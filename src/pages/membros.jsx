@@ -9,12 +9,10 @@ const Membros = (members) => {
   const [membros, setMembros] = useState(members.user)
 
   return (
-    <div>
-      <div className="pt-6">
-        <div className="container mx-auto text-center">
-          <div className="flex justify-center">
-            <MembrosTable> {membros} </MembrosTable>
-          </div>
+    <div className="pt-6">
+      <div className="container mx-auto text-center">
+        <div className="flex justify-center">
+          <MembrosTable> {membros} </MembrosTable>
         </div>
       </div>
     </div>

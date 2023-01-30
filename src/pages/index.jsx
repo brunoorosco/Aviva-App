@@ -1,11 +1,7 @@
 import Login from '../components/Auth'
 
 const Index = () => {
-  return (
-    <div className="">
-      <Login />
-    </div>
-  )
+  return <Login />
 }
 
 export default Index

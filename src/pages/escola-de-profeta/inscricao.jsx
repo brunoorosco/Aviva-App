@@ -101,7 +101,7 @@ const Index = () => {
               }
             />
 
-            <div className="flex justify-center  ">
+            <div className="flex justify-center">
               <button
                 className="p-4 block shadow bg-gray-500 my-2 rounded w-full max-w-md m-2 font-bold"
                 type="submit"
