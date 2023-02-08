@@ -11,7 +11,7 @@ type Study = {
 const ListaEscolaProfeta = (members: any) => {
   const [bat, setBat] = useState(members.json)
   const handleSendQr = async (data: any) => {
-    const res = await axios.post('/api/qrcode/send-qr-code',
+    const res = await axios.post('/api/qrcode/send',
       data
     )
     console.log('teste')

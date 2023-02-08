@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { qrCodeImg } from '@/utils/qr-code-generate'
 import { sendEmail } from '@/utils/send-email'
+import { sendImage } from '@/utils/send-whats'
 
 type Study = {
   name: string
@@ -17,6 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       sendEmail({
         emailTo: user.email
       })
+      sendImage(user.phone, user.name)
 
       return res.status(200).json({ success: true })
     }
