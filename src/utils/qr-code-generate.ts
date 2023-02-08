@@ -6,9 +6,11 @@ export const generateQR = async (text: string) => {
 
 export const qrCodeImg = (text: string) => {
   qr.toFile(
-    'public/filename.png',
+    'public/filename.jpeg',
     text,
     {
+      errorCorrectionLevel: 'H',
+      margin: 1,
       color: {
         dark: '#000',
         light: '#fff'

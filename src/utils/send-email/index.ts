@@ -23,8 +23,8 @@ export const sendEmail = async (email: Email) => {
     html: html,
     attachments: [
       {
-        filename: 'filename.png',
-        path: 'public/filename.png', // path contains the filename, do not just give path of folder where images are reciding.
+        filename: 'filename.jpeg',
+        path: 'public/filename.jpeg', // path contains the filename, do not just give path of folder where images are reciding.
         cid: 'img' // give any unique name to the image and make sure, you do not repeat the same string in given attachment array of object.
       },
       {
