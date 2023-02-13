@@ -21,7 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
       await doc.loadInfo() //carrega as infos da planilha
       //select sheet escola-profeta-insc
-      const sheet = await doc.sheetsByIndex[1]
+      const sheet = doc.sheetsByTitle['escola-profeta-insc']
       const response = await sheet.addRow({
         name: req.body.name,
         email: req.body.email,

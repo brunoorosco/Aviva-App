@@ -6,6 +6,7 @@ type Data = {
   phone: string
   id: string
   email: string
+  church: string
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse<Data[]>) => {
@@ -21,7 +22,8 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data[]>) => {
             id: row.qrcode,
             name: row.name,
             phone: row.phone,
-            email: row.email
+            email: row.email,
+            church: row.church
           }
         })
 
