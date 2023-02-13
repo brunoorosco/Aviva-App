@@ -53,8 +53,10 @@ const ListaEscolaProfeta = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {subscriber?.map(({ name, email, id, phone }: Study) => (
                   <tr key={id}>
-                    <td className="px-3 py-2 whitespace-nowrap">
-                      <div className="text-sm text-gray-900"> {name}</div>
+                    <td className="px-2 py-2 whitespace-nowrap">
+                      <div className="text-sm text-gray-900 truncate">
+                        {name.substring(0, 25)}
+                      </div>
                       <div className="text-sm text-gray-500">{email}</div>
 
                       <div className="text-sm text-gray-900"> {phone}</div>
