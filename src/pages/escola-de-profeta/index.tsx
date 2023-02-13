@@ -6,6 +6,7 @@ type Study = {
   phone: string
   id: string
   email: string
+  church?: string
 }
 
 const ListaEscolaProfeta = (members: any) => {
@@ -46,7 +47,7 @@ const ListaEscolaProfeta = (members: any) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {bat.map((list: Study) => (
+              {list.map((list: Study) => (
                 <tr key={list.id}>
                   <td className="px-3 py-2 whitespace-nowrap">
                     <div className="text-sm text-gray-900"> {list.name}</div>
@@ -75,13 +76,44 @@ const ListaEscolaProfeta = (members: any) => {
   )
 }
 
-ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
-  const res = await fetch('/api/escola-profeta/list')
-  const json = await res.json()
-  console.log(json)
-  return {
-    json
-  }
-}
+// ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
+//   const res = await fetch('/api/escola-profeta/list')
+//   const json = await res.json()
+//   console.log(json)
+//   return {
+//     json
+//   }
+// }
 
 export default ListaEscolaProfeta
+
+const list = [
+  {
+    id: '3c3d8455-d2e1-4319-8723-07b1b42ba64b',
+    name: 'Bruno Orosco ',
+    phone: '11940714391',
+    email: 'brunoorosco@gmail.com',
+    church: 'Sede'
+  },
+  {
+    id: '12b22553-8579-4718-a097-8b5421fd663a',
+    name: 'Jair alves Pequeno',
+    phone: '11915956020',
+    email: 'Jair.alvespequeno@gmail.com',
+    church: 'Sede'
+  },
+  {
+    id: 'ce02be1a-97e4-489a-8b87-272d476914dd',
+    name: 'Marivaldo da Silva ',
+    phone: '11970168409',
+    email: 'marivaodosilva@gmail.com',
+    church: 'Sede'
+  },
+  {
+    id: '7d3ea5e7-dca3-4e68-9885-cc701ad92277',
+    name: 'Simone Costa Silva ',
+    phone: '11940163671',
+    email: 'simonecsilva318@gmail.com',
+    church: 'Sede'
+  }
+]
