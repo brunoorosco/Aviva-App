@@ -26,7 +26,7 @@ const Index = () => {
     church: ''
   })
 
-  async function handleSubmit(evt) {
+  async function handleSubmit(evt: any) {
     evt.preventDefault()
     try {
       const response = await axios.post('/api/escola-profeta/new', form)
@@ -44,7 +44,7 @@ const Index = () => {
   return (
     <div className="md: w-full bg-gray-200 max-h-screen h-screen">
       <div className="justify-center text-center flex">
-        <Image className="mt-5" src={logo} width={200} />
+        <Image className="mt-5" alt="logo" src={logo} width={200} />
       </div>
       <div className="text-center pt-3">
         <p className="text-xl font-semibold">Inscrição escola de Profeta</p>
@@ -60,7 +60,7 @@ const Index = () => {
               name="name"
               placeholder="Nome Completo"
               value={form.name}
-              onChange={(value) =>
+              onChange={(value: string) =>
                 setForm((currenty) => {
                   return {
                     ...currenty,
@@ -73,7 +73,7 @@ const Index = () => {
               name="email"
               placeholder="Email"
               value={form.email}
-              onChange={(value) =>
+              onChange={(value: string) =>
                 setForm((currenty) => {
                   return { ...currenty, email: value.toLowerCase() }
                 })
@@ -82,9 +82,9 @@ const Index = () => {
 
             <TextInput
               placeholder="WhatsApp"
-              name="phone"
+              name={'phone'}
               value={form.phone}
-              onChange={(value) =>
+              onChange={(value: string) =>
                 setForm((currenty) => {
                   return { ...currenty, phone: Masks.phone(value) }
                 })
@@ -94,7 +94,7 @@ const Index = () => {
               options={churchName}
               title={'Selecione sua Igreja'}
               value={form.church}
-              onChange={(event) =>
+              onChange={(event: any) =>
                 setForm((currenty) => {
                   return { ...currenty, church: event.target.value }
                 })
