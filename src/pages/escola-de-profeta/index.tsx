@@ -45,7 +45,7 @@ const ListaEscolaProfeta = (members: any) => {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            {/* <tbody className="bg-white divide-y divide-gray-200">
               {bat.map((list: Study) => (
                 <tr key={list.id}>
                   <td className="px-3 py-2 whitespace-nowrap">
@@ -67,7 +67,7 @@ const ListaEscolaProfeta = (members: any) => {
                   </td>
                 </tr>
               ))}
-            </tbody>
+            </tbody> */}
           </table>
         </div>
       </div>
