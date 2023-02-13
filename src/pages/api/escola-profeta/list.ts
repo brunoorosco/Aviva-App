@@ -16,7 +16,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data[]>) => {
       getDoc().then(async (doc) => {
         sheet = doc.sheetsByTitle['escola-profeta-insc']
         const rows = await sheet.getRows()
-
+        console.log(doc)
         const qrcode: Data[] = await rows.map((row) => {
           return {
             id: row.qrcode,

@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { getDoc } from '../docGoogle'
 
 const { GoogleSpreadsheet } = require('google-spreadsheet')
 const crypto = require('node:crypto')
@@ -10,17 +11,8 @@ type Data = {
 export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   try {
     if (req.method === 'POST') {
-      const doc = new GoogleSpreadsheet(process.env.GOOGLE_ID)
-
-      await doc.useServiceAccountAuth({
-        client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.split(String.raw`\n`).join(
-          '\n'
-        )
-      })
-
-      await doc.loadInfo() //carrega as infos da planilha
-      //select sheet escola-profeta-insc
+      const doc = await getDoc()
+      console.log(doc)
       const sheet = doc.sheetsByTitle['escola-profeta-insc']
       const response = await sheet.addRow({
         name: req.body.name,
