@@ -58,7 +58,7 @@ const ListaEscolaProfeta = (members: any) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {list.map((list: Study) => (
+              {bat.map((list: Study) => (
                 <tr key={list.id}>
                   <td className="px-3 py-2 whitespace-nowrap">
                     <div className="text-sm text-gray-900"> {list.name}</div>
@@ -87,14 +87,12 @@ const ListaEscolaProfeta = (members: any) => {
   )
 }
 
-// ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
-//   const res = await fetch('/api/escola-profeta/list')
-//   const json = await res.json()
-//   console.log(json)
-//   return {
-//     json
-//   }
-// }
+ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
+  const res = await axios('/api/escola-profeta/list')
+  return {
+    res
+  }
+}
 
 export default ListaEscolaProfeta
 
