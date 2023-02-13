@@ -4,7 +4,7 @@ import axios from 'axios'
 type Study = {
   name: string
   phone: string
-  qrcode: string
+  id: string
   email: string
 }
 
@@ -48,7 +48,7 @@ const ListaEscolaProfeta = (members: any) => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {bat.map((list: Study) => (
-                <tr key={list.qrcode}>
+                <tr key={list.id}>
                   <td className="px-3 py-2 whitespace-nowrap">
                     <div className="text-sm text-gray-900"> {list.name}</div>
                     <div className="text-sm text-gray-500">{list.email}</div>
@@ -77,7 +77,7 @@ const ListaEscolaProfeta = (members: any) => {
 }
 
 ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
-  const res = await fetch('http://localhost:3000/api/escola-profeta/list')
+  const res = await fetch('/api/escola-profeta/list')
   const json = await res.json()
   return {
     json
