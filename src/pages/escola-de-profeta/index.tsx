@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
-type Study = {
+export type Study = {
   name: string
   phone: string
   id: string
@@ -9,8 +9,8 @@ type Study = {
   church?: string
 }
 
-const ListaEscolaProfeta = (members: any) => {
-  const [bat, setBat] = useState(members.json)
+const ListaEscolaProfeta = () => {
+  const [bat, setBat] = useState<Study>()
 
   useEffect(() => {
     getSubscribers()
@@ -22,8 +22,8 @@ const ListaEscolaProfeta = (members: any) => {
 
   async function getSubscribers() {
     const resul = await axios.get('/api/escola-profeta/list')
-    console.log(resul)
-    setBat(resul)
+    console.log(resul.data)
+    setBat(resul.data)
   }
 
   return (
@@ -58,7 +58,7 @@ const ListaEscolaProfeta = (members: any) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {bat.map((list: Study) => (
+              {list?.map((list: Study) => (
                 <tr key={list.id}>
                   <td className="px-3 py-2 whitespace-nowrap">
                     <div className="text-sm text-gray-900"> {list.name}</div>
@@ -86,13 +86,6 @@ const ListaEscolaProfeta = (members: any) => {
     </div>
   )
 }
-
-// ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
-//   const res = await axios('/api/escola-profeta/list')
-//   return {
-//     res
-//   }
-// }
 
 export default ListaEscolaProfeta
 
