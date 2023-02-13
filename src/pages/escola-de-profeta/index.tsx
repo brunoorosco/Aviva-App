@@ -10,20 +10,19 @@ export type Study = {
 }
 
 const ListaEscolaProfeta = () => {
-  const [bat, setBat] = useState<Study>()
+  const [subscriber, setSubscriber] = useState<Study[]>()
 
   useEffect(() => {
-    getSubscribers()
+    axios
+      .get('/api/escola-profeta/list')
+      .then((res) => {
+        setSubscriber(res.data)
+      })
+      .catch((err) => console.log(err))
   }, [])
 
   const handleSendQr = async (data: any) => {
     const res = await axios.post('/api/qrcode/send', data)
-  }
-
-  async function getSubscribers() {
-    const resul = await axios.get('/api/escola-profeta/list')
-    console.log(resul.data)
-    setBat(resul.data)
   }
 
   return (
@@ -58,14 +57,14 @@ const ListaEscolaProfeta = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {list?.map((list: Study) => (
-                <tr key={list.id}>
+              {subscriber?.map(({ name, email, id, phone }: Study) => (
+                <tr key={id}>
                   <td className="px-3 py-2 whitespace-nowrap">
-                    <div className="text-sm text-gray-900"> {list.name}</div>
-                    <div className="text-sm text-gray-500">{list.email}</div>
+                    <div className="text-sm text-gray-900"> {name}</div>
+                    <div className="text-sm text-gray-500">{email}</div>
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
-                    <div className="text-sm text-gray-900"> {list.phone}</div>
+                    <div className="text-sm text-gray-900"> {phone}</div>
                   </td>
 
                   <td className="px-3 py-2 text-sm font-medium text-right whitespace-nowrap">
