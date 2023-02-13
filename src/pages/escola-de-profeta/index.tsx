@@ -26,63 +26,57 @@ const ListaEscolaProfeta = () => {
   }
 
   return (
-    <div className="flex flex-col max-w-6xl mx-auto">
-      <div className="justify-center">
-        <p className="mt-2 mb-1 text-2xl">Escola de Profeta</p>
+    <>
+      <div className="flex justify-center">
+        <p className="mt-2 text-2xl">Escola de Profeta</p>
       </div>
+      <div className="flex mb-1 justify-center">
+        <p className="text-xl">{subscriber?.length} - Inscritos</p>
+      </div>
+      <div className="flex mx-auto justify-center">
+        <div className="overflow-x-auto flex ">
+          <div className="inline-block min-w-full py-2 align-middle">
+            <div className="overflow-hidden border-b border-gray-200 shadow sm:rounded-lg"></div>
 
-      <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <div className="overflow-hidden border-b border-gray-200 shadow sm:rounded-lg"></div>
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase ">
+                    Nome
+                  </th>
 
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-                >
-                  Nome
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
-                >
-                  WhatsApp
-                </th>
-
-                <th scope="col" className="relative px-6 py-3">
-                  <span className="sr-only">Edit</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {subscriber?.map(({ name, email, id, phone }: Study) => (
-                <tr key={id}>
-                  <td className="px-3 py-2 whitespace-nowrap">
-                    <div className="text-sm text-gray-900"> {name}</div>
-                    <div className="text-sm text-gray-500">{email}</div>
-                  </td>
-                  <td className="px-3 py-2 whitespace-nowrap">
-                    <div className="text-sm text-gray-900"> {phone}</div>
-                  </td>
-
-                  <td className="px-3 py-2 text-sm font-medium text-right whitespace-nowrap">
-                    <button
-                      onClick={(e) => {
-                        handleSendQr(list)
-                      }}
-                    >
-                      Enviar QrCode
-                    </button>
-                  </td>
+                  <th className="relative  py-3">
+                    <span className="sr-only">Edit</span>
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {subscriber?.map(({ name, email, id, phone }: Study) => (
+                  <tr key={id}>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      <div className="text-sm text-gray-900"> {name}</div>
+                      <div className="text-sm text-gray-500">{email}</div>
+
+                      <div className="text-sm text-gray-900"> {phone}</div>
+                    </td>
+
+                    <td className="py-2 pr-3 text-sm font-medium text-center mr-2">
+                      <a
+                        onClick={(e) => {
+                          handleSendQr(id)
+                        }}
+                      >
+                        Enviar QrCode
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
