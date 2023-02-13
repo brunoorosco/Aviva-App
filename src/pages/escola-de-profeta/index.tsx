@@ -4,16 +4,14 @@ import axios from 'axios'
 type Study = {
   name: string
   phone: string
-  id: string
+  qrcode: string
   email: string
 }
 
 const ListaEscolaProfeta = (members: any) => {
   const [bat, setBat] = useState(members.json)
   const handleSendQr = async (data: any) => {
-    const res = await axios.post('/api/qrcode/send',
-      data
-    )
+    const res = await axios.post('/api/qrcode/send', data)
     console.log('teste')
   }
 
@@ -30,13 +28,16 @@ const ListaEscolaProfeta = (members: any) => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-
-                <th scope="col"
-                  className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                >
                   Nome
                 </th>
-                <th scope="col"
-                  className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                >
                   WhatsApp
                 </th>
 
@@ -47,7 +48,7 @@ const ListaEscolaProfeta = (members: any) => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {bat.map((list: Study) => (
-                <tr key={list.id}>
+                <tr key={list.qrcode}>
                   <td className="px-3 py-2 whitespace-nowrap">
                     <div className="text-sm text-gray-900"> {list.name}</div>
                     <div className="text-sm text-gray-500">{list.email}</div>
@@ -57,9 +58,13 @@ const ListaEscolaProfeta = (members: any) => {
                   </td>
 
                   <td className="px-3 py-2 text-sm font-medium text-right whitespace-nowrap">
-
-                    <button onClick={e => { handleSendQr(list) }}>Enviar QrCode</button>
-
+                    <button
+                      onClick={(e) => {
+                        handleSendQr(list)
+                      }}
+                    >
+                      Enviar QrCode
+                    </button>
                   </td>
                 </tr>
               ))}
