@@ -75,13 +75,13 @@ const ListaEscolaProfeta = (members: any) => {
   )
 }
 
-ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
-  const res = await fetch('/api/escola-profeta/list')
-  const json = await res.json()
-  console.log(json)
-  return {
-    json
-  }
-}
+// ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
+//   const res = await fetch('/api/escola-profeta/list')
+//   const json = await res.json()
+//   console.log(json)
+//   return {
+//     json
+//   }
+// }
 
 export default ListaEscolaProfeta
