@@ -12,7 +12,6 @@ const ListaEscolaProfeta = (members: any) => {
   const [bat, setBat] = useState(members.json)
   const handleSendQr = async (data: any) => {
     const res = await axios.post('/api/qrcode/send', data)
-    console.log('teste')
   }
 
   return (
@@ -79,6 +78,7 @@ const ListaEscolaProfeta = (members: any) => {
 ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
   const res = await fetch('/api/escola-profeta/list')
   const json = await res.json()
+  console.log(json)
   return {
     json
   }

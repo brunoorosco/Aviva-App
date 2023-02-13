@@ -12,7 +12,6 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   try {
     if (req.method === 'POST') {
       const doc = await getDoc()
-      console.log(doc)
       const sheet = doc.sheetsByTitle['escola-profeta-insc']
       const response = await sheet.addRow({
         name: req.body.name,
