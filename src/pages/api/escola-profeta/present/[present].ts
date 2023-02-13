@@ -40,7 +40,6 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
           }
         })
 
-        console.log(teste)
         return res.status(200).json({ message: teste[0].name })
       })
     }

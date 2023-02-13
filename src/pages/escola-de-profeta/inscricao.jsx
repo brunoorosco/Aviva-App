@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import Toast from '../../components/Toast'
 import Image from 'next/image'
-import logo from '../../../public/logo.png'
+import logo from '../../../public/logo-preto.png'
 import TextInput from '../../components/Input'
 import { Masks } from '../../utils/masks'
 import Select from '../../components/Select'
@@ -44,7 +44,7 @@ const Index = () => {
   return (
     <div className="md: w-full bg-gray-200 max-h-screen h-screen">
       <div className="justify-center text-center flex">
-        <Image src={logo} width={200} />
+        <Image className="mt-5" src={logo} width={200} />
       </div>
       <div className="text-center pt-3">
         <p className="text-xl font-semibold">Inscrição escola de Profeta</p>
