@@ -87,12 +87,12 @@ const ListaEscolaProfeta = (members: any) => {
   )
 }
 
-ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
-  const res = await axios('/api/escola-profeta/list')
-  return {
-    res
-  }
-}
+// ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
+//   const res = await axios('/api/escola-profeta/list')
+//   return {
+//     res
+//   }
+// }
 
 export default ListaEscolaProfeta
 
