@@ -45,7 +45,7 @@ const ListaEscolaProfeta = (members: any) => {
                 </th>
               </tr>
             </thead>
-            {/* <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200">
               {bat.map((list: Study) => (
                 <tr key={list.id}>
                   <td className="px-3 py-2 whitespace-nowrap">
@@ -67,7 +67,7 @@ const ListaEscolaProfeta = (members: any) => {
                   </td>
                 </tr>
               ))}
-            </tbody> */}
+            </tbody>
           </table>
         </div>
       </div>
@@ -75,13 +75,13 @@ const ListaEscolaProfeta = (members: any) => {
   )
 }
 
-// ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
-//   const res = await fetch('/api/escola-profeta/list')
-//   const json = await res.json()
-//   console.log(json)
-//   return {
-//     json
-//   }
-// }
+ListaEscolaProfeta.getInitialProps = async (ctx: any) => {
+  const res = await fetch('/api/escola-profeta/list')
+  const json = await res.json()
+  console.log(json)
+  return {
+    json
+  }
+}
 
 export default ListaEscolaProfeta
