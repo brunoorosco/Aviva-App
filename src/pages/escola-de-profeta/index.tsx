@@ -20,7 +20,7 @@ const ListaEscolaProfeta = (members: any) => {
         <p className="mt-2 mb-1 text-2xl">Escola de Profeta</p>
       </div>
 
-      <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+      {/* <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div className="overflow-hidden border-b border-gray-200 shadow sm:rounded-lg"></div>
 
@@ -44,8 +44,8 @@ const ListaEscolaProfeta = (members: any) => {
                   <span className="sr-only">Edit</span>
                 </th>
               </tr>
-            </thead>
-            {/* <tbody className="bg-white divide-y divide-gray-200">
+            </thead> */}
+      {/* <tbody className="bg-white divide-y divide-gray-200">
               {bat.map((list: Study) => (
                 <tr key={list.id}>
                   <td className="px-3 py-2 whitespace-nowrap">
@@ -68,9 +68,9 @@ const ListaEscolaProfeta = (members: any) => {
                 </tr>
               ))}
             </tbody> */}
-          </table>
-        </div>
-      </div>
+      {/* </table>
+        </div> */}
+      {/* </div> */}
     </div>
   )
 }
