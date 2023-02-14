@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import Toast from '@/components/Toast'
 
 export type Study = {
   name: string
@@ -23,6 +24,11 @@ const ListaEscolaProfeta = () => {
 
   const handleSendQr = async (data: any) => {
     const res = await axios.post('/api/qrcode/send', data)
+    if (res.status === 200) {
+      Toast.showSuccess('Enviado com sucesso!')
+    } else {
+      Toast.showError('Falha ao enviar o qrcode')
+    }
   }
 
   return (
