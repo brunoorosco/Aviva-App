@@ -19,7 +19,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       sendEmail({
         emailTo: user.email
       })
-      //sendImage(user.phone, user.name)
+      sendImage(user.phone, user.name)
 
       return res.status(200).json({ success: true })
     }

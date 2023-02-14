@@ -67,13 +67,13 @@ const ListaEscolaProfeta = () => {
                     </td>
 
                     <td className="py-2 pr-3 text-sm font-medium text-center mr-2">
-                      <a
+                      <button
                         onClick={(e) => {
                           handleSendQr(subscriber)
                         }}
                       >
                         Enviar QrCode
-                      </a>
+                      </button>
                     </td>
                   </tr>
                 ))}
