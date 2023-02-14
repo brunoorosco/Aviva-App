@@ -10,7 +10,7 @@ export type Study = {
 }
 
 const ListaEscolaProfeta = () => {
-  const [subscriber, setSubscriber] = useState<Study[]>()
+  const [subscribers, setSubscriber] = useState<Study[]>()
 
   useEffect(() => {
     axios
@@ -31,7 +31,7 @@ const ListaEscolaProfeta = () => {
         <p className="mt-2 text-2xl">Escola de Profeta</p>
       </div>
       <div className="flex mb-1 justify-center">
-        <p className="text-xl">{subscriber?.length} - Inscritos</p>
+        <p className="text-xl">{subscribers?.length} - Inscritos</p>
       </div>
       <div className="flex mx-auto justify-center">
         <div className="overflow-x-auto flex ">
@@ -51,21 +51,25 @@ const ListaEscolaProfeta = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {subscriber?.map(({ name, email, id, phone }: Study) => (
-                  <tr key={id}>
+                {subscribers?.map((subscriber: Study) => (
+                  <tr key={subscriber.id}>
                     <td className="px-2 py-2 whitespace-nowrap">
                       <div className="text-sm text-gray-900 truncate">
-                        {name.substring(0, 25)}
+                        {subscriber.name.substring(0, 25)}
                       </div>
-                      <div className="text-sm text-gray-500">{email}</div>
+                      <div className="text-sm text-gray-500">
+                        {subscriber.email}
+                      </div>
 
-                      <div className="text-sm text-gray-900"> {phone}</div>
+                      <div className="text-sm text-gray-900">
+                        {subscriber.phone}
+                      </div>
                     </td>
 
                     <td className="py-2 pr-3 text-sm font-medium text-center mr-2">
                       <a
                         onClick={(e) => {
-                          handleSendQr(id)
+                          handleSendQr(subscriber)
                         }}
                       >
                         Enviar QrCode

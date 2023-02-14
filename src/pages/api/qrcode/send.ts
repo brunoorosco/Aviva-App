@@ -13,12 +13,13 @@ type Study = {
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (req.method === 'POST') {
+      console.log(req.body)
       const user: Study = req.body
       const img = await qrCodeImg(user.id)
       sendEmail({
         emailTo: user.email
       })
-      sendImage(user.phone, user.name)
+      //sendImage(user.phone, user.name)
 
       return res.status(200).json({ success: true })
     }
