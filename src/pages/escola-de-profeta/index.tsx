@@ -23,11 +23,15 @@ const ListaEscolaProfeta = () => {
   }, [])
 
   const handleSendQr = async (data: any) => {
-    const res = await axios.post('/api/qrcode/send', data)
-    if (res.status === 200) {
-      Toast.showSuccess('Enviado com sucesso!')
-    } else {
-      Toast.showError('Falha ao enviar o qrcode')
+    try {
+      const res = await axios.post('/api/qrcode/send', data)
+      if (res.status === 200) {
+        Toast.showSuccess('Enviado com sucesso!')
+      } else {
+        Toast.showError('Falha ao enviar o qrcode')
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
 
