@@ -1,18 +1,16 @@
 import nodemailer from 'nodemailer'
-import path from 'path'
+import path, { resolve } from 'path'
 import { html } from './html-email'
 
 type Email = {
   emailTo: string
 }
 export const sendEmail = async (email: Email) => {
-  console.log(process.env.EMAIL_PASSWORD)
-  console.log(process.env.emailPassword)
   const transporter = nodemailer.createTransport({
     port: 465,
-    host: 'smtp.gmail.com',
+    host: process.env.EMAIL_HOST,
     auth: {
-      user: 'brunoorosco@gmail.com',
+      user: process.env.EMAIL,
       pass: process.env.EMAIL_PASSWORD
     },
     secure: true
@@ -38,9 +36,16 @@ export const sendEmail = async (email: Email) => {
     // ]
   }
 
-  await transporter.sendMail(mailData, function (err, info) {
-    if (err) console.log(err)
-    else console.log(info)
+  await new Promise((resolve, reject) => {
+    transporter.sendMail(mailData, function (err, info) {
+      if (err) {
+        console.log(err)
+        reject(err)
+      } else {
+        console.log(info)
+        resolve(info)
+      }
+    })
+    return 'success'
   })
-  return 'success'
 }
