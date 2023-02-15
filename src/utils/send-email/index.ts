@@ -13,7 +13,8 @@ export const sendEmail = async (email: Email) => {
       user: process.env.EMAIL,
       pass: process.env.EMAIL_PASSWORD
     },
-    secure: true
+    secure: true,
+    service: 'gmail'
   })
 
   const mailData = {
