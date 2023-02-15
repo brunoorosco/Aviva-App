@@ -19,6 +19,18 @@ export const sendEmail = async (dataEmail: Email) => {
       service: 'gmail'
     })
 
+    await new Promise((resolve, reject) => {
+      // verify connection  configuration
+      transporter.verify(function (error, success) {
+        if (error) {
+          console.log(error)
+          reject(error)
+        } else {
+          console.log('Server is ready to take our messages')
+          resolve(success)
+        }
+      })
+    })
     const mailData = {
       from: 'brunoorosco@gmail.com',
       to: dataEmail.emailTo,
