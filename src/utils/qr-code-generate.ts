@@ -6,7 +6,7 @@ export const generateQR = async (text: string) => {
 
 export const qrCodeImg = (text: string) => {
   qr.toFile(
-    'filename.jpeg',
+    'assets/qr-code/filename.jpeg',
     text,
     {
       errorCorrectionLevel: 'H',
