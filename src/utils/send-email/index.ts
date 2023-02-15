@@ -9,7 +9,7 @@ type Email = {
 export const sendEmail = async (dataEmail: Email) => {
   try {
     const transporter = nodemailer.createTransport({
-      port: 587,
+      port: 465,
       host: process.env.EMAIL_HOST,
       auth: {
         user: process.env.EMAIL,
