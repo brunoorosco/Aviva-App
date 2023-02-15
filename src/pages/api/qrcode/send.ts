@@ -16,7 +16,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const user: Study = req.body
       // const img = await qrCodeImg(user.id)
       sendEmail({
-        emailTo: user.email
+        emailTo: user.email,
+        nameFrom: user.name
       })
       //   sendImage(user.phone, user.name)
 
