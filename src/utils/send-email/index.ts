@@ -6,11 +6,13 @@ type Email = {
   emailTo: string
 }
 export const sendEmail = async (email: Email) => {
+  console.log(process.env.EMAIL_PASSWORD)
+  console.log(process.env.emailPassword)
   const transporter = nodemailer.createTransport({
     port: 465,
     host: 'smtp.gmail.com',
     auth: {
-      user: 'brunoorosco',
+      user: 'brunoorosco@gmail.com',
       pass: process.env.EMAIL_PASSWORD
     },
     secure: true
