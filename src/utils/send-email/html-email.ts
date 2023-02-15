@@ -1,4 +1,4 @@
-export const html = `<!DOCTYPE html>
+export const html = (name: string) => `<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -61,7 +61,7 @@ export const html = `<!DOCTYPE html>
                   <h1
                     style="margin-top:0;margin-bottom:16px;font-size:26px;line-height:32px;font-weight:bold;letter-spacing:-0.02em;">
                     Inscrição realizada com sucesso!!!</h1>
-                  <p style="margin:0;">Sua presença será registrada pelo qrcode logo abaixo, este qrcode é único para todo este modulo da escola de profeta.
+                  <p style="margin:0;">${name}, sua presença será registrada pelo qrcode logo abaixo, este qrcode é único para todo este modulo da escola de profeta.
                   Não perca ou apague este e-mail.
                   </p>
                 </td>
