@@ -1,7 +1,9 @@
 import nodemailer from 'nodemailer'
-import path, { resolve } from 'path'
+import path from 'path'
 import { html } from './html-email'
-import { promises as fs } from 'fs'
+import fs from 'fs'
+
+const logo = fs.readFileSync('./assets/image/logo-preto.png', 'utf8')
 
 type Email = {
   emailTo: string
@@ -48,7 +50,7 @@ export const sendEmail = async (dataEmail: Email) => {
         // },
         {
           filename: 'logo-preto.png',
-          path: '/logo-preto.png', // path contains the filename, do not just give path of folder where images are reciding.
+          path: logo, // path contains the filename, do not just give path of folder where images are reciding.
           cid: 'logo' // give any unique name to the image and make sure, you do not repeat the same string in given attachment array of object.
         }
       ]
