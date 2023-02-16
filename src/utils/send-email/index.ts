@@ -48,7 +48,7 @@ export const sendEmail = async (dataEmail: Email) => {
         // },
         {
           filename: 'logo-preto.png',
-          path: process.cwd() + '/public/logo-preto.png', // path contains the filename, do not just give path of folder where images are reciding.
+          path: process.cwd() + '/logo-preto.png', // path contains the filename, do not just give path of folder where images are reciding.
           cid: 'logo' // give any unique name to the image and make sure, you do not repeat the same string in given attachment array of object.
         }
       ]
