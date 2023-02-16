@@ -32,7 +32,7 @@ export const sendEmail = async (dataEmail: Email) => {
         }
       })
     })
-    const qrCodeDirectory = path.join(process.cwd(), '/')
+    console.log(__dirname)
 
     const mailData = {
       from: 'brunoorosco@gmail.com',
