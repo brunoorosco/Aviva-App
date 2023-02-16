@@ -9,7 +9,7 @@ export const generateQR = async (text: string) => {
 export const qrCodeImg = async (text: string) => {
   const qrCodeDirectory = path.join(process.cwd(), '/')
   qr.toFile(
-    `${qrCodeDirectory}/filename.jpeg`,
+    `${qrCodeDirectory}/src/assets/images/filename.jpeg`,
     text,
     {
       errorCorrectionLevel: 'H',
