@@ -41,14 +41,14 @@ export const sendEmail = async (dataEmail: Email) => {
       text: `${dataEmail.nameFrom}, este é o código para identificação para o curso escola de profeta`,
       html: html(dataEmail.nameFrom),
       attachments: [
-        {
-          filename: 'filename.jpeg',
-          path: `${qrCodeDirectory}/src/assets/images/filename.jpeg`, // path contains the filename, do not just give path of folder where images are reciding.
-          cid: 'img' // give any unique name to the image and make sure, you do not repeat the same string in given attachment array of object.
-        },
+        // {
+        //   filename: 'filename.jpeg',
+        //   path: `${qrCodeDirectory}/src/assets/images/filename.jpeg`, // path contains the filename, do not just give path of folder where images are reciding.
+        //   cid: 'img' // give any unique name to the image and make sure, you do not repeat the same string in given attachment array of object.
+        // },
         {
           filename: 'logo-preto.png',
-          path: `${qrCodeDirectory}/src/assets/images/logo-preto.png`, // path contains the filename, do not just give path of folder where images are reciding.
+          path: process.cwd() + '/public/logo-preto.png', // path contains the filename, do not just give path of folder where images are reciding.
           cid: 'logo' // give any unique name to the image and make sure, you do not repeat the same string in given attachment array of object.
         }
       ]
