@@ -1,12 +1,15 @@
+import path from 'path'
 import qr from 'qrcode'
+import { promises as fs } from 'fs'
 
 export const generateQR = async (text: string) => {
   return await qr.toString(text)
 }
 
-export const qrCodeImg = (text: string) => {
+export const qrCodeImg = async (text: string) => {
+  const qrCodeDirectory = path.join(process.cwd(), '/')
   qr.toFile(
-    'assets/qr-code/filename.jpeg',
+    `${qrCodeDirectory}/filename.jpeg`,
     text,
     {
       errorCorrectionLevel: 'H',
