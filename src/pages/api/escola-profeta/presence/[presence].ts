@@ -16,7 +16,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         sheet = doc.sheetsByTitle['chamada-escola-profeta']
         const rows = await sheet.getRows()
         const teste = await rows.filter((row) => {
-          if (row.id === req.query.present) {
+          if (row.id === req.query.presence) {
             switch (dayClass) {
               case '6/3':
                 row.aula1 = 'P'
