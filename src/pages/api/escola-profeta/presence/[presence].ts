@@ -15,7 +15,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       getDoc().then(async (doc) => {
         sheet = doc.sheetsByTitle['chamada-escola-profeta']
         const rows = await sheet.getRows()
-        const teste = await rows.filter((row) => {
+        const teste = await rows.filter(async (row) => {
           if (row.id === req.query.presence) {
             switch (dayClass) {
               case '6/3':
@@ -25,7 +25,8 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
               case '23/2':
                 row.aula2 = 'P'
-                row.save()
+                const save = await row.save()
+                console.log(save)
                 break
 
               default:
