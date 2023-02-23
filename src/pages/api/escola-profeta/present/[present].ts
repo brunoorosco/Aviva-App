@@ -23,7 +23,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
                 row.save()
                 break
 
-              case '7/2':
+              case '23/2':
                 row.aula2 = 'P'
                 row.save()
                 break
