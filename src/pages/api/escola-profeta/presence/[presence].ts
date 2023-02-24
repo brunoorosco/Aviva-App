@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { getDoc } from '../../docGoogle'
 
 type Data = {
-  message: string
+  name: string
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
@@ -11,38 +11,32 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       let sheet
       const data = new Date()
       const dayClass = `${data.getUTCDate()}/${data.getMonth() + 1}`
-
-      getDoc().then(async (doc) => {
-        sheet = doc.sheetsByTitle['chamada-escola-profeta']
-        const rows = await sheet.getRows()
-        const teste = await rows.filter(async (row) => {
-          if (row.id === req.query.presence) {
-            switch (dayClass) {
-              case '6/3':
-                row.aula1 = 'P'
-                row.save()
-                break
-
-              case '23/2':
-                row.aula2 = 'P'
-                const save = await row.save()
-                console.log(save)
-                break
-
-              default:
-                break
-            }
-
-            return row.name
-
-            // row.aula1 = 'P'
-            // row.save()
-            // return row.name
-          }
+      const name = await getDoc()
+        .then(async (doc) => {
+          sheet = doc.sheetsByTitle['chamada-escola-profeta']
+          const rows = await sheet.getRows()
+          return await rows.filter((row) => row.id === req.query.presence)
         })
+        .then((data: any) => {
+          switch (dayClass) {
+            case '6/3':
+              data[0].aula1 = 'P'
+              data[0].save()
+              break
 
-        return res.status(200).json({ message: teste[0].name })
-      })
+            case '24/2':
+              data[0].aula2 = 'P1'
+              data[0].save()
+              break
+
+            default:
+              break
+          }
+          return data[0].name
+        })
+      console.log(name)
+
+      return res.status(200).json({ name })
     }
   } catch (error) {
     console.error(error)
