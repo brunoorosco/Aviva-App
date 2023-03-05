@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getDoc } from '../docGoogle'
-
-const { GoogleSpreadsheet } = require('google-spreadsheet')
-const crypto = require('node:crypto')
+import crypto from 'node:crypto'
 
 type Data = {
   name: string

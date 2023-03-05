@@ -17,7 +17,7 @@ const ReadQrCode = (props: any) => {
     if (idQrcode) {
       setLoading(true)
       const { status, data } = await axios.get(
-        `../api/escola-profeta/present/${idQrcode}`
+        `../api/escola-profeta/presence/${idQrcode}`
       )
 
       if (status === 200) {

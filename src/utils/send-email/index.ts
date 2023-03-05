@@ -1,13 +1,10 @@
 import nodemailer from 'nodemailer'
-import path from 'path'
 import { html } from './html-email'
-import fs from 'fs'
-
-const logo = fs.readFileSync('./assets/image/logo-preto.png', 'utf8')
 
 type Email = {
   emailTo: string
   nameFrom: string
+  qrCode: string
 }
 export const sendEmail = async (dataEmail: Email) => {
   try {
@@ -18,7 +15,7 @@ export const sendEmail = async (dataEmail: Email) => {
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASSWORD
       },
-      secure: true,
+      secure: false,
       service: 'gmail'
     })
 
@@ -29,45 +26,34 @@ export const sendEmail = async (dataEmail: Email) => {
           console.log(error)
           reject(error)
         } else {
-          console.log('Server is ready to take our messages')
           resolve(success)
         }
       })
     })
-    console.log(__dirname)
 
     const mailData = {
       from: 'brunoorosco@gmail.com',
       to: dataEmail.emailTo,
       subject: `Escola de Profeta - Avivamento`,
       text: `${dataEmail.nameFrom}, este é o código para identificação para o curso escola de profeta`,
-      html: html(dataEmail.nameFrom),
+      html: html(dataEmail.nameFrom, dataEmail.qrCode),
       attachments: [
-        // {
-        //   filename: 'filename.jpeg',
-        //   path: `${qrCodeDirectory}/src/assets/images/filename.jpeg`, // path contains the filename, do not just give path of folder where images are reciding.
-        //   cid: 'img' // give any unique name to the image and make sure, you do not repeat the same string in given attachment array of object.
-        // },
+        {
+          filename: 'qrCode.png',
+          path: `${dataEmail.qrCode}`, // path contains the filename, do not just give path of folder where images are reciding.
+          cid: `img` // give any unique name to the image and make sure, you do not repeat the same string in given attachment array of object.
+        },
         {
           filename: 'logo-preto.png',
-          path: logo, // path contains the filename, do not just give path of folder where images are reciding.
+          path: './public/logo-preto.png', // path contains the filename, do not just give path of folder where images are reciding.
           cid: 'logo' // give any unique name to the image and make sure, you do not repeat the same string in given attachment array of object.
         }
       ]
     }
 
-    await new Promise((resolve, reject) => {
-      transporter.sendMail(mailData, function (err, info) {
-        if (err) {
-          console.log(err)
-          reject(err)
-        } else {
-          console.log(info)
-          resolve(info)
-        }
-      })
-      return 'success'
-    })
+    const response = await transporter.sendMail(mailData)
+    if (response.accepted.length === 0) return false
+    return true
   } catch (error) {
     console.error(error)
   }

@@ -1,0 +1,33 @@
+version: '3'
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    ports:
+      - '80:80'
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  nextjs:
+    container_name: nextjs
+    build:
+      context: ./
+    hostname: web.local
+    domainname: web.local
+    env_file:
+      - ./.env
+    environment:
+      SCORE: 0.5
+      GOOGLE_ID: "1oqlJ5AmVXdSL4gaR-EC-MC6X1pXuVLUeOEHveSLwxhA"
+      GOOGLE_PRIVATE_KEY: -----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCtU3pd8EfCGTVz\nQ2G5shVfYjWV0YH2qvkPiMcNcCeK2CsdN7xt4WRDeolFqfMC53s5zwGjvHFQ6tCD\nGmSltfqIMbaad8BiZ8hb+dILd56R827WM3Y0JMZabSOH1/LYIwSytjLPSzS0GABs\nXBpVDOJsnj1nZ8RymStMVjD6zIdOTmRY5/vFJC7/D2X5l+nC1AHti32RFKWSt5JZ\nbvfdlPtwT6hcQcwzIFJ4GG9PaDxVyLP6dJne3b/DMAr2HrIVwqrsytsF4JlyJQKd\n9U+tsrpYCAUPepd+FlZ0TlCNdGUd6I+l1hoZ253UnRta7avEyTSH5iecu3TO1jYf\ntMUES1fRAgMBAAECggEADu1O1aYN+Z4QxHdfBE5dP3FmgQHhw48Whp52c7NSTHq9\npJuguDikv5gr5OdNtog3mUZsWaAVUdOVl1Z5QlMDG28Am82VY93HqEtb3UEoU5R9\n83RlVfjjnKg9wTZS9tQPoWtGKL3m15Duzf/VBFJPciBJbhoTL1vLZumDXvR1vXbb\nJJF1REzwvKD9iSyOnCoW4uP75LTNcoTzvLAPzXv6CisptJl1XeaGFLgcm6BNrMTH\nt5o0+uKe3D0Jl/LQ91XGTIlq51yojWUb67NWnOe7hEYJ+y73NILcjnMRUvOxKP36\naNL2hw8VtG0ygOBBPioJaE3J4UO+WotzkRJp011agwKBgQDcrL2nXmTgNIJj8enp\nkDglsX8EoQ6rj5MKCYNPqmA8BScHVXTCET4GaU7aKfvzHSrGNiGBJLlDZQ7VeAA4\nXKLaXqfoLz5JOLZLEANt0cQlR1QOMyupR623LFMaxWrUD7FDdnNCOLYHIpo5IbEJ\ndlnsogUAEznzuJU3Gzg/ehr+ywKBgQDJEmL4VTZAI0JNRkXWw1RqgKcWH4DbCpzw\nfI+gvup5cbL2/TIpBJMb5nJ5Gs3r8g+6+hAF98BEaZnDG3LiZoSg23AYOimvfphB\nG8dCdEL/+xCr9h1IfOGrC9rV2/wU1199Cy3Ewq4OYz+iNTFhS5GtKjgfdOUA1xuF\niDH8hqy0UwKBgQC/trLtfOxWfEfrXHfDGjAtTw7yjpmYIpuz1J/nzjTc7/0AOhW9\npA0mtMZ0cpUYmPZYTR6+e5EYI+vHOQG39YLmA+YLqT+LjWGRxM+10M9/M4Cq9Xmx\nDzy0LiXk1C4DHb76xSVNGsfJWx5xE/wiJFfrZLbDYfCu9GVuAo/TVdmuEQKBgEv+\n+Q0nF8QSD4MpZkgPt54xVfWUnp0rW7nBOn/k6LZR9PRJKmY6ZmeLKAUBzoa5DJz8\n2oWG6FJzHzyQ6VEMsmAh0DI3+X1s+ZrSJvPFAXXCrMBx2wuEt75wUpu184blCCA4\n02mksyiY9noWZL2DVGIArQmmos84fhxwJ4RsWmYlAoGAHGvcINaXQKcOStfXxW+u\nIKrdBwycXeBasSf4uXMw6QgPTh7xZkwmWFTxzeD1kB2aNHOQ+UbjCdh6mxbK2hIk\nPQOBul3M4gqH5urX0SIeeZPmCgtQCh86iAR7Xank7sXsa6oGoUSNgnYXcgQV/pFr\nxC9R6evH96ueRcuAODUBG2w=\n-----END PRIVATE KEY-----\n
+      GOOGLE_CLIENT_EMAIL: "avivamento@avivamento.iam.gserviceaccount.com"
+      EMAIL_PASSWORD: yitvkkapltrkizci
+      EMAIL: 'cursos.sede@avivamentoemcristo.com.br'
+      EMAIL_HOST: 'smtp.gmail.com'
+      VIRTUAL_HOST: avivasoft.localhost
+    ports:
+      - 3001:3000
+   
+networks:
+  default:
+    name: local-network
+  

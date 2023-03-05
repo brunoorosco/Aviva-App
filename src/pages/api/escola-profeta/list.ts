@@ -13,10 +13,10 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data[]>) => {
   try {
     if (req.method === 'GET') {
       let sheet
-      getDoc().then(async (doc) => {
+      const users: Data[] = await getDoc().then(async (doc) => {
         sheet = doc.sheetsByTitle['escola-profeta-insc']
         const rows = await sheet.getRows()
-        const qrcode: Data[] = await rows.map((row) => {
+        return await rows.map((row) => {
           return {
             id: row.qrcode,
             name: row.name,
@@ -25,9 +25,8 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data[]>) => {
             church: row.church
           }
         })
-
-        return res.status(200).json(qrcode)
       })
+      return res.status(200).json(users)
     }
   } catch (error) {
     throw new Error(error as string)

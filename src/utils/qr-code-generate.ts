@@ -1,27 +1,29 @@
-import path from 'path'
-import qr from 'qrcode'
-import { promises as fs } from 'fs'
+import QrCode from 'qrcode'
 
 export const generateQR = async (text: string) => {
-  return await qr.toString(text)
+  return await QrCode.toString(text)
 }
 
 export const qrCodeImg = async (text: string) => {
-  const qrCodeDirectory = path.join(process.cwd(), '/')
-  qr.toFile(
-    `${qrCodeDirectory}/src/assets/images/filename.jpeg`,
-    text,
-    {
+  try {
+    return await QrCode.toDataURL(text, {
       errorCorrectionLevel: 'H',
       margin: 1,
       color: {
         dark: '#000',
         light: '#fff'
       }
-    },
-    function (err) {
-      if (err) throw err
-      console.log('qr-code-complete')
-    }
-  )
+    })
+
+    // await QrCode.toFile(`./public/filename.jpeg`, text, {
+    //   errorCorrectionLevel: 'H',
+    //   margin: 1,
+    //   color: {
+    //     dark: '#000',
+    //     light: '#fff'
+    //   }
+    // })
+  } catch (error) {
+    console.log(error)
+  }
 }

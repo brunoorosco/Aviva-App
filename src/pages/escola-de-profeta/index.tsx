@@ -24,14 +24,29 @@ const ListaEscolaProfeta = () => {
 
   const handleSendQr = async (data: any) => {
     try {
-      const res = await axios.post('/api/qrcode/send', data)
+      const res = await axios.post('/api/qrcode/send-by-email', data)
       if (res.status === 200) {
-        Toast.showSuccess('Enviado com sucesso!')
-      } else {
-        Toast.showError('Falha ao enviar o qrcode')
+        Toast.showSuccess('Enviado via e-mail com sucesso!')
+      }
+      // const resWhats = await axios.post('/api/qrcode/send-by-whatsapp', data)
+      // if (resWhats.status === 200) {
+      //   Toast.showSuccess('Enviado via WhatsApp com sucesso!')
+      // }
+    } catch (error) {
+      console.log(error)
+      Toast.showError('Falha ao enviar o qrcode')
+    }
+  }
+
+  const handleSendQrAll = async (data: any) => {
+    try {
+      const res = await axios.post('/api/qrcode/send-all-by-email')
+      if (res.status === 200) {
+        Toast.showSuccess('Enviado via e-mail com sucesso!')
       }
     } catch (error) {
       console.log(error)
+      Toast.showError('Falha ao enviar o qrcode')
     }
   }
 
@@ -55,8 +70,13 @@ const ListaEscolaProfeta = () => {
                     Nome
                   </th>
 
-                  <th className="relative  py-3">
-                    <span className="sr-only">Edit</span>
+                  <th className="relative ">
+                    <button
+                      className="bg-blue-500 p-5 rounded border hover:bg-blue-400"
+                      onClick={handleSendQrAll}
+                    >
+                      Enviar QrCode Todos
+                    </button>
                   </th>
                 </tr>
               </thead>

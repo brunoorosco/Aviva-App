@@ -1,4 +1,4 @@
-export const html = (name: string) => `<!DOCTYPE html>
+export const html = (name: string, qrCode: string) => `<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -52,7 +52,7 @@ export const html = (name: string) => `<!DOCTYPE html>
             <table role="presentation"
               style="width:94%;max-width:600px;border:none;border-spacing:0;text-align:left;font-family:Arial,sans-serif;font-size:16px;line-height:22px;color:#363636;">
               <tr>
-                <td style="padding:40px 30px 30px 30px;text-align:center;font-size:24px;font-weight:bold;">                  
+                <td style="padding:20px 30px 20px 30px;text-align:center;font-size:24px;font-weight:bold;">                  
                   <img src="cid:logo" width="165">
                 </td>
               </tr>
@@ -71,6 +71,7 @@ export const html = (name: string) => `<!DOCTYPE html>
                 <img src="cid:img" />
                 </td>
               </tr>
+              
             
             </table>
           </td>

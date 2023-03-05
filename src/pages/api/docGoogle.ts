@@ -14,5 +14,5 @@ export const getDoc = async () => {
   return doc
 }
 getDoc().then((doc) => {
-  console.log(doc.title)
+  console.log('Nome da Planilha => ', doc.title)
 })
