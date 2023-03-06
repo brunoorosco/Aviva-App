@@ -37,6 +37,17 @@ const ListaEscolaProfeta = () => {
       Toast.showError('Falha ao enviar o qrcode')
     }
   }
+  const handleSendQrWhatsApp = async (data: any) => {
+    try {
+      const res = await axios.post('/api/qrcode/send-by-whatsapp', data)
+      if (res.status === 200) {
+        Toast.showSuccess('Enviado via e-mail com sucesso!')
+      }
+    } catch (error) {
+      console.log(error)
+      Toast.showError('Falha ao enviar o qrcode')
+    }
+  }
 
   const handleSendQrAll = async (data: any) => {
     try {
@@ -98,11 +109,20 @@ const ListaEscolaProfeta = () => {
 
                     <td className="py-2 pr-3 text-sm font-medium text-center mr-2">
                       <button
+                        className=" bg-slate-400 p-2 rounded"
                         onClick={(e) => {
                           handleSendQr(subscriber)
                         }}
                       >
-                        Enviar QrCode
+                        QrCode - E-mail
+                      </button>
+                      <button
+                        className="bg-green-300 p-2 rounded"
+                        onClick={(e) => {
+                          handleSendQrWhatsApp(subscriber)
+                        }}
+                      >
+                        QrCode - WhatsApp
                       </button>
                     </td>
                   </tr>
