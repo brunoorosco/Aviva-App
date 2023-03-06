@@ -21,10 +21,11 @@ const ReadQrCode = (props: any) => {
       )
       if (status === 200) {
         Modal.showSuccess(`Registrado com Sucesso  ${data.name}`)
+        setIdQrcode('')
       } else {
         Modal.showSuccess(`Oooppsssss! Falha, tente novamente!`)
+        setIdQrcode('')
       }
-      setIdQrcode('')
     }
   }
   return (
@@ -48,7 +49,7 @@ const ReadQrCode = (props: any) => {
             width: '100%',
             border: 0
           }}
-          containerStyle={{ width: '50%' }}
+          containerStyle={{ width: '100%' }}
           constraints={{}}
         />
 
