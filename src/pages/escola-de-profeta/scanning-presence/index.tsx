@@ -17,11 +17,10 @@ const ReadQrCode = (props: any) => {
     if (idQrcode) {
       setLoading(true)
       const { status, data } = await axios.get(
-        `../api/escola-profeta/presence/${idQrcode}`
+        `../../api/escola-profeta/presence/${idQrcode}`
       )
-
       if (status === 200) {
-        Modal.showSuccess(`Registrado com Sucesso  ${data.message}`)
+        Modal.showSuccess(`Registrado com Sucesso  ${data.name}`)
       } else {
         Modal.showSuccess(`Oooppsssss! Falha, tente novamente!`)
       }
@@ -29,13 +28,13 @@ const ReadQrCode = (props: any) => {
     }
   }
   return (
-    <div className="bg-black">
-      <div className="md:w-full lg:w-1/4 mx-auto justify-center items-center h-screen flex flex-col">
+    <div className="bg-gray-900">
+      <div className="md:w-full lg:w-1/4 mx-auto  items-center h-screen flex flex-col justify-center">
         <p className="text-white text-xl mt-15">
           Posicione seu QrCode dentro deste quadrado
         </p>
         <QrReader
-          className="qrCode"
+          className=""
           onResult={(result: any, error: any) => {
             if (!!result && !loading) {
               setIdQrcode(result?.text)
@@ -45,8 +44,11 @@ const ReadQrCode = (props: any) => {
             }
           }}
           scanDelay={2000}
-          videoStyle={{ width: '100%' }}
-          containerStyle={{ width: '100%' }}
+          videoStyle={{
+            width: '100%',
+            border: 0
+          }}
+          containerStyle={{ width: '50%' }}
           constraints={{}}
         />
 
