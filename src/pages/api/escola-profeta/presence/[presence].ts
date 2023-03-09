@@ -39,7 +39,7 @@ export default async (
               data[0].save()
               break
 
-            case '09/3':
+            case '9/3':
               data[0].aula3 = 'P3'
               data[0].save()
               break
