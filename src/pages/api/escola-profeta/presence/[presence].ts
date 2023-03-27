@@ -35,22 +35,22 @@ export default async (
               break
 
             case '13/3':
-              data[0].aula2 = 'P2'
+              data[0].aula2 = 'P'
               data[0].save()
               break
 
             case '20/3':
-              data[0].aula3 = 'P3'
-              data[0].save()
-              break
-
-            case '27/3':
-              data[0].aula3 = 'P4'
+              data[0].aula3 = 'P'
               data[0].save()
               break
 
             case '3/4':
-              data[0].aula3 = 'P5'
+              data[0].aula4 = 'P'
+              data[0].save()
+              break
+
+            case '10/4':
+              data[0].aula5 = 'P'
               data[0].save()
               break
 
