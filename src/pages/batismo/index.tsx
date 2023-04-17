@@ -1,14 +1,23 @@
 import axios from 'axios'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 type Data = {
   name: string
   date: string
   cem: string
 }
-const Batismo = (members: any) => {
-  const [bat, setBat] = useState<Data[]>(members.json)
+const Batismo = () => {
+  const [bat, setBat] = useState<Data[]>()
+
+  useEffect(() => {
+    axios
+      .get('/api/batismo')
+      .then((res) => {
+        setBat(res.data)
+      })
+      .catch((err) => console.log(err))
+  }, [])
 
   async function handlePrint(evt: any) {
     evt.preventDefault()
@@ -103,12 +112,12 @@ const Batismo = (members: any) => {
   )
 }
 
-Batismo.getInitialProps = async (ctx: any) => {
-  const res = await fetch('http://localhost:3000/api/batismo')
-  const json = await res.json()
-  return {
-    json
-  }
-}
+// Batismo.getInitialProps = async (ctx: any) => {
+//   const res = await fetch('api/batismo')
+//   const json = await res.json()
+//   return {
+//     json
+//   }
+// }
 
 export default Batismo
