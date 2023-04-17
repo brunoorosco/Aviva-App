@@ -30,12 +30,12 @@ export default async (
           }
           switch (dayClass) {
             case '17/4':
-              data[0].aula1 = 'P'
+              data[0].aula6 = 'P'
               data[0].save()
               break
 
             case '24/4':
-              data[0].aula2 = 'P'
+              data[0].aula7 = 'P'
               data[0].save()
               break
 

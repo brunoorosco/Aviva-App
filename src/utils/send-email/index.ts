@@ -12,10 +12,8 @@ export const sendEmail = async (dataEmail: Email) => {
       port: 465,
       host: process.env.EMAIL_HOST,
       auth: {
-        // user: process.env.EMAIL,
-        // pass: process.env.EMAIL_PASSWORD
-        user: 'cursos.sede@avivamentoemcristo.com.br',
-        pass: 'ozivdscduuvoxkcy'
+        user: process.env.EMAIL,
+        pass: process.env.EMAIL_PASSWORD
       },
       secure: true,
       service: 'gmail'
