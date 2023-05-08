@@ -28,21 +28,22 @@ export default async (
           if (data.length === 0) {
             return false
           }
-          switch (dayClass) {
-            case '17/4':
-              data[0].aula6 = 'P'
-              data[0].save()
-              break
+          // switch (dayClass) {
+          //   case '8/5':
+          //     data[0].aula6 = 'P'
+          //     data[0].save()
+          //     break
 
-            case '24/4':
-              data[0].aula7 = 'P'
-              data[0].save()
-              break
+          //   case '24/4':
+          //     data[0].aula7 = 'P'
+          //     data[0].save()
+          //     break
 
-            default:
-              break
-          }
-
+          //   default:
+          //     break
+          // }
+          data[0].aula8 = 'P'
+          data[0].save()
           return data[0].name
         })
 
