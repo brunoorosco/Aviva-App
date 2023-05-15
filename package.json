@@ -9,6 +9,7 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@loadable/component": "^5.15.3",
         "@next/font": "13.1.4",
         "@types/node": "18.11.18",
         "@types/react": "18.0.27",
@@ -26,6 +27,7 @@
         "qrcode": "^1.5.1",
         "react": "18.2.0",
         "react-dom": "18.2.0",
+        "react-icons": "^4.8.0",
         "react-qr-reader": "^3.0.0-beta-1",
         "sweetalert2": "^11.7.1",
         "swr": "^2.0.1",
