@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import MembrosTable from '../components/Tabela'
+import MembrosTable from '../../components/Tabela'
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
