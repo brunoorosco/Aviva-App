@@ -9,7 +9,7 @@ const Select = ({ options, value, onChange, title }) => {
         <option value="" disabled>
           {title}
         </option>
-        {options.map((opt, index) => (
+        {options?.map((opt, index) => (
           <option key={opt.value + index} value={opt.value}>
             {opt.label}
           </option>
