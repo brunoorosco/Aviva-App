@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import Toast from '../../components/Toast'
+import Toast from '../../../components/Toast'
 import Image from 'next/image'
 import logo from '../../../public/logo-preto.png'
-import TextInput from '../../components/Input'
-import { Masks } from '../../utils/masks'
-import Select from '../../components/Select'
+import TextInput from '../../../components/Input'
+import { Masks } from '../../../utils/masks'
+import Select from '../../../components/Select'
 
 const churchName = [
   { value: 'sede', label: 'Sede' },
