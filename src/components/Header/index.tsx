@@ -1,7 +1,10 @@
-type THeader = {
-  name: string
-}
-const Header = (props: THeader) => {
+import { authOptions } from '@/pages/api/auth/[...nextauth]'
+import { getServerSession } from 'next-auth'
+import { useSession } from 'next-auth/react'
+
+const Header = () => {
+  const { data: session } = useSession()
+  console.log('--->', session)
   return (
     <header className="z-40 flex items-center justify-between w-full h-16">
       <div className="block ml-6 lg:hidden">
@@ -52,7 +55,7 @@ const Header = (props: THeader) => {
             />
           </a>
           <button className="flex items-center text-gray-500 dark:text-white text-md">
-            {props.name}
+            {session?.user?.name}
             <svg
               width={20}
               height={20}

@@ -1,9 +1,10 @@
 import Header from '../Header'
+import { Session } from 'next-auth'
 
 const Wrapper = () => {
   return (
     <div className="flex flex-col w-full md:space-y-4">
-      <Header name={'Membro'} />
+      <Header />
       <div className="h-screen px-4 pb-24 overflow-auto md:px-6">
         <h1 className="text-4xl font-semibold text-gray-800 dark:text-white">
           Bem vindo! Membro
