@@ -1,0 +1,420 @@
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../infra/db/prisma"
+}
+
+datasource db {
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+// model aceita_jesus {
+//   id           Int       @id @default(autoincrement())
+//   nome         String    @db.VarChar(50)
+//   endereco     String?   @db.VarChar(50)
+//   telefone     String?   @db.VarChar(15)
+//   aceit_reconc String    @db.VarChar(12)
+//   cadastro     DateTime? @default(now()) @db.DateTime(0)
+//   batizado     String?   @db.VarChar(5)
+//   cem          String?   @db.VarChar(25)
+//   idade        String?   @default("0") @db.VarChar(5)
+//   fixo         String?   @db.VarChar(15)
+//   cargo        String?   @db.VarChar(15)
+// }
+
+// model acessoNEW {
+//   id           Int     @id @default(autoincrement())
+//   username     String? @db.VarChar(50)
+//   password     String  @db.VarChar(50)
+//   ativo        String? @db.Char(1)
+//   nivel_acesso Int?
+//   userID       Int?
+
+//   @@index([nivel_acesso], map: "nivel_acesso")
+//   @@index([userID], map: "userID")
+//   @@index([username], map: "username")
+// }
+
+// model batizando {
+//   id                     Int       @id
+//   nome                   String    @db.VarChar(50)
+//   aniversario            DateTime? @db.Date
+//   cem                    Int?
+//   batismo                Int
+//   sexo                   String?   @db.Char(1)
+//   cem_batizando_cemTocem cem?      @relation("batizando_cemTocem", fields: [cem], references: [id], onDelete: Cascade, map: "batizando_ibfk_1")
+
+//   @@index([cem], map: "cem")
+// }
+
+// model cem {
+//   id                           Int         @id
+//   responsavel                  Int
+//   endereco                     String      @db.VarChar(50)
+//   nome_cem                     String      @db.VarChar(20)
+//   batizando_batizando_cemTocem batizando[] @relation("batizando_cemTocem")
+//   members                      members     @relation(fields: [responsavel], references: [id], onDelete: Cascade, map: "cem_ibfk_1")
+
+//   @@index([responsavel], map: "responsavel")
+// }
+
+// model churches {
+//   id          Int       @id @default(autoincrement())
+//   endereco    String?   @db.VarChar(50)
+//   igreja      String?   @db.VarChar(50)
+//   responsavel Int?
+//   members     members[]
+// }
+
+// model config_sistem {
+//   id     Int    @id @default(autoincrement())
+//   funcao String @db.VarChar(20)
+//   status String @default("n") @map("_status") @db.VarChar(10)
+// }
+
+// model courseName {
+//   id                                             Int            @id @default(autoincrement())
+//   Course                                         String         @db.VarChar(30)
+//   prontMembros_prontMembros_course9TocourseName  prontMembros[] @relation("prontMembros_course9TocourseName")
+//   prontMembros_prontMembros_course10TocourseName prontMembros[] @relation("prontMembros_course10TocourseName")
+//   prontMembros_prontMembros_course11TocourseName prontMembros[] @relation("prontMembros_course11TocourseName")
+//   prontMembros_prontMembros_course12TocourseName prontMembros[] @relation("prontMembros_course12TocourseName")
+//   prontMembros_prontMembros_course13TocourseName prontMembros[] @relation("prontMembros_course13TocourseName")
+//   prontMembros_prontMembros_course14TocourseName prontMembros[] @relation("prontMembros_course14TocourseName")
+//   prontMembros_prontMembros_course15TocourseName prontMembros[] @relation("prontMembros_course15TocourseName")
+//   prontMembros_prontMembros_course16TocourseName prontMembros[] @relation("prontMembros_course16TocourseName")
+//   prontMembros_prontMembros_course17TocourseName prontMembros[] @relation("prontMembros_course17TocourseName")
+//   prontMembros_prontMembros_course18TocourseName prontMembros[] @relation("prontMembros_course18TocourseName")
+//   prontMembros_prontMembros_course1TocourseName  prontMembros[] @relation("prontMembros_course1TocourseName")
+//   prontMembros_prontMembros_course19TocourseName prontMembros[] @relation("prontMembros_course19TocourseName")
+//   prontMembros_prontMembros_course20TocourseName prontMembros[] @relation("prontMembros_course20TocourseName")
+//   prontMembros_prontMembros_course2TocourseName  prontMembros[] @relation("prontMembros_course2TocourseName")
+//   prontMembros_prontMembros_course3TocourseName  prontMembros[] @relation("prontMembros_course3TocourseName")
+//   prontMembros_prontMembros_course4TocourseName  prontMembros[] @relation("prontMembros_course4TocourseName")
+//   prontMembros_prontMembros_course5TocourseName  prontMembros[] @relation("prontMembros_course5TocourseName")
+//   prontMembros_prontMembros_course6TocourseName  prontMembros[] @relation("prontMembros_course6TocourseName")
+//   prontMembros_prontMembros_course7TocourseName  prontMembros[] @relation("prontMembros_course7TocourseName")
+//   prontMembros_prontMembros_course8TocourseName  prontMembros[] @relation("prontMembros_course8TocourseName")
+// }
+
+// /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+// model curso {
+//   idCursos  Int
+//   nomeAluno String   @db.VarChar(50)
+//   chamada   Boolean
+//   dataAula  DateTime @db.Date
+
+//   @@ignore
+// }
+
+// model encontrista {
+//   idEncontrista                              Int        @id @default(autoincrement())
+//   nomeEnc                                    String     @db.VarChar(45)
+//   telEnc                                     String?    @db.VarChar(15)
+//   endEnc                                     String?    @db.VarChar(50)
+//   sexoEnc                                    String?    @db.VarChar(10)
+//   CEM                                        String?    @db.VarChar(25)
+//   observacao                                 String?    @db.VarChar(200)
+//   encontro_encontro_encontristaToencontrista encontro[] @relation("encontro_encontristaToencontrista")
+// }
+
+// model encontro {
+//   id_encontro                                   Int           @id @default(autoincrement())
+//   n_encontro                                    Int
+//   encontrista                                   Int
+//   encontrista_encontro_encontristaToencontrista encontrista   @relation("encontro_encontristaToencontrista", fields: [encontrista], references: [idEncontrista], onDelete: Cascade, map: "fk_enco")
+//   info_encontro                                 info_encontro @relation(fields: [n_encontro], references: [n_encontro], onDelete: Cascade, map: "fk_encontro")
+
+//   @@index([encontrista], map: "fk_enco")
+//   @@index([n_encontro], map: "fk_encontro")
+// }
+
+// model equipe {
+//   id             Int             @id @default(autoincrement())
+//   membro         Int
+//   encontro       Int
+//   tarefaEnc      Int?            @default(0)
+//   members        members         @relation(fields: [membro], references: [id], onDelete: Cascade, map: "equipe_ibfk_1")
+//   info_encontro  info_encontro   @relation(fields: [encontro], references: [id], onDelete: Cascade, map: "equipe_ibfk_2")
+//   tarefas_equipe tarefas_equipe? @relation(fields: [tarefaEnc], references: [id], onDelete: Cascade, map: "equipe_ibfk_3")
+
+//   @@index([membro], map: "equipe")
+//   @@index([encontro], map: "id")
+//   @@index([tarefaEnc], map: "tarefaEnc")
+// }
+
+// model eventos {
+//   id            Int      @id @default(autoincrement())
+//   titulo        String   @db.VarChar(100)
+//   color         String   @db.VarChar(10)
+//   inicioevento  DateTime @db.DateTime(0)
+//   terminoevento DateTime @db.DateTime(0)
+// }
+
+// model historico {
+//   idHist     Int         @id @default(autoincrement())
+//   nome       String?     @db.VarChar(50)
+//   status_    String?     @db.VarChar(10)
+//   membroCad  Int?
+//   curso      Int?
+//   infocursos infocursos? @relation(fields: [curso], references: [idCursos], onDelete: Cascade, map: "FK_historico_infocursos")
+//   members    members?    @relation(fields: [membroCad], references: [id], onDelete: Cascade, map: "FK_historico_membros")
+
+//   @@index([curso], map: "FK_historico_infocursos")
+//   @@index([membroCad], map: "membroCad")
+// }
+
+// model info_encontro {
+//   id           Int        @id @default(autoincrement())
+//   n_encontro   Int        @unique
+//   data_inicial DateTime   @db.Date
+//   tipo         String     @db.VarChar(25)
+//   encontro     encontro[]
+//   equipe       equipe[]
+
+//   @@index([n_encontro], map: "fk")
+// }
+
+// model info_reencontro {
+//   id           Int          @id @default(autoincrement())
+//   n_reencontro Int          @unique
+//   data_inicial DateTime     @db.Date
+//   reencontro   reencontro[]
+
+//   @@index([n_reencontro], map: "n_reencontro")
+// }
+
+// model infocursos {
+//   idCursos   Int         @id @default(autoincrement())
+//   nomeCursos String?     @db.VarChar(50)
+//   tema       String?     @db.VarChar(50)
+//   data_      DateTime?   @db.Date
+//   historico  historico[]
+//   turma      turma[]
+// }
+
+// model members {
+//   id           Int            @id @default(autoincrement())
+//   name         String         @db.VarChar(50)
+//   nasc         DateTime?      @db.Date
+//   endereco     String?        @db.VarChar(50)
+//   phone        String?        @db.VarChar(15)
+//   supervisao   String?        @db.VarChar(25)
+//   cargo        String         @db.VarChar(15)
+//   email        String?        @db.VarChar(50)
+//   cadastro     DateTime       @default(now()) @db.Timestamp(0)
+//   igreja       Int            @default(1)
+//   status       String         @default("ativo") @db.VarChar(10)
+//   cem          cem[]
+//   equipe       equipe[]
+//   historico    historico[]
+//   churches     churches       @relation(fields: [igreja], references: [id], onDelete: Cascade, map: "members_ibfk_1")
+//   prontMembros prontMembros[]
+//   turma        turma[]
+
+//   @@index([email], map: "email_index")
+//   @@index([igreja], map: "igreja")
+// }
+
+// model nivel_acesso {
+//   id    Int    @id @default(autoincrement())
+//   nivel String @db.VarChar(25)
+// }
+
+// model prontMembros {
+//   id                                           Int         @id @default(autoincrement())
+//   membro                                       Int
+//   course1                                      Int?
+//   course2                                      Int?
+//   course3                                      Int?
+//   course4                                      Int?
+//   course5                                      Int?
+//   course6                                      Int?
+//   course7                                      Int?
+//   course8                                      Int?
+//   course9                                      Int?
+//   course10                                     Int?
+//   course11                                     Int?
+//   course12                                     Int?
+//   course13                                     Int?
+//   course14                                     Int?
+//   course15                                     Int?
+//   course16                                     Int?
+//   course17                                     Int?
+//   course18                                     Int?
+//   course19                                     Int?
+//   course20                                     Int?
+//   members                                      members     @relation(fields: [membro], references: [id], onDelete: Cascade, map: "prontMembros_ibfk_1")
+//   courseName_prontMembros_course9TocourseName  courseName? @relation("prontMembros_course9TocourseName", fields: [course9], references: [id], onDelete: Cascade, map: "prontmembros_10")
+//   courseName_prontMembros_course10TocourseName courseName? @relation("prontMembros_course10TocourseName", fields: [course10], references: [id], onDelete: Cascade, map: "prontmembros_11")
+//   courseName_prontMembros_course11TocourseName courseName? @relation("prontMembros_course11TocourseName", fields: [course11], references: [id], onDelete: Cascade, map: "prontmembros_12")
+//   courseName_prontMembros_course12TocourseName courseName? @relation("prontMembros_course12TocourseName", fields: [course12], references: [id], onDelete: Cascade, map: "prontmembros_13")
+//   courseName_prontMembros_course13TocourseName courseName? @relation("prontMembros_course13TocourseName", fields: [course13], references: [id], onDelete: Cascade, map: "prontmembros_14")
+//   courseName_prontMembros_course14TocourseName courseName? @relation("prontMembros_course14TocourseName", fields: [course14], references: [id], onDelete: Cascade, map: "prontmembros_15")
+//   courseName_prontMembros_course15TocourseName courseName? @relation("prontMembros_course15TocourseName", fields: [course15], references: [id], onDelete: Cascade, map: "prontmembros_16")
+//   courseName_prontMembros_course16TocourseName courseName? @relation("prontMembros_course16TocourseName", fields: [course16], references: [id], onDelete: Cascade, map: "prontmembros_17")
+//   courseName_prontMembros_course17TocourseName courseName? @relation("prontMembros_course17TocourseName", fields: [course17], references: [id], onDelete: Cascade, map: "prontmembros_18")
+//   courseName_prontMembros_course18TocourseName courseName? @relation("prontMembros_course18TocourseName", fields: [course18], references: [id], onDelete: Cascade, map: "prontmembros_19")
+//   courseName_prontMembros_course1TocourseName  courseName? @relation("prontMembros_course1TocourseName", fields: [course1], references: [id], onDelete: Cascade, map: "prontmembros_2")
+//   courseName_prontMembros_course19TocourseName courseName? @relation("prontMembros_course19TocourseName", fields: [course19], references: [id], onDelete: Cascade, map: "prontmembros_20")
+//   courseName_prontMembros_course20TocourseName courseName? @relation("prontMembros_course20TocourseName", fields: [course20], references: [id], onDelete: Cascade, map: "prontmembros_21")
+//   courseName_prontMembros_course2TocourseName  courseName? @relation("prontMembros_course2TocourseName", fields: [course2], references: [id], onDelete: Cascade, map: "prontmembros_3")
+//   courseName_prontMembros_course3TocourseName  courseName? @relation("prontMembros_course3TocourseName", fields: [course3], references: [id], onDelete: Cascade, map: "prontmembros_4")
+//   courseName_prontMembros_course4TocourseName  courseName? @relation("prontMembros_course4TocourseName", fields: [course4], references: [id], onDelete: Cascade, map: "prontmembros_5")
+//   courseName_prontMembros_course5TocourseName  courseName? @relation("prontMembros_course5TocourseName", fields: [course5], references: [id], onDelete: Cascade, map: "prontmembros_6")
+//   courseName_prontMembros_course6TocourseName  courseName? @relation("prontMembros_course6TocourseName", fields: [course6], references: [id], onDelete: Cascade, map: "prontmembros_7")
+//   courseName_prontMembros_course7TocourseName  courseName? @relation("prontMembros_course7TocourseName", fields: [course7], references: [id], onDelete: Cascade, map: "prontmembros_8")
+//   courseName_prontMembros_course8TocourseName  courseName? @relation("prontMembros_course8TocourseName", fields: [course8], references: [id], onDelete: Cascade, map: "prontmembros_9")
+
+//   @@index([course1], map: "course1")
+//   @@index([course10], map: "course10")
+//   @@index([course11], map: "course11")
+//   @@index([course12], map: "course12")
+//   @@index([course13], map: "course13")
+//   @@index([course14], map: "course14")
+//   @@index([course15], map: "course15")
+//   @@index([course16], map: "course16")
+//   @@index([course17], map: "course17")
+//   @@index([course18], map: "course18")
+//   @@index([course19], map: "course19")
+//   @@index([course2], map: "course2")
+//   @@index([course20], map: "course20")
+//   @@index([course3], map: "course3")
+//   @@index([course4], map: "course4")
+//   @@index([course5], map: "course5")
+//   @@index([course6], map: "course6")
+//   @@index([course7], map: "course7")
+//   @@index([course8], map: "course8")
+//   @@index([course9], map: "course9")
+//   @@index([membro], map: "membro")
+// }
+
+// model reencontrista {
+//   idReencontrista Int          @id @default(autoincrement())
+//   nomeEnc         String       @db.VarChar(45)
+//   telEnc          String?      @db.VarChar(15)
+//   observacao      String?      @db.VarChar(150)
+//   endEnc          String?      @db.VarChar(50)
+//   sexoEnc         String?      @db.VarChar(10)
+//   CEM             String?      @db.VarChar(25)
+//   cadastrado      DateTime     @default(now()) @db.Timestamp(0)
+//   reencontro      reencontro[]
+// }
+
+// model reencontro {
+//   id               Int             @id @default(autoincrement())
+//   id_reencontrista Int
+//   id_reencontro    Int
+//   reencontrista    reencontrista   @relation(fields: [id_reencontrista], references: [idReencontrista], onDelete: Cascade, map: "reencontro_ibfk_1")
+//   info_reencontro  info_reencontro @relation(fields: [id_reencontro], references: [n_reencontro], onDelete: Cascade, map: "reencontro_ibfk_2")
+
+//   @@index([id_reencontro], map: "id_reencontro")
+//   @@index([id_reencontrista], map: "reencontro_ibfk_1")
+// }
+
+// model tarefas_equipe {
+//   id              Int      @id @default(autoincrement())
+//   funcao_encontro String   @db.VarChar(10)
+//   cor             String?  @default("#ffffff") @db.VarChar(7)
+//   equipe          equipe[]
+// }
+
+// model teste {
+//   id   Int    @id @default(autoincrement())
+//   nome String @db.VarChar(25)
+// }
+
+// model turma {
+//   id         Int        @id @default(autoincrement())
+//   alunos     Int
+//   curso      Int
+//   members    members    @relation(fields: [alunos], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "turma_ibfk_1")
+//   infocursos infocursos @relation(fields: [curso], references: [idCursos], onDelete: NoAction, onUpdate: NoAction, map: "turma_ibfk_2")
+
+//   @@index([alunos], map: "alunos")
+//   @@index([curso], map: "curso")
+// }
+
+model Churches {
+  id     String  @id @default(cuid())
+  name   String  @db.VarChar(50)
+  street String? @db.VarChar(50)
+  number String? @db.VarChar(10)
+  city   String? @db.VarChar(20)
+  state  String? @db.VarChar(15)
+  cep    String? @db.VarChar(8)
+
+  @@map("churches")
+}
+
+model Address {
+  id     String  @id @default(cuid())
+  street String? @db.VarChar(50)
+  number String? @db.VarChar(10)
+  city   String? @db.VarChar(20)
+  state  String? @db.VarChar(15)
+  cep    String? @db.VarChar(8)
+  userId String
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("address")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  email_verified DateTime?
+  birth          DateTime? @db.Date
+  image          String?
+  password       String
+  address        Address[]
+  sessions       Session[]
+  UserCEM        UserCEM[]
+
+  @@map("user")
+}
+
+model CEM {
+  id      String    @id @default(cuid())
+  name    String    @db.VarChar(50)
+  street  String?   @db.VarChar(50)
+  number  String?   @db.VarChar(10)
+  city    String?   @db.VarChar(20)
+  state   String?   @db.VarChar(15)
+  cep     String?   @db.VarChar(8)
+  UserCEM UserCEM[]
+
+  @@map("cem")
+}
+
+model UserCEM {
+  user_id     String
+  cem_id      String
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  cem         CEM      @relation(fields: [cem_id], references: [id], onDelete: Cascade)
+  inserted_at DateTime @default(now())
+
+  @@id([user_id, cem_id])
+  @@map("usercem")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_token")
+}
