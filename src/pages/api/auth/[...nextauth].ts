@@ -3,10 +3,10 @@ import GoogleProvider from 'next-auth/providers/google'
 import EmailProvider from 'next-auth/providers/email'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from '@/infra/db/prisma/prismaClient'
-import { Account } from '@/repositories/account'
+import { User } from '@/infra/db/repositories/user'
 import { randomBytes, randomUUID } from 'node:crypto'
 
-const acount = new Account()
+const user = new User()
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -23,11 +23,15 @@ export const authOptions: NextAuthOptions = {
           name: 'User HardCode',
           role: 'admin'
         }
-        const teste = await acount.autenticade({ email: user.email })
+
+        const teste = await user.autenticade({
+          email: credentials.email,
+          password: user.password
+        })
 
         if (
-          credentials?.email == 'test@gmail.com' &&
-          credentials?.password == '123'
+          credentials?.email == user.email &&
+          credentials?.password == user.password
         ) {
           return user
         } else {

@@ -400,11 +400,13 @@ model CEM {
 }
 
 model UserCEM {
-  user_id String
-  cem_id  String
-  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  cem     CEM    @relation(fields: [cem_id], references: [id], onDelete: Cascade)
+  user_id     String
+  cem_id      String
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  cem         CEM      @relation(fields: [cem_id], references: [id], onDelete: Cascade)
+  inserted_at DateTime @default(now())
 
+  @@id([user_id, cem_id])
   @@map("usercem")
 }
 
