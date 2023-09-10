@@ -1,17 +1,16 @@
 import { prisma } from '@/infra/db/prisma/prismaClient'
 type TCredential = {
   email: string
-  password: string
 }
 
 export class User {
   async autenticade(credentials: TCredential): Promise<any> {
-    const user = await prisma.user.findMany({
+    const user = await prisma.user.findUnique({
       where: {
-        email: credentials.email,
-        password: credentials.password
+        email: credentials.email
       }
     })
+    console.log(user)
     return user
   }
 

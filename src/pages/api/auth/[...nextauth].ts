@@ -4,9 +4,11 @@ import EmailProvider from 'next-auth/providers/email'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from '@/infra/db/prisma/prismaClient'
 import { User } from '@/infra/db/repositories/user'
-import { randomBytes, randomUUID } from 'node:crypto'
+import CryptAdapter from '@/infra/cryptography/bcrypt'
 
 const user = new User()
+const cripto = new CryptAdapter()
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -15,28 +17,18 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Passsword', type: 'password' }
       },
-      async authorize(credentials) {
-        const user = {
-          id: '1',
-          email: 'user@email.com',
-          password: '123',
-          name: 'User HardCode',
-          role: 'admin'
-        }
-
-        const teste = await user.autenticade({
-          email: credentials.email,
-          password: user.password
+      async authorize(credentials): Promise<any> {
+        const userDb = await user.autenticade({
+          email: credentials?.email || ''
         })
-
-        if (
-          credentials?.email == user.email &&
-          credentials?.password == user.password
-        ) {
-          return user
-        } else {
-          return null
+        if (userDb) {
+          const isValidPass = cripto.compare(
+            credentials?.password || '',
+            userDb.password
+          )
+          if (!isValidPass) return null
         }
+        return userDb
       }
     })
   ],

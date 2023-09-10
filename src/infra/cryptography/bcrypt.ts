@@ -1,22 +1,25 @@
 import crypto from 'node:crypto'
 
 class CryptAdapter {
-  constructor(private salt: string) {}
+  private salt: string
+  constructor() {
+    this.salt = process.env.SALT || ''
+  }
 
   hashPassword(password: string) {
-    this.salt = crypto.randomBytes(16).toString('hex')
+    //SALT='MC6X1pXuVLUeOEHveSLwxhA'
+
     const hash = crypto
       .pbkdf2Sync(password, this.salt, 1000, 64, `sha512`)
       .toString(`hex`)
     return hash
   }
 
-  compare(password: string) {
-    const hash = crypto
+  compare(password: string, hash: string) {
+    const hashCompare = crypto
       .pbkdf2Sync(password, this.salt, 1000, 64, `sha512`)
       .toString(`hex`)
-    // return this.hash === hash
-    return hash === password
+    return hash === hashCompare
   }
 }
 export default CryptAdapter
