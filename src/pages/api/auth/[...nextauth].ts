@@ -21,6 +21,7 @@ export const authOptions: NextAuthOptions = {
         const userDb = await user.autenticade({
           email: credentials?.email || ''
         })
+
         if (userDb) {
           const isValidPass = cripto.compare(
             credentials?.password || '',
@@ -33,7 +34,7 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   pages: {
-    signIn: '/auth/signin' // Página de login personalizada
+    //signIn: '/auth/signin' // Página de login personalizada
     // signOut: '/auth/signout', // Página de logout personalizada
     // error: '/auth/error', // Página de erro de autenticação personalizada
     // verifyRequest: '/auth/verify-request', // Página de verificação de solicitação personalizada

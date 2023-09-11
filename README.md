@@ -4,6 +4,10 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 First, run the development server:
 
+é necessário realizar a conexão com o planetScale
+pscale connect churches main --port 3309
+pscale connect churches shadow --port 3310
+
 ```bash
 npm run dev
 # or

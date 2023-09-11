@@ -7,6 +7,7 @@ datasource db {
   provider          = "mysql"
   url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  relationMode      = "prisma"
 }
 
 // model aceita_jesus {
@@ -349,25 +350,27 @@ model Churches {
 }
 
 model Address {
-  id     String  @id @default(cuid())
-  street String? @db.VarChar(50)
-  number String? @db.VarChar(10)
-  city   String? @db.VarChar(20)
-  state  String? @db.VarChar(15)
-  cep    String? @db.VarChar(8)
-  userId String
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id      String  @id @default(cuid())
+  street  String? @db.VarChar(50)
+  number  String? @db.VarChar(10)
+  city    String? @db.VarChar(20)
+  state   String? @db.VarChar(15)
+  cep     String? @db.VarChar(8)
+  user_id String
+  user    User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
+  // @@index([user_id])
   @@map("address")
 }
 
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
-  userId       String
+  user_id      String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
+  // @@index([user_id])
   @@map("session")
 }
 
@@ -407,6 +410,8 @@ model UserCEM {
   inserted_at DateTime @default(now())
 
   @@id([user_id, cem_id])
+  // @@index([user_id])
+  // @@index([cem_id])
   @@map("usercem")
 }
 
