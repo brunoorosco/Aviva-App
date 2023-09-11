@@ -7,8 +7,6 @@ class CryptAdapter {
   }
 
   hashPassword(password: string) {
-    //SALT='MC6X1pXuVLUeOEHveSLwxhA'
-
     const hash = crypto
       .pbkdf2Sync(password, this.salt, 1000, 64, `sha512`)
       .toString(`hex`)
