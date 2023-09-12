@@ -10,10 +10,7 @@
         "migrate": "npx prisma migrate dev",
         "postinstall": "prisma generate"
     },
-    "prisma": {
-        "schema": "src/infra/db/prisma/schema.prisma"
-    },
-    "dependencies": {
+     "dependencies": {
         "@loadable/component": "^5.15.3",
         "@next/font": "13.1.4",
         "@prisma/client": "^5.2.0",
