@@ -1,4 +1,4 @@
-import { prisma } from '@/infra/db/prisma/prismaClient'
+import { prisma } from '@/infra/db/prismaClient'
 type TCredential = {
   email: string
 }
