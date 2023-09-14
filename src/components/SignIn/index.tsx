@@ -1,26 +1,33 @@
 import { SyntheticEvent, useState } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter, redirect } from 'next/navigation'
+import { useForm, Resolver } from 'react-hook-form'
+
+type FormValues = {
+  password: string
+  email: string
+}
 
 const SignIn = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<FormValues>()
   const router = useRouter()
   const session = useSession()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
   if (session.status === 'authenticated') {
     router.push('/app')
   }
 
-  const handleLogin = async (e: SyntheticEvent) => {
-    e.preventDefault()
-
+  const onSubmit = handleSubmit(async (data) => {
     try {
       const response = await signIn('credentials', {
         redirect: false,
-        email,
-        password
+        email: data.email,
+        password: data.password
       })
 
       console.log('[LOGIN_RESPONSE]: ', response)
@@ -33,7 +40,7 @@ const SignIn = () => {
     } catch (error) {
       console.log('[LOGIN_ERROR]: ', error)
     }
-  }
+  })
 
   return (
     <div className="flex  bg-zinc-700">
@@ -41,28 +48,42 @@ const SignIn = () => {
         <img src="/lg-banner.png" className="h-full hidden xl:block " />
       </div>
 
-      <form onSubmit={handleLogin}>
+      <form onSubmit={onSubmit}>
         <div className="flex flex-col w-100 h-[calc(100dvh)] mx-8">
           <div className="block">
             <img src="/logo-branco.png" width="70%" className="mx-auto my-16" />
           </div>
           <div className="w-full mb-1">
             <input
-              onChange={(e) => setEmail(e.target.value)}
-              type="text"
+              {...register('email', { required: true })}
               name="email"
               placeholder="Email"
               className="p-3 mt-3 text-1xl border rounded min-w-full text-gray-700"
             />
+            {errors.email && errors.email.type === 'required' && (
+              <p className="text-red-400 text-sm block mt-2">
+                E-mail é obrigatório
+              </p>
+            )}
           </div>
           <div className=" w-full mb-1">
             <input
-              onChange={(e) => setPassword(e.target.value)}
+              {...register('password', { required: true, minLength: 6 })}
               type="password"
               name="password"
               placeholder="Password"
               className="p-3 mt-3 text-1xl border rounded min-w-full text-gray-900"
             />
+            {errors.password && errors.password.type === 'required' && (
+              <p className="text-red-400 text-sm block mt-2">
+                Senha é Obrigatória
+              </p>
+            )}
+            {errors.password && errors.password.type === 'minLength' && (
+              <p className="text-red-400 text-sm block mt-2">
+                6 digitos no mínimo
+              </p>
+            )}
           </div>
           <div className="block w-full">
             {error && (
