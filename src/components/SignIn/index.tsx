@@ -9,9 +9,9 @@ const SignIn = () => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  // if (session) {
-  //   router.push('/app')
-  // }
+  if (session.status === 'authenticated') {
+    router.push('/app')
+  }
 
   const handleLogin = async (e: SyntheticEvent) => {
     e.preventDefault()
