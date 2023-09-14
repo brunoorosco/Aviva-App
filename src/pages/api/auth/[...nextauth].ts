@@ -33,13 +33,6 @@ export const authOptions: NextAuthOptions = {
       }
     })
   ],
-  pages: {
-    //signIn: '/auth/signin' // Página de login personalizada
-    // signOut: '/auth/signout', // Página de logout personalizada
-    // error: '/auth/error', // Página de erro de autenticação personalizada
-    // verifyRequest: '/auth/verify-request', // Página de verificação de solicitação personalizada
-    // newUser: '/auth/newuser' // Página de criação de novo usuário personalizada
-  },
   callbacks: {
     async jwt({ token, user }) {
       user && (token.user = user)
