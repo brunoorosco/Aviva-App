@@ -2,6 +2,7 @@ import { SyntheticEvent, useState } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter, redirect } from 'next/navigation'
 import { useForm, Resolver } from 'react-hook-form'
+import { Loading } from '../Loading'
 
 type FormValues = {
   password: string
@@ -17,6 +18,7 @@ const SignIn = () => {
   const router = useRouter()
   const session = useSession()
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   if (session.status === 'authenticated') {
     router.push('/app')
@@ -24,20 +26,23 @@ const SignIn = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      setIsLoading(true)
+      setError('')
       const response = await signIn('credentials', {
         redirect: false,
         email: data.email,
         password: data.password
       })
 
-      console.log('[LOGIN_RESPONSE]: ', response)
-
+      setIsLoading(false)
       if (response?.error) {
         setError('Email ou senha inválidos')
         return
       }
+
       router.replace('/app')
     } catch (error) {
+      setIsLoading(false)
       console.log('[LOGIN_ERROR]: ', error)
     }
   })
@@ -47,7 +52,6 @@ const SignIn = () => {
       <div className="bg-cover bg-right xl:w-full">
         <img src="/lg-banner.png" className="h-full hidden xl:block " />
       </div>
-
       <form onSubmit={onSubmit}>
         <div className="flex flex-col w-100 h-[calc(100dvh)] mx-8">
           <div className="block">
@@ -91,10 +95,14 @@ const SignIn = () => {
             )}
             <button
               type="submit"
-              className="p-3 text-1xl text-center border rounded border-green-700 
-                                    hover:bg-green-500 bg-lime-500 mt-3 min-w-full"
+              className={`p-3 text-1xl text-center border font-semibold  rounded border-green-700 
+                            bg-lime-500 mt-3 min-w-full ${
+                              isLoading
+                                ? 'cursor-not-allowed opacity-85'
+                                : 'hover:bg-lime-400'
+                            }`}
             >
-              Entrar
+              <div> {isLoading ? <Loading /> : 'Entrar'}</div>
             </button>
           </div>
         </div>
