@@ -1,3 +1,6 @@
+import { signOut } from 'next-auth/react'
+import { BiLogOut } from 'react-icons/bi'
+
 const Sidebar = () => {
   return (
     <div className="relative hidden h-screen shadow-lg lg:block w-80">
@@ -81,6 +84,13 @@ const Sidebar = () => {
               <span className="mx-4 text-sm font-normal">
                 Escola de Profeta
               </span>
+            </a>
+            <a
+              className="flex items-center justify-start w-full p-2 pl-6 my-2 text-gray-400 transition-colors duration-200 border-l-4 border-transparent hover:text-gray-800 cursor-pointer"
+              onClick={() => signOut()}
+            >
+              <BiLogOut size={22} />
+              <span className="mx-4 text-sm font-normal">Sair</span>
             </a>
           </div>
         </nav>
