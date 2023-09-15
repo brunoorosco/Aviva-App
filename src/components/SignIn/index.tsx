@@ -1,7 +1,7 @@
-import { SyntheticEvent, useState } from 'react'
+import { useState } from 'react'
 import { signIn, useSession } from 'next-auth/react'
-import { useRouter, redirect } from 'next/navigation'
-import { useForm, Resolver } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
 import { Loading } from '../Loading'
 
 type FormValues = {
