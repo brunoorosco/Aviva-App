@@ -1,37 +1,47 @@
 import React from 'react'
+import { useForm, Controller } from 'react-hook-form'
 
 export interface ITextInput {
   maxLength?: number
   placeholder?: string
-  value?: string
   type?: 'text' | 'password' | 'number' | 'email'
-  onChange?: (event: string) => void
-  onBlur?: () => void
   disabled?: boolean
   name: string
+  control: any
+  defaultValue?: string
+  error?: string | undefined
 }
 const TextInput: React.FC<ITextInput> = ({
   maxLength,
   placeholder,
-  onChange,
-  value,
   type,
   disabled = false,
-  onBlur,
-  name
+  name,
+  defaultValue = '',
+  control,
+  error
 }) => {
   return (
     <div className="flex justify-center">
-      <input
+      <Controller
         name={name}
-        className="p-4 block shadow bg-gray-100 my-2 rounded w-full max-w-md m-2"
-        disabled={disabled}
-        maxLength={maxLength}
-        placeholder={placeholder}
-        onChange={(e) => onChange && onChange(e.target.value)}
-        value={value}
-        type={type}
-        onBlur={onBlur}
+        control={control}
+        defaultValue={defaultValue}
+        render={({ field }) => (
+          <div className="flex flex-col w-full">
+            <input
+              className="p-4 block shadow bg-gray-100 m-2 mb-3 rounded w-full max-w-md focus:outline-gray-300"
+              disabled={disabled}
+              maxLength={maxLength}
+              placeholder={placeholder}
+              type={type}
+              {...field}
+            />
+            {error && (
+              <p className="text-red-400 text-sm block mt-2">{error}</p>
+            )}
+          </div>
+        )}
       />
     </div>
   )
