@@ -2,19 +2,26 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+Primeiro, clonou o projeto? agora faça o instalação dos pacotes:
 
-é necessário realizar a conexão com o planetScale
-pscale connect churches main --port 3309
-pscale connect churches shadow --port 3310
+```bash
+npm install
+# or
+yarn 
+```
+é necessário realizar a conexão com o planetScale, pra isso você precisa instalar o cli do planetscale:
+conexão com o banco de dados
+```bash
+pscale connect churches shadow --port 3309
+```
+Após a conexão, vamos iniciar o projeto com os seguintes comandos:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
 ```
+
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
