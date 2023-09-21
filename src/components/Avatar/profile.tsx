@@ -41,16 +41,16 @@ const Profile: React.FC<DropdownProps> = ({ trigger, onClose }) => {
   }, [isOpen])
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className='relative' ref={dropdownRef}>
       <div onClick={() => setIsOpen(!isOpen)}>{trigger}</div>
       {isOpen && (
-        <div className="absolute right-1 mt-1 p-2 w-48 bg-zinc-500 shadow-md rounded">
+        <div className='absolute right-1 mt-1 p-2 w-48 bg-zinc-500 shadow-md rounded'>
           <div
-            className="flex text-zinc-200"
+            className='flex text-zinc-200'
             onClick={() => signOut({ callbackUrl: 'http://localhost:3000' })}
           >
             <BiLogOut size={22} />
-            <span className="mx-4 text-sm font-normal">Sair</span>
+            <span className='mx-4 text-sm font-normal'>Sair</span>
           </div>
         </div>
       )}
