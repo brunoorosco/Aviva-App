@@ -22,17 +22,10 @@ module.exports = {
         bkimage: "url('./banner1980_1080.png')"
       },
       colors: {
-        royalblue: {
-          50: '#f8fafa',
-          100: '#eceffa',
-          200: '#d9d6f6',
-          300: '#b8b1e9',
-          400: '#9c88da',
-          500: '#8364cd',
-          600: '#6c48b7',
-          700: '#523693',
-          800: '#382568',
-          900: '#20183e'
+        app: {
+          gray: '#545554',
+          button: '#84cc16',
+          bg: '#333333'
         },
         lime: {
           400: '#A3E635',
