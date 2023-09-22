@@ -23,6 +23,15 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+      // "@/components/*": [
+      //   "./src/components/*"
+      // ],
+      // "@/infra/*": [
+      //   "./src/infra/*"
+      // ],
+      "@/public/*": [
+        "./public/*"
+      ],
       "@/*": [
         "./src/*"
       ]
