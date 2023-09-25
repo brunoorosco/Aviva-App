@@ -5,7 +5,7 @@ type TCredential = {
 
 export class User {
   async autenticade(credentials: TCredential): Promise<any> {
-    const user = await prisma.user.findFirst({
+    const userDb = await prisma.user.findFirst({
       where: {
         email: credentials.email
       },
@@ -17,8 +17,8 @@ export class User {
         }
       }
     })
-    console.log(user?.UserCEM[0].cem.ChurchesCEM[0].churches)
-    return user
+
+    return userDb
   }
 
   async checkByEmail(email: string): Promise<any> {
