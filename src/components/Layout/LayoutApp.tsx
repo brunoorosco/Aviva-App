@@ -1,4 +1,5 @@
 import React from 'react'
+import Header from '../Header'
 import Sidebar from '../Sidebar'
 import Wrapper from '../Wrapper'
 
@@ -10,7 +11,10 @@ const LayoutApp = ({ children }: Props) => {
     <main className='relative h-screen overflow-hidden bg-gray-50 dark:bg-gray-800'>
       <div className='flex items-start justify-between'>
         <Sidebar />
-        <Wrapper>{children}</Wrapper>
+        <Wrapper>
+          <Header />
+          {children}
+        </Wrapper>
       </div>
     </main>
   )

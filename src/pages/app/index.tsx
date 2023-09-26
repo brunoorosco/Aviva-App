@@ -16,7 +16,6 @@ const IndexApp = () => {
   useEffect(() => {
     if (churches) {
       setShouldRedirect(true)
-      console.log('pass')
     }
   }, [churches])
 
