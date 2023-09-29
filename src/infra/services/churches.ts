@@ -41,18 +41,23 @@ const findChurches = async () => {
   return churches
 }
 
-// const findChurchesByCEM = async (churchescem: string) => {
-//   const churches = await prisma.churches.findFirst({
-//     select: {
-//       id: true,
-//       name: true
-//     },
-//     where: {
-//       : churchescem
-//     }
-//   })
+const getChurchbyUserId = async (email: string) => {
+  const church = await prisma.user.findFirst({
+    where: {
+      email
+    },
+    include: {
+      UserCEM: {
+        include: {
+          cem: { include: { ChurchesCEM: { include: { churches: true } } } }
+        }
+      }
+    }
+  })
 
-//   return churches
-// }
+  const churchId = church?.UserCEM[0].cem.ChurchesCEM[0].churches
 
-export { create, findChurchesById, save, findChurches }
+  return churchId
+}
+
+export { create, findChurchesById, save, findChurches, getChurchbyUserId }

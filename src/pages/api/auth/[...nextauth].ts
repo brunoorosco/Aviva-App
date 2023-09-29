@@ -26,10 +26,14 @@ export const authOptions: NextAuthOptions = {
           )
           if (!isValidPass) return null
         }
+
         return userDb
       }
     })
   ],
+  session: {
+    maxAge: 1 * 60 * 60 // 1 hours
+  },
   callbacks: {
     async jwt({ token, user }) {
       user && (token.user = user)
