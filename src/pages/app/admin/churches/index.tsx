@@ -22,6 +22,7 @@ const Churches = () => {
   if (error) {
     return <p>Ocorreu um erro: {error.message}</p>
   }
+
   const handleDelete = async (id: string) => {
     const response = await useHttpDelete({ url: `/api/protected/church/${id}` })
     console.log(response)
