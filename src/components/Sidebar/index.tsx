@@ -1,8 +1,12 @@
 import { signOut } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import { BiLogOut, BiHome } from 'react-icons/bi'
 import LinkMenu from './LinkMenu'
 
 const Sidebar = () => {
+  const router = useRouter()
+  const { pathname } = router
+
   return (
     <div className='relative hidden h-screen shadow-lg lg:block w-80'>
       <div className='h-full bg-white dark:bg-gray-700'>
@@ -11,6 +15,14 @@ const Sidebar = () => {
         </div>
         <nav className='mt-6'>
           <div>
+            <LinkMenu href={pathname}>
+              <BiHome size={25} />
+              <span className='mx-4 text-sm font-normal'>Home</span>
+            </LinkMenu>
+            <LinkMenu href='/'>
+              <BiHome size={25} />
+              <span className='mx-4 text-sm font-normal'>Home</span>
+            </LinkMenu>
             <LinkMenu href='/app'>
               <BiHome size={25} />
               <span className='mx-4 text-sm font-normal'>Home</span>
