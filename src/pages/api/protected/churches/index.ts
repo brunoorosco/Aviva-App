@@ -35,9 +35,7 @@ export default async function handler(
       city: req.body.city,
       street: req.body.street
     }
-    console.log(newData)
     const saved = await create(newData)
-
     return res.status(200).json(saved)
   }
 
