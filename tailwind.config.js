@@ -33,6 +33,10 @@ module.exports = {
         },
         zinc: {
           700: '#3f3f46'
+        },
+        dark: {
+          primary: '#efefef',
+          secondary: '#333333'
         }
       }
     }
