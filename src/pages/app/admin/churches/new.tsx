@@ -50,16 +50,16 @@ const Admin = () => {
   })
   return (
     <div className='flex flex-col items-center mt-10 md:mt-5 p-3'>
-      <div className='text-center w-full max-w-lg content-center '>
-        <div className='w-full md:w-full px-3 mb-2 md:mb-0 '>
+      <div className='text-center w-full max-w-lg content-center'>
+        <div className='w-full md:w-full px-3 mb-2 md:mb-0'>
           <label className='text-2xl md:text-3xl text-dark-primary'>
             Cadastro de Igrejas
           </label>
         </div>
       </div>
-      <form className='w-full max-w-lg mt-5 px-1' onSubmit={onSubmit}>
+      <form className='max-md:w-full mt-5 px-1' onSubmit={onSubmit}>
         <div className='flex'>
-          <div className='w-full md:w-full mb-2 md:mb-0'>
+          <div className='w-full mb-2 md:mb-0'>
             <TextInput
               {...register('church', { required: true })}
               name='church'
@@ -81,12 +81,12 @@ const Admin = () => {
             <TextInput name='number' placeholder='Nº' control={control} />
           </div>
         </div>
-        <div className='flex flex-wrap'>
-          <div className='w-full md:w-2/3  mb-3 md:mb-0'>
+        <div className='md:flex'>
+          <div className='md:w-2/3 w-full mb-3 md:mb-0'>
             <TextInput name='city' placeholder='Cidade' control={control} />
           </div>
 
-          <div className='w-full md:w-1/3  mb-3 md:mb-0'>
+          <div className='md:w-1/3 w-full mb-3 md:mb-0 md:ml-3'>
             <TextInput placeholder='CEP' name='zipcode' control={control} />
           </div>
         </div>
