@@ -28,8 +28,8 @@ const Churches = () => {
     console.log(response)
   }
   return (
-    <div className='content-center mx-auto flex flex-col w-full p-3 max-w-lg'>
-      <div className='flex justify-between mt-2 bg-white px-3 pt-5'>
+    <div className='content-center mx-auto flex flex-col w-full p-3 max-w-lg rounded-lg dark:text-dark-primary'>
+      <div className='flex justify-between mt-2 bg-white px-3 pt-5 rounded-t-lg dark:bg-dark-secondary'>
         <div className=''>
           <div className='flex justify-between'>
             <p className='leading-5 text-3xl font-bold mr-3'>Igrejas</p>
@@ -46,7 +46,7 @@ const Churches = () => {
         </div>
       </div>
       <div className='shadow-sm'>
-        <ul className='divide-y divide-gray-200 dark:divide-gray-700 w-full mx-auto bg-white shadow-lg p-4'>
+        <ul className='divide-y divide-gray-200 dark:divide-gray-700 w-full mx-auto bg-white shadow-lg p-4 dark:rounded-b-lg dark:bg-dark-secondary'>
           {churches &&
             churches.map((church: Churches) => (
               <li className='pb-3 sm:pb-4' key={church.id}>
@@ -55,10 +55,10 @@ const Churches = () => {
                     Aviv
                   </div>
                   <div className='flex-1 min-w-0'>
-                    <p className='text-sm font-medium text-gray-900 truncate dark:text-white'>
+                    <p className='text-sm font-medium text-gray-900 truncate dark:text-gray-200'>
                       {church.name}
                     </p>
-                    <p className='text-sm text-gray-500 truncate dark:text-gray-400'>
+                    <p className='text-sm text-gray-500 dark:text-gray-400 truncate'>
                       {church.street +
                         ', ' +
                         church.number +
@@ -66,7 +66,7 @@ const Churches = () => {
                         church.city}
                     </p>
                   </div>
-                  <div className='inline-flex items-center text-base font-semibold text-gray-900 dark:text-white'>
+                  <div className='inline-flex items-center text-base font-semibold text-gray-900 dark:text-dark-primary'>
                     <FaEdit className='cursor-pointer mx-2' size={18} />
                     <FaTrash
                       className='cursor-pointer mx-2'

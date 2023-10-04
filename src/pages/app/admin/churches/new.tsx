@@ -50,8 +50,8 @@ const Admin = () => {
   })
   return (
     <div className='flex flex-col items-center mt-10 md:mt-5 p-3'>
-      <div className='text-center w-full max-w-lg content-center '>
-        <div className='w-full md:w-full px-3 mb-2 md:mb-0 '>
+      <div className='text-center w-full max-w-lg content-center'>
+        <div className='w-full md:w-full px-3 mb-2 md:mb-0'>
           <label className='text-2xl md:text-3xl text-dark-primary'>
             Cadastro de Igrejas
           </label>
