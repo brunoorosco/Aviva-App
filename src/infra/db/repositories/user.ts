@@ -11,14 +11,34 @@ export class User {
       },
       include: {
         UserCEM: {
-          include: {
-            cem: { include: { ChurchesCEM: { include: { churches: true } } } }
+          select: {
+            cem: {
+              select: {
+                id: true,
+                ChurchesCEM: {
+                  select: {
+                    churches: { select: { id: true } }
+                  }
+                }
+              }
+            }
           }
         }
       }
     })
-
-    return userDb
+    if (userDb) {
+      const userData = {
+        id: userDb.id,
+        email: userDb.email,
+        name: userDb.name,
+        birthday: userDb.birth,
+        password: userDb.password,
+        cemId: userDb.UserCEM[0].cem.id,
+        churchId: userDb.UserCEM[0].cem.ChurchesCEM[0].churches.id
+      }
+      return userData
+    }
+    return null
   }
 
   async checkByEmail(email: string): Promise<any> {
