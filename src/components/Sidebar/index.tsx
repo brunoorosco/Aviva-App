@@ -1,44 +1,131 @@
 import { signOut } from 'next-auth/react'
-import { useRouter } from 'next/router'
-import { BiLogOut, BiHome } from 'react-icons/bi'
+import { BiLogOut, BiHome, BiCollapse } from 'react-icons/bi'
 import LinkMenu from './LinkMenu'
+import classNames from 'classnames'
+import { useRouter } from 'next/router'
+import React, { useState, useMemo } from 'react'
+import { menuItems } from './menuRoute'
 
 const Sidebar = () => {
+  const [toggleCollapse, setToggleCollapse] = useState(false)
+  const [isCollapsible, setIsCollapsible] = useState(false)
+
   const router = useRouter()
-  const { pathname } = router
+  const { asPath, query } = router
+  const pathRouter = `/app/${query.churchid}`
+
+  console.log(router)
+
+  // const activeMenu = useMemo(
+  //   () => menuItems.find((menu) => menu.link === router.pathname),
+  //   [router.pathname]
+  // )
+
+  const activeMenu = useMemo(() => {
+    const currentPath = router.asPath // Use asPath para obter a rota atual
+    return menuItems.find((menu) => menu.link === currentPath)
+  }, [router.asPath])
+
+  const wrapperClasses = classNames(
+    'h-screen px-4 pt-2 pb-4 bg-gray-100 flex justify-between flex-col',
+    {
+      ['w-80']: !toggleCollapse,
+      ['w-20']: toggleCollapse
+    }
+  )
+
+  const collapseIconClasses = classNames(
+    'p-3 rounded bg-light-lighter absolute right-0 top-0',
+    {
+      'rotate-180': toggleCollapse
+    }
+  )
+
+  const getNavItemClasses = (menu: any) => {
+    console.log('valida', activeMenu?.id, menu.id)
+    return classNames(
+      'flex items-center cursor-pointer hover:bg-light-lighter rounded w-full overflow-hidden whitespace-nowrap',
+      {
+        ['bg-gray-300']: activeMenu?.id == menu.id
+      }
+    )
+  }
+
+  const onMouseOver = () => {
+    setIsCollapsible(!isCollapsible)
+  }
+
+  const handleSidebarToggle = () => {
+    setToggleCollapse(!toggleCollapse)
+  }
 
   return (
-    <div className='relative hidden h-screen shadow-lg lg:block w-80'>
-      <div className='h-full bg-white dark:bg-gray-700'>
-        <div className='flex items-center justify-start pt-6 ml-8'>
-          <p className='text-xl font-bold dark:text-white'>Avivamento</p>
-        </div>
-        <nav className='mt-6'>
-          <div>
-            <LinkMenu href={pathname}>
-              <BiHome size={25} />
-              <span className='mx-4 text-sm font-normal'>Home</span>
-            </LinkMenu>
-            <LinkMenu href='/'>
-              <BiHome size={25} />
-              <span className='mx-4 text-sm font-normal'>Home</span>
-            </LinkMenu>
-            <LinkMenu href='/app'>
-              <BiHome size={25} />
-              <span className='mx-4 text-sm font-normal'>Home</span>
-            </LinkMenu>
-
-            <a
-              className='flex items-center justify-start w-full p-2 pl-6 my-2 text-gray-400 transition-colors duration-200 border-l-4 border-transparent hover:text-gray-800 cursor-pointer'
-              onClick={() => signOut()}
-            >
-              <BiLogOut size={25} />
-              <span className='mx-4 text-sm font-normal'>Sair</span>
-            </a>
+    <div
+      className={`${wrapperClasses}`}
+      onMouseEnter={onMouseOver}
+      onMouseLeave={onMouseOver}
+      style={{ transition: 'width 300ms cubic-bezier(0.2, 0, 0, 1) 0s' }}
+    >
+      <div className='flex flex-col'>
+        <div className='flex items-center justify-between relative'>
+          <div className='flex items-center pl-1 gap-4'>
+            <div className='block'>
+              <img
+                src='/logo-preto.png'
+                width='70%'
+                className='mx-auto my-16'
+              />
+            </div>
           </div>
-        </nav>
+          {isCollapsible && (
+            <button
+              className={collapseIconClasses}
+              onClick={handleSidebarToggle}
+            >
+              <BiCollapse size={25} />
+            </button>
+          )}
+        </div>
+
+        <div className='flex flex-col items-start mt-1'>
+          {menuItems.map(({ ...menu }, index) => {
+            // const classes = getNavItemClasses(menu)
+            return (
+              <div className={getNavItemClasses(menu)} key={index}>
+                <LinkMenu href={pathRouter + menu.link}>
+                  <div style={{ width: '2.5rem' }}>{menu.icon}</div>
+                  {!toggleCollapse && (
+                    <span
+                      className={classNames(
+                        'text-md font-medium text-text-light'
+                      )}
+                    >
+                      {menu.label}
+                    </span>
+                  )}
+                </LinkMenu>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      <div
+        className={`flex items-center cursor-pointer hover:bg-light-lighter rounded w-full overflow-hidden whitespace-nowrap px-3 py-4`}
+      >
+        <a className='flex' onClick={() => signOut()}>
+          <div style={{ width: '2.5rem' }}>
+            <BiLogOut size={25} />
+          </div>
+          {!toggleCollapse && (
+            <span className={classNames('text-md font-medium text-text-light')}>
+              Sair
+            </span>
+          )}
+        </a>
       </div>
     </div>
   )
 }
+
 export default Sidebar

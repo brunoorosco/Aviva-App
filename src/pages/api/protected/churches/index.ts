@@ -1,32 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { prisma } from '@/infra/db/prismaClient'
-import { getCsrfToken, getSession } from 'next-auth/react'
 import { Prisma, Churches } from '@prisma/client'
 import {
   create,
   findChurchesById,
   findChurches
 } from '@/infra/services/churches'
-import { getServerSession } from 'next-auth'
 
 interface ChurchesId {
   id: String
 }
 
-interface SessionError {
+interface Error {
   message?: string
 }
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Churches[] | Churches | ChurchesId | SessionError>
+  res: NextApiResponse<Churches[] | Churches | ChurchesId | Error>
 ) {
-  // const session = await getServerSession()
-
-  // if (!session) {
-  //   return res.status(401).json({ message: 'Não autorizado' })
-  // }
-
   if (req.method === 'POST') {
     const newData: Prisma.ChurchesCreateInput = {
       name: req.body.church,
