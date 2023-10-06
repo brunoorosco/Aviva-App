@@ -4,40 +4,27 @@ import LinkMenu from './LinkMenu'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import React, { useState, useMemo } from 'react'
-
-const menuItems = [
-  { id: 1, label: 'Home', icon: <BiHome size={25} />, link: '/app' },
-  {
-    id: 2,
-    label: 'CEMs',
-    icon: <BiLogOut size={25} />,
-    link: '/posts'
-  },
-  {
-    id: 3,
-    label: 'Membros',
-    icon: <BiLogOut size={25} />,
-    link: '/users'
-  },
-  {
-    id: 4,
-    label: 'Outros',
-    icon: <BiLogOut size={25} />,
-    link: '/tutorials'
-  }
-]
+import { menuItems } from './menuRoute'
 
 const Sidebar = () => {
   const [toggleCollapse, setToggleCollapse] = useState(false)
   const [isCollapsible, setIsCollapsible] = useState(false)
 
   const router = useRouter()
-  const { pathname } = router
+  const { asPath, query } = router
+  const pathRouter = `/app/${query.churchid}`
 
-  const activeMenu = useMemo(
-    () => menuItems.find((menu) => menu.link === router.pathname),
-    [router.pathname]
-  )
+  console.log(router)
+
+  // const activeMenu = useMemo(
+  //   () => menuItems.find((menu) => menu.link === router.pathname),
+  //   [router.pathname]
+  // )
+
+  const activeMenu = useMemo(() => {
+    const currentPath = router.asPath // Use asPath para obter a rota atual
+    return menuItems.find((menu) => menu.link === currentPath)
+  }, [router.asPath])
 
   const wrapperClasses = classNames(
     'h-screen px-4 pt-2 pb-4 bg-gray-100 flex justify-between flex-col',
@@ -55,10 +42,11 @@ const Sidebar = () => {
   )
 
   const getNavItemClasses = (menu: any) => {
+    console.log('valida', activeMenu?.id, menu.id)
     return classNames(
       'flex items-center cursor-pointer hover:bg-light-lighter rounded w-full overflow-hidden whitespace-nowrap',
       {
-        ['bg-light-lighter']: activeMenu?.id === menu.id
+        ['bg-gray-300']: activeMenu?.id == menu.id
       }
     )
   }
@@ -100,11 +88,11 @@ const Sidebar = () => {
         </div>
 
         <div className='flex flex-col items-start mt-1'>
-          {menuItems.map(({ ...menu }) => {
-            const classes = getNavItemClasses(menu)
+          {menuItems.map(({ ...menu }, index) => {
+            // const classes = getNavItemClasses(menu)
             return (
-              <div className={classes}>
-                <LinkMenu href={menu.link}>
+              <div className={getNavItemClasses(menu)} key={index}>
+                <LinkMenu href={pathRouter + menu.link}>
                   <div style={{ width: '2.5rem' }}>{menu.icon}</div>
                   {!toggleCollapse && (
                     <span
@@ -122,7 +110,9 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <div className={`${getNavItemClasses({})} px-3 py-4`}>
+      <div
+        className={`flex items-center cursor-pointer hover:bg-light-lighter rounded w-full overflow-hidden whitespace-nowrap px-3 py-4`}
+      >
         <a className='flex' onClick={() => signOut()}>
           <div style={{ width: '2.5rem' }}>
             <BiLogOut size={25} />
