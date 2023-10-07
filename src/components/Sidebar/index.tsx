@@ -24,8 +24,8 @@ const Sidebar: React.FC<ISidebar> = ({ isOpen }) => {
   }, [router.asPath])
 
   const wrapperClasses = classNames(
-    `h-screen px-4 pb-4 bg-gray-100 dark:bg-gray-700 flex justify-between flex-col transition-transform  ${
-      isOpen ? 'translate-x-0' : '-translate-x-full hidden'
+    `h-screen  lg:block px-4 pb-4 bg-gray-100 dark:bg-gray-700 flex justify-between flex-col transition-transform ${
+      isOpen ? 'translate-x-0' : 'hidden'
     }`,
     {
       ['w-80']: !toggleCollapse,
