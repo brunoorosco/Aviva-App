@@ -6,7 +6,11 @@ import { useRouter } from 'next/router'
 import React, { useState, useMemo } from 'react'
 import { menuItems } from './menuRoute'
 
-const Sidebar = () => {
+export interface ISidebar {
+  isOpen: boolean
+}
+
+const Sidebar: React.FC<ISidebar> = ({ isOpen }) => {
   const [toggleCollapse, setToggleCollapse] = useState(false)
   const [isCollapsible, setIsCollapsible] = useState(false)
 
@@ -14,20 +18,15 @@ const Sidebar = () => {
   const { asPath, query } = router
   const pathRouter = `/app/${query.churchid}`
 
-  console.log(router)
-
-  // const activeMenu = useMemo(
-  //   () => menuItems.find((menu) => menu.link === router.pathname),
-  //   [router.pathname]
-  // )
-
   const activeMenu = useMemo(() => {
     const currentPath = router.asPath // Use asPath para obter a rota atual
     return menuItems.find((menu) => menu.link === currentPath)
   }, [router.asPath])
 
   const wrapperClasses = classNames(
-    'h-screen px-4 pt-2 pb-4 bg-gray-100 flex justify-between flex-col',
+    `h-screen px-4 pb-4 bg-gray-100 dark:bg-gray-700 flex justify-between flex-col transition-transform  ${
+      isOpen ? 'translate-x-0' : '-translate-x-full hidden'
+    }`,
     {
       ['w-80']: !toggleCollapse,
       ['w-20']: toggleCollapse
@@ -42,7 +41,6 @@ const Sidebar = () => {
   )
 
   const getNavItemClasses = (menu: any) => {
-    console.log('valida', activeMenu?.id, menu.id)
     return classNames(
       'flex items-center cursor-pointer hover:bg-light-lighter rounded w-full overflow-hidden whitespace-nowrap',
       {
@@ -62,9 +60,9 @@ const Sidebar = () => {
   return (
     <div
       className={`${wrapperClasses}`}
-      onMouseEnter={onMouseOver}
-      onMouseLeave={onMouseOver}
-      style={{ transition: 'width 300ms cubic-bezier(0.2, 0, 0, 1) 0s' }}
+      // onMouseEnter={onMouseOver}
+      // onMouseLeave={onMouseOver}
+      // style={{ transition: 'width 300ms cubic-bezier(0.2, 0, 0, 1) 0s' }}
     >
       <div className='flex flex-col'>
         <div className='flex items-center justify-between relative'>
