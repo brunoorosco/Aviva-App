@@ -5,13 +5,22 @@ import Profile from '../Avatar/profile'
 import { MdAdminPanelSettings } from 'react-icons/md'
 import Link from 'next/link'
 
-const Header = () => {
+interface SidebarProps {
+  toggleSidebar: () => void
+}
+
+const Header: React.FC<SidebarProps> = ({ toggleSidebar }) => {
   const { data: session } = useSession()
 
   return (
-    <header className='z-40 flex items-center justify-between w-full h-16 bg-app-gray'>
-      <div className='block ml-6 lg:hidden '>
-        <GiHamburgerMenu size={30} color='#e9e9e9' />
+    <header className='z-40 flex items-center justify-between w-full h-16'>
+      <div className='block ml-6 lg:hidden'>
+        <button
+          onClick={toggleSidebar}
+          className='flex items-center p-2 text-gray-700 bg-gray-300 rounded-full shadow text-md'
+        >
+          <GiHamburgerMenu size={26} />
+        </button>
       </div>
       <div className='relative z-20 flex flex-col justify-end h-full px-3 md:w-full'>
         <div className='relative flex items-center justify-end w-full p-1 pr-3 space-x-4 mb-1'>
