@@ -3,8 +3,9 @@ import { BiLogOut, BiHome, BiCollapse } from 'react-icons/bi'
 import LinkMenu from './LinkMenu'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { menuItems } from './menuRoute'
+import useWindowSize from '@/hooks/useWindow'
 
 export interface ISidebar {
   isOpen: boolean
@@ -13,6 +14,24 @@ export interface ISidebar {
 const Sidebar: React.FC<ISidebar> = ({ isOpen }) => {
   const [toggleCollapse, setToggleCollapse] = useState(false)
   const [isCollapsible, setIsCollapsible] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const [isOp, setOp] = useState(isOpen)
+
+  let size = false
+
+  const updateDrawerState = () => {
+    setIsMobile(window.innerWidth <= 1020)
+  }
+
+  // Adiciona ouvinte de evento de redimensionamento
+  useEffect(() => {
+    updateDrawerState()
+
+    window.addEventListener('resize', updateDrawerState)
+    return () => {
+      window.removeEventListener('resize', updateDrawerState)
+    }
+  }, [useWindowSize()])
 
   const router = useRouter()
   const { asPath, query } = router
@@ -24,9 +43,7 @@ const Sidebar: React.FC<ISidebar> = ({ isOpen }) => {
   }, [router.asPath])
 
   const wrapperClasses = classNames(
-    `h-screen  lg:block px-4 pb-4 bg-gray-100 dark:bg-gray-700 flex justify-between flex-col transition-transform ${
-      isOpen ? 'translate-x-0' : 'hidden'
-    }`,
+    `h-screen flex px-4 pb-4 bg-gray-100 dark:bg-gray-700 justify-between flex-col hidden:false`,
     {
       ['w-80']: !toggleCollapse,
       ['w-20']: toggleCollapse
@@ -62,7 +79,7 @@ const Sidebar: React.FC<ISidebar> = ({ isOpen }) => {
       className={`${wrapperClasses}`}
       // onMouseEnter={onMouseOver}
       // onMouseLeave={onMouseOver}
-      // style={{ transition: 'width 300ms cubic-bezier(0.2, 0, 0, 1) 0s' }}
+      style={{ transition: 'width 300ms cubic-bezier(0.2, 0, 0, 1) 0s' }}
     >
       <div className='flex flex-col'>
         <div className='flex items-center justify-between relative'>
