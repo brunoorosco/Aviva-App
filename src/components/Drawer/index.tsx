@@ -1,19 +1,21 @@
 import classNames from 'classnames'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { BiLogOut } from 'react-icons/bi'
 import LinkMenu from '../Sidebar/LinkMenu'
 import { menuItems } from '../Sidebar/menuRoute'
 
-export interface ISidebar {
+export interface IDrawer {
   isOpen: boolean
 }
 
-const Drawer: React.FC<ISidebar> = ({ isOpen }) => {
-  const router = useRouter()
-  const { asPath, query } = router
-  const pathRouter = `/app/${query.churchid}`
+const Drawer: React.FC<IDrawer> = ({ isOpen }) => {
+  const { data: session } = useSession()
+  const churchId = session?.user.churchId as string
+  const cemId = session?.user.cemId as string
+  const menu = menuItems({ churchId, cemId })
+  const pathRouter = `/app/${churchId}`
   return (
     <div
       className={`fixed top-0 left-0 h-screen w-72 bg-gray-100 dark:bg-gray-700 z-10 text-white transition-transform transform flex flex-col justify-between
@@ -33,17 +35,7 @@ const Drawer: React.FC<ISidebar> = ({ isOpen }) => {
         </div>
 
         <div className='flex flex-col items-start mt-1'>
-          {menuItems.map(({ ...menu }, index) => {
-            function getNavItemClasses(menu: {
-              id: number
-              label: string
-              icon: JSX.Element
-              link: string
-            }): string | undefined {
-              throw new Error('Function not implemented.')
-            }
-
-            // const classes = getNavItemClasses(menu)
+          {menu.map(({ ...menu }, index) => {
             return (
               <div key={index}>
                 <LinkMenu href={pathRouter + menu.link}>

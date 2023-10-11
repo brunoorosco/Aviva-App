@@ -7,28 +7,9 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { menuItems } from './menuRoute'
 import useWindowSize from '@/hooks/useWindow'
 
-export interface ISidebar {
-  isOpen: boolean
-}
-
-const Sidebar: React.FC<ISidebar> = ({ isOpen }) => {
+const Sidebar = () => {
   const [toggleCollapse, setToggleCollapse] = useState(false)
   const [isCollapsible, setIsCollapsible] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-
-  const updateDrawerState = () => {
-    setIsMobile(window.innerWidth <= 1020)
-  }
-
-  // Adiciona ouvinte de evento de redimensionamento
-  useEffect(() => {
-    updateDrawerState()
-
-    window.addEventListener('resize', updateDrawerState)
-    return () => {
-      window.removeEventListener('resize', updateDrawerState)
-    }
-  }, [useWindowSize()])
 
   const router = useRouter()
   const { asPath, query } = router

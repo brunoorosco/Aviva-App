@@ -11,7 +11,6 @@ interface Props {
 
 const LayoutApp = ({ children }: Props) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
   const updateDrawerState = () => {
@@ -33,11 +32,7 @@ const LayoutApp = ({ children }: Props) => {
   return (
     <main className='relative h-screen overflow-hidden bg-gray-50 dark:bg-gray-800 w-full'>
       <div className='flex items-start justify-between'>
-        {!isMobile ? (
-          <Sidebar isOpen={isSidebarOpen} />
-        ) : (
-          <Drawer isOpen={isSidebarOpen} />
-        )}
+        {!isMobile ? <Sidebar /> : <Drawer isOpen={isSidebarOpen} />}
         <Wrapper>
           <Header toggleSidebar={toggleSidebar} />
           {children}
