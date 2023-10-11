@@ -37,7 +37,7 @@ const IndexApp = () => {
   useEffect(() => {
     if (shouldRedirect === true && churches) {
       setTimeout(() => {
-        router.push(`/app/${churches.id}`)
+        router.push(`/app/${session?.user.churchId}`)
       }, 1000)
       setShouldRedirect(false)
     }
