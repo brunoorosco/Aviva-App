@@ -1,13 +1,17 @@
 import { Prisma, Churches } from '@prisma/client'
 import { prisma } from '@/infra/db/prismaClient'
 
-const create = async (
-  newData: Prisma.ChurchesCreateInput
-): Promise<Churches> => {
+const create = async (params: any): Promise<Churches | Error> => {
   const saved = await prisma.churches.create({
-    data: newData
+    data: {
+      name: params.name,
+      cep: params.cep,
+      city: params.city,
+      number: params.number,
+      state: params.state,
+      street: params.street
+    }
   })
-
   return saved
 }
 
