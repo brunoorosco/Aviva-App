@@ -86,13 +86,8 @@ const Members = () => {
                         <p className='text-sm text-gray-500 dark:text-gray-400 truncate'>
                           {member.email}
                         </p>
-                        <p className='text-sm text-gray-500 dark:text-gray-400 truncate'>
-                          {(member.address[0]?.street || '') +
-                            ', ' +
-                            (member.address[0]?.number || '') +
-                            ' - ' +
-                            (member.address[0]?.city || '')}
-                        </p>
+
+                        <Address member={member} />
                       </div>
                       <div className='inline-flex items-center text-base font-semibold text-gray-900 dark:text-dark-primary'>
                         <FaEdit className='cursor-pointer mx-2' size={18} />
@@ -110,6 +105,22 @@ const Members = () => {
         </>
       )}
     </div>
+  )
+}
+
+const Address = ({ member }: any) => {
+  const address = member.address as TAddress[]
+  const fullAddress =
+    address.length > 0
+      ? `${address[0]?.street || ''}, ${address[0]?.number || ''} - ${
+          address[0]?.city || ''
+        }`
+      : ''
+
+  return (
+    <p className='text-sm text-gray-500 dark:text-gray-400 truncate'>
+      {fullAddress}
+    </p>
   )
 }
 
