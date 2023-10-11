@@ -1,5 +1,5 @@
-import { signOut } from 'next-auth/react'
-import { BiLogOut, BiHome, BiCollapse } from 'react-icons/bi'
+import { signOut, useSession } from 'next-auth/react'
+import { BiLogOut, BiCollapse } from 'react-icons/bi'
 import LinkMenu from './LinkMenu'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
@@ -15,9 +15,6 @@ const Sidebar: React.FC<ISidebar> = ({ isOpen }) => {
   const [toggleCollapse, setToggleCollapse] = useState(false)
   const [isCollapsible, setIsCollapsible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  const [isOp, setOp] = useState(isOpen)
-
-  let size = false
 
   const updateDrawerState = () => {
     setIsMobile(window.innerWidth <= 1020)
@@ -35,11 +32,15 @@ const Sidebar: React.FC<ISidebar> = ({ isOpen }) => {
 
   const router = useRouter()
   const { asPath, query } = router
-  const pathRouter = `/app/${query.churchid}`
+  const { data: session } = useSession()
+  const churchId = session?.user.churchId as string
+  const cemId = session?.user.cemId as string
+  const menu = menuItems({ churchId, cemId })
+  const pathRouter = `/app/${churchId}`
 
   const activeMenu = useMemo(() => {
     const currentPath = router.asPath // Use asPath para obter a rota atual
-    return menuItems.find((menu) => menu.link === currentPath)
+    return menu.find((menu) => menu.link === currentPath)
   }, [router.asPath])
 
   const wrapperClasses = classNames(
@@ -103,7 +104,7 @@ const Sidebar: React.FC<ISidebar> = ({ isOpen }) => {
         </div>
 
         <div className='flex flex-col items-start mt-1'>
-          {menuItems.map(({ ...menu }, index) => {
+          {menu.map(({ ...menu }, index) => {
             // const classes = getNavItemClasses(menu)
             return (
               <div className={getNavItemClasses(menu)} key={index}>

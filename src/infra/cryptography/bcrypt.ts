@@ -19,5 +19,17 @@ class CryptAdapter {
       .toString(`hex`)
     return hash === hashCompare
   }
+  async randonPassword() {
+    const length = 6
+    const charset = 'abcdefghijmn0123456789'
+    let password = ''
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length)
+      password += charset[randomIndex]
+    }
+
+    return password
+  }
 }
 export default CryptAdapter
