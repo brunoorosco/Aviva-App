@@ -9,6 +9,13 @@ datasource db {
   relationMode      = "prisma"
 }
 
+enum Actions {
+  create
+  read
+  delete
+  update
+}
+
 model Churches {
   id          String        @id @default(cuid())
   name        String        @db.VarChar(50)
@@ -48,16 +55,17 @@ model Session {
 }
 
 model User {
-  id             String    @id @default(cuid())
+  id             String      @id @default(cuid())
   name           String?
-  email          String?   @unique
+  email          String?     @unique
   email_verified DateTime?
-  birth          DateTime? @db.Date
+  birth          DateTime?   @db.Date
   image          String?
   password       String
   address        Address[]
   sessions       Session[]
   UserCEM        UserCEM[]
+  UserRules      UserRules[]
 
   @@map("user")
 }
@@ -110,4 +118,25 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_token")
+}
+
+model Rules {
+  id        String      @id @default(cuid())
+  ations    Actions
+  subject   String
+  UserRules UserRules[]
+
+  @@map("rules")
+}
+
+model UserRules {
+  user_id  String
+  rules_id String
+  user     User   @relation(fields: [user_id], references: [id])
+  rules    Rules  @relation(fields: [rules_id], references: [id])
+
+  @@id([user_id, rules_id])
+  @@index([user_id])
+  @@index([rules_id])
+  @@map("userrules")
 }
