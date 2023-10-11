@@ -14,8 +14,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.send('')
     }
   } catch (error) {
-    console.log(error.message)
-    throw new Error('Falha ao cadastrar o usuário')
+    //@ts-ignore
+    console.erro(error.message)
     res.status(400).json({ error: 'Falha ao cadastrar o usuário' })
   }
 }
