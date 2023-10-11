@@ -1,11 +1,21 @@
 import { getAllUsers } from '@/infra/db/repositories/users'
+import { createUser } from '@/infra/services/users'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const users = await getAllUsers()
-    res.send(users)
-  } catch (e) {
-    console.error(e)
+    if (req.method == 'POST') {
+      const user = await createUser(req.body)
+      res.status(201).json({ user })
+    } else if (req.method == 'GET') {
+      const users = await getAllUsers()
+      res.send(users)
+    } else {
+      res.send('')
+    }
+  } catch (error) {
+    //@ts-ignore
+    console.erro(error.message)
+    res.status(400).json({ error: 'Falha ao cadastrar o usuário' })
   }
 }
