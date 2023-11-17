@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
         const userDb = await user.autenticade({
           email: credentials?.email || ''
         })
-
+        console.log(userDb)
         if (userDb) {
           const isValidPass = cripto.compare(
             credentials?.password || '',

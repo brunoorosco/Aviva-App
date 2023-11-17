@@ -1,5 +1,5 @@
 import useWindowSize from '@/hooks/useWindow'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Drawer from '../Drawer'
 import Header from '../Header'
 import Sidebar from '../Sidebar'
@@ -12,6 +12,7 @@ interface Props {
 const LayoutApp = ({ children }: Props) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const sidebarRef = useRef(null)
 
   const updateDrawerState = () => {
     setIsMobile(window.innerWidth <= 1020)

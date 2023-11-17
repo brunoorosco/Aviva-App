@@ -1,6 +1,6 @@
 import Avatar from '@/components/Avatar'
 import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
-import Skeleton from '@/components/skeleton'
+import Skeleton from '@/components/Skeleton'
 import { useHttpDelete, useHttpGet } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'

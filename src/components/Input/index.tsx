@@ -3,26 +3,24 @@ import { Controller } from 'react-hook-form'
 
 type MaskFunction = (e: string) => string
 
-export interface ITextInput {
+export interface ITextInput extends React.HTMLProps<HTMLInputElement> {
   maxLength?: number
-  placeholder?: string
-  type?: 'text' | 'password' | 'number' | 'email'
   disabled?: boolean
   name: string
   control: any
   defaultValue?: string
   error?: string | undefined
+  placeholder?: string
   mask?: MaskFunction
 }
 const TextInput: React.FC<ITextInput> = ({
   maxLength,
-  placeholder,
-  type,
   disabled = false,
   name,
   defaultValue = '',
   control,
   error,
+  placeholder,
   mask
 }) => {
   return (
@@ -34,11 +32,10 @@ const TextInput: React.FC<ITextInput> = ({
         render={({ field }) => (
           <div className='flex flex-col w-full'>
             <input
-              className='p-4 block shadow bg-gray-100  mb-3 rounded w-full max-w-md focus:outline-gray-300 dark:bg-gray-600 dark:text-dark-primary'
+              className='p-4 block shadow-md bg-gray-200  placeholder:text-gray-500 mb-3 rounded w-full max-w-md focus:outline-zinc-400 dark:bg-gray-600 dark:text-dark-primary'
               disabled={disabled}
               maxLength={maxLength}
               placeholder={placeholder}
-              type={type}
               value={mask ? mask(field.value) : field.value}
               onChange={(e) => {
                 field.onChange(e.target.value)

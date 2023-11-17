@@ -1,5 +1,5 @@
 import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
-import Skeleton from '@/components/skeleton'
+import Skeleton from '@/components/Skeleton'
 import { useHttpDelete, useHttpGet } from '@/hooks/api'
 import { Churches } from '@prisma/client'
 import Link from 'next/link'
