@@ -30,9 +30,9 @@ const NewRede = () => {
   const [supervisores, setSupervisores] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    setSupervisores(useSupervisor())
-  }, [])
+  // useEffect(() => {
+  //   setSupervisores(useSupervisor())
+  // }, [])
 
   const onSubmit = handleSubmit(async (data) => {
     try {

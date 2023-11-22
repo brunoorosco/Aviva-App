@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Skeleton from '../Skeleton'
 import { Controller } from 'react-hook-form'
 import { useHttpGet } from '@/hooks/api'
