@@ -5,7 +5,6 @@ import { Loading } from '@/components/Loading'
 import { useEffect, useState } from 'react'
 import ButtonSubmit from '@/components/ButtonSubmit'
 import { useHttpPost } from '@/hooks/api'
-import { SelectCSupervisor } from '@/components/Select/SelectSupervisores'
 import { useSupervisor } from '@/hooks/useSupervisor'
 
 type FormValues = {
