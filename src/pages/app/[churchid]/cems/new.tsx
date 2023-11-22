@@ -100,12 +100,12 @@ const NewRede = () => {
         </div>
         <div className='md:flex'>
           <div className='md:w-2/3 w-full mb-3 md:mb-0'>
-            <SelectCSupervisor
+            {/* <SelectCSupervisor
               errors={false}
               title={'Supervisores'}
               name='supervisor'
               control={control}
-            />
+            /> */}
           </div>
         </div>
         <div className='flex'>
