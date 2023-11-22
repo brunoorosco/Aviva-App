@@ -1,4 +1,7 @@
-import { getAllUsers } from '@/infra/db/repositories/users'
+import {
+  getAllUsers,
+  getAllUsersByProfile
+} from '@/infra/db/repositories/users'
 import { createUser } from '@/infra/services/users'
 import { NextApiRequest, NextApiResponse } from 'next'
 
@@ -8,14 +11,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const user = await createUser(req.body)
       res.status(201).json({ user })
     } else if (req.method == 'GET') {
-      const users = await getAllUsers()
+      const users = await getAllUsersByProfile()
       res.send(users)
     } else {
       res.send('')
     }
   } catch (error) {
     //@ts-ignore
-    console.erro(error.message)
-    res.status(400).json({ error: 'Falha ao cadastrar o usuário' })
+    console.error(error)
+    res.status(400).json({ error: 'Falha na conexão com tb usuário' })
   }
 }

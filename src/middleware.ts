@@ -20,5 +20,6 @@ export async function middleware(
 }
 
 export const config = {
-  matcher: ['/app/:path*', '/api/protected/:path*']
+  matcher: ['/app/:path*']
+  // matcher: ['/app/:path*', '/api/protected/:path*']
 }

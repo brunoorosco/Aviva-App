@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import { Churches } from '@prisma/client'
 import { useHttpGet } from '@/hooks/api'
-import Skeleton from '@/components/skeleton'
+import Skeleton from '@/components/Skeleton'
 
 const IndexApp = () => {
   const router = useRouter()
