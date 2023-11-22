@@ -32,11 +32,29 @@ const LayoutApp = ({ children }: Props) => {
 
   return (
     <main className='relative h-screen overflow-hidden bg-gray-50 dark:bg-gray-800 w-full'>
-      <div className='flex items-start justify-between'>
-        {!isMobile ? <Sidebar /> : <Drawer isOpen={isSidebarOpen} />}
+      <div className={`flex items-start justify-between`}>
+        {!isMobile ? (
+          <Sidebar />
+        ) : (
+          <Drawer isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        )}
         <Wrapper>
-          <Header toggleSidebar={toggleSidebar} />
-          {children}
+          {isSidebarOpen ? (
+            <>
+              <div
+                className={'blur-sm h-screen z-40 filter contrast-50 '}
+                onClick={toggleSidebar}
+              >
+                <Header toggleSidebar={toggleSidebar} />
+                {children}
+              </div>
+            </>
+          ) : (
+            <>
+              <Header toggleSidebar={toggleSidebar} />
+              {children}
+            </>
+          )}
         </Wrapper>
       </div>
     </main>

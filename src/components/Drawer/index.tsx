@@ -1,27 +1,36 @@
 import classNames from 'classnames'
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { BiLogOut } from 'react-icons/bi'
+import { IoCloseSharp } from 'react-icons/io5'
 import LinkMenu from '../Sidebar/LinkMenu'
 import { menuItems } from '../Sidebar/menuRoute'
 
 export interface IDrawer {
+  toggleSidebar: () => void
   isOpen: boolean
 }
 
-const Drawer: React.FC<IDrawer> = ({ isOpen }) => {
+const Drawer: React.FC<IDrawer> = ({ toggleSidebar, isOpen }) => {
   const { data: session } = useSession()
   const churchId = session?.user.churchId as string
   const cemId = session?.user.cemId as string
   const menu = menuItems({ churchId, cemId })
   const pathRouter = `/app/${churchId}`
+
   return (
     <div
-      className={`fixed top-0 left-0 h-screen w-72 bg-gray-100 dark:bg-gray-700 z-10 text-white transition-transform transform flex flex-col justify-between
+      className={`fixed top-0 left-0 h-screen w-72 bg-gray-100 dark:bg-gray-700 z-50 text-white transition-transform transform flex flex-col justify-between
       ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
     >
       <div className='flex flex-col'>
+        <div
+          className='flex justify-end items-center p-2 text-gray-600'
+          onClick={toggleSidebar}
+        >
+          <IoCloseSharp size={22} />
+        </div>
         <div className='flex items-center justify-between relative'>
           <div className='flex items-center pl-1 gap-4'>
             <div className='block'>

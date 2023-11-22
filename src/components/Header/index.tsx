@@ -13,8 +13,8 @@ const Header: React.FC<SidebarProps> = ({ toggleSidebar }) => {
   const { data: session } = useSession()
 
   return (
-    <header className='z-40 flex items-center justify-between w-full h-16'>
-      <div className='block ml-6 lg:hidden'>
+    <header className=' flex items-center justify-between w-full h-16'>
+      <div className='block ml-6 lg:hidden '>
         <button
           onClick={toggleSidebar}
           className='flex items-center p-2 text-gray-700 bg-gray-300 rounded-full shadow text-md'
@@ -27,7 +27,7 @@ const Header: React.FC<SidebarProps> = ({ toggleSidebar }) => {
           <Link href={'/app/admin'}>
             <MdAdminPanelSettings
               size={35}
-              color={'#e9e9e9'}
+              color={'#4b4e52'}
               className='cursor-pointer'
             />
           </Link>
