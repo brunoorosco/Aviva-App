@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { useHttpGet } from '@/hooks/api'
 // import Skeleton from '@/components/Skeleton'
@@ -37,35 +37,37 @@ export function SelectCem({
   }, [cem])
   return (
     <div className='w-full flex flex-col my-2'>
-      {/* {isLoading ? (
+      <Suspense>
+        {/* {isLoading ? (
         <Skeleton />
       ) : (
         <> */}
-      <Controller
-        name={name}
-        control={control}
-        render={({ field }) => (
-          <select
-            defaultValue={title}
-            {...field}
-            className='bg-gray-200  p-4 rounded-t w-full dark:bg-zinc-700 dark:text-gray-300 open:w-11'
-          >
-            <option disabled>{title}</option>
-            {cem?.map((item: any) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field }) => (
+            <select
+              defaultValue={title}
+              {...field}
+              className='bg-gray-200  p-4 rounded-t w-full dark:bg-zinc-700 dark:text-gray-300 open:w-11'
+            >
+              <option disabled>{title}</option>
+              {cem?.map((item: any) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          )}
+        />
+        {errors[name] && (
+          <p className='text-red-400 text-sm block mt-2'>
+            {errors[name].message}
+          </p>
         )}
-      />
-      {errors[name] && (
-        <p className='text-red-400 text-sm block mt-2'>
-          {errors[name].message}
-        </p>
-      )}
-      {/* </>
+        {/* </>
       )} */}
+      </Suspense>
     </div>
   )
 }
