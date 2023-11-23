@@ -1,5 +1,5 @@
 import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
-import Skeleton from '@/components/Skeleton'
+// import Skeleton from '@/components/Skeleton'
 import { useHttpDelete, useHttpGet } from '@/hooks/api'
 import { CEM } from '@prisma/client'
 import { useSession } from 'next-auth/react'

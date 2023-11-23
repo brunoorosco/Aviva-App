@@ -5,6 +5,7 @@ import { useHttpDelete, useHttpGet } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { Suspense } from 'react'
 import { FaEdit, FaTrash } from 'react-icons/fa'
 import { FaPeopleRoof } from 'react-icons/fa6'
 
@@ -72,34 +73,36 @@ const Members = () => {
       </div>
       <div className='shadow-sm'>
         <ul className='divide-y divide-gray-200 dark:divide-gray-700 w-full mx-auto bg-white shadow-lg p-4 dark:rounded-b-lg dark:bg-dark-secondary'>
-          {members &&
-            members.map((member: TMembers) => (
-              <li className='pb-3 sm:pb-4' key={member.id}>
-                <div className='flex items-center space-x-4'>
-                  <div className='w-12 h-12 bg-app-bg  text-white text-2xl rounded-full flex items-center justify-center mt-2'>
-                    <Avatar name={member.name} />
-                  </div>
-                  <div className='flex-1 min-w-0'>
-                    <p className='text-sm font-medium text-gray-900 truncate dark:text-gray-200'>
-                      {member.name}
-                    </p>
-                    <p className='text-sm text-gray-500 dark:text-gray-400 truncate'>
-                      {member.email}
-                    </p>
+          <Suspense fallback={'Loading....'}>
+            {members &&
+              members.map((member: TMembers) => (
+                <li className='pb-3 sm:pb-4' key={member.id}>
+                  <div className='flex items-center space-x-4'>
+                    <div className='w-12 h-12 bg-app-bg  text-white text-2xl rounded-full flex items-center justify-center mt-2'>
+                      <Avatar name={member.name} />
+                    </div>
+                    <div className='flex-1 min-w-0'>
+                      <p className='text-sm font-medium text-gray-900 truncate dark:text-gray-200'>
+                        {member.name}
+                      </p>
+                      <p className='text-sm text-gray-500 dark:text-gray-400 truncate'>
+                        {member.email}
+                      </p>
 
-                    <Address member={member} />
+                      <Address member={member} />
+                    </div>
+                    <div className='inline-flex items-center text-base font-semibold text-gray-900 dark:text-dark-primary'>
+                      <FaEdit className='cursor-pointer mx-2' size={18} />
+                      <FaTrash
+                        className='cursor-pointer mx-2'
+                        size={17}
+                        onClick={() => handleDelete(member.id)}
+                      />
+                    </div>
                   </div>
-                  <div className='inline-flex items-center text-base font-semibold text-gray-900 dark:text-dark-primary'>
-                    <FaEdit className='cursor-pointer mx-2' size={18} />
-                    <FaTrash
-                      className='cursor-pointer mx-2'
-                      size={17}
-                      onClick={() => handleDelete(member.id)}
-                    />
-                  </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              ))}
+          </Suspense>
         </ul>
       </div>
       {/* </>
