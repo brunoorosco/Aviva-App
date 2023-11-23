@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { CEM } from '@prisma/client'
-import { findCem, findCemById } from '@/infra/services/cems'
+import { createCem, findCem, findCemById } from '@/infra/services/cems'
 
 type CemId = {
   id: String
@@ -13,19 +13,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<CEM[] | CEM | CemId | Error>
 ) {
-  // if (req.method === 'POST') {
-  //   const newData: Prisma.CEMCreateInput = {
-  //     name: req.body.cem,
-  //     number: req.body.number,
-  //     cep: req.body.zipcode,
-  //     city: req.body.city,
-  //     street: req.body.street,
-  //     churchid: req.body.churchid
-  //   }
-
-  //   const saved = await create(newData)
-  //   return res.status(200).json(saved)
-  // }
+  const churchId = req.query.churchid as string
+  if (req.method === 'POST') {
+    const saved = await createCem(req.body, churchId)
+    return res.status(200).json(saved)
+  }
 
   if (req.method === 'GET') {
     const { churchid } = req.query

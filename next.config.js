@@ -4,6 +4,7 @@ const nextConfig = {
   env: {
     emailPassword: process.env.EMAIL_PASSWORD
   }
+  // output: 'export'
 }
 
 module.exports = nextConfig

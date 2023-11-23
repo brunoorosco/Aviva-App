@@ -4,6 +4,7 @@ import { prisma } from '@/infra/db/prismaClient'
 import { getSession } from 'next-auth/react'
 import { Churches } from '@prisma/client'
 import { findChurchesById } from '@/infra/services/churches'
+import { createCem } from '@/infra/services/cems'
 
 interface SessionError {
   message?: string

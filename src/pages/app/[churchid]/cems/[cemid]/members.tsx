@@ -108,14 +108,15 @@ const Members = () => {
   )
 }
 
-const Address = ({ member }: any) => {
-  const address = member.address as TAddress[]
+const Address = ({ address }: any) => {
+  // const address = member.address as TAddress[]
   const fullAddress =
-    address.length > 0
-      ? `${address[0]?.street || ''}, ${address[0]?.number || ''} - ${
-          address[0]?.city || ''
-        }`
-      : ''
+    // address.length > 0
+    // ?
+    `${address?.street || ''}, ${address?.number || ''} - ${
+      address?.city || ''
+    }`
+  // : ''
 
   return (
     <p className='text-sm text-gray-500 dark:text-gray-400 truncate'>

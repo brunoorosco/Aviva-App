@@ -1,11 +1,10 @@
 import TextInput from '@/components/Input'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
 import { useForm } from 'react-hook-form'
-import { Loading } from '@/components/Loading'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ButtonSubmit from '@/components/ButtonSubmit'
 import { useHttpPost } from '@/hooks/api'
-import { useSupervisor } from '@/hooks/useSupervisor'
+import { SelectSupervisor } from '@/components/Select/SelectSupervisores'
 
 type FormValues = {
   rede: string
@@ -25,13 +24,10 @@ const NewRede = () => {
     formState: { errors }
   } = useForm<FormValues>()
   const router = useRouter()
-  const [error, setError] = useState('')
-  const [supervisores, setSupervisores] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
+  const { pathname } = router
 
-  // useEffect(() => {
-  //   setSupervisores(useSupervisor())
-  // }, [])
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -100,12 +96,12 @@ const NewRede = () => {
         </div>
         <div className='md:flex'>
           <div className='md:w-2/3 w-full mb-3 md:mb-0'>
-            {/* <SelectCSupervisor
+            <SelectSupervisor
               errors={false}
               title={'Supervisores'}
               name='supervisor'
               control={control}
-            /> */}
+            />
           </div>
         </div>
         <div className='flex'>

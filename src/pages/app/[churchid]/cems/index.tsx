@@ -10,7 +10,7 @@ import { GiMeepleGroup } from 'react-icons/gi'
 
 const Cem = () => {
   const router = useRouter()
-  const { pathname } = router
+  const churchId = router.query?.churchid
   const { data: session } = useSession()
   const {
     data: cems,
@@ -28,6 +28,7 @@ const Cem = () => {
       url: `/api/protected/churches/${session?.user.churchId}/cems/${id}`
     })
   }
+
   return (
     <div className='content-center mx-auto flex flex-col w-full p-3 max-w-lg rounded-lg dark:text-dark-primary'>
       {isLoading ? (
@@ -45,7 +46,7 @@ const Cem = () => {
               <p className='text-gray-400 mt-2 mb-5'>{cems?.length}</p>
             </div>
             <div>
-              <Link href={pathname + '/new'}>
+              <Link href={'../' + churchId + '/cems/new'}>
                 <ButtonNew />
               </Link>
             </div>

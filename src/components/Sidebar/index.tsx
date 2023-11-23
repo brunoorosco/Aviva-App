@@ -5,14 +5,12 @@ import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import React, { useState, useMemo, useEffect } from 'react'
 import { menuItems } from './menuRoute'
-import useWindowSize from '@/hooks/useWindow'
 
 const Sidebar = () => {
   const [toggleCollapse, setToggleCollapse] = useState(false)
   const [isCollapsible, setIsCollapsible] = useState(false)
 
   const router = useRouter()
-  const { asPath, query } = router
   const { data: session } = useSession()
   const churchId = session?.user.churchId as string
   const cemId = session?.user.cemId as string
@@ -59,8 +57,6 @@ const Sidebar = () => {
   return (
     <div
       className={`${wrapperClasses}`}
-      // onMouseEnter={onMouseOver}
-      // onMouseLeave={onMouseOver}
       style={{ transition: 'width 300ms cubic-bezier(0.2, 0, 0, 1) 0s' }}
     >
       <div className='flex flex-col'>
@@ -86,6 +82,7 @@ const Sidebar = () => {
 
         <div className='flex flex-col items-start mt-1'>
           {menu.map(({ ...menu }, index) => {
+            console.log(pathRouter)
             // const classes = getNavItemClasses(menu)
             return (
               <div className={getNavItemClasses(menu)} key={index}>

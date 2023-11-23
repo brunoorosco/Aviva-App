@@ -1,11 +1,22 @@
 import { Prisma, CEM } from '@prisma/client'
 import { prisma } from '@/infra/db/prismaClient'
+import { Cems } from '../db/repositories/cem'
 
-const create = async (newData: Prisma.CEMCreateInput): Promise<CEM> => {
-  const saved = await prisma.cEM.create({
-    data: newData
-  })
-
+export const createCem = async (
+  data: any,
+  churchesId: string
+): Promise<CEM> => {
+  const cemRepository = new Cems()
+  const newCem: Prisma.CEMCreateInput = {
+    name: data.name,
+    number: data.number,
+    cep: data.zipcode.replace('-', ''),
+    city: data.city,
+    street: data.street,
+    state: data.state,
+    ChurchesCEM: { create: { churches_id: churchesId } }
+  }
+  const saved = await cemRepository.create(newCem)
   return saved
 }
 
@@ -59,4 +70,4 @@ const getCembyUserId = async (email: string) => {
   return cem
 }
 
-export { create, findCemById, update, findCem, getCembyUserId }
+export { findCemById, update, findCem, getCembyUserId }
