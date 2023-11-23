@@ -22,6 +22,8 @@ function MyApp({
     Layout = LayoutApp
   } else if (pathname.startsWith('/[slug]') === true) {
     Layout = LayoutTenant
+  } else {
+    Layout = LayoutEmpty
   }
   return (
     <NextAuthSessionProvider>
