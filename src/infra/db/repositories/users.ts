@@ -31,36 +31,6 @@ type ParamsUser = {
   address: TAddress
   profile_id?: number
 }
-export async function getAllUsers() {
-  const data = await prisma.user.findMany()
-  return data
-}
-
-export async function getAllUsersByProfile() {
-  const query = `SELECT * FROM user`
-  const data = await connection.query(query, (error, results) => {
-    if (error) {
-      console.error('Erro na consulta SELECT: ', error)
-      return
-    }
-
-    // Processar os resultados aqui
-    console.log('Resultados da consulta SELECT: ', results)
-  })
-  connection.end((error) => {
-    if (error) {
-      console.error('Erro ao encerrar a conexão: ', error)
-      return
-    }
-  })
-
-  console.log('Conexão encerrada com sucesso')
-
-  // const data = await prisma.user.findMany({
-  // where: { profile_id: 3 }
-  // })
-  return data
-}
 
 export class Users {
   async create(params: ParamsUser): Promise<any> {
@@ -94,4 +64,43 @@ export class Users {
     })
     return isValid
   }
+
+  async getUserSupervisories(churchId: string): Promise<any> {
+    const query = await prisma.$queryRaw`
+    SELECT user.name, user.id from user 
+    join churchescem c2 on c2.cem_id = user.cem_id 
+    where user.profile_id = 4 and c2.churches_id = ${churchId}`
+
+    return query
+  }
+}
+export async function getAllUsers() {
+  const data = await prisma.user.findMany()
+  return data
+}
+
+export async function getAllUsersByProfile() {
+  const query = `SELECT * FROM user`
+  const data = await connection.query(query, (error, results) => {
+    if (error) {
+      console.error('Erro na consulta SELECT: ', error)
+      return
+    }
+
+    // Processar os resultados aqui
+    console.log('Resultados da consulta SELECT: ', results)
+  })
+  connection.end((error) => {
+    if (error) {
+      console.error('Erro ao encerrar a conexão: ', error)
+      return
+    }
+  })
+
+  console.log('Conexão encerrada com sucesso')
+
+  // const data = await prisma.user.findMany({
+  // where: { profile_id: 3 }
+  // })
+  return data
 }

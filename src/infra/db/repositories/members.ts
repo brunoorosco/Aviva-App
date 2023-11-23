@@ -23,17 +23,12 @@ type ParamsMembers = {
 
 export class Members {
   async getMembers(params: ParamsMembers): Promise<TMembers[]> {
-    const userDb = await prisma.user.findMany({
-      where: { UserCEM: { some: { cem_id: params.cemId } } },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        birth: true,
-        image: true,
-        address: true
-      }
-    })
+    const userDb =
+      await prisma.$queryRaw`SELECT user.id, user.name, email, birth, image, ad.* from user 
+      left join cem c on c.id = user.cem_id
+      left join address ad on ad.user_id = user.id
+      where user.cem_id  = ${params.cemId}`
+
     return userDb as TMembers[]
   }
 }

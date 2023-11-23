@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Prisma, Churches } from '@prisma/client'
+import { Churches } from '@prisma/client'
 import {
-  create,
   findChurchesById,
-  findChurches
+  findChurches,
+  createChurch
 } from '@/infra/services/churches'
 
 interface ChurchesId {
@@ -16,17 +16,10 @@ interface Error {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Churches[] | Churches | ChurchesId | Error>
+  res: NextApiResponse
 ) {
   if (req.method === 'POST') {
-    const newData: Prisma.ChurchesCreateInput = {
-      name: req.body.church,
-      number: req.body.number,
-      cep: req.body.zipcode,
-      city: req.body.city,
-      street: req.body.street
-    }
-    const saved = await create(newData)
+    const saved = await createChurch(req.body)
     return res.status(200).json(saved)
   }
 

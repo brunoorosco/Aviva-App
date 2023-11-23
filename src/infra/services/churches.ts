@@ -1,32 +1,24 @@
-import { Prisma, Churches } from '@prisma/client'
+import { Prisma, Churches as TChurch } from '@prisma/client'
 import { prisma } from '@/infra/db/prismaClient'
+import { Churches } from '../db/repositories/church'
 
-const create = async (params: any): Promise<Churches | Error> => {
-  const saved = await prisma.churches.create({
-    data: {
-      name: params.name,
-      cep: params.cep,
-      city: params.city,
-      number: params.number,
-      state: params.state,
-      street: params.street
+export const createChurch = async (data: any): Promise<TChurch | Error> => {
+  const repositoriesChurch = new Churches()
+  try {
+    const newChurch: Prisma.ChurchesCreateInput = {
+      name: data.church,
+      number: data.number,
+      cep: data.zipcode.replace('-', ''),
+      city: data.city,
+      street: data.street,
+      state: data.state
     }
-  })
-  return saved
-}
-
-const save = async (
-  id: string,
-  newData: Prisma.ChurchesUpdateInput
-): Promise<Churches> => {
-  const saved = await prisma.churches.update({
-    where: {
-      id
-    },
-    data: newData
-  })
-
-  return saved
+    const saved = await repositoriesChurch.create(newChurch)
+    return saved
+  } catch (error) {
+    console.log(error)
+    return new Error()
+  }
 }
 
 const findChurchesById = async (id: string) => {
@@ -64,4 +56,4 @@ const getChurchbyUserId = async (email: string) => {
   return churchId
 }
 
-export { create, findChurchesById, save, findChurches, getChurchbyUserId }
+export { findChurchesById, findChurches, getChurchbyUserId }

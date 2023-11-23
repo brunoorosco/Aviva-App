@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-
 import { useSession } from 'next-auth/react'
 import { Churches } from '@prisma/client'
 import { useHttpGet } from '@/hooks/api'
-import Skeleton from '@/components/Skeleton'
+// import Skeleton from '@/components/Skeleton'
 
 const IndexApp = () => {
   const router = useRouter()
@@ -43,9 +40,9 @@ const IndexApp = () => {
     }
   }, [shouldRedirect, churches, router])
 
-  if (isLoading) {
-    return <Skeleton />
-  }
+  // if (isLoading) {
+  //   return <Skeleton />
+  // }
   if (error) {
     return <p>Ocorreu um erro: {error.message}</p>
   }
