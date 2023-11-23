@@ -1,7 +1,4 @@
-import {
-  getAllUsers,
-  getAllUsersByProfile
-} from '@/infra/db/repositories/users'
+import { getAllUsersByProfile } from '@/infra/db/repositories/users'
 import { createUser } from '@/infra/services/users'
 import { NextApiRequest, NextApiResponse } from 'next'
 
