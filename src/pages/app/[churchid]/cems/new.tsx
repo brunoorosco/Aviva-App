@@ -42,7 +42,8 @@ const NewRede = () => {
       })
 
       setIsLoading(false)
-      if (response.length > 0) {
+      console.log(response)
+      if (response) {
         setAlert(true)
         setTimeout(() => setAlert(false), 3000)
       }
@@ -68,13 +69,13 @@ const NewRede = () => {
         </div>
       </div>
       <form className='px-1 mt-5 text-black max-md:w-full' onSubmit={onSubmit}>
+        {alert && (
+          <Alert title='Sucesso!' type='Success'>
+            Salvo com sucesso
+          </Alert>
+        )}
         <div className='flex'>
-          {alert && (
-            <Alert title='Sucesso!' type='Success'>
-              Salvo com sucesso
-            </Alert>
-          )}
-          <div className='w-full mb-2 md:mb-0 '>
+          <div className='w-full mt-2 mb-2 md:mb-0'>
             <TextInput
               {...register('name', { required: true })}
               name='name'
