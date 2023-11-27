@@ -27,10 +27,10 @@ const Cem = () => {
     return <p>Ocorreu um erro: {error.message}</p>
   }
   const handleDelete = async (id: string) => {
-    const response = await useHttpDelete({
-      url: `/api/protected/churches/${session?.user.churchId}/cems/${id}`
-    })
-    Toast.showSuccess('Registro Excluído com Sucesso!')
+    Toast.showDelete(
+      `/api/protected/churches/${session?.user.churchId}/cems/${id}`
+    )
+
     await mutate()
   }
 
