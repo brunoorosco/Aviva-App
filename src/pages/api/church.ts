@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getDoc } from './docGoogle'
+import { batismo } from './docGoogle'
 
 type Data = {
   id: string
@@ -9,18 +9,15 @@ type Data = {
 export default async (req: NextApiRequest, res: NextApiResponse<Data[]>) => {
   try {
     if (req.method === 'GET') {
-      let sheet
-      const churches: Data[] = await getDoc().then(async (doc) => {
-        sheet = doc.sheetsByTitle['church']
-        const rows = await sheet.getRows()
-        return await rows.map((row) => {
-          return {
-            id: row.id,
-            church: row.church
-          }
-        })
+      const sheet = await batismo()
+      const rows = await sheet.getRows()
+      const datas: any[] = await rows.map((row: any) => {
+        return {
+          id: row.get('id'),
+          church: row.get('church')
+        }
       })
-      return res.status(200).json(churches)
+      return res.status(200).json(datas)
     }
   } catch (error) {
     throw new Error(error as string)
