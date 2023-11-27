@@ -50,6 +50,11 @@ const findCem = async (churchid: string) => {
   })
   return cem
 }
+const deleteCem = async (churchId: string, cemId: string) => {
+  const cemRepository = new Cems()
+  const result = await cemRepository.delete(churchId, cemId)
+  return result
+}
 
 const getCembyUserId = async (email: string) => {
   const church = await prisma.user.findUnique({
@@ -70,4 +75,4 @@ const getCembyUserId = async (email: string) => {
   return cem
 }
 
-export { findCemById, update, findCem, getCembyUserId }
+export { findCemById, update, findCem, getCembyUserId, deleteCem }
