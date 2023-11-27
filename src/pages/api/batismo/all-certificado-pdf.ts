@@ -3,7 +3,6 @@ import { Buffer } from 'buffer'
 import { generatePdfs } from 'html-pdf-node-ts'
 import { htmlPdf } from '@/utils/html/template'
 import { getDoc } from '../docGoogle'
-import pdftk from 'node-pdftk'
 
 type Data = {
   name: string
@@ -20,9 +19,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const rows = await sheet.getRows()
       return await rows.map((row) => {
         return {
-          name: row.Nomes,
-          date: row.data,
-          cem: row.CEM
+          name: row.get('Nomes'),
+          date: row.get('data'),
+          cem: row.get('CEM')
         }
       })
     })
