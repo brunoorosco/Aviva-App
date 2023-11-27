@@ -6,7 +6,7 @@ import ButtonSubmit from '@/components/ButtonSubmit'
 import { useHttpPost } from '@/hooks/api'
 import { SelectSupervisor } from '@/components/Select/SelectSupervisores'
 import { useSession } from 'next-auth/react'
-import Alert from '@/components/Alert'
+import Toast from '@/components/Toast'
 
 type FormValues = {
   name: string
@@ -44,23 +44,23 @@ const NewRede = () => {
       setIsLoading(false)
       console.log(response)
       if (response) {
-        setAlert(true)
-        setTimeout(() => setAlert(false), 4000)
+        Toast.showSuccess('Salvo com Sucesso!')
       }
 
       if (response?.error) {
+        Toast.showError('Erro ao Salvar!')
         setError('')
         return
       }
 
-      //   router.replace('/app')
+      router.back()
     } catch (error) {
       setIsLoading(false)
       console.log('[LOGIN_ERROR]: ', error)
     }
   })
   return (
-    <div className='flex flex-col items-center p-3 mt-10 md:mt-5'>
+    <div className='flex flex-col items-center p-3 mt-5 md:mt-5'>
       <div className='content-center w-full max-w-lg text-center'>
         <div className='w-full px-3 mb-2 md:w-full md:mb-0'>
           <label className='text-2xl text-gray-600 md:text-3xl dark:text-dark-primary'>
@@ -69,11 +69,6 @@ const NewRede = () => {
         </div>
       </div>
       <form className='px-1 mt-5 text-black max-md:w-full' onSubmit={onSubmit}>
-        {alert && (
-          <Alert title='Sucesso!' type='Success'>
-            Salvo com sucesso
-          </Alert>
-        )}
         <div className='flex'>
           <div className='w-full mt-2 mb-2 md:mb-0'>
             <TextInput
