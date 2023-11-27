@@ -11,4 +11,12 @@ export class Cems {
 
     return cem
   }
+  async delete(churchId: string, cemId: string): Promise<any> {
+    const resul = await prisma.cEM.delete({
+      where: { id: cemId },
+      include: { ChurchesCEM: { where: { churches_id: churchId } } }
+    })
+
+    return resul
+  }
 }
