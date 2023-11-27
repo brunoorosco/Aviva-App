@@ -13,14 +13,14 @@ const Toast = () => {
     }
   })
 
-  function showSuccess(message) {
+  function showSuccess(message: string) {
     DefaultToast.fire({
       icon: 'success',
       title: message
     })
   }
 
-  function showError(message) {
+  function showError(message: string) {
     DefaultToast.fire({
       icon: 'error',
       title: message
