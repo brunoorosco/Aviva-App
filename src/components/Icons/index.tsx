@@ -1,6 +1,5 @@
 import loadable from '@loadable/component'
-
-import { IconBaseProps, IconType } from 'react-icons/lib'
+import { IconBaseProps } from 'react-icons/lib'
 
 interface typesPropsIcon {
   nameIcon: string
