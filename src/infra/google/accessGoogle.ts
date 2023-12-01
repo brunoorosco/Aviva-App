@@ -25,3 +25,8 @@ export const batismo = async () => {
   const ss = await accessGoogle()
   return ss.sheetsById[0]
 }
+
+export const chamadaEscolaProfeta = async () => {
+  const ss = await accessGoogle()
+  return ss.sheetsById[942109327]
+}

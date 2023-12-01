@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import { Icon } from '@/components/Icons'
 import { useHttpGet } from '@/hooks/api'
 
-export type Study = {
-  nameLink: string
+export type Links = {
+  name: string
+  description: string
   link: string
   icon: string
 }
 
-const ListaEscolaProfeta = () => {
-  const [subscribers, setSubscriber] = useState<Study[]>()
+const Links = () => {
+  const [links, setLinks] = useState<Links[]>()
   const { data } = useHttpGet('/api/links')
-  console.log(data)
+
+  useEffect(() => {
+    setLinks(data)
+    console.log(links)
+  }, [data])
+
   return (
     <>
       <div className='flex justify-center bg-gray-200'>
@@ -20,7 +25,7 @@ const ListaEscolaProfeta = () => {
       </div>
       <div className='md:mx-64 md:mt-20 mx-5 mt-5 '>
         <div className='grid md:grid-cols-4 grid-cols-1  gap-5 content-start'>
-          {list?.map((subscriber: Study, key) => (
+          {links?.map((subscriber: Links, key: number) => (
             <div key={key} className=''>
               <a
                 href={subscriber.link}
@@ -29,7 +34,7 @@ const ListaEscolaProfeta = () => {
                 <div className='self-center'>
                   <Icon nameIcon={subscriber.icon} propsIcon={{ size: 20 }} />
                 </div>
-                <div className='mt-2'>{subscriber.nameLink}</div>
+                <div className='mt-2'>{subscriber.name}</div>
               </a>
             </div>
           ))}
@@ -39,7 +44,7 @@ const ListaEscolaProfeta = () => {
   )
 }
 
-export default ListaEscolaProfeta
+export default Links
 
 const list = [
   {

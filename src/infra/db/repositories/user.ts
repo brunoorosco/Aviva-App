@@ -6,36 +6,20 @@ type TCredential = {
 export class User {
   async autenticade(credentials: TCredential): Promise<any> {
     try {
-      const userDb = await prisma.user.findFirst({
-        where: {
-          email: credentials.email
-        },
-        include: {
-          UserCEM: {
-            select: {
-              cem: {
-                select: {
-                  id: true,
-                  ChurchesCEM: {
-                    select: {
-                      churches: { select: { id: true } }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      })
-      if (userDb) {
+      const userDb: any[] = await prisma.$queryRaw`
+      SELECT * from user u 
+      left join churchescem c2 on c2.cem_id = u.cem_id 
+      where u.email = ${credentials.email} LIMIT 1`
+
+      if (userDb.length > 0) {
         const userData = {
-          id: userDb.id,
-          email: userDb.email,
-          name: userDb.name,
-          birthday: userDb.birth,
-          password: userDb.password,
-          cemId: userDb.UserCEM[0].cem.id,
-          churchId: userDb.UserCEM[0].cem.ChurchesCEM[0].churches.id
+          id: userDb[0].id,
+          email: userDb[0].email,
+          name: userDb[0].name,
+          birthday: userDb[0].birth,
+          password: userDb[0].password,
+          cemId: userDb[0].cem_id || '',
+          churchId: userDb[0].churches_id || ''
         }
         return userData
       }

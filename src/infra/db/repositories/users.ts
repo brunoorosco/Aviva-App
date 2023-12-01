@@ -73,7 +73,20 @@ export class Users {
 
     return query
   }
+
+  async updatedUserCem(cemId: string, userid: string): Promise<any> {
+    const user = await prisma.user.update({
+      where: {
+        id: userid
+      },
+      data: {
+        cem_id: cemId
+      }
+    })
+    return user
+  }
 }
+
 export async function getAllUsers() {
   const data = await prisma.user.findMany()
   return data
@@ -98,9 +111,5 @@ export async function getAllUsersByProfile() {
   })
 
   console.log('Conexão encerrada com sucesso')
-
-  // const data = await prisma.user.findMany({
-  // where: { profile_id: 3 }
-  // })
   return data
 }

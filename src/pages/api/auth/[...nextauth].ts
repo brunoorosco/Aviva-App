@@ -3,7 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { User } from '@/infra/db/repositories/user'
 import CryptAdapter from '@/infra/cryptography/bcrypt'
 
-const user = new User()
+const userRepository = new User()
 const cripto = new CryptAdapter()
 
 export const authOptions: NextAuthOptions = {
@@ -15,10 +15,9 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Passsword', type: 'password' }
       },
       async authorize(credentials): Promise<any> {
-        const userDb = await user.autenticade({
+        const userDb = await userRepository.autenticade({
           email: credentials?.email || ''
         })
-        console.log(userDb)
         if (userDb) {
           const isValidPass = cripto.compare(
             credentials?.password || '',
@@ -39,8 +38,16 @@ export const authOptions: NextAuthOptions = {
       user && (token.user = user)
       return token
     },
-    async session({ session, token, user }) {
+    async session({ session, token, trigger, newSession }) {
       session.user = token.user as any
+      if (trigger === 'update' && newSession?.name) {
+        const userDb = await userRepository.autenticade({
+          email: token.email || ''
+        })
+
+        return userDb
+        session.user = token.user as any
+      }
       return session
     },
 

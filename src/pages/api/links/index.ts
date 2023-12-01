@@ -7,7 +7,7 @@ type TResponse = {
   icon: string
   name: string
 }
-export default async (req: NextRequest, res: NextResponse<TResponse[]>) => {
+export default async (req: NextRequest) => {
   try {
     if (req.method === 'GET') {
       const sheet = await links()
@@ -20,7 +20,7 @@ export default async (req: NextRequest, res: NextResponse<TResponse[]>) => {
           link: row.get('link')
         }
       })
-      return res.status(200).json(datas)
+      return NextResponse.json(datas, { status: 200 })
     }
   } catch (error) {
     console.log(error)

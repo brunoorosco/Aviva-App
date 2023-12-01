@@ -29,7 +29,6 @@ const NewRede = () => {
   const { pathname } = router
   const { data: session } = useSession()
   const [error, setError] = useState('')
-  const [alert, setAlert] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const onSubmit = handleSubmit(async (data) => {

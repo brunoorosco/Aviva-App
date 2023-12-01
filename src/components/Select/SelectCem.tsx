@@ -1,6 +1,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { useHttpGet } from '@/hooks/api'
+import Skeleton from '../Skeleton'
 // import Skeleton from '@/components/Skeleton'
 
 type DropdownProps = {
@@ -28,7 +29,7 @@ export function SelectCem({
     data: cem,
     error: errorRequest,
     isLoading
-  } = useHttpGet<TCem[]>(`/api/protected/churches/${churchId}`)
+  } = useHttpGet<TCem[]>(`/api/protected/churches/${churchId}/cems`)
 
   useEffect(() => {
     if (cem) {
@@ -36,12 +37,8 @@ export function SelectCem({
     }
   }, [cem])
   return (
-    <div className='w-full flex flex-col my-2'>
-      <Suspense>
-        {/* {isLoading ? (
-        <Skeleton />
-      ) : (
-        <> */}
+    <Suspense fallback={<Skeleton />}>
+      <div className='flex flex-col w-full my-2'>
         <Controller
           name={name}
           control={control}
@@ -49,25 +46,26 @@ export function SelectCem({
             <select
               defaultValue={title}
               {...field}
-              className='bg-gray-200  p-4 rounded-t w-full dark:bg-zinc-700 dark:text-gray-300 open:w-11'
+              className='w-full p-4 bg-gray-200 rounded-t dark:bg-zinc-700 dark:text-gray-300 open:w-11'
             >
               <option disabled>{title}</option>
-              {cem?.map((item: any) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
+              {!isLoading &&
+                cem?.map((item: any) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
             </select>
           )}
         />
         {errors[name] && (
-          <p className='text-red-400 text-sm block mt-2'>
+          <p className='block mt-2 text-sm text-red-400'>
             {errors[name].message}
           </p>
         )}
         {/* </>
       )} */}
-      </Suspense>
-    </div>
+      </div>
+    </Suspense>
   )
 }

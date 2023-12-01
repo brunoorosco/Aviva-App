@@ -26,6 +26,12 @@ export const menuItems = (params: TMenu) => {
       label: 'Grupo de Apoio',
       icon: <FaPeopleGroup size={25} />,
       link: '/aceitou-jesus'
+    },
+    {
+      id: 5,
+      label: 'Secretária',
+      icon: <FaPeopleGroup size={25} />,
+      link: '/secretary'
     }
   ]
 }

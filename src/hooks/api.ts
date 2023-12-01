@@ -36,7 +36,7 @@ const useHttpPost = async <T>({ url, data }: IPost<T>) => {
   return res.json()
 }
 
-const executePatch = async <T>({ url, data }: IPatch<T>) => {
+const useHttpPath = async <T>({ url, data }: IPatch<T>) => {
   const res = await fetch(url, {
     method: 'PATCH',
     headers: {
@@ -59,4 +59,4 @@ const useHttpDelete = async ({ url }: IDelete) => {
   return res.json()
 }
 
-export { useHttpDelete, executePatch, useHttpGet, useHttpPost }
+export { useHttpDelete, useHttpPath, useHttpGet, useHttpPost }

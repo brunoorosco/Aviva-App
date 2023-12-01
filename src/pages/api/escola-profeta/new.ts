@@ -18,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         qrcode: crypto.randomUUID()
       })
 
-      res.status(201).json({ name: response })
+      res.status(201).json({ name: 'teste' })
     }
   } catch (error) {
     throw new Error(error as string)
