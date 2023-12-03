@@ -1,7 +1,6 @@
 import { Suspense, useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { useHttpGet } from '@/hooks/api'
-import Skeleton from '@/components/Skeleton'
 
 type DropdownProps = {
   title: string
@@ -36,7 +35,19 @@ export function SelectCem({
     }
   }, [cem])
   return (
-    <Suspense fallback={<Skeleton />}>
+    <Suspense
+      fallback={
+        <div role='status' className='max-w-sm ml-4 animate-pulse'>
+          <div className='h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4' />
+          <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5' />
+          <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5' />
+          <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[330px] mb-2.5' />
+          <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[300px] mb-2.5' />
+          <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[360px]' />
+          <span className='sr-only'>Loading...</span>
+        </div>
+      }
+    >
       <div className='flex flex-col w-full my-2'>
         <Controller
           name={name}
