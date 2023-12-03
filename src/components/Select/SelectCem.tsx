@@ -1,7 +1,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { useHttpGet } from '@/hooks/api'
-import Skeleton from '../Skeleton'
+import Loading from './loading'
 
 type DropdownProps = {
   title: string
@@ -36,7 +36,7 @@ export function SelectCem({
     }
   }, [cem])
   return (
-    <Suspense fallback={<Skeleton />}>
+    <Suspense fallback={<Loading />}>
       <div className='flex flex-col w-full my-2'>
         <Controller
           name={name}
