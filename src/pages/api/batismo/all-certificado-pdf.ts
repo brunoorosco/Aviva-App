@@ -2,8 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { Buffer } from 'buffer'
 import { generatePdfs } from 'html-pdf-node-ts'
 import { htmlPdf } from '@/utils/html/template'
-import { getDoc } from '../docGoogle'
-import pdftk from 'node-pdftk'
+import { batismo } from '../docGoogle'
 
 type Data = {
   name: string
@@ -14,17 +13,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     // const batizando = req.body
     let file = new Array()
-    let sheet
-    const users: Data[] = await getDoc().then(async (doc) => {
-      sheet = doc.sheetsByTitle['Lista-Certificado']
-      const rows = await sheet.getRows()
-      return await rows.map((row) => {
-        return {
-          name: row.Nomes,
-          date: row.data,
-          cem: row.CEM
-        }
-      })
+    const sheet = await batismo()
+    const rows = await sheet.getRows()
+    const users = await rows.map((row) => {
+      return {
+        name: row.get('Nomes'),
+        date: row.get('data'),
+        cem: row.get('CEM')
+      }
     })
 
     users.forEach(async (e: Data) => {

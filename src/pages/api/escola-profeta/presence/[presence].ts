@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getDoc } from '../../docGoogle'
+import { chamadaEscolaProfeta } from '../../docGoogle'
 
 type Data = {
   name: string
@@ -9,45 +9,41 @@ type Error = {
   error: string
 }
 
-export default async (
-  req: NextApiRequest,
-  res: NextApiResponse<Data | Error>
-) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (req.method === 'GET') {
-      let sheet
       const data = new Date()
       const dayClass = `${data.getUTCDate()}/${data.getMonth() + 1}`
-      const name = await getDoc()
-        .then(async (doc) => {
-          sheet = doc.sheetsByTitle['chamada-escola-profeta']
-          const rows = await sheet.getRows()
-          return await rows.filter((row) => row.id === req.query.presence)
-        })
-        .then((data: any[]) => {
-          if (data.length === 0) {
-            return false
-          }
-          // switch (dayClass) {
-          //   case '8/5':
-          //     data[0].aula6 = 'P'
-          //     data[0].save()
-          //     break
+      const sheet = await chamadaEscolaProfeta()
+      const rows = await sheet.getRows()
+      const users = await rows.filter(
+        (row) => row.get('id') === req.query.presence
+      )
 
-          //   case '24/4':
-          //     data[0].aula7 = 'P'
-          //     data[0].save()
-          //     break
+      // .then((data: any[]) => {
+      //   if (data.length === 0) {
+      //     return false
+      //   }
+      //   // switch (dayClass) {
+      //   //   case '8/5':
+      //   //     data[0].aula6 = 'P'
+      //   //     data[0].save()
+      //   //     break
 
-          //   default:
-          //     break
-          // }
-          data[0].aula8 = 'P'
-          data[0].save()
-          return data[0].name
-        })
+      //   //   case '24/4':
+      //   //     data[0].aula7 = 'P'
+      //   //     data[0].save()
+      //   //     break
 
-      return res.status(200).json({ name })
+      //   //   default:
+      //   //     break
+      //   // }
+      //   data[0].aula8 = 'P'
+      //   data[0].save()
+      //   return data[0].name
+      // })
+
+      return res.status(200).json({ users })
     }
   } catch (error) {
     console.error(error)

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getDoc } from '../docGoogle'
+import { escolaProfeta } from '../docGoogle'
 import crypto from 'node:crypto'
 
 type Data = {
@@ -9,8 +9,7 @@ type Data = {
 export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   try {
     if (req.method === 'POST') {
-      const doc = await getDoc()
-      const sheet = doc.sheetsByTitle['escola-profeta-insc']
+      const sheet = await escolaProfeta()
       const response = await sheet.addRow({
         name: req.body.name,
         email: req.body.email,
@@ -19,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         qrcode: crypto.randomUUID()
       })
 
-      res.status(201).json({ name: response.name })
+      res.status(201).json({ name: 'teste' })
     }
   } catch (error) {
     throw new Error(error as string)

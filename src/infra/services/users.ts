@@ -18,3 +18,9 @@ export const getUserSupervisories = async (churchId: string) => {
   const supers = await userRepository.getUserSupervisories(churchId)
   return supers
 }
+
+export const updatedUserCem = async (cemId: string, userId: string) => {
+  const userRepository = new Users()
+  const user = await userRepository.updatedUserCem(cemId, userId)
+  return user
+}

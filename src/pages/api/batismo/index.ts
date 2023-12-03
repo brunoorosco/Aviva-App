@@ -1,25 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getDoc } from '../docGoogle'
-
-type Data = {
-  name: string
-  date: string
-  cem: string
-}
+import { batismo } from '../docGoogle'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    let sheet
-    const users: Data[] = await getDoc().then(async (doc) => {
-      sheet = doc.sheetsByTitle['Lista-Certificado']
-      const rows = await sheet.getRows()
-      return await rows.map((row) => {
-        return {
-          name: row.Nomes,
-          date: row.data,
-          cem: row.CEM
-        }
-      })
+    const sheet = await batismo()
+    const rows = await sheet.getRows()
+    const users = await rows.map((row) => {
+      return {
+        name: row.get('Nomes'),
+        date: row.get('data'),
+        cem: row.get('CEM')
+      }
     })
     return res.status(200).json(users)
   } catch (error) {

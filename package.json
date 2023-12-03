@@ -15,7 +15,6 @@
   "dependencies": {
     "@loadable/component": "^5.15.3",
     "@prisma/client": "^5.2.0",
-    "@types/loadable__component": "^5.13.4",
     "@types/node": "^20.5.9",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
@@ -24,7 +23,8 @@
     "cssnano": "^5.1.14",
     "dotenv": "^16.3.1",
     "eslint-config-next": "13.1.4",
-    "google-spreadsheet": "^3.3.0",
+    "google-auth-library": "^9.2.0",
+    "google-spreadsheet": "^4.1.1",
     "html-pdf-node-ts": "^1.0.7",
     "html5-qrcode": "^2.3.4",
     "hummus": "^1.0.112",
@@ -38,14 +38,13 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
     "react-icons": "^4.11.0",
-    "react-qr-reader": "^3.0.0-beta-1",
     "sweetalert2": "^11.7.1",
     "swr": "^2.0.1",
     "typescript": "4.9.4",
     "venom-bot": "^4.3.7"
   },
   "devDependencies": {
-    "@types/google-spreadsheet": "^3.3.0",
+    "@types/loadable__component": "^5.13.7",
     "@types/node-pdftk": "^2.1.6",
     "@types/nodemailer": "^6.4.7",
     "@types/qrcode": "^1.5.0",
