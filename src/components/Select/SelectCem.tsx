@@ -1,8 +1,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { useHttpGet } from '@/hooks/api'
-import Skeleton from '../Skeleton'
-// import Skeleton from '@/components/Skeleton'
+import Skeleton from '@/components/Skeleton'
 
 type DropdownProps = {
   title: string
