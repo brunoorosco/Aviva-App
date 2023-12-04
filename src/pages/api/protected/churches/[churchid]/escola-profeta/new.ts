@@ -1,5 +1,6 @@
+import { escolaProfeta } from '@/infra/google/accessGoogle'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { escolaProfeta } from '../docGoogle'
+
 import crypto from 'node:crypto'
 
 type Data = {

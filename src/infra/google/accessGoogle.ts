@@ -30,3 +30,8 @@ export const chamadaEscolaProfeta = async () => {
   const ss = await accessGoogle()
   return ss.sheetsById[942109327]
 }
+
+export const escolaProfeta = async () => {
+  const ss = await accessGoogle()
+  return ss.sheetsById[1287373443]
+}

@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { Buffer } from 'buffer'
 import { generatePdfs } from 'html-pdf-node-ts'
 import { htmlPdf } from '@/utils/html/template'
-import { batismo } from '../docGoogle'
+import { batismo } from '../../../../docGoogle'
 
 type Data = {
   name: string
