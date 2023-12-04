@@ -1,5 +1,5 @@
+import { chamadaEscolaProfeta } from '@/infra/google/accessGoogle'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { chamadaEscolaProfeta } from '../../docGoogle'
 
 type Data = {
   name: string
