@@ -2,8 +2,8 @@ import { GoogleSpreadsheet } from 'google-spreadsheet'
 import { JWT } from 'google-auth-library'
 
 const serviceAccountAuth = new JWT({
-  email: process.env.GOOGLE_CLIENT_SA as string,
-  key: process.env.GOOGLE_PRIVATE_KEY_SA?.split(String.raw`\n`).join('\n'),
+  email: process.env.GOOGLE_CLIENT_EMAIL as string,
+  key: process.env.GOOGLE_PRIVATE_KEY?.split(String.raw`\n`).join('\n'),
   scopes: ['https://www.googleapis.com/auth/spreadsheets']
 })
 const accessGoogle = async () => {
