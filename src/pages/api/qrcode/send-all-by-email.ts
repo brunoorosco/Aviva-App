@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { qrCodeImg } from '@/utils/qr-code-generate'
 import { sendEmail } from '@/utils/send-email'
-import { escolaProfeta } from '../docGoogle'
+import { escolaProfeta } from '@/infra/google/accessGoogle'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
