@@ -1,5 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { batismo } from '../docGoogle'
+import { batismo } from '@/infra/google/accessGoogle'
+import { orderByName } from '@/utils/orderBy'
+import { paginationArray } from '@/utils/paginationArray'
+
+const PAGE = 1
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -12,7 +16,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         cem: row.get('CEM')
       }
     })
-    return res.status(200).json(users)
+    const orderUsers = orderByName(users)
+    const userPage = paginationArray(orderUsers, PAGE)
+
+    return res.status(200).json(userPage)
   } catch (error) {
     throw new Error(error as string)
   }
