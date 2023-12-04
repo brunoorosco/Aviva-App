@@ -8,7 +8,7 @@ const serviceAccountAuth = new JWT({
 })
 const accessGoogle = async () => {
   const doc = new GoogleSpreadsheet(
-    process.env.GOOGLE_ID_SA as string,
+    process.env.GOOGLE_ID as string,
     serviceAccountAuth
   )
 
