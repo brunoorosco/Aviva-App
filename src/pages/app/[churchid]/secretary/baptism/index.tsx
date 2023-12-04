@@ -67,24 +67,38 @@ const Batismo = () => {
         </div>
 
         <div className='shadow-sm'>
-          <ul className='w-full p-4 mx-auto bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
+          <ul className='w-full px-4 mx-auto bg-white shadow-lg dark:bg-dark-secondary'>
             {baptism &&
               baptism.map((bapt: Data, index: number) => (
-                <li className='py-3 h-11 sm:pb-4' key={index}>
-                  <div className='flex space-x-4 align-middle'>
-                    <div className='flex-1 min-w-0'>
-                      <p className='text-sm font-medium text-gray-900 truncate dark:text-gray-200'>
-                        {bapt.name}
-                      </p>
+                <li className='py-3 sm:pb-3' key={index}>
+                  <div className='flex justify-between space-x-4 align-middle border-b border-b-gray-200 dark:border-b-gray-700'>
+                    <div className='flex flex-col'>
+                      <div className='flex min-w-0'>
+                        <p className='text-sm font-medium text-gray-900 truncate dark:text-gray-200'>
+                          {bapt.name}
+                        </p>
+                      </div>
+                      <div className='min-w-0 '>
+                        <p className='text-sm text-gray-900 truncate dark:text-gray-200'>
+                          {bapt.cem || ''}
+                        </p>
+                      </div>
                     </div>
                     <div className='inline-flex items-center text-base font-semibold text-gray-900 dark:text-dark-primary'>
-                      {/* <FaEdit className='mx-2 cursor-pointer' size={18} /> */}
-                      <FaPrint />
-                      {/* <FaTrash
-                        className='mx-2 cursor-pointer'
-                        size={17}
-                        onClick={() => handleDelete(bapt.name)}
-                      /> */}
+                      <Link
+                        download={true}
+                        target='_blank'
+                        replace
+                        href={{
+                          pathname: `/api/protected/churches/${session?.user.churchId}/baptism/certificado-pdf`,
+                          query: {
+                            nome: bapt.name,
+                            data: bapt.date
+                          }
+                        }}
+                      >
+                        <FaPrint />
+                      </Link>
                     </div>
                   </div>
                 </li>

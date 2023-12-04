@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Buffer } from 'buffer'
-import { generatePdfs } from 'html-pdf-node-ts'
+import { generatePdf } from 'html-pdf-node-ts'
 import { htmlPdf } from '@/utils/html/template'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -12,21 +12,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       type: 'pdf',
       format: 'a5',
       landscape: true,
-      path: 'Cert-' + nomeBatizando + '.pdf',
       printBackground: true
     }
 
-    const file = [
-      {
-        content: htmlPdf(nomeBatizando, dataBatismo)
-      }
-    ]
+    const file = {
+      content: htmlPdf(nomeBatizando, dataBatismo)
+    }
 
-    const pdfFile = await generatePdfs(file, options).then((output: any) => {
+    const pdfFile = await generatePdf(file, options).then((output: any) => {
       return output
     })
 
-    const pdfBuffer = Buffer.from(pdfFile[0].buffer)
+    const pdfBuffer = Buffer.from(pdfFile.buffer)
 
     res.setHeader('Control-cache', 'no-cache')
     res.setHeader(
