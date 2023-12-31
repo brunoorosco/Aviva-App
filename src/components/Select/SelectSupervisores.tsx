@@ -38,7 +38,7 @@ export function SelectSupervisor({
     }
   }, [supervisores])
   return (
-    <div className='w-full flex flex-col my-2'>
+    <div className='flex flex-col w-full my-2'>
       {/* {isLoading ? (
         <Skeleton />
       ) : (
@@ -50,7 +50,7 @@ export function SelectSupervisor({
           <select
             defaultValue={title}
             {...field}
-            className='bg-gray-200  p-4 rounded-t w-full dark:bg-zinc-700 dark:text-gray-300 open:w-11'
+            className='w-full p-4 bg-gray-200 rounded-t dark:bg-zinc-700 dark:text-gray-300 open:w-11'
           >
             <option disabled>{title}</option>
             {supervisores?.map((item: any) => (
@@ -62,12 +62,10 @@ export function SelectSupervisor({
         )}
       />
       {errors[name] && (
-        <p className='text-red-400 text-sm block mt-2'>
+        <p className='block mt-2 text-sm text-red-400'>
           {errors[name].message}
         </p>
       )}
-      {/* </>
-      )} */}
     </div>
   )
 }
