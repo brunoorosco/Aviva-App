@@ -8,27 +8,31 @@ import { Masks } from '@/utils/masks'
 import Select from '@/components/Select'
 import useSWR from 'swr'
 import { useForm } from 'react-hook-form'
+import { useSession } from 'next-auth/react'
+import { SelectSupervisor } from '@/components/Select/SelectSupervisores'
+import ButtonSubmit from '@/components/ButtonSubmit'
 
 type FormValues = {
   name: string
   email: string
   phone: string
-  tribe: string
+  cem: string
 }
 const fetcher = (url: string) => axios.get(url).then((res) => res.data)
 
 const AceitouJesus = () => {
-  const [form, setForm] = useState({
-    tribe: ''
-  })
-
+  const { data: session } = useSession()
   const {
     register,
     control,
     handleSubmit,
     formState: { errors }
   } = useForm<FormValues>()
-  const { data, error } = useSWR('/api/tribes', fetcher)
+  const { data, error } = useSWR(
+    `/api/protected/churches/${session?.user.churchId}/cems`,
+    fetcher
+  )
+
   const [erro, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
@@ -67,26 +71,36 @@ const AceitouJesus = () => {
   })
 
   return (
-    <div className='md:w-full max-h-screen h-screen'>
-      <div className='text-center pt-3'>
-        <p className='text-xl font-semibold'>Aceitou/Reconciliou</p>
+    <div className='flex flex-col items-center p-3 mt-5 md:mt-5'>
+      <div className='content-center w-full max-w-lg text-center'>
+        <div className='w-full px-3 mb-2 md:w-full md:mb-0'>
+          <label className='text-2xl text-gray-600 md:text-3xl dark:text-dark-primary'>
+            Aceitou Jesus
+          </label>
+        </div>
       </div>
-      <div className='pt-6'>
-        <form onSubmit={onSubmit}>
+
+      <form className='px-1 mt-5 text-black max-md:w-full' onSubmit={onSubmit}>
+        <div className='w-full mt-2 mb-2 md:mb-0'>
           <TextInput
             {...register('name', { required: true })}
             name='name'
+            className='placeholder:text-gray-600'
             placeholder='Nome Completo'
-            mask={(e: string) => Masks.inputName(e)}
             control={control}
             error={errors.name ? 'Preenchimento Obrigatório' : ''}
+            mask={(e: string) => Masks.inputName(e)}
           />
+        </div>
+        <div className='w-full mt-2 mb-2 md:mb-0'>
           <TextInput
             {...register('email')}
             name='email'
             placeholder='E-mail'
             control={control}
           />
+        </div>
+        <div className='w-full mt-2 mb-2 md:mb-0'>
           <TextInput
             {...register('phone', { required: true })}
             name='phone'
@@ -95,60 +109,55 @@ const AceitouJesus = () => {
             control={control}
             error={errors.phone ? 'Preenchimento Obrigatório' : ''}
           />
-          <Select
-            options={data}
+        </div>
+        <div className='w-full mb-3 md:w-2/3 md:mb-0'>
+          <SelectSupervisor
+            errors={false}
             title={'Escolha uma Rede'}
-            value={form.tribe}
-            onChange={(event: any) =>
-              setForm((currenty) => {
-                return { ...currenty, tribe: event.target.value }
-              })
-            }
+            name='cem'
+            control={control}
           />
-          <div className='flex w-full max-w-md'>
-            <div className='flex items-center mr-4'>
-              <input
-                id='inline-radio'
-                type='radio'
-                defaultValue='true'
-                defaultChecked={true}
-                name='inline-radio-group'
-                className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-              />
-              <label
-                htmlFor='inline-radio'
-                className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'
-              >
-                Aceitou
-              </label>
-            </div>
-            <div className='flex items-center mr-4'>
-              <input
-                id='inline-2-radio'
-                type='radio'
-                defaultValue=''
-                name='inline-radio-group'
-                className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-              />
-              <label
-                htmlFor='inline-2-radio'
-                className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'
-              >
-                Reconciliou
-              </label>
-            </div>
-          </div>
-
-          <div className='flex justify-center'>
-            <button
-              className='p-4 block shadow bg-gray-500 my-2 rounded w-full max-w-md m-2 font-bold'
-              type='submit'
+        </div>
+        <div className='flex w-full max-w-md'>
+          <div className='flex items-center mr-4'>
+            <input
+              id='inline-radio'
+              type='radio'
+              defaultValue='true'
+              defaultChecked={true}
+              name='inline-radio-group'
+              className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+            />
+            <label
+              htmlFor='inline-radio'
+              className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'
             >
-              Salvar
-            </button>
+              Aceitou
+            </label>
           </div>
-        </form>
-      </div>
+          <div className='flex items-center mr-4'>
+            <input
+              id='inline-2-radio'
+              type='radio'
+              defaultValue=''
+              name='inline-radio-group'
+              className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+            />
+            <label
+              htmlFor='inline-2-radio'
+              className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'
+            >
+              Reconciliou
+            </label>
+          </div>
+        </div>
+
+        <div className='flex'>
+          <div className='w-full mt-5 mb-6 md:w-full md:mb-0'>
+            <ButtonSubmit text='Salvar' type='submit' />
+          </div>
+        </div>
+      </form>
     </div>
   )
 }
