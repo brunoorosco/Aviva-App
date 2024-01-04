@@ -32,7 +32,7 @@ const TextInput: React.FC<ITextInput> = ({
         render={({ field }) => (
           <div className='flex flex-col w-full'>
             <input
-              className='p-4 block shadow-md bg-gray-200  placeholder:text-gray-500 mb-3 rounded w-full max-w-md focus:outline-zinc-400 dark:bg-gray-600 dark:text-dark-primary'
+              className='block w-full p-4 mb-3 bg-gray-200 rounded shadow-md placeholder:text-gray-500 focus:outline-zinc-400 dark:bg-gray-600 dark:text-dark-primary'
               disabled={disabled}
               maxLength={maxLength}
               placeholder={placeholder}
@@ -42,7 +42,7 @@ const TextInput: React.FC<ITextInput> = ({
               }}
             />
             {error && (
-              <p className='text-red-400 text-sm block mt-2'>{error}</p>
+              <p className='block mt-2 text-sm text-red-400'>{error}</p>
             )}
           </div>
         )}
