@@ -80,8 +80,11 @@ const AceitouJesus = () => {
         </div>
       </div>
 
-      <form className='px-1 mt-5 text-black max-md:w-full' onSubmit={onSubmit}>
-        <div className='w-full mt-2 mb-2 md:mb-0'>
+      <form
+        className='w-1/3 px-1 mt-5 text-black max-md:w-full'
+        onSubmit={onSubmit}
+      >
+        <div className='mt-2 mb-2 md:mb-0'>
           <TextInput
             {...register('name', { required: true })}
             name='name'
@@ -110,7 +113,7 @@ const AceitouJesus = () => {
             error={errors.phone ? 'Preenchimento Obrigatório' : ''}
           />
         </div>
-        <div className='w-full mb-3 md:w-2/3 md:mb-0'>
+        <div className='w-full mb-3 md:mb-0'>
           <SelectSupervisor
             errors={false}
             title={'Escolha uma Rede'}
