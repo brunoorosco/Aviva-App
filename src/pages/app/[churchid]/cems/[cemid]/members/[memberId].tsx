@@ -142,24 +142,25 @@ const MembersById = (path: any) => {
             </div>
           </div>
         ) : (
-          <section className='flex items-center h-screen p-16 bg-gray-50 dark:bg-gray-700'>
-            <div className='container flex flex-col items-center'>
-              <div className='flex flex-col max-w-md gap-6 text-center'>
-                <h2 className='font-extrabold text-gray-600 text-9xl'>
-                  <span className='sr-only'>Error</span>404
-                </h2>
-                <p className='text-2xl md:text-3xl dark:text-gray-400'>
-                  Membro não encontrado
-                </p>
-                <a
-                  href='#'
-                  className='px-8 py-4 text-xl font-semibold bg-purple-600 rounded text-gray-50 hover:text-gray-200'
-                >
-                  Back to homepage
-                </a>
-              </div>
-            </div>
-          </section>
+          ''
+          // <section className='flex items-center h-screen p-16 bg-gray-50 dark:bg-gray-700'>
+          //   <div className='container flex flex-col items-center'>
+          //     <div className='flex flex-col max-w-md gap-6 text-center'>
+          //       <h2 className='font-extrabold text-gray-600 text-9xl'>
+          //         <span className='sr-only'>Error</span>404
+          //       </h2>
+          //       <p className='text-2xl md:text-3xl dark:text-gray-400'>
+          //         Membro não encontrado
+          //       </p>
+          //       <a
+          //         href='#'
+          //         className='px-8 py-4 text-xl font-semibold bg-purple-600 rounded text-gray-50 hover:text-gray-200'
+          //       >
+          //         Back to homepage
+          //       </a>
+          //     </div>
+          //   </div>
+          // </section>
         )}
       </Suspense>
     </div>
