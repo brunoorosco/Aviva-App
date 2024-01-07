@@ -11,6 +11,14 @@ export class Cems {
 
     return cem
   }
+
+  async getCem(churchid: string) {
+    const cem = await prisma.cEM.findMany({
+      where: { ChurchesCEM: { some: { churches_id: churchid } } }
+    })
+    return cem
+  }
+
   async delete(churchId: string, cemId: string): Promise<any> {
     const resul = await prisma.cEM.delete({
       where: { id: cemId },
