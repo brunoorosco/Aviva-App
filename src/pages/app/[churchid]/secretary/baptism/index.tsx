@@ -1,10 +1,9 @@
-import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
 import { useHttpGet } from '@/hooks/api'
 import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import React, { Suspense, useState } from 'react'
-import { FaEdit, FaPrint, FaTrash } from 'react-icons/fa'
+import { IoPrintOutline } from 'react-icons/io5'
 
 type Data = {
   name: string
@@ -26,12 +25,16 @@ const Batismo = () => {
   async function handlePrint(evt: any) {
     evt.preventDefault()
     await axios
-      .post('/api/batismo/all-certificado-pdf', bat, {
-        headers: {
-          Accept: 'application/pdf'
-        },
-        responseType: 'arraybuffer'
-      })
+      .post(
+        `/api/protected/churches/${session?.user.churchId}/baptism/all-certificado-pdf`,
+        bat,
+        {
+          headers: {
+            Accept: 'application/pdf'
+          },
+          responseType: 'arraybuffer'
+        }
+      )
       .then((response) => {
         console.log(response)
         const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -59,11 +62,9 @@ const Batismo = () => {
             </div>
             <p className='mt-2 mb-5 text-gray-400'>{baptism?.length}</p>
           </div>
-          {/* <div>
-            <Link href={'../' + session. + '/cems/new'}>
-              <ButtonNew />
-            </Link>
-          </div> */}
+          <div onClick={handlePrint}>
+            <IoPrintOutline size={25} />
+          </div>
         </div>
 
         <div className='shadow-sm'>
@@ -97,7 +98,7 @@ const Batismo = () => {
                           }
                         }}
                       >
-                        <FaPrint />
+                        <IoPrintOutline />
                       </Link>
                     </div>
                   </div>
