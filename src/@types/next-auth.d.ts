@@ -11,6 +11,7 @@ declare module 'next-auth' {
       cemId?: string
       churchId?: string
       rules?: string[]
+      profileId?: number
     } & DefaultSession['user']
   }
 }

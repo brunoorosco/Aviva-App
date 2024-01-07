@@ -45,11 +45,11 @@ const findCemById = async (churchid: string, cemid: string) => {
 }
 
 const findCem = async (churchid: string) => {
-  const cem = await prisma.cEM.findMany({
-    where: { ChurchesCEM: { some: { churches_id: churchid } } }
-  })
-  return cem
+  const cemRepository = new Cems()
+  const result = await cemRepository.getCem(churchid)
+  return result
 }
+
 const deleteCem = async (churchId: string, cemId: string) => {
   const cemRepository = new Cems()
   const result = await cemRepository.delete(churchId, cemId)

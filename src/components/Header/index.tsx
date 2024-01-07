@@ -11,9 +11,8 @@ interface SidebarProps {
 
 const Header: React.FC<SidebarProps> = ({ toggleSidebar }) => {
   const { data: session } = useSession()
-
   return (
-    <header className=' flex items-center justify-between w-full h-16'>
+    <header className='flex items-center justify-between w-full h-16 '>
       <div className='block ml-6 lg:hidden '>
         <button
           onClick={toggleSidebar}
@@ -23,14 +22,18 @@ const Header: React.FC<SidebarProps> = ({ toggleSidebar }) => {
         </button>
       </div>
       <div className='relative z-20 flex flex-col justify-end h-full px-3 md:w-full'>
-        <div className='relative flex items-center justify-end w-full p-1 pr-3 space-x-4 mb-1'>
-          <Link href={'/app/admin'}>
-            <MdAdminPanelSettings
-              size={35}
-              color={'#4b4e52'}
-              className='cursor-pointer'
-            />
-          </Link>
+        <div className='relative flex items-center justify-end w-full p-1 pr-3 mb-1 space-x-4'>
+          {session?.user?.rules?.includes('F003') && (
+            <>
+              <Link href={'/app/admin'}>
+                <MdAdminPanelSettings
+                  size={35}
+                  color={'#4b4e52'}
+                  className='cursor-pointer'
+                />
+              </Link>
+            </>
+          )}
           <a href='#' className='relative block'>
             <Profile trigger={<Avatar name={session?.user?.name || ''} />} />
           </a>

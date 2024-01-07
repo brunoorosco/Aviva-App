@@ -29,7 +29,8 @@ export class User {
           password: userDb[0].password,
           cemId: userDb[0].cem_id || '',
           churchId: userDb[0].churches_id || '',
-          rules
+          rules,
+          profileId: userDb[0].profile_id
         }
         return userData
       }

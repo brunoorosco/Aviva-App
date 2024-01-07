@@ -1,0 +1,179 @@
+import TextInput from '@/components/Input'
+import { useRouter } from 'next/router'
+import { useForm } from 'react-hook-form'
+import { useState } from 'react'
+import ButtonSubmit from '@/components/ButtonSubmit'
+import { useHttpPost } from '@/hooks/api'
+import { useSession } from 'next-auth/react'
+import Toast from '@/components/Toast'
+import { Masks } from '@/utils/masks'
+import { SelectSupervisorCem } from '@/components/Select/SelectSupervisoresCem'
+import { SelectProfile } from '@/components/Select/SelectProfile'
+
+type FormValues = {
+  name: string
+  email?: string
+  phone: string
+  zipcode: string
+  street: string
+  number: string
+  city: string
+  cemId: string
+  birth: string
+  profileId: number
+}
+
+const NewMember = () => {
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<FormValues>()
+  const router = useRouter()
+  const { pathname } = router
+  const { data: session } = useSession()
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      console.log(data)
+      setIsLoading(true)
+      setError('')
+      const response = await useHttpPost({
+        url: `/api/protected/churches/${session?.user.churchId}/cems/${session?.user.cemId}/members`,
+        data
+      })
+
+      setIsLoading(false)
+      console.log(response)
+      if (response) {
+        Toast.showSuccess('Salvo com Sucesso!')
+      }
+
+      if (response?.error) {
+        Toast.showError('Erro ao Salvar!')
+        setError('')
+        return
+      }
+
+      router.back()
+    } catch (error) {
+      setIsLoading(false)
+      console.log('[LOGIN_ERROR]: ', error)
+    }
+  })
+  return (
+    <div className='flex flex-col items-center p-3 mt-5 md:mt-5'>
+      <div className='content-center w-full max-w-lg text-center'>
+        <div className='w-full px-3 mb-2 md:w-full md:mb-0'>
+          <label className='text-2xl text-gray-600 md:text-3xl dark:text-dark-primary'>
+            Cadastro de Membros
+          </label>
+        </div>
+      </div>
+      <form className='px-1 mt-5 text-black max-md:w-full' onSubmit={onSubmit}>
+        <div className='flex'>
+          <div className='w-full mt-2 mb-2 md:mb-0'>
+            <TextInput
+              {...register('name', { required: true })}
+              name='name'
+              className='uppercase placeholder:text-gray-600'
+              placeholder='Nome Completo'
+              control={control}
+              error={errors.name ? 'Preenchimento Obrigatório' : ''}
+            />
+          </div>
+        </div>
+        <div className='flex'>
+          <div className='w-full mb-2 md:mb-0'>
+            <TextInput
+              {...register('email')}
+              name='email'
+              className='placeholder:text-gray-600'
+              placeholder='Email'
+              control={control}
+            />
+          </div>
+        </div>
+        <div className='flex w-full gap-3'>
+          <div className='w-1/2 mb-2 md:mb-0'>
+            <TextInput
+              {...register('phone', { required: true })}
+              name='phone'
+              placeholder='WhatsApp'
+              mask={(e: string) => Masks.phone(e)}
+              control={control}
+              error={errors.phone ? 'Preenchimento Obrigatório' : ''}
+            />
+          </div>
+          <div className='w-1/2 mb-2 md:mb-0'>
+            <TextInput
+              {...register('birth')}
+              name='birth'
+              type='date'
+              placeholder='Data de Nascimento'
+              control={control}
+              error={errors.phone ? 'Preenchimento Obrigatório' : ''}
+            />
+          </div>
+        </div>
+        <div className='flex w-full'>
+          <div className='w-2/3 md:w-2/3 md:mb-0'>
+            <TextInput
+              name='street'
+              placeholder='Logradouro'
+              control={control}
+            />
+          </div>
+          <div className='w-1/3 ml-3 md:w-1/3'>
+            <TextInput name='number' placeholder='Nº' control={control} />
+          </div>
+        </div>
+        <div className='md:flex'>
+          <div className='w-full md:w-2/3 md:mb-0'>
+            <TextInput name='city' placeholder='Cidade' control={control} />
+          </div>
+
+          <div className='w-full md:w-1/3 md:mb-0 md:ml-3'>
+            <TextInput
+              placeholder='CEP'
+              name='zipcode'
+              maxLength={9}
+              control={control}
+              mask={(e: string) => Masks.cep(e)}
+            />
+          </div>
+        </div>
+        <div className='flex'>
+          <div className='w-full md:mb-0'>
+            <SelectSupervisorCem
+              errors={false}
+              title={'Supervisores'}
+              name='cemId'
+              control={control}
+            />
+          </div>
+        </div>
+        <div className='flex'>
+          <div className='w-full md:mb-0'>
+            <SelectProfile
+              errors={false}
+              title={'Cargo Eclesiástico'}
+              name='profileId'
+              control={control}
+            />
+          </div>
+        </div>
+        <div className='flex'>
+          <div className='w-full mt-2 mb-6 md:w-full md:mb-0'>
+            <ButtonSubmit text='Salvar' type='submit' />
+          </div>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+export default NewMember
