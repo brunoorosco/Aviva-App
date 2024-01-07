@@ -113,7 +113,12 @@ const NewRede = () => {
           </div>
 
           <div className='w-full mb-3 md:w-1/3 md:mb-0 md:ml-3'>
-            <TextInput placeholder='CEP' name='zipcode' control={control} />
+            <TextInput
+              placeholder='CEP'
+              name='zipcode'
+              control={control}
+              mask={(e: string) => Masks.cep(e)}
+            />
           </div>
         </div>
         <div className='md:flex'>
