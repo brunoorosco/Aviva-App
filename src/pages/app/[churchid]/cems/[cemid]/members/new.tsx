@@ -82,7 +82,7 @@ const NewMember = () => {
               className='uppercase'
               placeholder='Nome Completo'
               control={control}
-              mask={(e: string) => Masks.clearName(e)}
+              mask={(e: string) => Masks.inputName(e)}
               error={errors.name ? 'Preenchimento Obrigatório' : ''}
             />
           </div>
@@ -128,7 +128,7 @@ const NewMember = () => {
               name='street'
               placeholder='Logradouro'
               className='uppercase'
-              mask={(e: string) => Masks.clearName(e)}
+              mask={(e: string) => Masks.inputName(e)}
               control={control}
             />
           </div>
@@ -148,7 +148,7 @@ const NewMember = () => {
               placeholder='Cidade'
               control={control}
               className='uppercase'
-              mask={(e: string) => Masks.clearName(e)}
+              mask={(e: string) => Masks.inputName(e)}
             />
           </div>
 

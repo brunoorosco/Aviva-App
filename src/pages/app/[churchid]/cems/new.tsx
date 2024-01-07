@@ -77,7 +77,7 @@ const NewRede = () => {
               placeholder='Nome da Rede'
               control={control}
               className='uppercase'
-              mask={(e: string) => Masks.clearName(e)}
+              mask={(e: string) => Masks.inputName(e)}
               error={errors.name ? 'Preenchimento Obrigatório' : ''}
             />
           </div>
@@ -88,7 +88,7 @@ const NewRede = () => {
               name='street'
               placeholder='Logradouro'
               className='uppercase'
-              mask={(e: string) => Masks.clearName(e)}
+              mask={(e: string) => Masks.inputName(e)}
               control={control}
             />
           </div>
@@ -108,7 +108,7 @@ const NewRede = () => {
               placeholder='Cidade'
               control={control}
               className='uppercase'
-              mask={(e: string) => Masks.clearName(e)}
+              mask={(e: string) => Masks.inputName(e)}
             />
           </div>
 
