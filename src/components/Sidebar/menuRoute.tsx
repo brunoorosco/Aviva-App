@@ -16,6 +16,12 @@ export const menuItems = (params: TMenu) => {
       link: '/cems'
     },
     {
+      id: 2,
+      label: 'Rede',
+      icon: <GiMeepleGroup size={25} />,
+      link: '/redes'
+    },
+    {
       id: 3,
       label: 'Membros',
       icon: <FaPeopleRoof size={25} />,

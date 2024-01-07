@@ -21,6 +21,7 @@ const TextInput: React.FC<ITextInput> = ({
   control,
   error,
   placeholder,
+  type,
   mask
 }) => {
   return (
@@ -35,6 +36,7 @@ const TextInput: React.FC<ITextInput> = ({
               className='block w-full p-4 mb-3 bg-gray-200 rounded shadow-md placeholder:text-gray-500 focus:outline-zinc-400 dark:bg-gray-600 dark:text-dark-primary'
               disabled={disabled}
               maxLength={maxLength}
+              type={type}
               placeholder={placeholder}
               value={mask ? mask(field.value) : field.value}
               onChange={(e) => {
