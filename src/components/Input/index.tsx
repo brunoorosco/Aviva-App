@@ -34,7 +34,7 @@ const TextInput: React.FC<ITextInput> = ({
         render={({ field }) => (
           <div className='flex flex-col w-full'>
             <input
-              className={`block w-full p-4 mb-3 bg-gray-200 rounded shadow-md placeholder:text-gray-500 focus:outline-zinc-400 dark:bg-gray-600 dark:text-dark-primary${className}`}
+              className={`block w-full p-4 mb-3 bg-gray-200 rounded shadow-md placeholder:text-gray-500 focus:outline-zinc-400 dark:bg-gray-600 dark:text-dark-primary ${className}`}
               disabled={disabled}
               maxLength={maxLength}
               type={type}
