@@ -82,10 +82,10 @@ const Members = () => {
                       <Avatar name={member.name} />
                     </div>
                     <div className='flex-1 min-w-0'>
-                      <p className='text-sm font-medium text-gray-900 truncate dark:text-gray-200'>
+                      <p className='text-sm font-medium text-gray-900 uppercase truncate dark:text-gray-200'>
                         {member.name}
                       </p>
-                      <p className='text-sm text-gray-500 truncate dark:text-gray-400'>
+                      <p className='text-sm text-gray-500 uppercase truncate dark:text-gray-400'>
                         {member.email}
                       </p>
 
@@ -114,15 +114,12 @@ const Members = () => {
 }
 
 const Address = ({ member }: any) => {
-  // const address = member.address as TAddress[]
-  const fullAddress =
-    // address.length > 0
-    // ?
-    `${member?.street || ''}, ${member?.number || ''} - ${member?.city || ''}`
-  // : ''
+  const fullAddress = member.street
+    ? `${member?.street || ''}, ${member?.number || ''} - ${member?.city || ''}`
+    : ''
 
   return (
-    <p className='text-sm text-gray-500 truncate dark:text-gray-400'>
+    <p className='text-sm text-gray-500 uppercase truncate dark:text-gray-400'>
       {fullAddress}
     </p>
   )
