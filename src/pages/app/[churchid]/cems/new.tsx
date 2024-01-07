@@ -122,7 +122,7 @@ const NewRede = () => {
           </div>
         </div>
         <div className='md:flex'>
-          <div className='w-full mb-3 md:w-2/3 md:mb-0'>
+          <div className='w-full mb-3 '>
             <SelectSupervisor
               errors={false}
               title={'Supervisores'}
