@@ -7,6 +7,7 @@ import { useHttpPost } from '@/hooks/api'
 import { SelectSupervisor } from '@/components/Select/SelectSupervisores'
 import { useSession } from 'next-auth/react'
 import Toast from '@/components/Toast'
+import { Masks } from '@/utils/masks'
 
 type FormValues = {
   name: string
@@ -73,9 +74,10 @@ const NewRede = () => {
             <TextInput
               {...register('name', { required: true })}
               name='name'
-              className='placeholder:text-gray-600'
               placeholder='Nome da Rede'
               control={control}
+              className='uppercase'
+              mask={(e: string) => Masks.clearName(e)}
               error={errors.name ? 'Preenchimento Obrigatório' : ''}
             />
           </div>
@@ -85,16 +87,29 @@ const NewRede = () => {
             <TextInput
               name='street'
               placeholder='Logradouro'
+              className='uppercase'
+              mask={(e: string) => Masks.clearName(e)}
               control={control}
             />
           </div>
           <div className='w-1/3 ml-3 md:w-1/3'>
-            <TextInput name='number' placeholder='Nº' control={control} />
+            <TextInput
+              name='number'
+              placeholder='Nº'
+              control={control}
+              className='uppercase'
+            />
           </div>
         </div>
         <div className='md:flex'>
           <div className='w-full mb-3 md:w-2/3 md:mb-0'>
-            <TextInput name='city' placeholder='Cidade' control={control} />
+            <TextInput
+              name='city'
+              placeholder='Cidade'
+              control={control}
+              className='uppercase'
+              mask={(e: string) => Masks.clearName(e)}
+            />
           </div>
 
           <div className='w-full mb-3 md:w-1/3 md:mb-0 md:ml-3'>

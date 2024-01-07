@@ -79,9 +79,10 @@ const NewMember = () => {
             <TextInput
               {...register('name', { required: true })}
               name='name'
-              className='uppercase placeholder:text-gray-600'
+              className='uppercase'
               placeholder='Nome Completo'
               control={control}
+              mask={(e: string) => Masks.clearName(e)}
               error={errors.name ? 'Preenchimento Obrigatório' : ''}
             />
           </div>
@@ -91,7 +92,7 @@ const NewMember = () => {
             <TextInput
               {...register('email')}
               name='email'
-              className='placeholder:text-gray-600'
+              className='uppercase'
               placeholder='Email'
               control={control}
             />
@@ -104,6 +105,7 @@ const NewMember = () => {
               name='phone'
               placeholder='WhatsApp'
               mask={(e: string) => Masks.phone(e)}
+              className='uppercase'
               control={control}
               error={errors.phone ? 'Preenchimento Obrigatório' : ''}
             />
@@ -114,6 +116,7 @@ const NewMember = () => {
               name='birth'
               type='date'
               placeholder='Data de Nascimento'
+              className='uppercase'
               control={control}
               error={errors.phone ? 'Preenchimento Obrigatório' : ''}
             />
@@ -124,16 +127,29 @@ const NewMember = () => {
             <TextInput
               name='street'
               placeholder='Logradouro'
+              className='uppercase'
+              mask={(e: string) => Masks.clearName(e)}
               control={control}
             />
           </div>
           <div className='w-1/3 ml-3 md:w-1/3'>
-            <TextInput name='number' placeholder='Nº' control={control} />
+            <TextInput
+              name='number'
+              placeholder='Nº'
+              control={control}
+              className='uppercase'
+            />
           </div>
         </div>
         <div className='md:flex'>
           <div className='w-full md:w-2/3 md:mb-0'>
-            <TextInput name='city' placeholder='Cidade' control={control} />
+            <TextInput
+              name='city'
+              placeholder='Cidade'
+              control={control}
+              className='uppercase'
+              mask={(e: string) => Masks.clearName(e)}
+            />
           </div>
 
           <div className='w-full md:w-1/3 md:mb-0 md:ml-3'>
