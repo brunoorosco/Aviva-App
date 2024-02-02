@@ -1,33 +1,38 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import Toast from '@/components/Toast'
-import Image from 'next/image'
-import logo from '@/../public/logo-preto.png'
 import TextInput from '@/components/Input'
 import { Masks } from '@/utils/masks'
-import Select from '@/components/Select'
 import useSWR from 'swr'
 import { useForm } from 'react-hook-form'
 import { useSession } from 'next-auth/react'
 import { SelectSupervisor } from '@/components/Select/SelectSupervisores'
 import ButtonSubmit from '@/components/ButtonSubmit'
+import RadioInput from '@/components/RadioInput'
+import { optionAccepted, optionBapstism } from '@/components/RadioInput/options'
 
 type FormValues = {
   name: string
   email: string
   phone: string
   cem: string
+  accepted: string
+  bapstism: boolean
+  acceptedAt: string
 }
 const fetcher = (url: string) => axios.get(url).then((res) => res.data)
 
 const AceitouJesus = () => {
   const { data: session } = useSession()
+  const dataRetro = new Date()
+  dataRetro.setDate(dataRetro.getDate())
+  const dataRetroISO = dataRetro.toISOString().split('T')[0]
+
   const {
     register,
     control,
     handleSubmit,
     formState: { errors }
-  } = useForm<FormValues>()
+  } = useForm<FormValues>({ defaultValues: { acceptedAt: dataRetroISO } })
   const { data, error } = useSWR(
     `/api/protected/churches/${session?.user.churchId}/cems`,
     fetcher
@@ -52,9 +57,9 @@ const AceitouJesus = () => {
   // }
   const onSubmit = handleSubmit(async (data) => {
     try {
+      console.log('[LOGIN_ERROR]: ', data)
       setIsLoading(true)
       setError('')
-      console.log('[LOGIN_ERROR]: ', data)
 
       setIsLoading(false)
 
@@ -83,7 +88,18 @@ const AceitouJesus = () => {
       <form
         className='w-1/3 px-1 mt-5 text-black max-md:w-full'
         onSubmit={onSubmit}
+        method='post'
       >
+        <div className='mt-2 mb-2 md:mb-0'>
+          <TextInput
+            {...register('acceptedAt')}
+            name='acceptedAt'
+            type='date'
+            defaultValue={dataRetroISO}
+            className='text-lg text-center placeholder:text-gray-600'
+            control={control}
+          />
+        </div>
         <div className='mt-2 mb-2 md:mb-0'>
           <TextInput
             {...register('name', { required: true })}
@@ -91,7 +107,7 @@ const AceitouJesus = () => {
             className='placeholder:text-gray-600'
             placeholder='Nome Completo'
             control={control}
-            error={errors.name ? 'Preenchimento Obrigatório' : ''}
+            error={errors.name ? 'Preenchimento Obrigatório do Nome' : ''}
             mask={(e: string) => Masks.inputName(e)}
           />
         </div>
@@ -105,15 +121,14 @@ const AceitouJesus = () => {
         </div>
         <div className='w-full mt-2 mb-2 md:mb-0'>
           <TextInput
-            {...register('phone', { required: true })}
+            {...register('phone')}
             name='phone'
             placeholder='WhatsApp'
             mask={(e: string) => Masks.phone(e)}
             control={control}
-            error={errors.phone ? 'Preenchimento Obrigatório' : ''}
           />
         </div>
-        <div className='w-full mb-3 md:mb-0'>
+        <div className='w-full mb-5 md:mb-0'>
           <SelectSupervisor
             errors={false}
             title={'Escolha uma Rede'}
@@ -122,36 +137,20 @@ const AceitouJesus = () => {
           />
         </div>
         <div className='flex w-full max-w-md'>
-          <div className='flex items-center mr-4'>
-            <input
-              id='inline-radio'
-              type='radio'
-              defaultValue='true'
-              defaultChecked={true}
-              name='inline-radio-group'
-              className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+          <RadioInput
+            name='accepted'
+            control={control}
+            options={optionAccepted}
+          />
+        </div>
+        <div className='flex flex-col w-full max-w-md'>
+          <p className='mt-3 text-lg font-medium'>Batizado?</p>
+          <div className='mt-1'>
+            <RadioInput
+              name='baptism'
+              control={control}
+              options={optionBapstism}
             />
-            <label
-              htmlFor='inline-radio'
-              className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'
-            >
-              Aceitou
-            </label>
-          </div>
-          <div className='flex items-center mr-4'>
-            <input
-              id='inline-2-radio'
-              type='radio'
-              defaultValue=''
-              name='inline-radio-group'
-              className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-            />
-            <label
-              htmlFor='inline-2-radio'
-              className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'
-            >
-              Reconciliou
-            </label>
           </div>
         </div>
 
