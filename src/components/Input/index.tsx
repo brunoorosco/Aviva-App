@@ -29,12 +29,12 @@ const TextInput: React.FC<ITextInput> = ({
     <div className='flex justify-center'>
       <Controller
         name={name}
-        control={control}
+        control={control || ''}
         defaultValue={defaultValue}
         render={({ field }) => (
           <div className='flex flex-col w-full'>
             <input
-              className={`block w-full p-4 mb-3 bg-gray-200 rounded shadow-md placeholder:text-gray-500 focus:outline-zinc-400 dark:bg-gray-600 dark:text-dark-primary ${className}`}
+              className={`appearance-none block w-full p-4 mb-2 bg-gray-200 rounded shadow-md placeholder:text-gray-500 focus:outline-zinc-400 dark:bg-gray-600 dark:text-dark-primary ${className}`}
               disabled={disabled}
               maxLength={maxLength}
               type={type}
@@ -44,9 +44,7 @@ const TextInput: React.FC<ITextInput> = ({
                 field.onChange(e.target.value)
               }}
             />
-            {error && (
-              <p className='block mt-2 text-sm text-red-400'>{error}</p>
-            )}
+            {error && <p className='block text-sm text-red-400'>{error}</p>}
           </div>
         )}
       />
