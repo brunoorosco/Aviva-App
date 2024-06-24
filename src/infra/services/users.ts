@@ -18,7 +18,7 @@ export const createUser = async (params: TUser) => {
   const userRepository = new Users()
   const randowPass = await cripto.randonPassword()
   //TO-DO fazer chma pra enviar o email com a Senha
-  console.log(randowPass)
+  console.log('random pass--->', randowPass)
   const setPassword = cripto.hashPassword(randowPass)
   const zipcode = params.zipcode?.replace('-', '')
   const user = await userRepository.create({

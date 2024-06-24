@@ -1,22 +1,24 @@
 import { Prisma, CEM } from '@prisma/client'
 import { prisma } from '@/infra/db/prismaClient'
 import { Cems } from '../db/repositories/cem'
+import { CellsMongoRepository } from '../db/repositories/mongo/cells'
+import { ObjectId } from 'mongodb'
 
 export const createCem = async (
   data: any,
   churchesId: string
 ): Promise<CEM> => {
-  const cemRepository = new Cems()
-  const newCem: Prisma.CEMCreateInput = {
-    name: data.name,
+  const cemRepository = new CellsMongoRepository()
+  const newCell = {
+    name: data.name.toUpperCase(),
     number: data.number,
     cep: data.zipcode.replace('-', ''),
     city: data.city,
     street: data.street,
     state: data.state,
-    ChurchesCEM: { create: { churches_id: churchesId } }
+    _id: new ObjectId()
   }
-  const saved = await cemRepository.create(newCem)
+  const saved = await cemRepository.create(churchesId, newCell)
   return saved
 }
 
@@ -45,9 +47,10 @@ const findCemById = async (churchid: string, cemid: string) => {
 }
 
 const findCem = async (churchid: string) => {
-  const cemRepository = new Cems()
-  const result = await cemRepository.getCem(churchid)
-  return result
+  const cemRepository = new CellsMongoRepository()
+  const result = await cemRepository.getCells(churchid)
+
+  return result?.cells
 }
 
 const deleteCem = async (churchId: string, cemId: string) => {

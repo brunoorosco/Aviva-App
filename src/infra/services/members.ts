@@ -1,8 +1,9 @@
 import { Members } from '../db/repositories/members'
+import { UsersMongoRepository } from '../db/repositories/mongo/users'
 
 export const getMembers = async (churchId: string, cemId: string) => {
-  const userRepository = new Members()
-  const user = await userRepository.getMembers({ cemId: cemId })
+  const userRepository = new UsersMongoRepository()
+  const user = await userRepository.getUsersByCellId(cemId)
   return user
 }
 
