@@ -1,4 +1,5 @@
 import CryptAdapter from '../cryptography/bcrypt'
+import { UsersMongoRepository } from '../db/repositories/mongo/users'
 import { Users } from '../db/repositories/users'
 
 type TUser = {
@@ -47,4 +48,11 @@ export const updatedUserCem = async (cemId: string, userId: string) => {
   const userRepository = new Users()
   const user = await userRepository.updatedUserCem(cemId, userId)
   return user
+}
+
+export const getUsersByCem = async (cemId: string) => {
+  const userRepository = new UsersMongoRepository()
+  const members = await userRepository.getUsersByCellId(cemId)
+
+  return members
 }

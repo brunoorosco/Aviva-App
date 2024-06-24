@@ -7,6 +7,7 @@ import LayoutPublic from '@/components/Layout/LayoutPublic'
 import LayoutApp from '@/components/Layout/LayoutApp'
 import LayoutTenant from '@/components/Layout/LayoutTenant'
 import LayoutEmpty from '@/components/Layout/LayoutEmpty'
+import { SessionProvider, useSession } from 'next-auth/react'
 
 function MyApp({
   Component,
@@ -26,12 +27,24 @@ function MyApp({
     Layout = LayoutEmpty
   }
   return (
-    <NextAuthSessionProvider>
+    <SessionProvider>
       <Layout>
-        <Component {...pageProps} />
+        <Auth>
+          <Component {...pageProps} />
+        </Auth>
       </Layout>
-    </NextAuthSessionProvider>
+    </SessionProvider>
   )
 }
 
+function Auth({ children }: any) {
+  // if `{ required: true }` is supplied, `status` can only be "loading" or "authenticated"
+  const { status } = useSession({ required: true })
+
+  if (status === 'loading') {
+    return <div>Loading...</div>
+  }
+
+  return children
+}
 export default MyApp

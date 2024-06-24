@@ -28,13 +28,13 @@ export class UsersMongoRepository {
       throw error
     }
   }
-  async getUsersByCellId(cellId: string): Promise<any> {
+  async getUsersByCellId(cemId: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      const result = collection.find({ cellId })
-      return result // Retorna o usuário inserido
+      const result = collection.find({}).toArray()
+      return result
     } catch (error) {
-      console.error('Error find user:', error)
+      console.error('Error get users:', error)
       throw error
     }
   }
