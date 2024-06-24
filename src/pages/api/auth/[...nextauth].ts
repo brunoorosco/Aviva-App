@@ -6,7 +6,7 @@ import { UsersMongoRepository } from '@/infra/db/repositories/mongo/users'
 import { MongoHelper } from '@/infra/db/mongoHelper'
 
 const userRepository = new User()
-const userMongoRepository = new UsersMongoRepository('users')
+const userMongoRepository = new UsersMongoRepository()
 const cripto = new CryptAdapter()
 
 export const authOptions: NextAuthOptions = {
@@ -18,10 +18,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Passsword', type: 'password' }
       },
       async authorize(credentials): Promise<any> {
-        await MongoHelper.connect(process.env.MONGO_CONNECTION as string)
-        // const userDb = await userRepository.autenticade({
-        //   email: credentials?.email || ''
-        // })
         const userDb = await userMongoRepository.getByEmail(credentials?.email)
         if (userDb) {
           const isValidPass = cripto.compare(
