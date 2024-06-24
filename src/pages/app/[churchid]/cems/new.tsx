@@ -27,7 +27,6 @@ const NewRede = () => {
     formState: { errors }
   } = useForm<FormValues>()
   const router = useRouter()
-  const { pathname } = router
   const { data: session } = useSession()
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -42,7 +41,6 @@ const NewRede = () => {
       })
 
       setIsLoading(false)
-      console.log(response)
       if (response) {
         Toast.showSuccess('Salvo com Sucesso!')
       }

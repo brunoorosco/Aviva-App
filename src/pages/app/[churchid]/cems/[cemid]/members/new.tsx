@@ -38,7 +38,6 @@ const NewMember = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log(data)
       setIsLoading(true)
       setError('')
       const response = await useHttpPost({
@@ -47,7 +46,6 @@ const NewMember = () => {
       })
 
       setIsLoading(false)
-      console.log(response)
       if (response) {
         Toast.showSuccess('Salvo com Sucesso!')
       }
