@@ -1,21 +1,14 @@
 import Avatar from '@/components/Avatar'
 import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
+import { AddressModel } from '@/domain/models/address'
 // import Skeleton from '@/components/Skeleton'
 import { useHttpDelete, useHttpGet } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { FaEdit, FaTrash } from 'react-icons/fa'
 import { FaPeopleRoof } from 'react-icons/fa6'
-
-type TAddress = {
-  street: string
-  number: string
-  city: string
-  cep: string
-  state: string
-}
 
 export type TMembers = {
   userId: string
@@ -23,32 +16,28 @@ export type TMembers = {
   email: string
   birth?: Date
   image?: string
-  address?: TAddress[]
+  address?: AddressModel[]
 }
 
 const Members = () => {
   const router = useRouter()
   const { pathname, asPath } = router
+  const { churchid, cemid } = router.query
   const { data: session } = useSession()
-  const churchId = session?.user.churchId as string
-  const cemId = session?.user.cemId as string
-  const baseUrl = `/api/protected/churches/${churchId}/cems`
 
-  const {
-    data: members,
-    error,
-    isLoading
-  } = useHttpGet<TMembers[]>(`${baseUrl}/${cemId}/members`)
+  // const churchId = session?.user.churchId as string
+  // const cemId = session?.user.cemId as string
 
-  if (error) {
-    return <p>Ocorreu um erro: {error.message}</p>
-  }
+  const { data: members, error } = useHttpGet<TMembers[]>(
+    `/api/protected/churches/${churchid}/cems/${cemid}/members`
+  )
+
   const handleDelete = async (id: string) => {
     const response = await useHttpDelete({
-      url: `/api/protected/churches/${churchId}/cems/${id}/members`
+      url: `/api/protected/churches/${churchid}/cems/${id}/members`
     })
   }
-  console.log(members)
+
   return (
     <div className='flex flex-col content-center w-full max-w-lg p-3 mx-auto rounded-lg dark:text-dark-primary'>
       {/* {isLoading ? (
@@ -75,7 +64,7 @@ const Members = () => {
         <ul className='w-full p-4 mx-auto bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
           <Suspense fallback={'Loading....'}>
             {members &&
-              members.map((member: TMembers, index: number) => (
+              members?.map((member: TMembers, index: number) => (
                 <li className='pb-3 sm:pb-4' key={index}>
                   <div className='flex items-center space-x-4'>
                     <div className='flex items-center justify-center w-12 h-12 mt-2 text-2xl text-white rounded-full bg-app-bg'>

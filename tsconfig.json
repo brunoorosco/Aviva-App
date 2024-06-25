@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2019",
     "lib": [
       "dom",
       "dom.iterable",
@@ -47,8 +47,9 @@
     "src",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-, "prisma"  ],
+    ".next/types/**/*.ts",
+    "prisma"
+  ],
   "exclude": [
     "node_modules"
   ]

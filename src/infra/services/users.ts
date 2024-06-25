@@ -1,4 +1,5 @@
 import CryptAdapter from '../cryptography/bcrypt'
+import { UsersMongoRepository } from '../db/repositories/mongo/users'
 import { Users } from '../db/repositories/users'
 
 type TUser = {
@@ -18,7 +19,7 @@ export const createUser = async (params: TUser) => {
   const userRepository = new Users()
   const randowPass = await cripto.randonPassword()
   //TO-DO fazer chma pra enviar o email com a Senha
-  console.log(randowPass)
+  console.log('random pass--->', randowPass)
   const setPassword = cripto.hashPassword(randowPass)
   const zipcode = params.zipcode?.replace('-', '')
   const user = await userRepository.create({
@@ -47,4 +48,11 @@ export const updatedUserCem = async (cemId: string, userId: string) => {
   const userRepository = new Users()
   const user = await userRepository.updatedUserCem(cemId, userId)
   return user
+}
+
+export const getUsersByCem = async (cemId: string) => {
+  const userRepository = new UsersMongoRepository()
+  const members = await userRepository.getUsersByCellId(cemId)
+
+  return members
 }

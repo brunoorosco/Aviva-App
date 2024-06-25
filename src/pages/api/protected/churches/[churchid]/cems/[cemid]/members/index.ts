@@ -12,9 +12,8 @@ export default async function handler(
   res: NextApiResponse<TMembers[] | Error>
 ) {
   if (req.method === 'GET') {
-    const { churchid, cemid } = req.query
-
-    const members = await getMembers(churchid as string, cemid as string)
+    const cemid = req.query.cemid as string
+    const members = await getMembers(cemid as string)
 
     return res.status(200).json(members)
   } else if (req.method === 'POST') {

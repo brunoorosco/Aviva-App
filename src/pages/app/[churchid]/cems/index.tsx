@@ -14,18 +14,13 @@ const Cem = () => {
   const router = useRouter()
   const churchId = router.query?.churchid
   const { data: session } = useSession()
-  const {
-    data: cems,
-    error,
-    isLoading,
-    mutate
-  } = useHttpGet<CEM[]>(
+  const { data: cems, mutate } = useHttpGet<CEM[]>(
     `/api/protected/churches/${session?.user.churchId}/cems`
   )
 
-  if (error) {
-    return <p>Ocorreu um erro: {error.message}</p>
-  }
+  // if (error) {
+  //   return <p>Ocorreu um erro: {error.message}</p>
+  // }
   const handleDelete = async (id: string) => {
     Toast.showDelete(
       `/api/protected/churches/${session?.user.churchId}/cems/${id}`

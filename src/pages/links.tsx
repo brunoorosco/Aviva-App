@@ -15,7 +15,6 @@ const ListaEscolaProfeta = () => {
     axios
       .get('/api/links')
       .then((res) => {
-        console.log(res.data)
         setSubscriber(res.data)
       })
       .catch((err) => console.log(err))
@@ -24,15 +23,15 @@ const ListaEscolaProfeta = () => {
   return (
     <>
       <div className='flex justify-center bg-gray-200'>
-        <p className='my-2 font-roboto text-2xl'>Links de Acesso</p>
+        <p className='my-2 text-2xl font-roboto'>Links de Acesso</p>
       </div>
-      <div className='md:mx-64 md:mt-20 mx-5 mt-5 '>
-        <div className='grid md:grid-cols-4 grid-cols-1  gap-5 content-start'>
+      <div className='mx-5 mt-5 md:mx-64 md:mt-20 '>
+        <div className='grid content-start grid-cols-1 gap-5 md:grid-cols-4'>
           {list?.map((subscriber: Study, key) => (
             <div key={key} className=''>
               <a
                 href={subscriber.link}
-                className='border rounded-md text-center justify-center flex-col flex cursor-pointer md:h-28 h-20 shadow-md'
+                className='flex flex-col justify-center h-20 text-center border rounded-md shadow-md cursor-pointer md:h-28'
               >
                 <div className='self-center'>
                   <Icon nameIcon={subscriber.icon} propsIcon={{ size: 20 }} />
