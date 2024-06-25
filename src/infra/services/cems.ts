@@ -50,7 +50,7 @@ const findCem = async (churchid: string) => {
   const cemRepository = new CellsMongoRepository()
   const result = await cemRepository.getCells(churchid)
 
-  return result?.cells
+  return result
 }
 
 const deleteCem = async (churchId: string, cemId: string) => {

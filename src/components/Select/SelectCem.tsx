@@ -11,7 +11,7 @@ type DropdownProps = {
   churchId: string
 }
 type TCem = {
-  id: string
+  _id: string
   name: string
 }
 
@@ -50,7 +50,7 @@ export function SelectCem({
               <option disabled>{title}</option>
               {!isLoading &&
                 cem?.map((item: any) => (
-                  <option key={item.id} value={item.id}>
+                  <option key={item._id} value={item._id}>
                     {item.name}
                   </option>
                 ))}

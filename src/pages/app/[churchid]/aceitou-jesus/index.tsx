@@ -9,6 +9,7 @@ import { SelectSupervisor } from '@/components/Select/SelectSupervisores'
 import ButtonSubmit from '@/components/ButtonSubmit'
 import RadioInput from '@/components/RadioInput'
 import { optionAccepted, optionBapstism } from '@/components/RadioInput/options'
+import { SelectCem } from '@/components/Select/SelectCem'
 
 type FormValues = {
   name: string
@@ -26,7 +27,7 @@ const AceitouJesus = () => {
   const dataRetro = new Date()
   dataRetro.setDate(dataRetro.getDate())
   const dataRetroISO = dataRetro.toISOString().split('T')[0]
-
+  const churchId = session?.user.churchId as string
   const {
     register,
     control,
@@ -34,7 +35,7 @@ const AceitouJesus = () => {
     formState: { errors }
   } = useForm<FormValues>({ defaultValues: { acceptedAt: dataRetroISO } })
   const { data, error } = useSWR(
-    `/api/protected/churches/${session?.user.churchId}/cems`,
+    `/api/protected/churches/${churchId}/cems`,
     fetcher
   )
 
@@ -129,7 +130,8 @@ const AceitouJesus = () => {
           />
         </div>
         <div className='w-full mb-5 md:mb-0'>
-          <SelectSupervisor
+          <SelectCem
+            churchId={churchId}
             errors={false}
             title={'Escolha uma Rede'}
             name='cem'

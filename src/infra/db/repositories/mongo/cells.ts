@@ -1,3 +1,4 @@
+import { ChurchModel } from '@/domain/models/churchs'
 import { MongoHelper } from '../../mongoHelper'
 // import { ParamCellCreate } from '../TUsers'
 
@@ -10,13 +11,16 @@ export class CellsMongoRepository {
   async getCells(churchId: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      //@ts-ignore
-      const church = collection.findOne({ _id: churchId }, { cells: 1, _id: 0 })
+      const church = await collection.findOne<ChurchModel>(
+        //@ts-ignore
+        { _id: churchId },
+        { cells: 1, _id: 0 }
+      )
       if (!church) {
         throw new Error(`Church with ID ${churchId} not found`)
       }
 
-      return church
+      return church.cells
     } catch (error) {
       console.error('Error get Churchs:', error)
       throw error
