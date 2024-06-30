@@ -23,15 +23,12 @@ const Pagination: React.FC<PaginationProps> = ({
         {pages.map((page) => (
           <li
             key={page}
+            onClick={() => onPageChange(page)}
             className={`flex justify-center items-center w-8 h-8 border border-gray-300 rounded-md  ml-2 ${
-              page === +currentPage
-                ? 'bg-gray-400 cursor-none'
-                : 'cursor-pointer'
+              page === +currentPage ? 'bg-gray-400 disabled' : 'cursor-pointer'
             }`}
           >
-            <a href='#!' className='' onClick={() => onPageChange(page)}>
-              {page}
-            </a>
+            {page}
           </li>
         ))}
       </ul>
