@@ -41,30 +41,30 @@ const MembersById = (path: any) => {
   return (
     <div className='container'>
       <Suspense fallback={<p>Loading...</p>}>
-        {member?.length ? (
+        {member?.data.length ? (
           <div className='relative w-5/6 mx-auto mt-20 bg-white rounded-lg shadow md:w-5/6 lg:w-4/6 xl:w-3/6 md:mt-24'>
             <div className='flex justify-center'>
               <Avatar
-                name={member[0].userName}
+                name={member.data[0].userName}
                 className='absolute mx-auto text-4xl transition duration-200 transform w-28 h-28 -top-20 hover:scale-110'
               />
             </div>
             <div className='mt-16'>
               <h1 className='text-3xl font-bold text-center text-gray-900'>
-                {member[0].userName}
+                {member.data[0].userName}
               </h1>
               <p className='text-sm font-medium text-center text-gray-400'>
-                {member[0].profile || ''}
+                {member.data[0].profile || ''}
               </p>
               <p>
                 <span></span>
               </p>
               <div className='px-6 my-5'>
                 <div className='flex flex-col px-6 py-3 font-medium leading-6 text-center text-gray-200 bg-gray-900 rounded-lg'>
-                  <span className='font-bold'>{member[0].email}</span>
-                  <span className='font-bold'>{member[0].phone}</span>
+                  <span className='font-bold'>{member.data[0].email}</span>
+                  <span className='font-bold'>{member.data[0].phone}</span>
                   <span className='font-bold'>
-                    <Address>{member[0]}</Address>
+                    <Address>{member.data[0]}</Address>
                   </span>
                 </div>
               </div>
