@@ -14,14 +14,18 @@ interface IPatch<T> {
 interface IDelete {
   url: string
 }
+interface IResponseData<T> {
+  data: T
+  headers: Record<string, any>
+}
 
-const fetcher = async (url: string) => {
-  const response = await axios.get(url)
-  return response.data
+const fetcher = async <T = any>(url: string) => {
+  const response: IResponseData<T> = await axios.get(url)
+  return { data: response.data, headers: response.headers }
 }
 
 const useHttpGet = <T = any>(url: string) => {
-  return useSWR<T>(url, fetcher)
+  return useSWR<IResponseData<T>, Error>(url, fetcher)
 }
 
 const useHttpPost = async <T>({ url, data }: IPost<T>) => {
