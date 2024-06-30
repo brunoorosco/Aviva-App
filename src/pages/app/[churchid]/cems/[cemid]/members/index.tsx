@@ -52,7 +52,7 @@ const Members = () => {
               <FaPeopleRoof size={24} />
             </div>
           </div>
-          <p className='mt-2 mb-5 text-gray-400'>{members?.length}</p>
+          <p className='mt-2 mb-5 text-gray-400'>{members?.data.length}</p>
         </div>
         <div>
           <Link href={pathname + '/new'}>
@@ -64,7 +64,7 @@ const Members = () => {
         <ul className='w-full p-4 mx-auto bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
           <Suspense fallback={'Loading....'}>
             {members &&
-              members?.map((member: TMembers, index: number) => (
+              members?.data.map((member: TMembers, index: number) => (
                 <li className='pb-3 sm:pb-4' key={index}>
                   <div className='flex items-center space-x-4'>
                     <div className='flex items-center justify-center w-12 h-12 mt-2 text-2xl text-white rounded-full bg-app-bg'>

@@ -44,7 +44,7 @@ const Cem = () => {
                 <GiMeepleGroup size={24} />
               </div>
             </div>
-            <p className='mt-2 mb-5 text-gray-400'>{cems?.length}</p>
+            <p className='mt-2 mb-5 text-gray-400'>{cems?.data.length}</p>
           </div>
           <div>
             <Link href={'../' + churchId + '/cems/new'}>
@@ -56,7 +56,7 @@ const Cem = () => {
         <div className='shadow-sm'>
           <ul className='w-full p-4 mx-auto bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
             {cems &&
-              cems.map((cem: CEM) => (
+              cems.data.map((cem: CEM) => (
                 <li className='pb-3 sm:pb-4' key={cem.id}>
                   <div className='flex items-center space-x-4'>
                     <div className='flex items-center justify-center w-12 h-12 mt-2 text-2xl text-white rounded-full bg-app-bg'>
