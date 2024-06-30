@@ -34,7 +34,7 @@ export function SelectSupervisorCem({
 
   useEffect(() => {
     if (supervisores) {
-      setItems(supervisores)
+      setItems(supervisores.data)
     }
   }, [supervisores])
   return (
@@ -53,7 +53,7 @@ export function SelectSupervisorCem({
             className='w-full p-4 bg-gray-200 rounded-t dark:bg-zinc-700 dark:text-gray-300 open:w-11'
           >
             <option disabled>{title}</option>
-            {supervisores?.map((item: any) => (
+            {supervisores?.data.map((item: any) => (
               <option key={item.id} value={item.id}>
                 {item.name}
               </option>

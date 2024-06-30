@@ -24,7 +24,7 @@ export function SelectChurch({ control, name, errors, title }: DropdownProps) {
 
   useEffect(() => {
     if (church) {
-      setItems(church)
+      setItems(church.data)
     }
   }, [church])
 
@@ -44,7 +44,7 @@ export function SelectChurch({ control, name, errors, title }: DropdownProps) {
             className='w-full p-4 bg-gray-200 rounded-t dark:bg-zinc-700 dark:text-gray-300 open:w-11'
           >
             <option disabled>{title}</option>
-            {church?.map((item: any) => (
+            {church?.data.map((item: any) => (
               <option key={item.id} value={item.id}>
                 {item.name}
               </option>

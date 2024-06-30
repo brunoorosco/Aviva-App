@@ -26,7 +26,7 @@ export function SelectProfile({ control, name, errors, title }: DropdownProps) {
 
   useEffect(() => {
     if (profile) {
-      const filterProfile = profile.filter(
+      const filterProfile = profile.data.filter(
         (p) => parseInt(p.id) >= (session?.user.profileId || 99)
       )
       setItems(filterProfile)

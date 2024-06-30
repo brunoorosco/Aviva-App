@@ -32,7 +32,7 @@ export function SelectCem({
 
   useEffect(() => {
     if (cem) {
-      setItems(cem)
+      setItems(cem.data)
     }
   }, [cem])
   return (
@@ -49,7 +49,7 @@ export function SelectCem({
             >
               <option disabled>{title}</option>
               {!isLoading &&
-                cem?.map((item: any) => (
+                cem?.data.map((item: any) => (
                   <option key={item._id} value={item._id}>
                     {item.name}
                   </option>
