@@ -6,7 +6,7 @@ class MongoHelper {
   private static clientPromise: Promise<MongoClient> | null = null
 
   static async connect(uri: string): Promise<void> {
-    this.uri = uri || process.env.MONGO_CONNECTION || ''
+    this.uri = uri || process.env.MONGODB_URI || ''
     if (!this.clientPromise) {
       this.client = new MongoClient(this.uri, {})
       this.clientPromise = this.client.connect()
