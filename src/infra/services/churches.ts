@@ -1,6 +1,7 @@
 import { Prisma, Churches as TChurch } from '@prisma/client'
 import { prisma } from '@/infra/db/prismaClient'
 import { Churches } from '../db/repositories/church'
+import { ChurChMongoRepository } from '../db/repositories/mongo/churchs'
 
 export const createChurch = async (data: any): Promise<TChurch | Error> => {
   const repositoriesChurch = new Churches()
@@ -16,7 +17,7 @@ export const createChurch = async (data: any): Promise<TChurch | Error> => {
     const saved = await repositoriesChurch.create(newChurch)
     return saved
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return new Error()
   }
 }
@@ -32,7 +33,8 @@ const findChurchesById = async (id: string) => {
 }
 
 const findChurches = async () => {
-  const churches = await prisma.churches.findMany()
+  const church = new ChurChMongoRepository()
+  const churches = await church.getChurch()
 
   return churches
 }

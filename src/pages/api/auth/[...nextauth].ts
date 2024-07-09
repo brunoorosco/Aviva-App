@@ -23,7 +23,6 @@ export const authOptions: NextAuthOptions = {
           )
           if (!isValidPass) return null
         }
-        console.log('senha valida')
         return userDb
       }
     })

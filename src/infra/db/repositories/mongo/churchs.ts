@@ -18,6 +18,14 @@ export class ChurChMongoRepository {
       throw error
     }
   }
+
+  async getChurch(): Promise<any> {
+    const collection = await MongoHelper.getCollection(this.collectionName)
+    const church = await collection.find({}).toArray()
+
+    return church
+  }
+
   async create(user: any): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)

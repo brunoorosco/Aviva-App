@@ -16,8 +16,6 @@ function MyApp({
   const router = useRouter()
   const { pathname } = router
   let Layout = LayoutPublic
-  console.log(pathname)
-
   if (pathname === '/app') {
     Layout = LayoutEmpty
   } else if (pathname.startsWith('/app') === true) {
