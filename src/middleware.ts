@@ -10,11 +10,9 @@ export async function middleware(req: NextRequest) {
     })
 
     if (!session) {
-      console.warn(`[WARN] No session found for request to ${req.url}`)
       return NextResponse.redirect(new URL('/', req.url))
     }
 
-    console.log(`[INFO] Session found:`, session)
     return NextResponse.next()
   } catch (error) {
     console.error(
