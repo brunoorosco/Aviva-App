@@ -13,14 +13,13 @@ export default async function handler(
 ) {
   if (req.method === 'GET') {
     const { churchid, cemid, membersId } = req.query
-
-    const members = await getMembersById(
+    const user = await getMembersById(
       churchid as string,
       cemid as string,
       membersId as string
     )
 
-    return res.status(200).json(members)
+    return res.status(200).json(user)
   }
   return res.status(200).json([])
 }

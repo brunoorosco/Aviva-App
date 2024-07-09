@@ -12,8 +12,8 @@ export const getMembersById = async (
   cemId: string,
   userId: string
 ) => {
-  const userRepository = new Members()
-  const user = await userRepository.getMembersById(userId)
+  const userRepository = new UsersMongoRepository()
+  const user = await userRepository.geUserById(userId)
   return user
 }
 

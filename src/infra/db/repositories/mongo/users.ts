@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb'
 import { MongoHelper } from '../../mongoHelper'
 import { ParamUserLogin } from '../TUsers'
 
@@ -18,6 +19,20 @@ export class UsersMongoRepository {
       throw error
     }
   }
+
+  async geUserById(id: string): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName)
+      //@ts-ignore
+      const user = await collection.findOne({ _id: new ObjectId(id) })
+
+      return user
+    } catch (error) {
+      console.error('Error finding user by email:', error)
+      throw error
+    }
+  }
+
   async create(user: any): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
@@ -28,6 +43,7 @@ export class UsersMongoRepository {
       throw error
     }
   }
+
   async getUsersByCellId(cemId: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)

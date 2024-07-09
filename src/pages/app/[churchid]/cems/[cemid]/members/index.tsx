@@ -11,7 +11,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa'
 import { FaPeopleRoof } from 'react-icons/fa6'
 
 export type TMembers = {
-  userId: string
+  _id: string
   name: string
   email: string
   birth?: Date
@@ -23,10 +23,6 @@ const Members = () => {
   const router = useRouter()
   const { pathname, asPath } = router
   const { churchid, cemid } = router.query
-  const { data: session } = useSession()
-
-  // const churchId = session?.user.churchId as string
-  // const cemId = session?.user.cemId as string
 
   const { data: members, error } = useHttpGet<TMembers[]>(
     `/api/protected/churches/${churchid}/cems/${cemid}/members`
@@ -81,13 +77,13 @@ const Members = () => {
                       <Address member={member} />
                     </div>
                     <div className='inline-flex items-center text-base font-semibold text-gray-900 dark:text-dark-primary'>
-                      <Link href={`${asPath}/${member.userId}`}>
+                      <Link href={`${asPath}/${member._id}`}>
                         <FaEdit className='mx-2 cursor-pointer' size={18} />
                       </Link>
                       <FaTrash
                         className='mx-2 cursor-pointer'
                         size={17}
-                        onClick={() => handleDelete(member.userId)}
+                        onClick={() => handleDelete(member._id)}
                       />
                     </div>
                   </div>
