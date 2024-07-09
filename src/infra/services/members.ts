@@ -1,4 +1,3 @@
-import { Members } from '../db/repositories/members'
 import { UsersMongoRepository } from '../db/repositories/mongo/users'
 
 export const getMembers = async (cemId: string) => {
@@ -18,7 +17,7 @@ export const getMembersById = async (
 }
 
 export const saveMembers = async (churchId: string, cemId: string) => {
-  const userRepository = new Members()
-  const user = await userRepository.getMembers({ cemId: cemId })
+  const userRepository = new UsersMongoRepository()
+  const user = await userRepository.create({ cemId: cemId })
   return user
 }

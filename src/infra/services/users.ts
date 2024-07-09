@@ -16,7 +16,7 @@ type TUser = {
 
 export const createUser = async (params: TUser) => {
   const cripto = new CryptAdapter()
-  const userRepository = new Users()
+  const userRepository = new UsersMongoRepository()
   const randowPass = await cripto.randonPassword()
   //TO-DO fazer chma pra enviar o email com a Senha
   console.log('random pass--->', randowPass)
