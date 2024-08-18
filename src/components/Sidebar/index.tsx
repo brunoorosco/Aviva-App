@@ -60,8 +60,8 @@ const Sidebar = () => {
       style={{ transition: 'width 300ms cubic-bezier(0.2, 0, 0, 1) 0s' }}
     >
       <div className='flex flex-col'>
-        <div className='flex items-center justify-between relative'>
-          <div className='flex items-center pl-1 gap-4'>
+        <div className='relative flex items-center justify-between'>
+          <div className='flex items-center gap-4 pl-1'>
             <div className='block'>
               <img
                 src='/logo-preto.png'
@@ -82,7 +82,6 @@ const Sidebar = () => {
 
         <div className='flex flex-col items-start mt-1'>
           {menu.map(({ ...menu }, index) => {
-            console.log(pathRouter)
             // const classes = getNavItemClasses(menu)
             return (
               <div className={getNavItemClasses(menu)} key={index}>
