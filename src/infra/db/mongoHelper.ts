@@ -24,6 +24,7 @@ class MongoHelper {
   }
 
   static async getCollection(name: string): Promise<Collection> {
+    console.log(this.uri)
     if (!this.client) {
       await this.connect(this.uri)
     }
