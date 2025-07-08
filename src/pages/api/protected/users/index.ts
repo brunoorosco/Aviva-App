@@ -1,4 +1,3 @@
-import { getAllUsersByProfile } from '@/infra/db/repositories/users'
 import { createUser } from '@/infra/services/users'
 import { NextApiRequest, NextApiResponse } from 'next'
 
@@ -8,8 +7,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const user = await createUser(req.body)
       res.status(201).json({ user })
     } else if (req.method == 'GET') {
-      const users = await getAllUsersByProfile()
-      res.send(users)
+      // const users = await getAllUsersByProfile()
+      res.send({ message: 'ok' })
     } else {
       res.send('')
     }

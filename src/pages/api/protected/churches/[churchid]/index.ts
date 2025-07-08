@@ -1,10 +1,7 @@
+import { ChurchModel } from '@/domain/models/churchs'
+import { getChurchByIdService } from '@/infra/services/churchService'
 import type { NextApiRequest, NextApiResponse } from 'next'
-
-import { prisma } from '@/infra/db/prismaClient'
 import { getSession } from 'next-auth/react'
-import { Churches } from '@prisma/client'
-import { findChurchesById } from '@/infra/services/churches'
-import { createCem } from '@/infra/services/cems'
 
 interface SessionError {
   message?: string
@@ -12,13 +9,13 @@ interface SessionError {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Churches | SessionError>
+  res: NextApiResponse<ChurchModel | SessionError>
 ) {
   const session = await getSession({ req })
 
   if (session) {
     const churchId = req.query.churchid as string
-    const church = await findChurchesById(churchId)
+    const church = await getChurchByIdService(churchId)
 
     if (!church) {
       return res

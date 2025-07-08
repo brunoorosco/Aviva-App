@@ -1,11 +1,10 @@
-import { getProfile } from '@/infra/services/profile'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (req.method == 'GET') {
-      const profile = await getProfile()
-      res.send(profile)
+    
+      res.send("GET")
     } else {
       res.send('')
     }

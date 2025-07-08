@@ -1,9 +1,6 @@
+import { CellsModel } from '@/domain/models/cells'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { CEM } from '@prisma/client'
-import {
-  getUserSupervisories,
-  getUserSupervisoriesCem
-} from '@/infra/services/users'
+
 
 type CemId = {
   id: String
@@ -14,17 +11,17 @@ type Error = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<CEM[] | CEM | CemId | Error>
+  res: NextApiResponse<CellsModel[] | CellsModel | CemId | Error>
 ) {
   if (req.method === 'GET') {
     const { churchid, cemid } = req.query
 
-    const supervisories = await getUserSupervisoriesCem(
-      churchid as string,
-      cemid as string
-    )
+    const supervisories = [
+      { id: '1' },
+      { id: '2' }
+    ]
 
-    return res.status(200).json(supervisories)
+    return res.status(200).json(supervisories as unknown as CemId)
   }
 
   return res.status(200).json([])

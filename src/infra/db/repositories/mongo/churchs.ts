@@ -1,17 +1,17 @@
+import { ObjectId } from 'mongodb'
 import { MongoHelper } from '../../mongoHelper'
-import { ParamUserLogin } from '../TUsers'
-
 export class ChurChMongoRepository {
   private collectionName: string
   constructor() {
     this.collectionName = 'churchs'
   }
 
-  async getByChurchId(churchId?: string): Promise<any> {
+  async getChurchById(churchId: string): Promise<any> {
+    console.log('churchId', churchId)
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      const church = await collection.findOne({ church: churchId })
-
+      const church = await collection.findOne({ _id: new ObjectId(churchId) })
+      console.log('church', church)
       return church
     } catch (error) {
       console.error('Error finding user by email:', error)

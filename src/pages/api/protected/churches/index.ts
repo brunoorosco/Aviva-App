@@ -1,25 +1,16 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { Churches } from '@prisma/client'
 import {
-  findChurchesById,
-  findChurches,
-  createChurch
-} from '@/infra/services/churches'
-
-interface ChurchesId {
-  id: String
-}
-
-interface Error {
-  message?: string
-}
+  createChurchService,
+  getChurchByIdService,
+  getChurchService
+} from '@/infra/services/churchService'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method === 'POST') {
-    const saved = await createChurch(req.body)
+    const saved = await createChurchService(req.body)
     return res.status(200).json(saved)
   }
 
@@ -27,19 +18,18 @@ export default async function handler(
     const { churchid } = req.query
 
     if (churchid) {
-      const church = await findChurchesById(churchid as string)
+      const church = await getChurchByIdService(churchid as string)
 
       if (!church) {
         return res.status(404).json({ message: 'Church invalid' })
       }
-
       return res.status(200).json(church)
     }
 
-    const churches = await findChurches()
+    const churches = await getChurchService()
 
     return res.status(200).json(churches)
   }
 
-  return res.status(200).json([])
+  return res.status(204)
 }

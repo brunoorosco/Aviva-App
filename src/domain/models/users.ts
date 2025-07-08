@@ -1,12 +1,16 @@
 import { AddressModel } from './address'
 
-export type UsersModel = {
-  id: string
+export type Permission ='user' | 'admin' | 'superAdmin' | 'secretary' 
+
+export type User = {
+  _id: string
+  churchId: string
+  cemId: string
   name: string
-  phone: string
   email: string
-  church: string
-  password: string
-  permissions: string
+  phone: string
+  birth: string
   address: AddressModel
+  permissions: Permission[]
+  password: string
 }

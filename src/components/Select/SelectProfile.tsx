@@ -18,15 +18,27 @@ type TProfile = {
 export function SelectProfile({ control, name, errors, title }: DropdownProps) {
   const [items, setItems] = useState<TProfile[]>()
   const { data: session } = useSession()
-  const {
-    data: profile,
-    error: errorRequest,
-    isLoading
-  } = useHttpGet<TProfile[]>(`/api/protected/profile`)
+  // const {
+  //   data: profile,
+  //   error: errorRequest,
+  //   isLoading
+  // } = useHttpGet<TProfile[]>(`/api/protected/profile`)
 
+  const profile = [{
+    id: '99',
+    description: 'Selecione um perfil'
+  },
+  {
+    id: '1',
+    description: 'Administrador'
+  },
+  {
+    id: '2',
+    description: 'Membro'
+  }]
   useEffect(() => {
     if (profile) {
-      const filterProfile = profile.data.filter(
+      const filterProfile = profile.filter(
         (p) => parseInt(p.id) >= (session?.user.profileId || 99)
       )
       setItems(filterProfile)

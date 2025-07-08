@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { CEM } from '@prisma/client'
-import { deleteCem, findCemById } from '@/infra/services/cems'
 import { getUsersByCem } from '@/infra/services/users'
+import { CellsModel } from '@/domain/models/cells'
+import { deleteCemService } from '@/infra/services/cemService'
 
 interface Error {
   message: string
@@ -9,7 +9,7 @@ interface Error {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<CEM[] | CEM | Error | null>
+  res: NextApiResponse<CellsModel[] | CellsModel | Error | null>
 ) {
   const churchId = req.query.churchid as string
   const cemId = req.query.cemid as string
@@ -18,7 +18,7 @@ export default async function handler(
     return res.status(200).json(cem)
   }
   if (req.method == 'DELETE') {
-    const cemDelete = await deleteCem(churchId, cemId)
+    const cemDelete = await deleteCemService(churchId, cemId)
     return res.status(200).json(cemDelete)
   }
   // if (!cem) {

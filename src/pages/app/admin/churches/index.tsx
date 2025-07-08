@@ -1,7 +1,7 @@
 import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
+import { ChurchModel } from '@/domain/models/churchs'
 // import Skeleton from '@/components/Skeleton'
 import { useHttpDelete, useHttpGet } from '@/hooks/api'
-import { Churches } from '@prisma/client'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FaEdit, FaCross, FaTrash } from 'react-icons/fa'
@@ -14,7 +14,7 @@ const Churches = () => {
     data: churches,
     error,
     isLoading
-  } = useHttpGet<Churches[]>('/api/protected/churches')
+  } = useHttpGet<ChurchModel[]>('/api/protected/churches')
 
   if (error) {
     return <p>Ocorreu um erro: {error.message}</p>
@@ -50,8 +50,8 @@ const Churches = () => {
       <div className='shadow-sm'>
         <ul className='w-full p-4 mx-auto bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
           {churches &&
-            churches.data.map((church: Churches) => (
-              <li className='pb-3 sm:pb-4' key={church.id}>
+            churches.data.map((church: ChurchModel) => (
+              <li className='pb-3 sm:pb-4' key={church._id.toString()}>
                 <div className='flex items-center space-x-4'>
                   <div className='flex items-center justify-center w-12 h-12 mt-2 text-2xl text-white rounded-full bg-app-bg'>
                     Aviv
@@ -73,7 +73,7 @@ const Churches = () => {
                     <FaTrash
                       className='mx-2 cursor-pointer'
                       size={17}
-                      onClick={() => handleDelete(church.id)}
+                      onClick={() => handleDelete(church._id.toString())}
                     />
                   </div>
                 </div>

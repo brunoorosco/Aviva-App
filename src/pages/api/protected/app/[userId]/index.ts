@@ -1,4 +1,3 @@
-import { getChurchbyUserId } from '@/infra/services/churches'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -7,7 +6,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const { userId } = req.query
 
       if (userId) {
-        const user = await getChurchbyUserId(userId as string)
+        const user =null
 
         if (!user) {
           return res.status(404).json({ message: 'Church invalid' })

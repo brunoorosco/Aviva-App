@@ -6,5 +6,4 @@ export type ChurchModel = {
   _id: ObjectId
   name: string
   cells: CellsModel[]
-  address: AddressModel
-}
+} & AddressModel

@@ -1,6 +1,5 @@
+import { User } from '@/domain/models/users'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { CEM, User } from '@prisma/client'
-import { updatedUserCem } from '@/infra/services/users'
 
 type CemId = {
   id: String
@@ -16,9 +15,8 @@ export default async function handler(
   if (req.method === 'PATCH') {
     const { userid } = req.query
     const { cem } = req.body
-    const user = await updatedUserCem(cem as string, userid as string)
 
-    return res.status(200).json(user)
+    return res.status(200).json({ message: 'ok' })
   }
 
   return res.status(200).json([])

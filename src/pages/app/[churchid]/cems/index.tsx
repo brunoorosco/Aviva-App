@@ -1,8 +1,8 @@
 import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
 import Toast from '@/components/Toast'
+import { CellsModel } from '@/domain/models/cells'
 // import Skeleton from '@/components/Skeleton'
 import { useHttpGet } from '@/hooks/api'
-import { CEM } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -14,7 +14,7 @@ const Cem = () => {
   const router = useRouter()
   const churchId = router.query?.churchid
   const { data: session } = useSession()
-  const { data: cems, mutate } = useHttpGet<CEM[]>(
+  const { data: cems, mutate } = useHttpGet<CellsModel[]>(
     `/api/protected/churches/${session?.user.churchId}/cems`
   )
 
@@ -56,7 +56,7 @@ const Cem = () => {
         <div className='shadow-sm'>
           <ul className='w-full p-4 mx-auto bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
             {cems &&
-              cems.data.map((cem: CEM) => (
+              cems.data.map((cem: CellsModel) => (
                 <li className='pb-3 sm:pb-4' key={cem.id}>
                   <div className='flex items-center space-x-4'>
                     <div className='flex items-center justify-center w-12 h-12 mt-2 text-2xl text-white rounded-full bg-app-bg'>
