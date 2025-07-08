@@ -30,13 +30,21 @@ const LayoutApp = ({ children }: Props) => {
     setIsSidebarOpen(!isSidebarOpen)
   }
 
+  const closeSidebar = () => {
+    setIsSidebarOpen(false)
+  }
+
   return (
-    <main className='relative h-screen overflow-hidden bg-gray-50 dark:bg-gray-800 w-full'>
+    <main className='relative w-full h-screen overflow-hidden bg-gray-50 dark:bg-gray-800'>
       <div className={`flex items-start justify-between`}>
         {!isMobile ? (
-          <Sidebar />
+          <Sidebar closeSidebar={closeSidebar} />
         ) : (
-          <Drawer isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+          <Drawer
+            isOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+            closeSidebar={closeSidebar}
+          />
         )}
         <Wrapper>
           {isSidebarOpen ? (

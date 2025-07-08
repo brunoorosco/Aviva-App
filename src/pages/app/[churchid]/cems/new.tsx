@@ -57,31 +57,30 @@ const NewRede = () => {
       console.log('[LOGIN_ERROR]: ', error)
     }
   })
+
   return (
-    <div className='flex flex-col items-center p-3 mt-5 md:mt-5'>
-      <div className='content-center w-full max-w-lg text-center'>
-        <div className='w-full px-3 mb-2 md:w-full md:mb-0'>
-          <label className='text-2xl text-gray-600 md:text-3xl dark:text-dark-primary'>
-            Cadastro de Rede
-          </label>
-        </div>
+    <div className='flex flex-col items-center p-4 md:p-6 lg:p-8'>
+      <div className='w-full max-w-5xl text-center'>
+        <h1 className='text-2xl md:text-3xl text-gray-600 dark:text-dark-primary'>
+          Cadastro de Rede
+        </h1>
       </div>
-      <form className='px-1 mt-5 text-black max-md:w-full' onSubmit={onSubmit}>
-        <div className='flex'>
-          <div className='w-full mt-2 mb-2 md:mb-0'>
-            <TextInput
-              {...register('name', { required: true })}
-              name='name'
-              placeholder='Nome da Rede'
-              control={control}
-              className='uppercase'
-              mask={(e: string) => Masks.inputName(e)}
-              error={errors.name ? 'Preenchimento Obrigatório' : ''}
-            />
-          </div>
-        </div>
-        <div className='flex w-full'>
-          <div className='w-2/3 mb-3 md:w-2/3 md:mb-0'>
+
+      <form onSubmit={onSubmit} className='w-full max-w-5xl mt-6 flex flex-col gap-4'>
+        {/* Nome da Rede */}
+        <TextInput
+          {...register('name', { required: true })}
+          name='name'
+          placeholder='Nome da Rede'
+          control={control}
+          className='uppercase'
+          mask={(e: string) => Masks.inputName(e)}
+          error={errors.name ? 'Preenchimento Obrigatório' : ''}
+        />
+
+        {/* Logradouro e Número */}
+        <div className='flex flex-col md:flex-row gap-4'>
+          <div className='w-full md:w-2/3'>
             <TextInput
               name='street'
               placeholder='Logradouro'
@@ -90,7 +89,7 @@ const NewRede = () => {
               control={control}
             />
           </div>
-          <div className='w-1/3 ml-3 md:w-1/3'>
+          <div className='w-full md:w-1/3'>
             <TextInput
               name='number'
               placeholder='Nº'
@@ -99,8 +98,10 @@ const NewRede = () => {
             />
           </div>
         </div>
-        <div className='md:flex'>
-          <div className='w-full mb-3 md:w-2/3 md:mb-0'>
+
+        {/* Cidade e CEP */}
+        <div className='flex flex-col md:flex-row gap-4'>
+          <div className='w-full md:w-2/3'>
             <TextInput
               name='city'
               placeholder='Cidade'
@@ -109,8 +110,7 @@ const NewRede = () => {
               mask={(e: string) => Masks.inputName(e)}
             />
           </div>
-
-          <div className='w-full mb-3 md:w-1/3 md:mb-0 md:ml-3'>
+          <div className='w-full md:w-1/3'>
             <TextInput
               placeholder='CEP'
               name='zipcode'
@@ -119,20 +119,20 @@ const NewRede = () => {
             />
           </div>
         </div>
-        <div className='md:flex'>
-          <div className='w-full mb-3 '>
-            <SelectSupervisor
-              errors={false}
-              title={'Supervisores'}
-              name='supervisor'
-              control={control}
-            />
-          </div>
+
+        {/* Supervisor */}
+        <div className='w-full'>
+          <SelectSupervisor
+            errors={false}
+            title={'Supervisores'}
+            name='supervisor'
+            control={control}
+          />
         </div>
-        <div className='flex'>
-          <div className='w-full mb-6 md:w-full md:mb-0'>
-            <ButtonSubmit text='Salvar' type='submit' />
-          </div>
+
+        {/* Botão */}
+        <div className='w-full'>
+          <ButtonSubmit text='Salvar' type='submit' />
         </div>
       </form>
     </div>

@@ -21,7 +21,7 @@ const ButtonSubmit: React.FC<IButtonSubmit> = ({
   return (
     <button
       type={type}
-      className={`p-4 text-1xl text-center border font-semibold w-full rounded border-lime-500 shadow 
+      className={`p-3 text-1xl text-center border font-semibold w-full rounded border-lime-500 shadow 
                       bg-lime-500 min-w-full ${
                         loading
                           ? 'cursor-not-allowed opacity-85'

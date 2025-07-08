@@ -1,7 +1,7 @@
 import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
 import Toast from '@/components/Toast'
 // import Skeleton from '@/components/Skeleton'
-import { useHttpDelete, useHttpGet } from '@/hooks/api'
+import { useHttpGet } from '@/hooks/api'
 import { CEM } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -30,7 +30,7 @@ const Cem = () => {
   }
 
   return (
-    <div className='flex flex-col content-center w-full max-w-lg p-3 mx-auto rounded-lg dark:text-dark-primary'>
+    <div className='flex flex-col content-center w-full max-w-3xl p-3 mx-auto rounded-lg dark:text-dark-primary'>
       <Suspense fallback={'teste loading'}>
         {/* {isLoading ? (
         <Skeleton />

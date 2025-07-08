@@ -16,7 +16,7 @@ const users_ = [{ idmembros: 2, nome: 'Ana Lucia Luz Orosco', email: 'analu.luz@
 { idmembros: 31, nome: 'BRUNO DO NASCIMENTO OROSCO', email: 'brunoorosco@gmail.com', endereco: 'RUA GUPEVA, 56 - VILA CURUÇA', nasc: '1987-03-29' }
 ]
 
-export default function MembrosTable(props) {
+export default function MembrosTable(props:any) {
     //console.log(props.children[1])
     //    const { membros } = props;
     const [users, setMembros] = useState(props.children[1])
@@ -33,7 +33,7 @@ export default function MembrosTable(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user, key) => (
+                    {users.map((user:any, key:number) => (
                         <tr key={key}>
                             <td>{user.idmembros}</td>
                             <td>{user.nome}</td>

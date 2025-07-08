@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 import { signOut, useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
 import React from 'react'
 import { BiLogOut } from 'react-icons/bi'
 import { IoCloseSharp } from 'react-icons/io5'
@@ -10,9 +9,10 @@ import { menuItems } from '../Sidebar/menuRoute'
 export interface IDrawer {
   toggleSidebar: () => void
   isOpen: boolean
+  closeSidebar: () => void
 }
 
-const Drawer: React.FC<IDrawer> = ({ toggleSidebar, isOpen }) => {
+const Drawer: React.FC<IDrawer> = ({ toggleSidebar, isOpen, closeSidebar }) => {
   const { data: session } = useSession()
   const churchId = session?.user.churchId as string
   const cemId = session?.user.cemId as string
@@ -26,13 +26,13 @@ const Drawer: React.FC<IDrawer> = ({ toggleSidebar, isOpen }) => {
     >
       <div className='flex flex-col'>
         <div
-          className='flex justify-end items-center p-2 text-gray-600'
+          className='flex items-center justify-end p-2 text-gray-600'
           onClick={toggleSidebar}
         >
           <IoCloseSharp size={22} />
         </div>
-        <div className='flex items-center justify-between relative'>
-          <div className='flex items-center pl-1 gap-4'>
+        <div className='relative flex items-center justify-between'>
+          <div className='flex items-center gap-4 pl-1'>
             <div className='block'>
               <img
                 src='/logo-preto.png'
@@ -47,7 +47,10 @@ const Drawer: React.FC<IDrawer> = ({ toggleSidebar, isOpen }) => {
           {menu.map(({ ...menu }, index) => {
             return (
               <div key={index}>
-                <LinkMenu href={pathRouter + menu.link}>
+                <LinkMenu
+                  closeSidebar={closeSidebar}
+                  href={pathRouter + menu.link}
+                >
                   <div style={{ width: '2.5rem' }}>{menu.icon}</div>
                   <span
                     className={classNames(

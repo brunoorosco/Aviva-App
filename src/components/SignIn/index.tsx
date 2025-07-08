@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import { Loading } from '../Loading'
 import ButtonSubmit from '../ButtonSubmit'
 
 type FormValues = {
@@ -49,56 +48,59 @@ const SignIn = () => {
   })
 
   return (
-    <div className='flex bg-zinc-700'>
-      <div className='bg-right bg-cover xl:w-3/4'>
-        <img src='/banner2024.jpg' className='hidden h-full xl:block ' />
-      </div>
-      <div className='mx-auto'>
-        <form onSubmit={onSubmit}>
-          <div className='flex flex-col w-100 h-[calc(100dvh)] items-center p-10'>
-            <div className='block'>
-              <img
-                src='/logo-branco.png'
-                width='70%'
-                className='mx-auto my-16'
-              />
-            </div>
-            <div className='w-full mb-1'>
+    <div className='flex items-center justify-center h-screen bg-zinc-800'>
+      {/* Formulário centralizado */}
+      <div className='w-full max-w-lg p-4 transition-all duration-300 transform border border-zinc-700 rounded-lg shadow-lg hover:shadow-2xl sm:w-full sm:p-4 sm:rounded-lg sm:shadow-md sm:m-6 max-h-[100vh]'>
+        <form onSubmit={onSubmit} className='mx-6'>
+          <div className='flex flex-col items-center'>
+            {/* Logo */}
+            <img
+              src='/logo-branco.png'
+              alt='Logo'
+              className='w-2/3 mx-auto my-6 sm:w-1/2'
+            />
+
+            {/* Email input */}
+            <div className='w-full mb-3'>
               <input
                 {...register('email', { required: true })}
+                type='email'
                 name='email'
                 placeholder='Email'
-                className='min-w-full p-3 mt-3 text-gray-700 border rounded text-1xl '
+                className='w-full p-3 mt-2 text-gray-900 border border-gray-400 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500'
               />
               {errors.email && errors.email.type === 'required' && (
-                <p className='block mt-2 text-sm text-red-400'>
+                <p className='mt-2 text-sm text-red-400'>
                   E-mail é obrigatório
                 </p>
               )}
             </div>
-            <div className='w-full mb-4 '>
+
+            {/* Password input */}
+            <div className='w-full mb-3'>
               <input
-                {...register('password', { required: true, minLength: 6 })}
+                {...register('password', {
+                  required: true,
+                  minLength: 6
+                })}
                 type='password'
                 name='password'
                 placeholder='Password'
-                className='min-w-full p-3 mt-3 text-gray-900 border rounded text-1xl '
+                className='w-full p-3 mt-2 text-gray-900 border border-gray-400 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500'
               />
               {errors.password && errors.password.type === 'required' && (
-                <p className='block mt-2 text-sm text-red-400'>
-                  Senha é Obrigatória
-                </p>
+                <p className='mt-2 text-sm text-red-400'>Senha é obrigatória</p>
               )}
               {errors.password && errors.password.type === 'minLength' && (
-                <p className='block mt-2 text-sm text-red-400'>
-                  6 digitos no mínimo
-                </p>
+                <p className='mt-2 text-sm text-red-400'>6 dígitos no mínimo</p>
               )}
-              {error && (
-                <span className='block mt-2 text-sm text-red-400'>{error}</span>
-              )}
+              {error && <p className='mt-2 text-sm text-red-400'>{error}</p>}
             </div>
-            <ButtonSubmit text='Entrar' type='submit' loading={isLoading} />
+
+            {/* Botão de envio */}
+            <div className='w-full mt-3 mb-10'>
+              <ButtonSubmit text='Entrar' type='submit' loading={isLoading} />
+            </div>
           </div>
         </form>
       </div>

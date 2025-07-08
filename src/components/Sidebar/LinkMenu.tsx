@@ -4,13 +4,15 @@ import { useRouter } from 'next/router'
 interface Props {
   children: React.ReactNode
   href: string
+  closeSidebar: () => void
 }
-const LinkMenu = ({ children, href }: Props) => {
+const LinkMenu = ({ children, href, closeSidebar }: Props) => {
   const router = useRouter()
   const { pathname } = router
   const selected = pathname === href
   return (
     <Link
+      onClick={closeSidebar}
       href={href}
       className={
         selected

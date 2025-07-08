@@ -6,7 +6,11 @@ import { useRouter } from 'next/router'
 import React, { useState, useMemo, useEffect } from 'react'
 import { menuItems } from './menuRoute'
 
-const Sidebar = () => {
+type SidebarProps = {
+  closeSidebar: () => void
+}
+
+const Sidebar = ({ closeSidebar }: SidebarProps) => {
   const [toggleCollapse, setToggleCollapse] = useState(false)
   const [isCollapsible, setIsCollapsible] = useState(false)
 
@@ -85,7 +89,10 @@ const Sidebar = () => {
             // const classes = getNavItemClasses(menu)
             return (
               <div className={getNavItemClasses(menu)} key={index}>
-                <LinkMenu href={pathRouter + menu.link}>
+                <LinkMenu
+                  closeSidebar={closeSidebar}
+                  href={pathRouter + menu.link}
+                >
                   <div style={{ width: '2.5rem' }}>{menu.icon}</div>
                   {!toggleCollapse && (
                     <span

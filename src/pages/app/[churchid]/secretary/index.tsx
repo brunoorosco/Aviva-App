@@ -2,6 +2,7 @@ import MiniCard from '@/components/Card/miniCard'
 import { BaptismIcon } from '@/components/Sidebar/icons'
 import { useRouter } from 'next/router'
 import { IoSchool } from 'react-icons/io5'
+import { AiOutlineWhatsApp } from 'react-icons/ai'
 
 const Secretary = () => {
   const { asPath } = useRouter()
@@ -13,6 +14,12 @@ const Secretary = () => {
       </MiniCard>
       <MiniCard name='Batismo' href={`${asPath}/baptism`}>
         <BaptismIcon size={40} className='text-black dark:text-gray-400' />
+      </MiniCard>
+      <MiniCard name='WhatsApp' href={`${asPath}/whatsapp`}>
+        <AiOutlineWhatsApp
+          size={40}
+          className='text-black dark:text-gray-400'
+        />
       </MiniCard>
     </div>
   )

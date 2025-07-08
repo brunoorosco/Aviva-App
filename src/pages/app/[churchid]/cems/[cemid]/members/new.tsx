@@ -31,7 +31,6 @@ const NewMember = () => {
     formState: { errors }
   } = useForm<FormValues>()
   const router = useRouter()
-  const { pathname } = router
   const { data: session } = useSession()
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -62,42 +61,36 @@ const NewMember = () => {
       console.log('[LOGIN_ERROR]: ', error)
     }
   })
+
   return (
-    <div className='flex flex-col items-center p-3 mt-5 md:mt-5'>
-      <div className='content-center w-full max-w-lg text-center'>
-        <div className='w-full px-3 mb-2 md:w-full md:mb-0'>
-          <label className='text-2xl text-gray-600 md:text-3xl dark:text-dark-primary'>
-            Cadastro de Membros
-          </label>
-        </div>
+    <div className='flex flex-col items-center p-4 md:p-6 lg:p-8'>
+      <div className='w-full max-w-2xl text-center'>
+        <h1 className='text-2xl md:text-3xl text-gray-600 dark:text-dark-primary'>
+          Cadastro de Membros
+        </h1>
       </div>
-      <form className='px-1 mt-5 text-black max-md:w-full' onSubmit={onSubmit}>
-        <div className='flex'>
-          <div className='w-full mt-2 mb-2 md:mb-0'>
-            <TextInput
-              {...register('name', { required: true })}
-              name='name'
-              className='uppercase'
-              placeholder='Nome Completo'
-              control={control}
-              mask={(e: string) => Masks.inputName(e)}
-              error={errors.name ? 'Preenchimento Obrigatório' : ''}
-            />
-          </div>
-        </div>
-        <div className='flex'>
-          <div className='w-full mb-2 md:mb-0'>
-            <TextInput
-              {...register('email')}
-              name='email'
-              className='uppercase'
-              placeholder='Email'
-              control={control}
-            />
-          </div>
-        </div>
-        <div className='flex w-full gap-3'>
-          <div className='w-1/2 mb-2 md:mb-0'>
+
+      <form onSubmit={onSubmit} className='w-full max-w-2xl mt-6 flex flex-col gap-4'>
+        <TextInput
+          {...register('name', { required: true })}
+          name='name'
+          className='uppercase'
+          placeholder='Nome Completo'
+          control={control}
+          mask={(e: string) => Masks.inputName(e)}
+          error={errors.name ? 'Preenchimento Obrigatório' : ''}
+        />
+
+        <TextInput
+          {...register('email')}
+          name='email'
+          className='uppercase'
+          placeholder='Email'
+          control={control}
+        />
+
+        <div className='flex flex-col md:flex-row gap-4'>
+          <div className='w-full md:w-1/2'>
             <TextInput
               {...register('phone', { required: true })}
               name='phone'
@@ -108,7 +101,7 @@ const NewMember = () => {
               error={errors.phone ? 'Preenchimento Obrigatório' : ''}
             />
           </div>
-          <div className='w-1/2 mb-2 md:mb-0'>
+          <div className='w-full md:w-1/2'>
             <TextInput
               {...register('birth')}
               name='birth'
@@ -116,12 +109,13 @@ const NewMember = () => {
               placeholder='Data de Nascimento'
               className='uppercase'
               control={control}
-              error={errors.phone ? 'Preenchimento Obrigatório' : ''}
+              error={errors.birth ? 'Preenchimento Obrigatório' : ''}
             />
           </div>
         </div>
-        <div className='flex w-full'>
-          <div className='w-2/3 md:w-2/3 md:mb-0'>
+
+        <div className='flex flex-col md:flex-row gap-4'>
+          <div className='w-full md:w-2/3'>
             <TextInput
               name='street'
               placeholder='Logradouro'
@@ -130,7 +124,7 @@ const NewMember = () => {
               control={control}
             />
           </div>
-          <div className='w-1/3 ml-3 md:w-1/3'>
+          <div className='w-full md:w-1/3'>
             <TextInput
               name='number'
               placeholder='Nº'
@@ -139,8 +133,9 @@ const NewMember = () => {
             />
           </div>
         </div>
-        <div className='md:flex'>
-          <div className='w-full md:w-2/3 md:mb-0'>
+
+        <div className='flex flex-col md:flex-row gap-4'>
+          <div className='w-full md:w-2/3'>
             <TextInput
               name='city'
               placeholder='Cidade'
@@ -150,7 +145,7 @@ const NewMember = () => {
             />
           </div>
 
-          <div className='w-full md:w-1/3 md:mb-0 md:ml-3'>
+          <div className='w-full md:w-1/3'>
             <TextInput
               placeholder='CEP'
               name='zipcode'
@@ -160,31 +155,22 @@ const NewMember = () => {
             />
           </div>
         </div>
-        <div className='flex'>
-          <div className='w-full md:mb-0'>
-            <SelectSupervisorCem
-              errors={false}
-              title={'Supervisores'}
-              name='cemId'
-              control={control}
-            />
-          </div>
-        </div>
-        <div className='flex'>
-          <div className='w-full md:mb-0'>
-            <SelectProfile
-              errors={false}
-              title={'Cargo Eclesiástico'}
-              name='profileId'
-              control={control}
-            />
-          </div>
-        </div>
-        <div className='flex'>
-          <div className='w-full mt-2 mb-6 md:w-full md:mb-0'>
-            <ButtonSubmit text='Salvar' type='submit' />
-          </div>
-        </div>
+
+        <SelectSupervisorCem
+          errors={false}
+          title={'Supervisores'}
+          name='cemId'
+          control={control}
+        />
+
+        <SelectProfile
+          errors={false}
+          title={'Cargo Eclesiástico'}
+          name='profileId'
+          control={control}
+        />
+
+        <ButtonSubmit text='Salvar' type='submit' />
       </form>
     </div>
   )
