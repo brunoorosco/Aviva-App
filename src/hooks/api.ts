@@ -4,6 +4,7 @@ import useSWR from 'swr'
 interface IPost<T> {
   url: string
   data: T
+  headers?: { [key: string]: string }
 }
 
 interface IPatch<T> {
@@ -28,11 +29,12 @@ const useHttpGet = <T = any>(url: string) => {
   return useSWR<IResponseData<T>, Error>(url, fetcher)
 }
 
-const useHttpPost = async <T>({ url, data }: IPost<T>) => {
+const useHttpPost = async <T>({ url, data, headers }: IPost<T>) => {
   const res = await fetch(url, {
     method: 'POST',
     headers: {
-      'content-type': 'application/json'
+      'content-type': 'application/json',
+      ...headers
     },
     body: JSON.stringify(data)
   })
