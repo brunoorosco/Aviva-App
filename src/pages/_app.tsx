@@ -1,13 +1,13 @@
 import '@/styles/globals.css'
 import { Session } from 'next-auth'
 import type { AppProps } from 'next/app'
-import NextAuthSessionProvider from '@/providers/sessionProvider'
 import { useRouter } from 'next/router'
 import LayoutPublic from '@/components/Layout/LayoutPublic'
 import LayoutApp from '@/components/Layout/LayoutApp'
 import LayoutTenant from '@/components/Layout/LayoutTenant'
 import LayoutEmpty from '@/components/Layout/LayoutEmpty'
 import { SessionProvider, useSession } from 'next-auth/react'
+import Head from 'next/head'
 
 function MyApp({
   Component,
@@ -26,13 +26,19 @@ function MyApp({
     Layout = LayoutEmpty
   }
   return (
-    <SessionProvider>
-      <Layout>
-        <Auth>
-          <Component {...pageProps} />
-        </Auth>
-      </Layout>
-    </SessionProvider>
+    <>
+      <Head>
+        <title>Aviva-App</title>
+        <meta name='description' content='Descrição da página' />
+      </Head>
+      <SessionProvider>
+        <Layout>
+          <Auth>
+            <Component {...pageProps} />
+          </Auth>
+        </Layout>
+      </SessionProvider>
+    </>
   )
 }
 
