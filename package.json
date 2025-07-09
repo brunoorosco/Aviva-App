@@ -7,11 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "db:push": "npx prisma db push",
-    "db:migrate": "npx prisma migrate dev",
-    "db:status": "npx prisma migrate status",
-    "postinstall": "prisma generate"
+    "lint": "next lint"
   },
   "dependencies": {
     "@loadable/component": "^5.15.3",
