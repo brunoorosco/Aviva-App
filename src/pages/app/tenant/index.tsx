@@ -2,7 +2,7 @@ import ButtonSubmit from '@/components/ButtonSubmit'
 import { SelectCem } from '@/components/Select/SelectCem'
 import { SelectChurch } from '@/components/Select/SelectChurch'
 import Toast from '@/components/Toast'
-import { useHttpPath } from '@/hooks/api'
+import { useHttpPatch } from '@/hooks/api'
 import { getSession, signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Suspense, useState } from 'react'
@@ -28,7 +28,7 @@ const UserUpdatedChurchApp = () => {
     try {
       setIsLoading(true)
       setError('')
-      const response = await useHttpPath({
+      const response = await useHttpPatch({
         url: `/api/protected/churches/${data.church}/users/${session?.user.id}`,
         data
       })

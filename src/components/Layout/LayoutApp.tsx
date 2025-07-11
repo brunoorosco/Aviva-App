@@ -1,8 +1,8 @@
+import React, { useEffect, useState } from 'react'
 import useWindowSize from '@/hooks/useWindow'
-import React, { useEffect, useRef, useState } from 'react'
+import Sidebar from '../Sidebar'
 import Drawer from '../Drawer'
 import Header from '../Header'
-import Sidebar from '../Sidebar'
 import Wrapper from '../Wrapper'
 
 interface Props {
@@ -11,61 +11,53 @@ interface Props {
 
 const LayoutApp = ({ children }: Props) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-  const sidebarRef = useRef(null)
+  const { width = 0 } = useWindowSize()
+  const isMobile = width <= 1020
 
-  const updateDrawerState = () => {
-    setIsMobile(window.innerWidth <= 1020)
-  }
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev)
+  const closeSidebar = () => setIsSidebarOpen(false)
 
   useEffect(() => {
-    updateDrawerState()
-    window.addEventListener('resize', updateDrawerState)
-    return () => {
-      window.removeEventListener('resize', updateDrawerState)
+    if (!isMobile) {
+      setIsSidebarOpen(false)
     }
-  }, [useWindowSize()])
+  }, [isMobile])
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen)
-  }
-
-  const closeSidebar = () => {
-    setIsSidebarOpen(false)
-  }
+  const Content = (
+    <>
+      <Header toggleSidebar={toggleSidebar} />
+      <div className="flex-1 overflow-y-auto p-4">{children}</div>
+    </>
+  )
 
   return (
-    <main className='relative w-full h-screen overflow-hidden bg-gray-50 dark:bg-gray-800'>
-      <div className={`flex items-start justify-between`}>
-        {!isMobile ? (
-          <Sidebar closeSidebar={closeSidebar} />
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-800">
+      {/* Sidebar fixo */}
+      {!isMobile ? (
+        <Sidebar closeSidebar={closeSidebar} />
+      ) : (
+        <Drawer
+          isOpen={isSidebarOpen}
+          toggleSidebar={toggleSidebar}
+          closeSidebar={closeSidebar}
+        />
+      )}
+
+      {/* Conteúdo principal */}
+      <div className="flex flex-col flex-1">
+        {isSidebarOpen && isMobile ? (
+          <div
+            className="blur-sm filter contrast-50 h-screen z-40 overflow-hidden"
+            onClick={toggleSidebar}
+          >
+            {Content}
+          </div>
         ) : (
-          <Drawer
-            isOpen={isSidebarOpen}
-            toggleSidebar={toggleSidebar}
-            closeSidebar={closeSidebar}
-          />
+          Content
         )}
-        <Wrapper>
-          {isSidebarOpen ? (
-            <>
-              <div
-                className={'blur-sm h-screen z-40 filter contrast-50 '}
-                onClick={toggleSidebar}
-              >
-                <Header toggleSidebar={toggleSidebar} />
-                {children}
-              </div>
-            </>
-          ) : (
-            <>
-              <Header toggleSidebar={toggleSidebar} />
-              {children}
-            </>
-          )}
-        </Wrapper>
       </div>
-    </main>
+    </div>
   )
 }
+
 export default LayoutApp

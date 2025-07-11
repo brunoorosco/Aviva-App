@@ -1,5 +1,5 @@
 import { User } from '@/domain/models/users'
-import { updateMember } from '@/infra/services/members'
+import { changeStatusUser, updateMember } from '@/infra/services/members'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 type CemId = {
@@ -15,9 +15,11 @@ export default async function handler(
 ) {
   if (req.method === 'PATCH') {
     const { userid } = req.query
-    const { active } = req.body
+    const members = await updateMember(userid as string, req.body)
 
-    const members = await updateMember(userid as string, active)
+    return res.status(200).json({ message: 'ok' })
+  } else if (req.method === 'PUT') {
+    const { userid } = req.query
 
     return res.status(200).json({ message: 'ok' })
   }

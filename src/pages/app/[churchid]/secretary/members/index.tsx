@@ -1,10 +1,11 @@
 import { Suspense, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useHttpDelete, useHttpGet, useHttpPath } from '@/hooks/api'
+import { useHttpGet, useHttpPatch } from '@/hooks/api'
 import MembersHeader from './MembersHeader'
 import MemberItem from './MemberItem'
 import { User } from '@/domain/models/users'
 import Pagination from '@/components/Pagination'
+import EditMemberModal from '@/components/Member/EditMemberModal'
 
 const MembersWithImportExport = () => {
   const router = useRouter()
@@ -12,11 +13,13 @@ const MembersWithImportExport = () => {
   const { churchid } = query
   const inputFileRef = useRef<HTMLInputElement>(null)
   const [search, setSearch] = useState('')
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [selectedMember, setSelectedMember] = useState<User | null>(null)
 
   const [page, setPage] = useState(1)
   const limit = 8
 
-  const { data: members } = useHttpGet<{
+  const { data: members, mutate: refreshMembers } = useHttpGet<{
     data: User[]
     total: number
     page: number
@@ -24,8 +27,7 @@ const MembersWithImportExport = () => {
   }>(`/api/protected/churches/${churchid}/users?page=${page}&limit=${limit}`)
 
   const handleDesactive = async (id: string) => {
-    console.log('chegou', id)
-    await useHttpPath({
+    await useHttpPatch({
       url: `/api/protected/churches/${churchid}/users/${id}`,
       data: {
         id,
@@ -34,8 +36,32 @@ const MembersWithImportExport = () => {
     })
   }
 
+  const handleActive = async (id: string) => {
+    await useHttpPatch({
+      url: `/api/protected/churches/${churchid}/users/${id}`,
+      data: {
+        id,
+        active: true
+      }
+    })
+  }
+  const handleEdit = (member: User) => {
+    setSelectedMember(member)
+    setShowEditModal(true)
+  }
+
   return (
     <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg dark:text-dark-primary'>
+      {showEditModal && (
+        <EditMemberModal
+          member={selectedMember}
+          onClose={() => {
+            setShowEditModal(false)
+            setSelectedMember(null)
+          }}
+          onUpdated={refreshMembers}
+        />
+      )}
       <MembersHeader
         total={members?.data?.total || 0}
         pathname={pathname}
@@ -50,7 +76,9 @@ const MembersWithImportExport = () => {
               <MemberItem
                 key={member._id}
                 member={member}
+                onEdit={() => handleEdit(member)}
                 onDeactive={() => handleDesactive(member._id)}
+                onActive={() => handleActive(member._id)}
                 basePath={asPath}
               />
             ))}

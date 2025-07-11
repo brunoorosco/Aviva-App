@@ -15,8 +15,10 @@ export type User = {
   birth: string
   address?: AddressModel
   permissions: Permission[]
-  cargo: Cargo
+  role: Cargo
   password: string
+  createdAt: string
+  updatedAt: string
 }
 
 type Cem = {

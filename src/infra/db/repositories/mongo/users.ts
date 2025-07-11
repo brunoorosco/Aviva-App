@@ -53,13 +53,12 @@ export class UsersMongoRepository {
       throw error
     }
   }
-  async desactiveUser(userId: string, data: any): Promise<any> {
+  async changeStatusUser(userId: string, data: any): Promise<any> {
     try {
-      console.log('user', userId, data)
       const collection = await MongoHelper.getCollection(this.collectionName)
       const result = collection.updateOne(
         { _id: new ObjectId(userId) },
-        { $set: { active: data } }
+        { $set: { active: data ? true : false, updatedAt: new Date() } }
       )
       return result
     } catch (error) {
@@ -67,6 +66,26 @@ export class UsersMongoRepository {
       throw error
     }
   }
+
+  async updateUser(userId: string, data: any): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName)
+      const result = await collection.updateOne(
+        { _id: new ObjectId(userId) },
+        {
+          $set: {
+            ...data, // Espalha as propriedades para atualizar campos individualmente
+            updatedAt: new Date()
+          }
+        }
+      )
+      return result
+    } catch (error) {
+      console.error('Error updating user:', error)
+      throw error
+    }
+  }
+
   async getUsersByChurchId(
     churchId: string,
     page: number = 1,

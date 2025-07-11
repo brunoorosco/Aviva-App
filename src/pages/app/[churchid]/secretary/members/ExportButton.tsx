@@ -17,7 +17,7 @@ const ExportButton = ({ members }: Props) => {
       rua: m.address?.street ?? '',
       numero: m.address?.number ?? '',
       cidade: m.address?.city ?? '',
-      cargo: m.cargo ?? '',
+      cargo: m.role ?? '',
       permissao: m.permissions?.join(', ') ?? ''
     }))
 

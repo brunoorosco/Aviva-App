@@ -14,7 +14,12 @@ export class CellsMongoRepository {
       const collection = await MongoHelper.getCollection(this.collectionName)
       const church = await collection.findOne<ChurchModel>(
         { _id: new ObjectId(churchId) },
-        { projection: { cells: 1, _id: 0 } }
+        {
+          projection: {
+            cells: { $sortArray: { input: '$cells', sortBy: { name: 1 } } },
+            _id: 0
+          }
+        }
       )
       if (!church) {
         throw new Error(`Church with ID ${churchId} not found`)
@@ -54,7 +59,7 @@ export class CellsMongoRepository {
           _id: new ObjectId(churchId),
           'cells.name': RegExp(cemName, 'i')
         },
-        { projection: { "cells.$": 1, _id: 0 } }
+        { projection: { 'cells.$': 1, _id: 0 } }
       )
       if (!church) {
         throw new Error(`Church with Name:: ${churchId} not found`)

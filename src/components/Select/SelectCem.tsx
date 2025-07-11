@@ -1,70 +1,46 @@
-import { Suspense, useEffect, useState } from 'react'
 import { Controller } from 'react-hook-form'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { useHttpGet } from '@/hooks/api'
 import Loading from './loading'
 
 type DropdownProps = {
-  title: string
   name: string
-  errors: any
   control: any
+  title: string
   churchId: string
-}
-type TCem = {
-  _id: string
-  name: string
+  errors: any
 }
 
-export function SelectCem({
-  control,
-  name,
-  errors,
-  title,
-  churchId
-}: DropdownProps) {
-  const [items, setItems] = useState<TCem[]>()
+export function SelectCem({ control, name, title, churchId, errors }: DropdownProps) {
+  const { data, isLoading } = useHttpGet(`/api/protected/churches/${churchId}/cems`)
 
-  const {
-    data: cem,
-    error: errorRequest,
-    isLoading
-  } = useHttpGet<TCem[]>(`/api/protected/churches/${churchId}/cems`)
-
-  useEffect(() => {
-    if (cem) {
-      setItems(cem.data)
-    }
-  }, [cem])
   return (
-    <Suspense fallback={<Loading />}>
-      <div className='flex flex-col w-full my-2'>
-        <Controller
-          name={name}
-          control={control}
-          render={({ field }) => (
-            <select
-              defaultValue={title}
-              {...field}
-              className='w-full p-4 bg-gray-200 rounded-t dark:bg-zinc-700 dark:text-gray-300 open:w-11'
-            >
-              <option disabled>{title}</option>
+    <div className="flex flex-col w-full my-2">
+      <Controller
+        name={name}
+        control={control}
+        rules={{ required: 'Selecione um CEM' }}
+        render={({ field }) => (
+          <Select
+            onValueChange={field.onChange}
+            value={field.value}
+          >
+            <SelectTrigger className="w-full bg-gray-200 dark:bg-zinc-700 dark:text-gray-100">
+              <SelectValue placeholder={title} />
+            </SelectTrigger>
+            <SelectContent>
+              {isLoading && <Loading />}
               {!isLoading &&
-                cem?.data.map((item: any) => (
-                  <option key={item._id} value={item._id}>
+                data?.data?.map((item: any) => (
+                  <SelectItem key={item._id} value={`${item._id}-${item.name}`}>
                     {item.name}
-                  </option>
+                  </SelectItem>
                 ))}
-            </select>
-          )}
-        />
-        {errors[name] && (
-          <p className='block mt-2 text-sm text-red-400'>
-            {errors[name].message}
-          </p>
+            </SelectContent>
+          </Select>
         )}
-        {/* </>
-      )} */}
-      </div>
-    </Suspense>
+      />
+      {errors[name] && <p className="mt-2 text-sm text-red-500">{errors[name]?.message}</p>}
+    </div>
   )
 }

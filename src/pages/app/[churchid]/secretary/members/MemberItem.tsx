@@ -1,17 +1,24 @@
 import Avatar from '@/components/Avatar'
 import Link from 'next/link'
-import MemberAddress from './MemberAddress'
 import { User } from '@/domain/models/users'
 import { useState } from 'react'
-import { CircleX, Edit, EyeIcon } from 'lucide-react'
+import { CirclePlayIcon, CircleX, Edit, EyeIcon } from 'lucide-react'
 
 type Props = {
   member: User
   onDeactive: () => void
+  onActive: () => void
+  onEdit: () => void
   basePath: string
 }
 
-const MemberItem = ({ member, onDeactive, basePath }: Props) => {
+const MemberItem = ({
+  member,
+  onDeactive,
+  onActive,
+  onEdit,
+  basePath
+}: Props) => {
   const [disabled, setDisabled] = useState(false)
   const toggleDisabled = () => setDisabled((prev) => !prev)
 
@@ -27,8 +34,14 @@ const MemberItem = ({ member, onDeactive, basePath }: Props) => {
         <div className='grid grid-cols-4 grid-rows-2 gap-x-2 gap-y-1 flex-1'>
           {/* Nome */}
           <div className='col-span-2 row-start-1'>
-            <p className='text-sm font-medium text-gray-900 dark:text-gray-100 uppercase truncate leading-tight'>
-              {member.name}
+            <p
+              className={`text-sm font-medium uppercase truncate leading-tight ${
+                member.active
+                  ? 'text-gray-900 dark:text-gray-100'
+                  : 'text-gray-400'
+              }`}
+            >
+              {member.name + ' ' + (member.active ? '' : '(Inativo)')}
             </p>
           </div>
 
@@ -45,15 +58,24 @@ const MemberItem = ({ member, onDeactive, basePath }: Props) => {
                 size={16}
               />
             </Link>
-            <Link href={`${basePath}/${member._id}`}>
-              <Edit className='cursor-pointer hover:text-blue-600' size={16} />
-            </Link>
-
-            <CircleX
-              className='cursor-pointer hover:text-red-600'
+            <Edit
+              className='cursor-pointer hover:text-blue-600'
               size={16}
-              onClick={onDeactive}
+              onClick={onEdit}
             />
+            {member.active ? (
+              <CircleX
+                className='cursor-pointer hover:text-red-600'
+                size={16}
+                onClick={onDeactive}
+              />
+            ) : (
+              <CirclePlayIcon
+                className='cursor-pointer hover:text-blue-600'
+                size={16}
+                onClick={onActive}
+              />
+            )}
           </div>
 
           {/* Email */}
@@ -62,9 +84,9 @@ const MemberItem = ({ member, onDeactive, basePath }: Props) => {
           </div>
 
           {/* Endereço */}
-          <div className='col-start-3 row-start-2 text-sm text-gray-500 dark:text-gray-400 truncate leading-tight'>
+          {/* <div className='col-start-3 row-start-2 text-sm text-gray-500 dark:text-gray-400 truncate leading-tight'>
             <MemberAddress address={member.address} />
-          </div>
+          </div> */}
         </div>
       </div>
     </li>

@@ -9,7 +9,7 @@ interface IPost<T> {
 
 interface IPatch<T> {
   url: string
-  data: T
+  data: Partial<T> // Para PATCH faz sentido ser parcial, PUT geralmente é completo
 }
 
 interface IDelete {
@@ -42,14 +42,34 @@ const useHttpPost = async <T>({ url, data, headers }: IPost<T>) => {
   return res.json()
 }
 
-const useHttpPath = async <T>({ url, data }: IPatch<T>) => {
+const useHttpPatch = async <T>({ url, data }: IPatch<T>) => {
   const res = await fetch(url, {
     method: 'PATCH',
     headers: {
-      'content-type': 'application/json'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(data)
   })
+
+  if (!res.ok) {
+    throw new Error(`HTTP error! status: ${res.status}`)
+  }
+
+  return res.json()
+}
+
+const useHttpPut = async <T>({ url, data }: IPatch<T>) => {
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+
+  if (!res.ok) {
+    throw new Error(`HTTP error! status: ${res.status}`)
+  }
 
   return res.json()
 }
@@ -65,4 +85,4 @@ const useHttpDelete = async ({ url }: IDelete) => {
   return res.json()
 }
 
-export { useHttpDelete, useHttpPath, useHttpGet, useHttpPost }
+export { useHttpDelete, useHttpPatch, useHttpGet, useHttpPost, useHttpPut }

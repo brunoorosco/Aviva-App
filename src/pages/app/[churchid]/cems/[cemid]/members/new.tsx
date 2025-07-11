@@ -9,6 +9,7 @@ import Toast from '@/components/Toast'
 import { Masks } from '@/utils/masks'
 import { SelectSupervisorCem } from '@/components/Select/SelectSupervisoresCem'
 import { SelectProfile } from '@/components/Select/SelectProfile'
+import { roles } from '@/utils/constants/roles'
 
 type FormValues = {
   name: string
@@ -164,6 +165,7 @@ const NewMember = () => {
         />
 
         <SelectProfile
+           options={roles}
           errors={false}
           title={'Cargo Eclesiástico'}
           name='profileId'
