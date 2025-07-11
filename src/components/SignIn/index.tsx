@@ -1,108 +1,107 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import ButtonSubmit from '../ButtonSubmit'
+import Image from 'next/image'
 
 type FormValues = {
-  password: string
   email: string
+  password: string
 }
 
 const SignIn = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<FormValues>()
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>()
   const router = useRouter()
-  const session = useSession()
+  const { status, data: session } = useSession()
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  if (session.status === 'authenticated') {
-    router.push('/app')
-  }
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.push('/app')
+    }
+  }, [status, router])
 
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-      setIsLoading(true)
-      setError('')
-      const response = await signIn('credentials', {
-        redirect: false,
-        email: data.email,
-        password: data.password
-      })
+  const onSubmit = handleSubmit(async ({ email, password }) => {
+    setIsLoading(true)
+    setError('')
+    const res = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+    })
 
-      setIsLoading(false)
-      if (response?.error) {
-        setError('Email ou senha inválidos')
-        return
-      }
-
+    setIsLoading(false)
+    if (res?.error) {
+      setError('Email ou senha inválidos')
+    } else {
       router.replace('/app')
-    } catch (error) {
-      setIsLoading(false)
-      console.log('[LOGIN_ERROR]: ', error)
     }
   })
 
   return (
-    <div className='flex items-center justify-center h-screen bg-zinc-800'>
-      {/* Formulário centralizado */}
-      <div className='w-full max-w-lg p-4 transition-all duration-300 transform border border-zinc-700 rounded-lg shadow-lg hover:shadow-2xl sm:w-full sm:p-4 sm:rounded-lg sm:shadow-md sm:m-6 max-h-[100vh]'>
-        <form onSubmit={onSubmit} className='mx-6'>
-          <div className='flex flex-col items-center'>
-            {/* Logo */}
-            <img
-              src='/logo-branco.png'
-              alt='Logo'
-              className='w-2/3 mx-auto my-6 sm:w-1/2'
-            />
+    <div className="flex items-center justify-center min-h-screen px-4 bg-[#393E46]">
+      <div className="w-full max-w-md bg-[#434a53] rounded-2xl p-6 shadow-xl">
+        <div className="flex flex-col items-center">
+          <Image
+            src="/logo-preto.png"
+            alt="Logo"
+            width={160}
+            height={100}
+            className="mb-6"
+          />
 
-            {/* Email input */}
-            <div className='w-full mb-3'>
+          {/* Login Social Google */}
+          <button
+            onClick={() => signIn('google')}
+            className="w-full flex items-center justify-center mb-4 px-4 py-2 text-sm font-medium text-[#DB4437] border border-gray-300 rounded-lg shadow hover:bg-gray-50 transition"
+          >
+            <svg className="w-5 h-5 mr-2" viewBox="0 0 488 512" fill="currentColor">
+              <path d="M488 261.8C488 403.3 391.1..." />
+            </svg>
+            Entrar com Google
+          </button>
+
+          <form onSubmit={onSubmit} className="w-full space-y-4 mt-4">
+            <div>
               <input
-                {...register('email', { required: true })}
-                type='email'
-                name='email'
-                placeholder='Email'
-                className='w-full p-3 mt-2 text-gray-900 border border-gray-400 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500'
+                {...register('email', { required: 'E-mail é obrigatório' })}
+                type="email"
+                placeholder="E-mail"
+                className="w-full p-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-800"
               />
-              {errors.email && errors.email.type === 'required' && (
-                <p className='mt-2 text-sm text-red-400'>
-                  E-mail é obrigatório
-                </p>
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
               )}
             </div>
 
-            {/* Password input */}
-            <div className='w-full mb-3'>
+            <div>
               <input
                 {...register('password', {
-                  required: true,
-                  minLength: 6
+                  required: 'Senha é obrigatória',
+                  minLength: { value: 6, message: 'Mínimo 6 caracteres' }
                 })}
-                type='password'
-                name='password'
-                placeholder='Password'
-                className='w-full p-3 mt-2 text-gray-900 border border-gray-400 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-gray-500'
+                type="password"
+                placeholder="Senha"
+                className="w-full p-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-800"
               />
-              {errors.password && errors.password.type === 'required' && (
-                <p className='mt-2 text-sm text-red-400'>Senha é obrigatória</p>
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
               )}
-              {errors.password && errors.password.type === 'minLength' && (
-                <p className='mt-2 text-sm text-red-400'>6 dígitos no mínimo</p>
-              )}
-              {error && <p className='mt-2 text-sm text-red-400'>{error}</p>}
+              {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
             </div>
 
-            {/* Botão de envio */}
-            <div className='w-full mt-3 mb-10'>
-              <ButtonSubmit text='Entrar' type='submit' loading={isLoading} />
-            </div>
-          </div>
-        </form>
+            <ButtonSubmit text="Entrar" type="submit" loading={isLoading} />
+          </form>
+
+          <p className="text-sm text-gray-500 mt-6">
+            Ainda não tem conta?{' '}
+            <a href="/sign-up" className="text-lime-400 hover:underline">
+              Cadastre-se
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   )

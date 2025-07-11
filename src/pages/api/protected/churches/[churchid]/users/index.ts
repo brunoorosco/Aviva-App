@@ -12,7 +12,12 @@ type Error = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<User[] | User | Error | { data: User[], total: number, page: number, totalPages: number }>
+  res: NextApiResponse<
+    | User[]
+    | User
+    | Error
+    | { data: User[]; total: number; page: number; totalPages: number }
+  >
 ) {
   if (req.method === 'GET') {
     try {
@@ -39,7 +44,7 @@ export default async function handler(
     })
 
     return res.status(201).json({ message: 'ok' })
-  }
+  } 
 
   return res.status(200).json([])
 }

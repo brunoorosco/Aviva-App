@@ -53,6 +53,20 @@ export class UsersMongoRepository {
       throw error
     }
   }
+  async desactiveUser(userId: string, data: any): Promise<any> {
+    try {
+      console.log('user', userId, data)
+      const collection = await MongoHelper.getCollection(this.collectionName)
+      const result = collection.updateOne(
+        { _id: new ObjectId(userId) },
+        { $set: { active: data } }
+      )
+      return result
+    } catch (error) {
+      console.error('Error get users:', error)
+      throw error
+    }
+  }
   async getUsersByChurchId(
     churchId: string,
     page: number = 1,

@@ -1,6 +1,6 @@
 import { Suspense, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useHttpDelete, useHttpGet } from '@/hooks/api'
+import { useHttpDelete, useHttpGet, useHttpPath } from '@/hooks/api'
 import MembersHeader from './MembersHeader'
 import MemberItem from './MemberItem'
 import { User } from '@/domain/models/users'
@@ -23,16 +23,19 @@ const MembersWithImportExport = () => {
     totalPages: number
   }>(`/api/protected/churches/${churchid}/users?page=${page}&limit=${limit}`)
 
-  console.log(members)
-
-  const handleDelete = async (id: string) => {
-    await useHttpDelete({
-      url: `/api/protected/churches/${churchid}/users`
+  const handleDesactive = async (id: string) => {
+    console.log('chegou', id)
+    await useHttpPath({
+      url: `/api/protected/churches/${churchid}/users/${id}`,
+      data: {
+        id,
+        active: false
+      }
     })
   }
 
   return (
-    <div className='flex flex-col w-full max-w-4xl p-3 mx-auto rounded-lg dark:text-dark-primary'>
+    <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg dark:text-dark-primary'>
       <MembersHeader
         total={members?.data?.total || 0}
         pathname={pathname}
@@ -47,7 +50,7 @@ const MembersWithImportExport = () => {
               <MemberItem
                 key={member._id}
                 member={member}
-                onDelete={() => handleDelete(member._id)}
+                onDeactive={() => handleDesactive(member._id)}
                 basePath={asPath}
               />
             ))}

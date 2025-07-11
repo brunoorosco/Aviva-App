@@ -18,51 +18,27 @@ const range = (start: number, end: number) => {
 }
 
 const getPageNumbers = (totalPages: number, currentPage: number): (number | "...")[] => {
-  const visiblePages = 3
-  const siblings = 1
-  const firstPage = 1
-  const lastPage = totalPages
-
-  const startPages = range(1, Math.min(visiblePages, totalPages))
-  const endPages = range(Math.max(totalPages - visiblePages + 1, visiblePages + 1), totalPages)
-
-  const shouldShowLeftDots = currentPage > visiblePages + siblings
-  const shouldShowRightDots = currentPage < totalPages - visiblePages - siblings + 1
-
-  const middlePages = range(
-    Math.max(currentPage - siblings, visiblePages + 1),
-    Math.min(currentPage + siblings, totalPages - visiblePages)
-  )
-
+  const delta = 3
   const pages: (number | "...")[] = []
 
-  // Start
-  pages.push(...startPages)
+  const startPage = Math.max(2, currentPage - delta)
+  const endPage = Math.min(totalPages - 1, currentPage + delta)
 
-  // Dots before middle
-  if (shouldShowLeftDots) {
-    if (startPages[startPages.length - 1] + 1 < middlePages[0]) {
-      pages.push("...")
-    }
+  pages.push(1) // Always show the first page
+
+  if (startPage > 2) pages.push("...")
+
+  for (let i = startPage; i <= endPage; i++) {
+    pages.push(i)
   }
 
-  // Middle
-  if (shouldShowLeftDots || shouldShowRightDots) {
-    pages.push(...middlePages)
-  }
+  if (endPage < totalPages - 1) pages.push("...")
 
-  // Dots after middle
-  if (shouldShowRightDots) {
-    if (middlePages[middlePages.length - 1] + 1 < endPages[0]) {
-      pages.push("...")
-    }
-  }
-
-  // End
-  pages.push(...endPages)
+  if (totalPages > 1) pages.push(totalPages) // Always show the last page
 
   return pages
 }
+
 
 const ShadcnPagination = ({
   items,

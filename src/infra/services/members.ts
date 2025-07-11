@@ -19,6 +19,12 @@ export const saveMembers = async (churchId: string, cemId: string) => {
   return user
 }
 
+export const updateMember = async (userId: string, data: boolean) => {
+  const userRepository = new UsersMongoRepository()
+  const user = await userRepository.desactiveUser(userId, data)
+  return user
+}
+
 export const addUserImportService = async (churchId: string, data: any) => {
   const userRepository = new UsersMongoRepository()
   const cemRepository = new CellsMongoRepository()
