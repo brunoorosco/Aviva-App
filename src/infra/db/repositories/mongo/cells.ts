@@ -45,6 +45,26 @@ export class CellsMongoRepository {
       throw error
     }
   }
+  async getCellsByName(churchId: string, cemName: string): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName)
+      console.log(cemName)
+      const church = await collection.findOne<ChurchModel>(
+        {
+          _id: new ObjectId(churchId),
+          'cells.name': RegExp(cemName, 'i')
+        },
+        { projection: { "cells.$": 1, _id: 0 } }
+      )
+      if (!church) {
+        throw new Error(`Church with Name:: ${churchId} not found`)
+      }
+      return church.cells || []
+    } catch (error) {
+      console.error('Error getting cells:', error)
+      throw error
+    }
+  }
 
   async create(churchId: string, data: any): Promise<any> {
     try {

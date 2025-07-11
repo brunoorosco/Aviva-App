@@ -15,18 +15,18 @@ type TUser = {
   churchId: string
 }
 
-export const createUser = async (params: TUser) => {  
+export const createUser = async (params: TUser) => {
   const church = new ChurChMongoRepository()
   const userRepository = new UsersMongoRepository()
   const cripto = new CryptAdapter()
-  
+
   const churchId = await church.getChurchById(params.churchId)
   console.log('churchId', churchId)
   const randowPass = await cripto.randonPassword()
-  
+
   const setPassword = cripto.hashPassword(randowPass)
   const zipcode = params.zipcode?.replace('-', '')
-  
+
   const user = await userRepository.create({
     ...params,
     permissions: ['user'],
@@ -63,9 +63,17 @@ export const getUsersByCem = async (cemId: string) => {
   return members
 }
 
-export const getUsersByChurch = async (churchId: string) => {
+export const getUsersByChurch = async (
+  churchId: string,
+  pageNumber: number,
+  limitNumber: number
+) => {
   const userRepository = new UsersMongoRepository()
-  const users = await userRepository.getUsersByChurchId(churchId)
+  const users = await userRepository.getUsersByChurchId(
+    churchId,
+    pageNumber,
+    limitNumber
+  )
 
   return users
 }

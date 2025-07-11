@@ -53,13 +53,40 @@ export class UsersMongoRepository {
       throw error
     }
   }
-  async getUsersByChurchId(churchId: string): Promise<any> {
+  async getUsersByChurchId(
+    churchId: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{
+    data: any[]
+    total: number
+    page: number
+    totalPages: number
+  }> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      const result = collection.find({churchId: churchId}).toArray()
-      return result
+
+      const skip = (page - 1) * limit
+
+      const [data, total] = await Promise.all([
+        collection
+          .find({ churchId })
+          .collation({ locale: 'pt', strength: 1 })
+          .sort({ name: 1 })
+          .skip(skip)
+          .limit(limit)
+          .toArray(),
+        collection.countDocuments({ churchId })
+      ])
+
+      return {
+        data,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit)
+      }
     } catch (error) {
-      console.error('Error get users:', error)
+      console.error('Error get users with pagination:', error)
       throw error
     }
   }
