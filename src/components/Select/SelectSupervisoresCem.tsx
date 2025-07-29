@@ -29,7 +29,7 @@ export function SelectSupervisorCem({
     error: errorRequest,
     isLoading
   } = useHttpGet<TSupervisores[]>(
-    `/api/protected/churches/${session?.user.churchId}/supervisories/${session?.user.cemId}`
+    `/api/protected/churches/${session?.user.churchId}/supervisories/${session?.user.cem.id}`
   )
 
   useEffect(() => {
