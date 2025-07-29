@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useWindowSize from '@/hooks/useWindow'
-import Sidebar from '../Sidebar'
+import {SidebarWrapper} from '../Sidebar'
 import Drawer from '../Drawer'
 import Header from '../Header'
 import Wrapper from '../Wrapper'
@@ -34,7 +34,7 @@ const LayoutApp = ({ children }: Props) => {
     <div className="flex h-screen bg-gray-50 dark:bg-gray-800">
       {/* Sidebar fixo */}
       {!isMobile ? (
-        <Sidebar closeSidebar={closeSidebar} />
+        <SidebarWrapper closeSidebar={closeSidebar} />
       ) : (
         <Drawer
           isOpen={isSidebarOpen}

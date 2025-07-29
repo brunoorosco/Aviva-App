@@ -8,7 +8,10 @@ declare module 'next-auth' {
   interface Session {
     user: {
       id?: string
-      cemId?: string
+      cem:{
+        id:string
+        name: string
+      }
       churchId?: string
       rules?: string[]
       profileId?: number
