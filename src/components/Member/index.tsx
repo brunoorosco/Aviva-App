@@ -3,7 +3,6 @@ import Loading from '@/components/Select/loading'
 // import Skeleton from '@/components/Skeleton'
 import { useHttpDelete, useHttpGet } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 export type TMembers = {
@@ -26,7 +25,7 @@ const MembersById = (dataMember: any) => {
   const { query } = router
   const { data: session } = useSession()
   const churchId = session?.user.churchId as string
-  const cemId = session?.user.cemId as string
+  const cemId = session?.user.cem.id as string
   const {
     data: member,
     error,

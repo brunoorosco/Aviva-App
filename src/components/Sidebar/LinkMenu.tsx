@@ -1,24 +1,26 @@
+'use client'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 
 interface Props {
   children: React.ReactNode
   href: string
   closeSidebar: () => void
 }
+
 const LinkMenu = ({ children, href, closeSidebar }: Props) => {
-  const router = useRouter()
-  const { pathname } = router
+  const pathname = usePathname()
   const selected = pathname === href
+
   return (
     <Link
-      onClick={closeSidebar}
       href={href}
-      className={
+      onClick={closeSidebar}
+      className={`flex items-center justify-start w-full py-3 px-3 h-full transition-colors duration-200 border-l-4 ${
         selected
-          ? 'flex items-center justify-start w-full py-4 px-3 h-full  text-gray-800 transition-colors duration-200 border-l-4 border-purple-500 dark:text-white'
-          : 'flex items-center justify-start w-full py-4 px-3 h-full text-gray-400  transition-colors duration-200 border-l-4 border-transparent hover:text-gray-800'
-      }
+          ? 'text-gray-800 dark:text-white border-purple-500 bg-gray-200'
+          : 'text-gray-400 border-transparent hover:text-gray-800'
+      }`}
     >
       {children}
     </Link>

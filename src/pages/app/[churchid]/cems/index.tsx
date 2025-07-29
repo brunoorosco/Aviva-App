@@ -17,6 +17,7 @@ const Cem = () => {
   const { data: cems, mutate } = useHttpGet<CellsModel[]>(
     `/api/protected/churches/${session?.user.churchId}/cems`
   )
+  console.log(cems)
 
   // if (error) {
   //   return <p>Ocorreu um erro: {error.message}</p>
@@ -57,7 +58,7 @@ const Cem = () => {
           <ul className='w-full p-4 mx-auto bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
             {cems &&
               cems.data.map((cem: CellsModel) => (
-                <li className='pb-3 sm:pb-4' key={cem.id}>
+                <li className='pb-3 sm:pb-4' key={cem._id}>
                   <div className='flex items-center space-x-4'>
                     <div className='flex items-center justify-center w-12 h-12 mt-2 text-2xl text-white rounded-full bg-app-bg'>
                       Aviv
@@ -75,7 +76,7 @@ const Cem = () => {
                       <FaTrash
                         className='mx-2 cursor-pointer'
                         size={17}
-                        onClick={() => handleDelete(cem.id)}
+                        onClick={() => handleDelete(cem._id)}
                       />
                     </div>
                   </div>
