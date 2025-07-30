@@ -1,10 +1,12 @@
 export type baptism = {
-  date: Date
-  people: People[]
+  _id: string
+  data: Date
+  churchId: string
+  batizandos: People[]
 }
 
 type People = {
   name: string
-  cem: string
+  cem?: string
   isCourse: boolean
 }

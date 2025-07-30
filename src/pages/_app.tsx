@@ -15,7 +15,8 @@ function MyApp({
 }: AppProps<{ session: Session }>) {
   const router = useRouter()
   const { pathname } = router
-  let Layout = LayoutPublic
+  let Layout: ({ children }: { children: React.ReactNode }) => JSX.Element =
+    LayoutPublic
   if (pathname === '/app') {
     Layout = LayoutEmpty
   } else if (pathname.startsWith('/app') === true) {

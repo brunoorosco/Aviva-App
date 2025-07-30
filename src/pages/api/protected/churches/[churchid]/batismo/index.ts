@@ -1,0 +1,21 @@
+import { createBatismoService, getBatismoService,  } from '@/infra/services/batismos'
+import { createUser } from '@/infra/services/users'
+import { NextApiRequest, NextApiResponse } from 'next'
+
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  try {
+    if (req.method == 'POST') {
+      const user = await createBatismoService(req.body)
+      res.status(201).json({ user })
+    } else if (req.method == 'GET') {
+      const batismo = await getBatismoService()
+      res.send(batismo)
+    } else {
+      res.send('')
+    }
+  } catch (error) {
+    //@ts-ignore
+    console.error(error)
+    res.status(400).json({ error: 'Falha na conexão com tb usuário' })
+  }
+}

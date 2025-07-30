@@ -15,7 +15,7 @@ const Secretary = () => {
       <MiniCard name='Membresia' href={`${asPath}/members`}>
         <IoSchool size={32} className='dark:text-gray-400' />
       </MiniCard>
-      <MiniCard name='Batismo' href={`${asPath}/baptism`}>
+      <MiniCard name='Batismo' href={`${asPath}/batismos`}>
         <BaptismIcon size={40} className='text-black dark:text-gray-400' />
       </MiniCard>
       <MiniCard name='WhatsApp' href={`${asPath}/whatsapp`}>

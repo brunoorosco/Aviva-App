@@ -41,14 +41,14 @@ export const menuItems = ({ churchId, cemId }: TMenu) => [
   },
   {
     id: 6,
-    label: 'Encontro com Deus',
+    label: 'Encontro com Deus (number)',
     icon: <FaPeopleGroup size={25} />,
-    link: `/app/${churchId}/encontroComDeus`
+    link: `/app/${churchId}/secretary/encontroComDeus`
   },
   {
     id: 7,
     label: 'Reencontro com Deus',
     icon: <FaPeopleGroup size={25} />,
-    link: `/app/${churchId}/reencontroComDeus`
+    link: `/app/${churchId}/secretary/reencontroComDeus`
   }
 ]
