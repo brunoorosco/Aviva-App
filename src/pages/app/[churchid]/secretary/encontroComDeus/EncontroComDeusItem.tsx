@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { useState } from 'react'
 import { Edit, EyeIcon } from 'lucide-react'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
 
@@ -9,19 +8,13 @@ type Props = {
   basePath: string
 }
 
-const EncontroComDeusItem = ({
-  encontro,
-  onEdit,
-  basePath
-}: Props) => {
-  const [disabled, setDisabled] = useState(false)
-  const toggleDisabled = () => setDisabled((prev) => !prev)
+const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
+  // const [disabled, setDisabled] = useState(false)
+  // const toggleDisabled = () => setDisabled((prev) => !prev)
 
   const formatDate = (dateValue: any) => {
     if (!dateValue) return ''
-
     const date = typeof dateValue === 'string' ? new Date(dateValue) : dateValue
-
     if (!(date instanceof Date) || isNaN(date.getTime())) return ''
 
     return date.toLocaleDateString('pt-BR', { timeZone: 'UTC' })
@@ -30,9 +23,7 @@ const EncontroComDeusItem = ({
   return (
     <li className='bg-white dark:bg-gray-800 px-3 py-2 rounded-md shadow mb-1'>
       <div className='flex items-start gap-4'>
-        {/* Grid de informações */}
         <div className='grid grid-cols-4 gap-x-2 gap-y-1 flex-1'>
-          {/* Nome */}
           <div className='col-span-2 row-start-1'>
             <p
               className={`text-sm font-medium uppercase truncate leading-tight ${
@@ -43,12 +34,14 @@ const EncontroComDeusItem = ({
             >
               {formatDate(encontro.data)}
               <p className='text-xs font-normal'>
-                Encontristas: {encontro.encontristas.length}
+                Encontristas:{' '}
+                <label className='font-semibold'>
+                  {encontro?.encontristas.length || 0}
+                </label>
               </p>
             </p>
           </div>
 
-          {/* Botões e checkbox: agora em linha */}
           <div className='flex items-center justify-end gap-3 col-start-4 row-span-2'>
             <Link href={`${basePath}/${encontro._id}`}>
               <EyeIcon

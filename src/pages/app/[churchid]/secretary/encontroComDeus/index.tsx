@@ -71,14 +71,14 @@ const EncontroComDeusList = () => {
           )}
         </ul>
 
-        {encontros?.data.totalPages && (
+        {/* {encontros?.data.totalPages && (
           <Pagination
             currentPage={page}
             pageSize={limit}
             items={encontros.data.total}
             onPageChange={setPage}
           />
-        )}
+        )} */}
       </div>
     </div>
   )

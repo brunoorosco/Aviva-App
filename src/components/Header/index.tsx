@@ -10,7 +10,7 @@ interface SidebarProps {
   toggleSidebar: () => void
 }
 
-const Header: React.FC<SidebarProps> = ({ toggleSidebar }) => {
+const Header = ({ toggleSidebar }: SidebarProps) => {
   const { data: session } = useSession()
   return (
     <header className='flex items-center justify-between w-full h-16 '>

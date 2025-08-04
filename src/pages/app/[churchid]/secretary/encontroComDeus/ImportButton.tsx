@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useHttpPost } from '@/hooks/api'
 import Toast from '@/components/Toast'
@@ -25,7 +25,7 @@ const ImportButton = ({ inputFileRef }: Props) => {
 
       setIsLoading(true)
       const response = await useHttpPost({
-        url: `/api/protected/churches/${session?.user.churchId}/batismo`,
+        url: `/api/protected/churches/${session?.user.churchId}/encontroComDeus`,
         data: json
       })
       setIsLoading(false)
@@ -48,7 +48,7 @@ const ImportButton = ({ inputFileRef }: Props) => {
         onClick={() => inputFileRef.current?.click()}
         className="p-3 rounded bg-blue-500 hover:bg-blue-600 text-white"
         aria-label="Importar Batizandos"
-        title="Importar Batizandos"
+        title="Importar Encontro"
         type="button"
         disabled={isLoading}
       >

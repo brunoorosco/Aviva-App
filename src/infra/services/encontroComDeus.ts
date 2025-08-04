@@ -9,9 +9,10 @@ export const getEncontroComDeusService = async (churchId: string) => {
 
 export const createEncontroComDeusService = async (data: any): Promise<any> => {
   const encontroRepository = new EncontroComDeusRepository()
+  console.log(data)
   const novoBatismo = {
     data: new Date(),
-    batizandos: data
+    encontristas: data
   }
   const saved = await encontroRepository.create(novoBatismo)
   return saved
