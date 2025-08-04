@@ -49,7 +49,7 @@ const Drawer: React.FC<IDrawer> = ({ toggleSidebar, isOpen, closeSidebar }) => {
               <div key={index}>
                 <LinkMenu
                   closeSidebar={closeSidebar}
-                  href={pathRouter + menu.link}
+                  href={ menu.link}
                 >
                   <div style={{ width: '2.5rem' }}>{menu.icon}</div>
                   <span
