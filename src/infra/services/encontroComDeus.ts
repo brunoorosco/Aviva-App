@@ -1,3 +1,4 @@
+import { TPeople } from '@/domain/models/encontroComDeus'
 import { ChurChMongoRepository } from '../db/repositories/mongo/churchs'
 import { EncontroComDeusRepository } from '../db/repositories/mongo/encontroComDeus'
 
@@ -33,16 +34,10 @@ export const createEncontroComDeusService = async (data: any): Promise<any> => {
   return saved
 }
 
-type Encontrista = {
-  nome: string
-  rede?: string
-  igreja: string
-}
-
 function normalizarEncontristasPorIgreja(
-  entradas: (string | Encontrista)[],
+  entradas: (string | TPeople)[],
   nomeDaIgreja: string
-): Encontrista[] {
+): TPeople[] {
   return entradas.map((entrada) => {
     if (typeof entrada === "string") {
       const contemIgreja = entrada.toLowerCase().includes("igreja");

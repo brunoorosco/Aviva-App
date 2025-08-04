@@ -21,43 +21,39 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
   }
 
   return (
-    <li className='bg-white dark:bg-gray-800 px-3 py-2 rounded-md shadow mb-1'>
-      <div className='flex items-start gap-4'>
-        <div className='grid grid-cols-4 gap-x-2 gap-y-1 flex-1'>
-          <div className='col-span-2 row-start-1'>
-            <p
-              className={`text-sm font-medium uppercase truncate leading-tight ${
-                encontro.data
-                  ? 'text-gray-900 dark:text-gray-100'
-                  : 'text-gray-400'
-              }`}
-            >
-              {formatDate(encontro.data)}
-              <p className='text-xs font-normal'>
-                Encontristas:{' '}
-                <label className='font-semibold'>
-                  {encontro?.encontristas.length || 0}
-                </label>
+    <Link href={`${basePath}/${encontro._id}`}>
+      <li className='bg-white dark:bg-gray-800 px-3 py-2 rounded-md shadow mb-1'>
+        <div className='flex items-start gap-4'>
+          <div className='grid grid-cols-4 gap-x-2 gap-y-1 flex-1'>
+            <div className='col-span-2 row-start-1'>
+              <p
+                className={`text-sm font-medium uppercase truncate leading-tight ${
+                  encontro.data
+                    ? 'text-gray-900 dark:text-gray-100'
+                    : 'text-gray-400'
+                }`}
+              >
+                {formatDate(encontro.data)}
+                <p className='text-xs font-normal'>
+                  Encontristas:{' '}
+                  <label className='font-semibold'>
+                    {encontro?.encontristas ? encontro?.encontristas.length : 0}
+                  </label>
+                </p>
               </p>
-            </p>
-          </div>
+            </div>
 
-          <div className='flex items-center justify-end gap-3 col-start-4 row-span-2'>
-            <Link href={`${basePath}/${encontro._id}`}>
-              <EyeIcon
-                className='cursor-pointer hover:text-green-600'
+            <div className='flex items-center justify-end gap-3 col-start-4 row-span-2'>
+              <Edit
+                className='cursor-pointer hover:text-blue-600'
                 size={16}
+                onClick={onEdit}
               />
-            </Link>
-            <Edit
-              className='cursor-pointer hover:text-blue-600'
-              size={16}
-              onClick={onEdit}
-            />
+            </div>
           </div>
         </div>
-      </div>
-    </li>
+      </li>
+    </Link>
   )
 }
 

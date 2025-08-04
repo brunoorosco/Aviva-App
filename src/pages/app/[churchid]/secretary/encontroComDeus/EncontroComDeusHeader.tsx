@@ -12,7 +12,7 @@ const EncontroComDeusHeader = ({ pathname, inputFileRef, encontro }: Props) => {
   const mapBaptismToExport = (m: TEncontroComDeus) => ({
     nome: m.data,
     rede: m.encontristas,
-    churchId: m.churchId
+    igreja: m.igreja
   })
 
   return (

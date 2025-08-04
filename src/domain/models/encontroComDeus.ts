@@ -6,9 +6,21 @@ export type TEncontroComDeus = {
   encontristas: People[]
 }
 
+export type TReencontroComDeus = {
+  _id: string
+  data: Date
+  numero: string
+  igreja: string
+  reencontristas: People[]
+}
+
 type People = {
   nome: string
   rede?: string
-  telefone: string
+  idade?: string
+  email?: string
+  telefone?: string
   igreja?: string
 }
+
+export type TPeople = People

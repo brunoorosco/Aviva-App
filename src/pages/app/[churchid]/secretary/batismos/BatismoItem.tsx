@@ -32,6 +32,7 @@ const BatismoItem = ({
   }
 
   return (
+     <Link href={`${basePath}/${batismos._id}`}>
     <li className='bg-white dark:bg-gray-800 px-3 py-2 rounded-md shadow mb-1'>
       <div className='flex items-start gap-4'>
         {/* Grid de informações */}
@@ -54,12 +55,6 @@ const BatismoItem = ({
 
           {/* Botões e checkbox: agora em linha */}
           <div className='flex items-center justify-end gap-3 col-start-4 row-span-2'>
-            <Link href={`${basePath}/${batismos._id}`}>
-              <EyeIcon
-                className='cursor-pointer hover:text-green-600'
-                size={16}
-              />
-            </Link>
             <Edit
               className='cursor-pointer hover:text-blue-600'
               size={16}
@@ -69,6 +64,7 @@ const BatismoItem = ({
         </div>
       </div>
     </li>
+     </Link>
   )
 }
 

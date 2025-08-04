@@ -17,11 +17,11 @@ type Props = {
 export default function EncontroPage({ encontro }: Props) {
   if (!encontro) return <p>Encontro não encontrado.</p>
   return (
-    <div className='sm:p-6 max-w-3xl mx-auto'>
-      <h1 className='text-2xl font-bold mb-2'>
+    <div className='sm:p-6 max-w-4xl mx-auto'>
+      <h1 className='sm:text-2xl font-bold mb-2 text-xl'>
         Encontro nº {encontro.numero} | Data {formatDate(encontro.data)}
       </h1>
-      <div className='grid grid-cols-4 col-span-2'>
+      <div className='grid sm:grid-cols-4 sm:col-span-2 grid-cols-2'>
         <p className='text-gray-600 text-sm mb-4'>
           Igreja: <label className='font-bold'>{encontro.igreja}</label>
         </p>

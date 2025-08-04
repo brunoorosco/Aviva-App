@@ -7,7 +7,7 @@ type TMenu = {
   churchId: string
   cemId: string
 }
-
+const baseUrl = process.env.NEXTAUTH_URL
 export const menuItems = ({ churchId, cemId }: TMenu) => [
   {
     id: 1,
@@ -41,7 +41,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => [
   },
   {
     id: 6,
-    label: 'Encontro com Deus (number)',
+    label: 'Encontro com Deus',
     icon: <FaPeopleGroup size={25} />,
     link: `/app/${churchId}/secretary/encontroComDeus`
   },
