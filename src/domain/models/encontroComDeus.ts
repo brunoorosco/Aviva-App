@@ -2,7 +2,7 @@ export type TEncontroComDeus = {
   _id: string
   data: Date
   numero: string
-  churchId: string
+  igreja: string
   encontristas: People[]
 }
 

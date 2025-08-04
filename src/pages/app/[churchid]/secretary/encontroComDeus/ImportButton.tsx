@@ -39,6 +39,9 @@ const ImportButton = ({ inputFileRef }: Props) => {
       setIsLoading(false)
       console.error('[IMPORT_ERROR]:', error)
       Toast.showError('Erro durante o processo de importação.')
+    } finally {
+      // ✅ Limpa o input para permitir o mesmo arquivo ser selecionado novamente
+      e.target.value = ''
     }
   }
 
@@ -46,10 +49,10 @@ const ImportButton = ({ inputFileRef }: Props) => {
     <>
       <button
         onClick={() => inputFileRef.current?.click()}
-        className="p-3 rounded bg-blue-500 hover:bg-blue-600 text-white"
-        aria-label="Importar Batizandos"
-        title="Importar Encontro"
-        type="button"
+        className='p-3 rounded bg-blue-500 hover:bg-blue-600 text-white'
+        aria-label='Importar Batizandos'
+        title='Importar Encontro'
+        type='button'
         disabled={isLoading}
       >
         <Upload size={20} />
@@ -57,9 +60,9 @@ const ImportButton = ({ inputFileRef }: Props) => {
 
       <input
         ref={inputFileRef}
-        type="file"
-        accept=".xlsx,.xls"
-        className="hidden"
+        type='file'
+        accept='.xlsx,.xls'
+        className='hidden'
         onChange={handleImport}
       />
     </>
