@@ -17,10 +17,10 @@ type Props = {
 export default function EncontroPage({ encontro }: Props) {
   if (!encontro) return <p>Encontro não encontrado.</p>
   return (
-    <div className='p-6 max-w-3xl mx-auto'>
+    <div className='sm:p-6 max-w-3xl mx-auto'>
       <h1 className='text-2xl font-bold mb-2'>Encontro nº {encontro.numero} | Data {formatDate(encontro.data)}</h1>
       <p className='text-gray-600 text-sm mb-4'>
-        Data: {formatDate(encontro.data)} | Igreja ID: {encontro.churchId}
+        Igreja: {encontro.churchId}
       </p>
 
       <div className='bg-white dark:bg-gray-800 p-4 rounded-md shadow'>
@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       encontro: {
         ...encontro,
         _id: encontro._id.toString(),
-        data: encontro.data.toISOString(), // ✅ Corrige o erro do Date
+        data: encontro.data.toISOString(),
         encontristas: encontro.encontristas || [],
       },
     },
