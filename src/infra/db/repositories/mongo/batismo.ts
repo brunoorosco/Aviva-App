@@ -6,24 +6,47 @@ export class BatismoMongoRepository {
     this.collectionName = 'batismos'
   }
 
-  async getBatismoById(churchId: string): Promise<any> {
-    console.log('churchId', churchId)
+  async getBatismoById(id: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      const church = await collection.findOne({ _id: new ObjectId(churchId) })
-      console.log('church', church)
-      return church
+      const batismos = await collection.findOne({ _id: new ObjectId(id) })
+      return batismos
     } catch (error) {
       console.error('Error finding user by email:', error)
       throw error
     }
   }
 
-  async getBatismo(): Promise<any> {
+  async getBatismo(
+    churchId:string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{
+    data: any[]
+    total: number
+    page: number
+    totalPages: number
+  }> {
     const collection = await MongoHelper.getCollection(this.collectionName)
-    const church = await collection.find({}).toArray()
+    const skip = (page - 1) * limit
 
-    return church
+    const [data, total] = await Promise.all([
+      collection
+        .find({})
+        .collation({ locale: 'pt', strength: 1 })
+        .sort({ name: 1 })
+        .skip(skip)
+        .limit(limit)
+        .toArray(),
+      collection.countDocuments({ churchId })
+    ])
+
+    return {
+      data,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    }
   }
 
   async create(batismo: any): Promise<any> {

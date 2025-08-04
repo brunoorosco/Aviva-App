@@ -8,8 +8,7 @@ interface Props {
   children: React.ReactNode
 }
 
-const LayoutApp = ({ children }: { children: React.ReactNode }): JSX.Element => {
-  const [isClient, setIsClient] = useState(false)
+const LayoutApp = ({ children }: Props): JSX.Element => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const { width = 0 } = useWindowSize()
   const isMobile = width <= 1020
@@ -17,27 +16,13 @@ const LayoutApp = ({ children }: { children: React.ReactNode }): JSX.Element => 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev)
   const closeSidebar = () => setIsSidebarOpen(false)
 
-  // Esse useEffect garante que só renderize depois que estiver no client
   useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  useEffect(() => {
-    if (!isMobile) {
-      setIsSidebarOpen(false)
-    }
+    if (!isMobile) setIsSidebarOpen(false)
   }, [isMobile])
 
-
-  const Content = (
-    <>
-      <Header toggleSidebar={toggleSidebar} />
-      <div className="flex-1 overflow-y-auto p-4">{children}</div>
-    </>
-  )
-
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-800">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-800 relative">
+      {/* Sidebar permanente ou Drawer móvel */}
       {!isMobile ? (
         <SidebarWrapper closeSidebar={closeSidebar} />
       ) : (
@@ -48,20 +33,20 @@ const LayoutApp = ({ children }: { children: React.ReactNode }): JSX.Element => 
         />
       )}
 
-      <div className="flex flex-col flex-1">
-        {isSidebarOpen && isMobile ? (
-          <div
-            className="blur-sm filter contrast-50 h-screen z-40 overflow-hidden"
-            onClick={toggleSidebar}
-          >
-            {Content}
-          </div>
-        ) : (
-          Content
-        )}
+      {/* Conteúdo principal */}
+      <div className="flex flex-col flex-1 relative z-10">
+        <Header toggleSidebar={toggleSidebar} />
+        <div className="flex-1 overflow-y-auto p-4">{children}</div>
       </div>
+
+      {/* Overlay quando a sidebar está aberta no mobile */}
+      {isMobile && isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-20"
+          onClick={toggleSidebar}
+        />
+      )}
     </div>
   )
 }
-
 export default LayoutApp

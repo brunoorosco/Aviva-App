@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useHttpGet, useHttpPatch } from '@/hooks/api'
@@ -6,6 +8,7 @@ import Pagination from '@/components/Pagination'
 import EditMemberModal from '@/components/Member/EditMemberModal'
 import { baptism } from '@/domain/models/baptism'
 import BatismoHeader from './BatismoHeader'
+import ImportButton from './ImportButton'
 
 const BatismoList = () => {
   const router = useRouter()
@@ -22,9 +25,9 @@ const BatismoList = () => {
   if (!isReady || !churchid) return null
 
   const { data: batismos, mutate: refreshMembers } = useHttpGet<{
-    data: baptism[]
     total: number
     page: number
+    data: baptism[]
     totalPages: number
   }>(`/api/protected/churches/${churchid}/batismo?page=${page}&limit=${limit}`)
 
@@ -61,28 +64,39 @@ const BatismoList = () => {
       )}
 
       <div className='shadow-sm'>
-        <BatismoHeader
-          total={batismos?.data?.total || 0}
-          pathname={""}
-          inputFileRef={inputFileRef}
-          batismo={batismos?.data.data || []}
-        />
-        <ul className='w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
-          {!batismos ? (
+        {batismos && (
+          <>
+            <BatismoHeader
+              pathname={''}
+              inputFileRef={inputFileRef}
+              batismo={batismos?.data.data}
+            />
+          </>
+        )}
+        {!batismos ? (
+          <div className='w-full p-4 bg-white shadow-lg dark:rounded-b-lg dark:bg-dark-secondary'>
             <p>Carregando batismos...</p>
-          ) : (
-            batismos?.data.data.map((bat:baptism) => (
-              <BatismoItem
-                key={bat._id}
-                batismos={bat}
-                onEdit={() => handleEdit(bat)}
-                onDeactive={() => handleDesactive(bat._id)}
-                onActive={() => handleActive(bat._id)}
-                basePath={asPath}
-              />
-            ))
-          )}
-        </ul>
+          </div>
+        ) : (
+          <ul className='w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
+            {batismos.data.data.length === 0 ? (
+              <li className='text-center py-4 text-gray-500'>
+                Nenhum batismo encontrado.
+              </li>
+            ) : (
+              batismos.data.data.map((bat: baptism) => (
+                <BatismoItem
+                  key={bat._id}
+                  batismos={bat}
+                  onEdit={() => handleEdit(bat)}
+                  onDeactive={() => handleDesactive(bat._id)}
+                  onActive={() => handleActive(bat._id)}
+                  basePath={asPath}
+                />
+              ))
+            )}
+          </ul>
+        )}
 
         {batismos?.data.totalPages && (
           <Pagination

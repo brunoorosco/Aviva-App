@@ -20,14 +20,15 @@ interface IResponseData<T> {
   headers: Record<string, any>
 }
 
-const fetcher = async <T = any>(url: string) => {
-  const response: IResponseData<T> = await axios.get(url)
-  return { data: response.data, headers: response.headers }
-}
+const fetcher = async <T = any>(url: string): Promise<{ data: T; headers: any }> => {
+  const response: AxiosResponse<T> = await axios.get(url);
+  return { data: response.data, headers: response.headers };
+};
 
 const useHttpGet = <T = any>(url: string) => {
-  return useSWR<IResponseData<T>, Error>(url, fetcher)
+  return useSWR<{ data: T; headers: any }, Error>(url, fetcher)
 }
+
 
 const useHttpPost = async <T>({ url, data, headers }: IPost<T>) => {
   const res = await fetch(url, {

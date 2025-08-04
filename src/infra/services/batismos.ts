@@ -1,16 +1,14 @@
-import { ObjectId } from 'mongodb'
 import { BatismoMongoRepository } from '../db/repositories/mongo/batismo'
 
-export const getBatismoService = async () => {
+export const getBatismoService = async (churchId:string) => {
   const batismoRepository = new BatismoMongoRepository()
-  const result = await batismoRepository.getBatismo()
+  const result = await batismoRepository.getBatismo(churchId)
 
   return result
 }
 
 export const createBatismoService = async (data: any): Promise<any> => {
   const batismoRepository = new BatismoMongoRepository()
-  console.log(data)
   const novoBatismo = {
     data: new Date(),
     batizandos: data

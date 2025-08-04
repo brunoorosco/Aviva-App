@@ -1,3 +1,4 @@
+'use client'
 import { useSession } from 'next-auth/react'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import Avatar from '../Avatar'
