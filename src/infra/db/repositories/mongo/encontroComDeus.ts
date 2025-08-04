@@ -9,8 +9,8 @@ export class EncontroComDeusRepository {
   async getEncontroComDeusById(id: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      const batismos = await collection.findOne({ _id: new ObjectId(id) })
-      return batismos
+      const encontro = await collection.findOne({ _id: new ObjectId(id) })
+      return encontro
     } catch (error) {
       console.error('Error finding user by email:', error)
       throw error

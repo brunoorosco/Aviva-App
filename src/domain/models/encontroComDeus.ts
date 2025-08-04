@@ -7,8 +7,8 @@ export type TEncontroComDeus = {
 }
 
 type People = {
-  name: string
-  cem?: string
+  nome: string
+  rede?: string
   telefone: string
   igreja?: string
 }

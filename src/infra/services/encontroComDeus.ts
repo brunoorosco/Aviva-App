@@ -6,6 +6,12 @@ export const getEncontroComDeusService = async (churchId: string) => {
 
   return result
 }
+export const getEncontroComDeusByIdService = async (churchId: string, encontroId:string) => {
+  const encontroRepository = new EncontroComDeusRepository()
+  const result = await encontroRepository.getEncontroComDeusById(encontroId)
+
+  return result
+}
 
 export const createEncontroComDeusService = async (data: any): Promise<any> => {
   const encontroRepository = new EncontroComDeusRepository()
