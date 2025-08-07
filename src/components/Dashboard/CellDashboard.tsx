@@ -197,7 +197,7 @@ export default function CellDashboard({ members }: Props) {
                 <div className='h-40 md:h-48'>
                   {cell.roles.length > 0 ? (
                     <ResponsiveContainer width='100%' height='100%'>
-                      <PieChart >
+                      <PieChart>
                         <Pie
                           data={cell.roles}
                           cx='50%'
@@ -213,7 +213,7 @@ export default function CellDashboard({ members }: Props) {
                         >
                           {cell.roles.map((entry, idx) => (
                             <Cell
-                                key={`cell-${cellIndex}-${idx.toString()}`}
+                              // key={`cell-${cellIndex}-${idx.toString()}`}
                               fill={COLORS[idx % COLORS.length]}
                             />
                           ))}
