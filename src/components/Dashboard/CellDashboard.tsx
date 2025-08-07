@@ -45,7 +45,6 @@ export default function CellDashboard({ members }: Props) {
   const [totalChurchActive, setTotalChurchActive] = useState(0)
   const [totalChurchInactive, setTotalChurchInactive] = useState(0)
   const [loading, setLoading] = useState(true)
-  console.log('aquiii', members)
   useEffect(() => {
     if (!members || members.length === 0) {
       setLoading(false)

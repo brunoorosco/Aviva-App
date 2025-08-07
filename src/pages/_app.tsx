@@ -1,5 +1,6 @@
 import '@/styles/globals.css'
 import { Session } from 'next-auth'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import LayoutPublic from '@/components/Layout/LayoutPublic'
@@ -39,6 +40,7 @@ function MyApp({
           </Auth>
         </Layout>
       </SessionProvider>
+      <SpeedInsights />
     </>
   )
 }
