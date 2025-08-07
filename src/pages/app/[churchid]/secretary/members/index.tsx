@@ -1,11 +1,11 @@
 import { Suspense, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useHttpGet, useHttpPatch } from '@/hooks/api'
-import MembersHeader from './MembersHeader'
-import MemberItem from './MemberItem'
+import MemberItem from '../../../../../components/Member/MemberItem'
 import { User } from '@/domain/models/users'
 import Pagination from '@/components/Pagination'
 import EditMemberModal from '@/components/Member/EditMemberModal'
+import MembersHeader from '@/components/Member/MembersHeader'
 
 const MembersWithImportExport = () => {
   const router = useRouter()

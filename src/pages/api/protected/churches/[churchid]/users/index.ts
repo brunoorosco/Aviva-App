@@ -21,7 +21,7 @@ export default async function handler(
 ) {
   if (req.method === 'GET') {
     try {
-      const { churchid, page = '1', limit = '10' } = req.query
+      const { churchid, page = 1, limit = 10 } = req.query
 
       const pageNumber = parseInt(page as string, 10)
       const limitNumber = parseInt(limit as string, 10)

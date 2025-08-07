@@ -43,7 +43,38 @@ export class UsersMongoRepository {
     }
   }
 
-  async getUsersByCellId(cemId: string): Promise<any> {
+  async getUsersByCellId(
+    cemId: string,
+    page: number = 1,
+    limit: number = 10
+  ): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName)
+      const skip = (page - 1) * limit
+
+      const [data, total] = await Promise.all([
+        collection
+          .find({ 'cem._id': cemId, role: { $ne: 'bispo' } })
+          .collation({ locale: 'pt', strength: 1 })
+          .sort({ name: 1 })
+          .skip(skip)
+          .limit(limit)
+          .toArray(),
+        collection.countDocuments({ 'cem._id': cemId,role: { $ne: 'bispo' } })
+      ])
+      return {
+        data,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit)
+      }
+    } catch (error) {
+      console.error('Error get users:', error)
+      throw error
+    }
+  }
+
+  async getUsersByChurch(churchId: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
       const result = collection.find({}).toArray()

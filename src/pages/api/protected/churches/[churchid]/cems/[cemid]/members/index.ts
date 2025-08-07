@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getMembers } from '@/infra/services/members'
+import { getMembersByCellId } from '@/infra/services/members'
 import { createUser } from '@/infra/services/users'
+import { User } from '@/domain/models/users'
 
 type Error = {
   message: string
@@ -8,11 +9,20 @@ type Error = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any[] | Error>
+  res: NextApiResponse<
+    | User[]
+    | User
+    | Error
+    | { data: User[]; total: number; page: number; totalPages: number }
+  >
 ) {
   if (req.method === 'GET') {
-    const cemid = req.query.cemid as string
-    const members = await getMembers(cemid as string)
+    const { cemid, page = 1, limit = 10 } = req.query
+
+    const pageNumber = parseInt(page as string, 10)
+    const limitNumber = parseInt(limit as string, 10)
+
+    const members = await getMembersByCellId(cemid as string, pageNumber, limitNumber)
 
     return res.status(200).json(members)
   } else if (req.method === 'POST') {

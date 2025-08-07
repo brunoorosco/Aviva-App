@@ -35,7 +35,7 @@ const LayoutApp = ({ children }: Props): JSX.Element => {
 
       {/* Conteúdo principal */}
       <div className="flex flex-col flex-1 relative z-10">
-        <Header toggleSidebar={toggleSidebar} />
+        {/* <Header toggleSidebar={toggleSidebar} /> */}
         <div className="flex-1 overflow-y-auto p-4">{children}</div>
       </div>
 

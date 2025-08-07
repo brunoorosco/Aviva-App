@@ -1,9 +1,13 @@
 import { CellsMongoRepository } from '../db/repositories/mongo/cells'
 import { UsersMongoRepository } from '../db/repositories/mongo/users'
 
-export const getMembers = async (cemId: string) => {
+export const getMembersByCellId = async (
+  cemId: string,
+  page: number,
+  limit: number
+) => {
   const userRepository = new UsersMongoRepository()
-  const user = await userRepository.getUsersByCellId(cemId)
+  const user = await userRepository.getUsersByCellId(cemId, page, limit)
   return user
 }
 

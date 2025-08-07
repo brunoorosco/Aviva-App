@@ -13,6 +13,17 @@ type Props = {
 }
 
 const MembersHeader = ({ total, pathname, inputFileRef, members }: Props) => {
+  const { ativos, inativos } = members.reduce(
+    (acc, user) => {
+      if (user.active) {
+        acc.ativos++
+      } else {
+        acc.inativos++
+      }
+      return acc
+    },
+    { ativos: 0, inativos: 0 }
+  )
   return (
     <div className='flex justify-between px-3 pt-5 mt-2 bg-white rounded-t-lg dark:bg-dark-secondary'>
       <div>
@@ -20,7 +31,11 @@ const MembersHeader = ({ total, pathname, inputFileRef, members }: Props) => {
           <h2 className='text-2xl font-bold'>Membros</h2>
           <FaPeopleRoof size={24} />
         </div>
-        <p className='mt-2 text-gray-400'>{total}</p>
+        <div className='flex gap-5 mt-2 text-gray-400'>
+          <p>Total de Membros: <label className='text-gray-700 font-semibold'>{total}</label></p>
+          <p>Ativos: <label className='text-gray-700 font-semibold'>{ativos}</label></p>
+          <p>Inativos: <label className='text-gray-700 font-semibold'>{inativos}</label></p>
+        </div>
       </div>
 
       <div className='flex gap-2 h-10'>

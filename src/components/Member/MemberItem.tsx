@@ -10,6 +10,7 @@ type Props = {
   onActive: () => void
   onEdit: () => void
   basePath: string
+  viewCargo?: boolean
 }
 
 const MemberItem = ({
@@ -17,7 +18,8 @@ const MemberItem = ({
   onDeactive,
   onActive,
   onEdit,
-  basePath
+  basePath,
+  viewCargo = false
 }: Props) => {
   const [disabled, setDisabled] = useState(false)
   const toggleDisabled = () => setDisabled((prev) => !prev)
@@ -31,15 +33,17 @@ const MemberItem = ({
         </div>
 
         {/* Grid de informações */}
-        <div className='grid grid-cols-4 grid-rows-2 gap-x-2 gap-y-1 flex-1'>
+        <div className={`grid grid-cols-4 grid-rows-2 gap-x-2 gap-y-1 flex-1`}>
           {/* Nome */}
-          <div className='col-span-2 row-start-1'>
+          <div
+            className={`col-span-2 row-start-1 ${
+              member.active
+                ? 'text-gray-900 dark:text-gray-100'
+                : 'text-gray-400'
+            }`}
+          >
             <p
-              className={`text-sm font-medium uppercase truncate leading-tight ${
-                member.active
-                  ? 'text-gray-900 dark:text-gray-100'
-                  : 'text-gray-400'
-              }`}
+              className={`text-sm font-medium uppercase truncate leading-tight`}
             >
               {member.name + ' ' + (member.active ? '' : '(Inativo)')}
             </p>
@@ -49,32 +53,52 @@ const MemberItem = ({
           <div className='col-start-3 row-start-1 text-sm text-gray-600 dark:text-gray-400 uppercase truncate leading-tight'>
             {member.cem?.name || 'Sem rede'}
           </div>
-
+          {viewCargo && (
+            <div className='col-start-3 row-start-2 text-sm text-gray-600 dark:text-gray-400 uppercase truncate leading-tight'>
+              {member.role || 'Sem rede'}
+            </div>
+          )}
           {/* Botões e checkbox: agora em linha */}
           <div className='flex items-center justify-end gap-3 col-start-4 row-span-2'>
-            <Link href={`${basePath}/${member._id}`}>
-              <EyeIcon
-                className='cursor-pointer hover:text-green-600'
+            <span title='Visualizar'>
+              <Link href={`${basePath}/${member._id}`}>
+                <EyeIcon
+                 className={`${
+                  member.active
+                    ? 'text-gray-900 dark:text-gray-100 cursor-pointer hover:green-blue-600 disabled'
+                    : 'text-gray-400 cursor-not-allowed'
+                }`}
+                  size={16}
+                />
+              </Link>
+            </span>
+            <span title='Editar'>
+              <Edit
+                className={`${
+                  member.active
+                    ? 'text-gray-900 dark:text-gray-100 cursor-pointer hover:text-blue-600 disabled'
+                    : 'text-gray-400 cursor-not-allowed'
+                }`}
                 size={16}
+                onClick={onEdit}
               />
-            </Link>
-            <Edit
-              className='cursor-pointer hover:text-blue-600'
-              size={16}
-              onClick={onEdit}
-            />
+            </span>
             {member.active ? (
-              <CircleX
-                className='cursor-pointer hover:text-red-600'
-                size={16}
-                onClick={onDeactive}
-              />
+              <span title='Desativar'>
+                <CircleX
+                  className='cursor-pointer hover:text-red-600'
+                  size={16}
+                  onClick={onDeactive}
+                />
+              </span>
             ) : (
-              <CirclePlayIcon
-                className='cursor-pointer hover:text-blue-600'
-                size={16}
-                onClick={onActive}
-              />
+              <span title='Ativar'>
+                <CirclePlayIcon
+                  className='cursor-pointer hover:text-blue-600'
+                  size={16}
+                  onClick={onActive}
+                />
+              </span>
             )}
           </div>
 
