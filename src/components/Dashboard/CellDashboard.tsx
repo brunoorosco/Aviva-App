@@ -213,7 +213,7 @@ export default function CellDashboard({ members }: Props) {
                         >
                           {cell.roles.map((entry, idx) => (
                             <Cell
-                               key={String(`cell-${cellIndex}-${idx}`)}
+                                key={`cell-${cellIndex}-${idx.toString()}`}
                               fill={COLORS[idx % COLORS.length]}
                             />
                           ))}
@@ -238,7 +238,7 @@ export default function CellDashboard({ members }: Props) {
                   <div className='flex flex-wrap gap-2'>
                     {cell.roles.map((role) => (
                       <span
-                        key={role.name}
+                        key={String(role.name)}
                         className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800'
                       >
                         {role.name.toUpperCase()}: {role.value}
