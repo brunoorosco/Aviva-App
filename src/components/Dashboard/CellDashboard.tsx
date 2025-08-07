@@ -212,8 +212,8 @@ export default function CellDashboard({ members }: Props) {
                         >
                           {cell.roles.map((entry, idx) => (
                             <Cell
-                              key={`cell-${cellIndex}-${idx.toString()}`}
-                              fill={COLORS[idx % COLORS.length]}
+                              key={entry.name}
+                              fill={String(COLORS[idx % COLORS.length])}
                             />
                           ))}
                         </Pie>
