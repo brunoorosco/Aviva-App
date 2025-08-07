@@ -196,7 +196,7 @@ export default function CellDashboard({ members }: Props) {
                 {/* Gráfico de cargos */}
                 <div className='h-40 md:h-48'>
                   {cell.roles.length > 0 && (
-                    <ResponsiveContainer width='100%' height='100%'>
+                    <ResponsiveContainer width='100%' height='100%' key={cellIndex.toString()}>
                       <h1>teste</h1>
                       {/* <PieChart key={cellIndex.toString()}>
                         <Pie
