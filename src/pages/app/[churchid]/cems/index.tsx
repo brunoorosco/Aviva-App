@@ -17,8 +17,6 @@ const Cem = () => {
   const { data: cems, mutate } = useHttpGet<CellsModel[]>(
     `/api/protected/churches/${session?.user.churchId}/cems`
   )
-  console.log(cems)
-
   // if (error) {
   //   return <p>Ocorreu um erro: {error.message}</p>
   // }

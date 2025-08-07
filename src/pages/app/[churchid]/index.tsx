@@ -1,11 +1,7 @@
 import Dashboard from '@/components/Dashboard'
 
 const IndexApp = () => {
-  return (
-    <>
-      <Dashboard />
-    </>
-  )
+  return <Dashboard />
 }
 
 export default IndexApp

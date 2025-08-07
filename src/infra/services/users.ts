@@ -21,7 +21,6 @@ export const createUser = async (params: TUser) => {
   const cripto = new CryptAdapter()
 
   const churchId = await church.getChurchById(params.churchId)
-  console.log('churchId', churchId)
   const randowPass = await cripto.randonPassword()
 
   const setPassword = cripto.hashPassword(randowPass)

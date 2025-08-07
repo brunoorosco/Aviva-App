@@ -54,13 +54,13 @@ export class UsersMongoRepository {
 
       const [data, total] = await Promise.all([
         collection
-          .find({ 'cem._id': cemId, role: { $ne: 'bispo' } })
+          .find({ 'cem.id': cemId, role: { $ne: 'bispo' } })
           .collation({ locale: 'pt', strength: 1 })
           .sort({ name: 1 })
           .skip(skip)
           .limit(limit)
           .toArray(),
-        collection.countDocuments({ 'cem._id': cemId,role: { $ne: 'bispo' } })
+        collection.countDocuments({ 'cem.id': cemId,role: { $ne: 'bispo' } })
       ])
       return {
         data,

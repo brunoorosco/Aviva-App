@@ -8,7 +8,7 @@ type Props = {
   basePath: string
 }
 
-const EncontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
+const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
   // const [disabled, setDisabled] = useState(false)
   // const toggleDisabled = () => setDisabled((prev) => !prev)
 
@@ -35,7 +35,7 @@ const EncontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
               >
                 {formatDate(reencontro.data)}
                 <p className='text-xs font-normal'>
-                  Encontristas:{' '}
+                  Reencontristas:{' '}
                   <label className='font-semibold'>
                     {reencontro?.reencontristas
                       ? reencontro?.reencontristas.length
@@ -59,4 +59,4 @@ const EncontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
   )
 }
 
-export default EncontroComDeusItem
+export default ReencontroComDeusItem
