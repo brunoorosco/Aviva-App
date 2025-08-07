@@ -126,8 +126,8 @@ export default function ChurchDashboard({ members, cellsData, rolesData }: Dashb
           {/* Gráfico de membros por célula */}
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-lg font-medium text-gray-800 mb-4">Membros por Célula</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
+            <ResponsiveContainer width="100%" height={300} key={"abd"}>
+              <PieChart key={"abd"}>
                 <Pie
                   data={cellsChartData}
                   cx="50%"
