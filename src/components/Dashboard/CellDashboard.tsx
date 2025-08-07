@@ -195,10 +195,10 @@ export default function CellDashboard({ members }: Props) {
 
                 {/* Gráfico de cargos */}
                 <div className='h-40 md:h-48'>
-                  {cell.roles.length > 0 && (
-                    <ResponsiveContainer width='100%' height='100%' key={cellIndex.toString()}>
+                  {cell.roles.length > 0 && (<>
                       <h1>teste</h1>
-                      {/* <PieChart key={cellIndex.toString()}>
+                   {/* <ResponsiveContainer width='100%' height='100%' key={cellIndex.toString()}>
+                      <PieChart key={cellIndex.toString()}>
                         <Pie
                           data={cell.roles}
                           cx='50%'
@@ -219,8 +219,9 @@ export default function CellDashboard({ members }: Props) {
                           ))}
                         </Pie>
                         <Tooltip />
-                      </PieChart> */}
-                    </ResponsiveContainer>
+                      </PieChart>
+                    </ResponsiveContainer> */}
+                    </>
                   )
                   //  (
                   //   <div className='flex items-center justify-center h-full'>
