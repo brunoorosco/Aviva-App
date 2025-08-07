@@ -206,14 +206,13 @@ export default function CellDashboard({ members }: Props) {
                           outerRadius={60}
                           fill='#8884d8'
                           paddingAngle={5}
-                          dataKey='value'
                           label={({ name, percent }) =>
                             `${name}: ${(Number(percent) * 100).toFixed(0)}%`
                           }
                         >
                           {cell.roles.map((entry, idx) => (
                             <Cell
-                              // key={`cell-${cellIndex}-${idx.toString()}`}
+                              key={`cell-${cellIndex}-${idx.toString()}`}
                               fill={COLORS[idx % COLORS.length]}
                             />
                           ))}
@@ -236,9 +235,9 @@ export default function CellDashboard({ members }: Props) {
                     Distribuição de Cargos:
                   </h4>
                   <div className='flex flex-wrap gap-2'>
-                    {cell.roles.map((role) => (
+                    {cell.roles.map((role, index) => (
                       <span
-                        key={String(role.name)}
+                        key={String(index)}
                         className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800'
                       >
                         {role.name.toUpperCase()}: {role.value}
