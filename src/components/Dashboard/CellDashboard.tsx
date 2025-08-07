@@ -1,14 +1,7 @@
 // src/components/CellDashboard.tsx
 import { User } from '@/domain/models/users'
 import { useState, useEffect } from 'react'
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Legend,
-  Tooltip
-} from 'recharts'
+import { PieChart } from 'react-minimal-pie-chart'
 
 interface RoleCount {
   name: string
@@ -93,7 +86,8 @@ export default function CellDashboard({ members }: Props) {
         }
 
         // Adicionar ou incrementar o cargo
-        cell.roles[member.role] = (cell.roles[member.role.toUpperCase()] || 0) + 1
+        cell.roles[member.role] =
+          (cell.roles[member.role.toUpperCase()] || 0) + 1
       }
     })
 
@@ -101,7 +95,7 @@ export default function CellDashboard({ members }: Props) {
     const cellsDataWithRoles = Array.from(cellsMap.values()).map((cell) => ({
       ...cell,
       roles: Object.entries(cell.roles).map(([name, value]) => ({
-        name:name.toUpperCase(),
+        name: name.toUpperCase(),
         value
       }))
     }))
@@ -195,42 +189,36 @@ export default function CellDashboard({ members }: Props) {
 
                 {/* Gráfico de cargos */}
                 <div className='h-40 md:h-48'>
-                  {cell.roles.length > 0 && (<>
-                      <h1>teste</h1>
-                   {/* <ResponsiveContainer width='100%' height='100%' key={cellIndex.toString()}>
-                      <PieChart key={cellIndex.toString()}>
-                        <Pie
-                          data={cell.roles}
-                          cx='50%'
-                          cy='50%'
-                          innerRadius={25}
-                          outerRadius={60}
-                          fill='#8884d8'
-                          paddingAngle={5}
-                          label={({ name, percent }) =>
-                            `${name}: ${(Number(percent) * 100).toFixed(0)}%`
-                          }
-                        >
-                          {cell.roles.map((entry, idx) => (
-                            <Cell
-                              key={entry.name}
-                              fill={String(COLORS[idx % COLORS.length])}
-                            />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer> */}
-                    </>
-                  )
-                  //  (
-                  //   <div className='flex items-center justify-center h-full'>
-                  //     <p className='text-center text-gray-500 text-sm'>
-                  //       Sem dados de cargos
-                  //     </p>
-                  //   </div>
-                  // )
-                  }
+                  {cell.roles.length > 0 ? (
+                    <div className='h-full flex items-center justify-center'>
+                      <PieChart
+                        data={cell.roles.map((r, idx) => ({
+                          title: r.name,
+                          value: r.value,
+                          color: COLORS[idx % COLORS.length]
+                        }))}
+                        animate
+                        lineWidth={40}
+                        label={({ dataEntry }) =>
+                          `${dataEntry.title}: ${Math.round(
+                            dataEntry.percentage
+                          )}%`
+                        }
+                        labelStyle={{
+                          fontSize: '5px',
+                          fill: '#555'
+                        }}
+                        radius={40}
+                        labelPosition={70}
+                      />
+                    </div>
+                  ) : (
+                    <div className='flex items-center justify-center h-full'>
+                      <p className='text-center text-gray-500 text-sm'>
+                        Sem dados de cargos
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Lista de cargos */}
