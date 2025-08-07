@@ -30,7 +30,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     },
     {
       id: 4,
-      label: 'Grupo de Apoio',
+      label: 'Boas Vindas',
       icon: <Users size={25} />,
       link: `${base}/aceitou-jesus`
     },
