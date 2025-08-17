@@ -1,5 +1,5 @@
-import { CellsMongoRepository } from '../db/repositories/mongo/cells'
-import { UsersMongoRepository } from '../db/repositories/mongo/users'
+import { CellsMongoRepository } from '../infra/db/repositories/mongo/cells'
+import { UsersMongoRepository } from '../infra/db/repositories/mongo/users'
 
 export const getMembersByCellId = async (
   cemId: string,

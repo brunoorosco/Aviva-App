@@ -1,6 +1,6 @@
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
 import { useHttpGet } from '@/hooks/api'
-import { getEncontroComDeusByIdService } from '@/infra/services/encontroComDeus'
+import { getEncontroComDeusByIdService } from '@/services/encontroComDeus'
 import { GetServerSideProps } from 'next/types'
 
 function formatDate(dateValue: any) {

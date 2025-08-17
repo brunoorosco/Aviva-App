@@ -1,5 +1,5 @@
 import { TReencontroComDeus } from '@/domain/models/encontroComDeus'
-import { getReencontroComDeusByIdService } from '@/infra/services/reencontroComDeus'
+import { getReencontroComDeusByIdService } from '@/services/reencontroComDeus'
 import { GetServerSideProps } from 'next/types'
 
 function formatDate(dateValue: any) {

@@ -1,4 +1,4 @@
-import { CellsMongoRepository } from '../db/repositories/mongo/cells'
+import { CellsMongoRepository } from '../infra/db/repositories/mongo/cells'
 import { ObjectId } from 'mongodb'
 
 const createCemService = async (

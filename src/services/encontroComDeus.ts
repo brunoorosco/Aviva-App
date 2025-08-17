@@ -1,6 +1,6 @@
 import { TPeople } from '@/domain/models/encontroComDeus'
-import { ChurChMongoRepository } from '../db/repositories/mongo/churchs'
-import { EncontroComDeusRepository } from '../db/repositories/mongo/encontroComDeus'
+import { ChurChMongoRepository } from '../infra/db/repositories/mongo/churchs'
+import { EncontroComDeusRepository } from '../infra/db/repositories/mongo/encontroComDeus'
 
 export const getEncontroComDeusService = async (churchId: string) => {
   const encontroRepository = new EncontroComDeusRepository()

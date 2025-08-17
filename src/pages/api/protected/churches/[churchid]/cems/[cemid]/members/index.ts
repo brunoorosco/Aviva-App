@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getMembersByCellId } from '@/infra/services/members'
-import { createUser } from '@/infra/services/users'
+import { getMembersByCellId } from '@/services/members'
+import { createUser } from '@/services/users'
 import { User } from '@/domain/models/users'
 
 type Error = {
