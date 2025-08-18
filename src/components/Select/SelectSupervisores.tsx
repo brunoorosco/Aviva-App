@@ -1,71 +1,70 @@
 import { useEffect, useState } from 'react'
-// import Skeleton from '../Skeleton'
 import { Controller } from 'react-hook-form'
 import { useHttpGet } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from '@/components/ui/select'
 
 type DropdownProps = {
   title: string
   name: string
-  errors: any
   control: any
+  errors?: any
 }
-type TSupervisores = {
-  id: string
+
+type TSupervisor = {
+  _id: string
   name: string
 }
 
-export function SelectSupervisor({
+// SupervisorSelect
+export const SupervisorSelect = ({
   control,
   name,
-  errors,
   title
-}: DropdownProps) {
-  const [items, setItems] = useState<TSupervisores[]>()
+}: {
+  control: any
+  name: string
+  title: string
+}) => {
   const { data: session } = useSession()
+  const [items, setItems] = useState<TSupervisor[]>([])
 
-  const {
-    data: supervisores,
-    error: errorRequest,
-    isLoading
-  } = useHttpGet<TSupervisores[]>(
+  const { data: supervisores } = useHttpGet<TSupervisor[]>(
     `/api/protected/churches/${session?.user.churchId}/cems`
   )
 
   useEffect(() => {
-    if (supervisores) {
+    if (supervisores?.data){
       setItems(supervisores.data)
-    }
+    } 
+      
   }, [supervisores])
+
   return (
-    <div className='flex flex-col w-full'>
-      {/* {isLoading ? (
-        <Skeleton />
-      ) : (
-        <> */}
-      <Controller
-        name={name}
-        control={control}
-        render={({ field }) => (
-          <select
-            defaultValue={title}
-            {...field}
-            className='w-full p-4 bg-gray-200 rounded-t dark:bg-zinc-700 dark:text-gray-300 open:w-11'
-          >
-            <option disabled>{title}</option>
-            {supervisores?.data.map((item: any) => (
-              <option key={item.id} value={item.id}>
+    <Controller
+      control={control}
+      name={name}
+      defaultValue="" // garante valor inicial vazio
+      render={({ field }) => (
+        <Select value={field.value || ''} onValueChange={field.onChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder={title} />
+          </SelectTrigger>
+          <SelectContent>
+            {items.map((item) => (
+              <SelectItem key={item._id} value={`${item._id}|${item.name}`}>
                 {item.name}
-              </option>
+              </SelectItem>
             ))}
-          </select>
-        )}
-      />
-      {errors[name] && (
-        <p className='block mt-2 text-sm text-red-400'>
-          {errors[name].message}
-        </p>
+          </SelectContent>
+        </Select>
       )}
-    </div>
+    />
   )
 }

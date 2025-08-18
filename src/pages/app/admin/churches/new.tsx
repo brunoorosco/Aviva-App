@@ -1,11 +1,12 @@
-import TextInput from '@/components/Input'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { Loading } from '@/components/Loading'
+'use client'
+
 import { useState } from 'react'
-import axios from 'axios'
+import { useForm, Controller } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+import { Input } from '@/components/ui/input'
 import ButtonSubmit from '@/components/ButtonSubmit'
 import { useHttpPost } from '@/hooks/api'
+import { Masks } from '@/utils/masks'
 
 type FormValues = {
   church: string
@@ -16,12 +17,7 @@ type FormValues = {
 }
 
 const Admin = () => {
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<FormValues>()
+  const { control, handleSubmit } = useForm<FormValues>()
   const router = useRouter()
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -34,67 +30,92 @@ const Admin = () => {
         url: '/api/protected/churches',
         data
       })
-
       setIsLoading(false)
 
       if (response?.error) {
-        setError('')
+        setError('Erro ao salvar igreja!')
         return
       }
 
-      //   router.replace('/app')
-    } catch (error) {
+      // router.replace('/app') // descomente se quiser redirecionar
+    } catch (err) {
       setIsLoading(false)
-      console.log('[LOGIN_ERROR]: ', error)
+      console.error('[SUBMIT_ERROR]:', err)
+      setError('Erro durante o cadastro')
     }
   })
+
   return (
     <div className='flex flex-col items-center p-3 mt-10 md:mt-5'>
       <div className='content-center w-full max-w-lg text-center'>
-        <div className='w-full px-3 mb-2 md:w-full md:mb-0'>
-          <label className='text-2xl text-gray-600 md:text-3xl dark:text-dark-primary'>
-            Cadastro de Igrejas
-          </label>
-        </div>
+        <h1 className='text-2xl text-gray-600 md:text-3xl dark:text-dark-primary'>
+          Cadastro de Igrejas
+        </h1>
       </div>
-      <form className='px-1 mt-5 max-md:w-full' onSubmit={onSubmit}>
-        <div className='flex'>
-          <div className='w-full mb-2 md:mb-0'>
-            <TextInput
-              {...register('church', { required: true })}
-              name='church'
-              placeholder='Nome da igreja'
-              control={control}
-              error={errors.church ? 'Preenchimento Obrigatório' : ''}
-            />
-          </div>
-        </div>
-        <div className='flex w-full'>
-          <div className='w-2/3 mb-3 md:w-2/3 md:mb-0'>
-            <TextInput
-              name='address'
-              placeholder='Logradouro'
-              control={control}
-            />
-          </div>
-          <div className='w-1/3 ml-3 md:w-1/3'>
-            <TextInput name='number' placeholder='Nº' control={control} />
-          </div>
-        </div>
-        <div className='md:flex'>
-          <div className='w-full mb-3 md:w-2/3 md:mb-0'>
-            <TextInput name='city' placeholder='Cidade' control={control} />
-          </div>
 
-          <div className='w-full mb-3 md:w-1/3 md:mb-0 md:ml-3'>
-            <TextInput placeholder='CEP' name='zipcode' control={control} />
-          </div>
+      <form
+        className='px-1 mt-5 max-md:w-full flex flex-col gap-4'
+        onSubmit={onSubmit}
+      >
+        {/* Nome da Igreja */}
+        <Controller
+          name='church'
+          control={control}
+          rules={{ required: true }}
+          render={({ field, fieldState }) => (
+            <Input
+              {...field}
+              placeholder='Nome da Igreja'
+              className='w-full'
+            />
+          )}
+        />
+
+        {/* Endereço e Número */}
+        <div className='flex flex-col md:flex-row gap-4'>
+          <Controller
+            name='address'
+            control={control}
+            render={({ field }) => (
+              <Input {...field} placeholder='Logradouro' className='w-full' />
+            )}
+          />
+          <Controller
+            name='number'
+            control={control}
+            render={({ field }) => (
+              <Input {...field} placeholder='Nº' className='w-full' />
+            )}
+          />
         </div>
-        <div className='flex'>
-          <div className='w-full mb-6 md:w-full md:mb-0'>
-            <ButtonSubmit text='Salvar' type='submit' />
-          </div>
+
+        {/* Cidade e CEP */}
+        <div className='flex flex-col md:flex-row gap-4'>
+          <Controller
+            name='city'
+            control={control}
+            render={({ field }) => (
+              <Input {...field} placeholder='Cidade' className='w-full' />
+            )}
+          />
+          <Controller
+            name='zipcode'
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder='CEP'
+                className='w-full'
+                onChange={(e) => field.onChange(Masks.cep(e.target.value))}
+              />
+            )}
+          />
         </div>
+
+        {/* Botão */}
+        <ButtonSubmit text='Salvar' type='submit' disabled={isLoading} />
+
+        {error && <p className='text-red-500 mt-2'>{error}</p>}
       </form>
     </div>
   )

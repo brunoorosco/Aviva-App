@@ -1,53 +1,31 @@
 import React from 'react'
-import { Controller } from 'react-hook-form'
 
 type MaskFunction = (e: string) => string
 
-export interface ITextInput extends React.HTMLProps<HTMLInputElement> {
-  maxLength?: number
-  disabled?: boolean
+interface ITextInput extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string
-  control: any
-  defaultValue?: string
-  error?: string | undefined
-  placeholder?: string
+  error?: string
   mask?: MaskFunction
+  field?: any // do RHF Controller
 }
+
 const TextInput: React.FC<ITextInput> = ({
-  maxLength,
-  disabled = false,
+  field,
   name,
-  defaultValue = '',
-  control,
   error,
-  placeholder,
-  type,
-  className,
-  mask
+  mask,
+  ...rest
 }) => {
   return (
-    <div className='flex justify-center'>
-      <Controller
-        name={name}
-        control={control || ''}
-        defaultValue={defaultValue}
-        render={({ field }) => (
-          <div className='flex flex-col w-full'>
-            <input
-              className={`appearance-none block w-full p-4 mb-2 bg-gray-200 rounded shadow-md placeholder:text-gray-500 focus:outline-zinc-400 dark:bg-gray-600 dark:text-dark-primary ${className}`}
-              disabled={disabled}
-              maxLength={maxLength}
-              type={type}
-              placeholder={placeholder}
-              value={mask ? mask(field.value) : field.value}
-              onChange={(e) => {
-                field.onChange(e.target.value)
-              }}
-            />
-            {error && <p className='block text-sm text-red-400'>{error}</p>}
-          </div>
-        )}
+    <div className="flex flex-col w-full">
+      <input
+        {...rest}
+        {...field}
+        value={field?.value || ''}
+        onChange={(e) => field?.onChange(mask ? mask(e.target.value) : e.target.value)}
+        className="appearance-none block w-full p-4 mb-2 bg-gray-200 rounded shadow-md placeholder:text-gray-500 focus:outline-zinc-400 dark:bg-gray-600 dark:text-dark-primary"
       />
+      {error && <p className="block text-sm text-red-400">{error}</p>}
     </div>
   )
 }
