@@ -10,6 +10,8 @@ import ImportButton, { LeaderPair } from './ImportButton'
 import { useHttpPost } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
 import Toast from '@/components/Toast'
+import { Button } from '@/components/ui/button'
+import { Loader2Icon } from 'lucide-react'
 
 type FormValues = {
   casas: LeaderPair[]
@@ -29,23 +31,27 @@ const NovaCasaDePaz = () => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const { data: session } = useSession()
+  const casas = watch('casas')
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log('Salvando:', data)
-    setIsLoading(true)
+    if (!data.casas || data.casas.length === 0) {
+      Toast.showError('Adicione pelo menos uma Casa de Paz antes de salvar!')
+      return
+    }
+
     setIsLoading(true)
     const response = await useHttpPost({
       url: `/api/protected/churches/${session?.user.churchId}/casasdepaz`,
       data
     })
     setIsLoading(false)
-    if (response?.error) Toast.showError('Erro ao salvar batismo!')
-    else {
-      Toast.showSuccess('CAsas de Paz cadastrada com sucesso!')
+
+    if (response?.error) {
+      Toast.showError('Erro ao salvar Casas de Paz!')
+    } else {
+      Toast.showSuccess('Casas de Paz cadastradas com sucesso!')
       router.back()
     }
-    setIsLoading(false)
-    router.back()
   })
 
   const handleImport = (imported: LeaderPair[]) => {
@@ -57,7 +63,8 @@ const NovaCasaDePaz = () => {
     <div className='p-4'>
       <div className='flex justify-between items-center mb-4'>
         <h1 className='text-2xl'>Casa de Paz</h1>
-        <div className='flex gap-2'>
+
+        <div className='flex items-end gap-2'>
           <Controller
             name='data'
             control={control}
@@ -68,6 +75,7 @@ const NovaCasaDePaz = () => {
               </div>
             )}
           />
+
           <ImportButton inputFileRef={inputFileRef} onImport={handleImport} />
         </div>
       </div>
@@ -76,7 +84,7 @@ const NovaCasaDePaz = () => {
         {fields.map((field, index) => (
           <div
             key={field.id}
-            className='border p-4 rounded-lg bg-gray-50 flex flex-col gap-4'
+            className='border border-gray-400 p-4 rounded-lg bg-gray-50 flex flex-col gap-4'
           >
             {/* Linha 1: Líder 1, Líder 2, Rede */}
             <div className='flex gap-4'>
@@ -86,7 +94,6 @@ const NovaCasaDePaz = () => {
                   control={control}
                   render={({ field }) => (
                     <div className='flex flex-col'>
-                      <Label>Líder 1</Label>
                       <Input {...field} placeholder='Líder 1' />
                     </div>
                   )}
@@ -99,7 +106,6 @@ const NovaCasaDePaz = () => {
                   control={control}
                   render={({ field }) => (
                     <div className='flex flex-col'>
-                      <Label>Líder 2</Label>
                       <Input {...field} placeholder='Líder 2' />
                     </div>
                   )}
@@ -112,7 +118,6 @@ const NovaCasaDePaz = () => {
                   control={control}
                   render={({ field }) => (
                     <div className='flex flex-col'>
-                      <Label>Rede</Label>
                       <Input {...field} placeholder='Rede' />
                     </div>
                   )}
@@ -128,7 +133,6 @@ const NovaCasaDePaz = () => {
                   control={control}
                   render={({ field }) => (
                     <div className='flex flex-col'>
-                      <Label>Endereço</Label>
                       <Input {...field} placeholder='Endereço' />
                     </div>
                   )}
@@ -141,7 +145,6 @@ const NovaCasaDePaz = () => {
                   control={control}
                   render={({ field }) => (
                     <div className='flex flex-col'>
-                      <Label>Anfitriã</Label>
                       <Input {...field} placeholder='Anfitriã' />
                     </div>
                   )}
@@ -154,7 +157,6 @@ const NovaCasaDePaz = () => {
                   control={control}
                   render={({ field }) => (
                     <div className='flex flex-col'>
-                      <Label>Telefone</Label>
                       <Input {...field} placeholder='Telefone' />
                     </div>
                   )}
@@ -171,28 +173,35 @@ const NovaCasaDePaz = () => {
             </div>
           </div>
         ))}
-
-        <button
-          type='button'
-          className='px-3 py-2 bg-blue-500 text-white rounded'
-          onClick={() =>
-            append({
-              lider1: '',
-              lider2: '',
-              endereco: '',
-              rede: '',
-              anfitria: '',
-              telefone: ''
-            })
-          }
-        >
-          + Adicionar Casa
-        </button>
-
-        <ButtonSubmit
-          text={isLoading ? 'Salvando...' : 'Salvar'}
-          type='submit'
-        />
+        <div className='flex gap-2 justify-end'>
+          <div>
+            <Button
+              type='button'
+              className=' bg-blue-500 text-white rounded'
+              onClick={() =>
+                append({
+                  lider1: '',
+                  lider2: '',
+                  endereco: '',
+                  rede: '',
+                  anfitria: '',
+                  telefone: ''
+                })
+              }
+            >
+              + Adicionar Casa
+            </Button>
+          </div>
+          <div>
+            <Button
+              className='bg-[#04AA6D] text-white hover:bg-[#04AA6Daa] hover:text-white'
+              type='submit'
+              disabled={isLoading || !casas || casas.length === 0}
+            >
+              {isLoading ? <Loader2Icon className='animate-spin' /> : 'Salvar'}
+            </Button>
+          </div>
+        </div>
       </form>
     </div>
   )

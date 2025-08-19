@@ -48,7 +48,7 @@ const ImportButton = ({ inputFileRef, onImport }: Props) => {
     <>
       <button
         onClick={() => inputFileRef.current?.click()}
-        className='p-3 rounded bg-blue-500 hover:bg-blue-600 text-white'
+        className='py-2 px-4 rounded bg-blue-500 hover:bg-blue-600 text-white '
         type='button'
         disabled={isLoading}
       >
