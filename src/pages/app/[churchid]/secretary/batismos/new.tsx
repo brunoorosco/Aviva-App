@@ -49,16 +49,16 @@ const NovoBatismo = () => {
     try {
       console.log(data)
       setIsLoading(true)
-      //   const response = await useHttpPost({
-      //     url: `/api/protected/churches/${session?.user.churchId}/baptisms`,
-      //     data
-      //   })
+      const response = await useHttpPost({
+        url: `/api/protected/churches/${session?.user.churchId}/baptisms`,
+        data
+      })
       setIsLoading(false)
-      //   if (response?.error) Toast.showError('Erro ao salvar batismo!')
-      //   else {
-      //     Toast.showSuccess('Batismo cadastrado com sucesso!')
-      //     router.back()
-      //   }
+      if (response?.error) Toast.showError('Erro ao salvar batismo!')
+      else {
+        Toast.showSuccess('Batismo cadastrado com sucesso!')
+        router.back()
+      }
     } catch (err) {
       setIsLoading(false)
       console.error('[BAPTISM_ERROR]:', err)

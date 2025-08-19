@@ -1,15 +1,17 @@
+'use client'
+
 import { useRef, useState } from 'react'
-import { useSession } from 'next-auth/react'
-import { useHttpPost } from '@/hooks/api'
-import Toast from '@/components/Toast'
-import * as XLSX from 'xlsx'
 import { Upload } from 'lucide-react'
+import * as XLSX from 'xlsx'
+import Toast from '@/components/Toast'
 
 export type LeaderPair = {
   lider1: string
   lider2: string
   endereco: string
   rede: string
+  anfitria?: string
+  telefone?: string
 }
 
 type Props = {
@@ -18,7 +20,6 @@ type Props = {
 }
 
 const ImportButton = ({ inputFileRef, onImport }: Props) => {
-  const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(false)
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,23 +32,15 @@ const ImportButton = ({ inputFileRef, onImport }: Props) => {
       const sheet = workbook.Sheets[workbook.SheetNames[0]]
       const json = XLSX.utils.sheet_to_json(sheet) as LeaderPair[]
 
-      setIsLoading(true)
-      const response = await useHttpPost({
-        url: `/api/protected/churches/${session?.user.churchId}/batismo`,
-        data: json
-      })
-      setIsLoading(false)
-
-      if (response?.error) {
-        Toast.showError('Erro na importação!')
-      } else {
-        Toast.showSuccess('Importado com sucesso!')
-        if (onImport) onImport(json) // chama o callback
+      if (json.length === 0) {
+        Toast.showError('Arquivo vazio ou inválido')
+        return
       }
-    } catch (error) {
-      setIsLoading(false)
-      console.error('[IMPORT_ERROR]:', error)
-      Toast.showError('Erro durante o processo de importação.')
+
+      if (onImport) onImport(json)
+    } catch (err) {
+      console.error('[IMPORT_ERROR]:', err)
+      Toast.showError('Erro ao processar o arquivo')
     }
   }
 
@@ -55,20 +48,17 @@ const ImportButton = ({ inputFileRef, onImport }: Props) => {
     <>
       <button
         onClick={() => inputFileRef.current?.click()}
-        className="p-3 rounded bg-blue-500 hover:bg-blue-600 text-white"
-        aria-label="Importar Batizandos"
-        title="Importar Batizandos"
-        type="button"
+        className='p-3 rounded bg-blue-500 hover:bg-blue-600 text-white'
+        type='button'
         disabled={isLoading}
       >
         <Upload size={20} />
       </button>
-
       <input
         ref={inputFileRef}
-        type="file"
-        accept=".xlsx,.xls"
-        className="hidden"
+        type='file'
+        accept='.xlsx,.xls'
+        className='hidden'
         onChange={handleImport}
       />
     </>
