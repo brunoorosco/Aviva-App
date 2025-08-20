@@ -51,6 +51,18 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
       label: 'Reencontro com Deus',
       icon: <FaPeopleGroup size={25} />,
       link: `${base}/secretary/reencontroComDeus`
+    },
+    {
+      id: 8,
+      label: 'Casas de Paz',
+      icon: <FaPeopleGroup size={25} />,
+      link: `${base}/casasdepaz`
+    },
+    {
+      id: 8,
+      label: 'Visitas de Paz',
+      icon: <FaPeopleGroup size={25} />,
+      link: `${base}/visitasdepaz`
     }
   ]
 }

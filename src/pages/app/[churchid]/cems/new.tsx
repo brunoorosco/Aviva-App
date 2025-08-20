@@ -1,13 +1,15 @@
-import TextInput from '@/components/Input'
-import { useRouter } from 'next/router'
-import { useForm } from 'react-hook-form'
+'use client'
+
+import { useForm, Controller } from 'react-hook-form'
 import { useState } from 'react'
-import ButtonSubmit from '@/components/ButtonSubmit'
-import { useHttpPost } from '@/hooks/api'
-import { SelectSupervisor } from '@/components/Select/SelectSupervisores'
+import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import { Input } from '@/components/ui/input'
+import { useHttpPost } from '@/hooks/api'
 import Toast from '@/components/Toast'
 import { Masks } from '@/utils/masks'
+import ButtonSubmit from '@/components/ButtonSubmit'
+import { SelectSupervisorCem } from '@/components/Select/SelectSupervisoresCem'
 
 type FormValues = {
   name: string
@@ -15,46 +17,36 @@ type FormValues = {
   street: string
   number: string
   city: string
-  pastor_id: string
-  supervisor_id: string
+  pastor_id?: string
+  supervisor_id?: string
 }
 
 const NewRede = () => {
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<FormValues>()
+  const { control, handleSubmit } = useForm<FormValues>()
   const router = useRouter()
   const { data: session } = useSession()
-  const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       setIsLoading(true)
-      setError('')
       const response = await useHttpPost({
         url: `/api/protected/churches/${session?.user.churchId}/cems`,
         data
       })
-
       setIsLoading(false)
-      if (response) {
-        Toast.showSuccess('Salvo com Sucesso!')
-      }
 
       if (response?.error) {
         Toast.showError('Erro ao Salvar!')
-        setError('')
         return
       }
 
+      Toast.showSuccess('Salvo com Sucesso!')
       router.back()
     } catch (error) {
       setIsLoading(false)
-      console.log('[LOGIN_ERROR]: ', error)
+      console.error('[ERROR]:', error)
+      Toast.showError('Erro ao salvar')
     }
   })
 
@@ -66,73 +58,93 @@ const NewRede = () => {
         </h1>
       </div>
 
-      <form onSubmit={onSubmit} className='w-full max-w-5xl mt-6 flex flex-col gap-4'>
+      <form
+        onSubmit={onSubmit}
+        className='w-full max-w-5xl mt-6 flex flex-col gap-4'
+      >
         {/* Nome da Rede */}
-        <TextInput
-          {...register('name', { required: true })}
+        <Controller
           name='name'
-          placeholder='Nome da Rede'
           control={control}
-          className='uppercase'
-          mask={(e: string) => Masks.inputName(e)}
-          error={errors.name ? 'Preenchimento Obrigatório' : ''}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              placeholder='Nome da Rede'
+              className='uppercase w-full'
+              onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
+            />
+          )}
         />
 
         {/* Logradouro e Número */}
         <div className='flex flex-col md:flex-row gap-4'>
-          <div className='w-full md:w-2/3'>
-            <TextInput
-              name='street'
-              placeholder='Logradouro'
-              className='uppercase'
-              mask={(e: string) => Masks.inputName(e)}
-              control={control}
-            />
-          </div>
-          <div className='w-full md:w-1/3'>
-            <TextInput
-              name='number'
-              placeholder='Nº'
-              control={control}
-              className='uppercase'
-            />
-          </div>
+          <Controller
+            name='street'
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder='Logradouro'
+                className='uppercase w-full md:w-2/3'
+                onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
+              />
+            )}
+          />
+          <Controller
+            name='number'
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder='Nº'
+                className='uppercase w-full md:w-1/3'
+              />
+            )}
+          />
         </div>
 
         {/* Cidade e CEP */}
         <div className='flex flex-col md:flex-row gap-4'>
-          <div className='w-full md:w-2/3'>
-            <TextInput
-              name='city'
-              placeholder='Cidade'
-              control={control}
-              className='uppercase'
-              mask={(e: string) => Masks.inputName(e)}
-            />
-          </div>
-          <div className='w-full md:w-1/3'>
-            <TextInput
-              placeholder='CEP'
-              name='zipcode'
-              control={control}
-              mask={(e: string) => Masks.cep(e)}
-            />
-          </div>
+          <Controller
+            name='city'
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder='Cidade'
+                className='uppercase w-full md:w-2/3'
+                onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
+              />
+            )}
+          />
+          <Controller
+            name='zipcode'
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder='CEP'
+                className='w-full md:w-1/3'
+                onChange={(e) => field.onChange(Masks.cep(e.target.value))}
+              />
+            )}
+          />
         </div>
 
         {/* Supervisor */}
         <div className='w-full'>
-          <SelectSupervisor
+          <SelectSupervisorCem
             errors={false}
-            title={'Supervisores'}
-            name='supervisor'
+            title='Supervisores'
+            name='supervisor_id'
             control={control}
           />
         </div>
 
         {/* Botão */}
         <div className='w-full'>
-          <ButtonSubmit text='Salvar' type='submit' />
+          <ButtonSubmit text='Salvar' type='submit' disabled={isLoading} />
         </div>
       </form>
     </div>
