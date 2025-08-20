@@ -1,3 +1,4 @@
+import { CasaDePaz } from '@/domain/models/casaDePaz'
 import { ObjectId } from 'mongodb'
 import { MongoHelper } from '../../mongoHelper'
 
@@ -63,5 +64,45 @@ export class CasasDePazRepository {
       console.error('Error inserting casas de paz:', error)
       throw error
     }
+  }
+  async addCasa(
+    casaId: string,
+    casa: CasaDePaz
+  ): Promise<{ success: boolean }> {
+    const collection = await MongoHelper.getCollection(this.collectionName)
+
+    const filteredCasa = Object.fromEntries(
+      Object.entries(casa).filter(([_, v]) => v !== undefined)
+    )
+
+    const resp = await collection.updateOne(
+      { _id: new ObjectId(casaId) },
+      {
+        // @ts-ignore
+        $push: {
+          casas: { ...filteredCasa, _id: new ObjectId() }
+        }
+      }
+    )
+
+    return { success: resp.matchedCount > 0 }
+  }
+
+  // Edita uma casa existente dentro do documento
+  async updateCasa(
+    casaId: string,
+    casa: Partial<CasaDePaz>
+  ): Promise<{ success: boolean }> {
+    const { _id, ...rest } = casa
+    const collection = await MongoHelper.getCollection(this.collectionName)
+    const resp = await collection.updateOne(
+      { _id: new ObjectId(casaId), 'casas._id': new ObjectId(_id) },
+      {
+        $set: Object.fromEntries(
+          Object.entries(rest).map(([key, value]) => [`casas.$.${key}`, value])
+        )
+      }
+    )
+    return { success: true }
   }
 }

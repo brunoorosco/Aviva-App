@@ -1,9 +1,6 @@
-import { baptism } from '@/domain/models/baptism'
 import Link from 'next/link'
 import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
-import ExportButton from '@/components/ExportButton'
 import { CasaDePaz, CasaDePazModel } from '@/domain/models/casaDePaz'
-// import ExportButton from '../ExportButton'
 
 type TProps<T> = {
   total: number
@@ -39,8 +36,8 @@ const CasadePazHeader = ({ pathname, inputFileRef, casasdepaz }: Props) => {
       inputFileRef={inputFileRef}
       data={casasdepaz}
       mapExport={mapBaptismToExport}
-      sheetName='Batismo'
-      filename='batismo.xlsx'
+      sheetName='casas'
+      filename='casa_de_paz.xlsx'
     />
   )
 }

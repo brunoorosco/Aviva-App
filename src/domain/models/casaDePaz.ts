@@ -15,5 +15,5 @@ export type CasaDePaz = {
   telefone?: string
 }
 
-export type VisitadePaz = CasaDePaz
-export type VisitadePazMOdel = CasaDePazModel
+export type VisitaDePaz = CasaDePaz
+export type VisitaDePazModel = CasaDePazModel

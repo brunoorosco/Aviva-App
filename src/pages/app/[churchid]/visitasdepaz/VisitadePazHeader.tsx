@@ -22,7 +22,7 @@ type Props = {
   casasdepaz: CasaDePazModel[]
 }
 
-const CasadePazHeader = ({ pathname, inputFileRef, casasdepaz }: Props) => {
+const VisitadePazHeader = ({ pathname, inputFileRef, casasdepaz }: Props) => {
   const mapBaptismToExport = (m: Omit<CasaDePaz, '_id'>) => ({
     lider1:'',
     lider2:'',
@@ -33,19 +33,19 @@ const CasadePazHeader = ({ pathname, inputFileRef, casasdepaz }: Props) => {
 
   return (
     <Header<CasaDePazModel>
-      title='Casas de Paz'
+      title='Visitas de Paz'
       total={casasdepaz.length}
       pathname={pathname}
       inputFileRef={inputFileRef}
       data={casasdepaz}
       mapExport={mapBaptismToExport}
-      sheetName='Batismo'
-      filename='batismo.xlsx'
+      sheetName='Visitas'
+      filename='visita_de_paz.xlsx'
     />
   )
 }
 
-export default CasadePazHeader
+export default VisitadePazHeader
 
 const Header = <T,>({
   total,

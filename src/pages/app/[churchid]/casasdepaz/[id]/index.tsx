@@ -1,9 +1,14 @@
+import Toast from '@/components/Toast'
 import { Button } from '@/components/ui/button'
-import { CasaDePazModel } from '@/domain/models/casaDePaz'
+import { CasaDePaz, CasaDePazModel } from '@/domain/models/casaDePaz'
+import { useHttpPost, useHttpPut } from '@/hooks/api'
 import { getCasasdePazByIdService } from '@/infra/services/casasdepaz'
 import { ArrowLeft } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { GetServerSideProps } from 'next/types'
+import { useState } from 'react'
+import CasaDePazModal from '../CasaDePazModal'
 
 function formatDate(dateValue: any) {
   if (!dateValue) return ''
@@ -13,11 +18,52 @@ function formatDate(dateValue: any) {
 }
 
 type Props = {
-  casasDePaz: CasaDePazModel | null
+  casasDePaz: CasaDePazModel
 }
 
 export default function EncontroPage({ casasDePaz }: Props) {
   const router = useRouter()
+  const [showModal, setShowModal] = useState(false)
+  const [selectedCasa, setSelectedCasa] = useState<any | null>(null)
+  const { data: session } = useSession()
+  const handleAdd = () => {
+    setSelectedCasa(null)
+    setShowModal(true)
+  }
+
+  const handleEdit = (casa: any) => {
+    setSelectedCasa(casa)
+    setShowModal(true)
+  }
+
+  const handleSave = async (casa: CasaDePaz) => {
+    const data = {
+      church_id: casasDePaz.church_id,
+      dataInicial: casasDePaz.data_inicial,
+      visitaId: casasDePaz._id,
+      casa: casa
+    }
+    if (selectedCasa) {
+      const response = await useHttpPut<CasaDePazModel>({
+        url: `/api/protected/churches/${session?.user.churchId}/casasdepaz/${casasDePaz?._id}`,
+        data
+      })
+      console.log('Editar casa:', response)
+      Toast.showSuccess('Sucesso ao Editar')
+      return
+    }
+    // chamada API para adicionar
+    const response = await useHttpPost({
+      url: `/api/protected/churches/${session?.user.churchId}/casasdepaz/${casasDePaz?._id}`,
+      data
+    })
+
+    console.log('Nova casa:', casa)
+    Toast.showSuccess('Sucesso ao Salvar')
+    return
+    // depois você pode chamar mutate() ou refresh dos dados
+  }
+
   if (!casasDePaz) return <p>Casa de Paz não encontrada.</p>
   return (
     <div className='sm:p-6 max-w-4xl mx-auto'>
@@ -47,18 +93,18 @@ export default function EncontroPage({ casasDePaz }: Props) {
       </div>
 
       <div className='bg-white dark:bg-gray-800 p-4 rounded-md shadow'>
-        <h2 className='text-xl font-semibold mb-2'>Encontristas</h2>
+        <h2 className='text-xl font-semibold mb-2'>Casas</h2>
 
         {casasDePaz.casas.length === 0 ? (
           <p className='text-sm text-gray-500'>
-            Nenhum encontrista cadastrado.
+            Nenhuma Casa de Paz cadastrada.
           </p>
         ) : (
           <ul className='space-y-2'>
             {casasDePaz.casas.map((pessoa, index) => (
               <li
                 key={index}
-                className='border grid grid-cols-3 border-gray-200 dark:border-gray-700 rounded-md p-3'
+                className='border grid grid-cols-[3fr_3fr_1fr_1fr] border-gray-200 dark:border-gray-700 rounded-md p-3'
               >
                 <p className='text-xs text-gray-400'>
                   Dupla:{' '}
@@ -90,11 +136,26 @@ export default function EncontroPage({ casasDePaz }: Props) {
                     )}
                   </p>
                 )}
+                <div className='flex justify-end'>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    onClick={() => handleEdit(pessoa)}
+                  >
+                    Editar
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>
         )}
       </div>
+      <CasaDePazModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleSave}
+        initialData={selectedCasa}
+      />
     </div>
   )
 }

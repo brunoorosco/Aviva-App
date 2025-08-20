@@ -1,5 +1,7 @@
-import { getCasasdePazByIdService } from '@/infra/services/casasdepaz'
-import { createEncontroComDeusService } from '@/infra/services/encontroComDeus'
+import {
+  getCasasdePazByIdService,
+  saveCasaDePazService
+} from '@/infra/services/casasdepaz'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -7,11 +9,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const churchId = (req.query?.churchid as string) || ''
     const casadepazId = (req.query?.id as string) || ''
     if (req.method == 'PUT') {
-      const user = await createEncontroComDeusService(req.body)
-      res.status(200).json({ user })
+      const casa = await saveCasaDePazService(req.body)
+      res.status(200).json({ casa })
+    } else if (req.method == 'POST') {
+      const casa = await saveCasaDePazService(req.body)
+      res.status(200).json({ casa })
     } else if (req.method == 'GET') {
-      const encontro = await getCasasdePazByIdService(churchId, casadepazId)
-      res.send(encontro)
+      const casas = await getCasasdePazByIdService(churchId, casadepazId)
+      res.send(casas)
     } else {
       res.send('')
     }

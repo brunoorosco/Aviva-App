@@ -5,11 +5,11 @@ import { useRouter } from 'next/router'
 import { useHttpGet } from '@/hooks/api'
 import Pagination from '@/components/Pagination'
 import EditMemberModal from '@/components/Member/EditMemberModal'
-import CasadePazHeader from './VisitadePazHeader'
-import CasadePazItem from './VisitadePazItem'
 import { CasaDePazModel } from '@/domain/models/casaDePaz'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
+import VisitadePazHeader from './VisitadePazHeader'
+import VisitadePazItem from './VisitadePazItem'
 
 const VisitaDePazList = () => {
   const router = useRouter()
@@ -67,7 +67,7 @@ const VisitaDePazList = () => {
 
       <div className='shadow-sm'>
         {casasDePaz && (
-          <CasadePazHeader
+          <VisitadePazHeader
             pathname={asPath}
             inputFileRef={inputFileRef}
             casasdepaz={casasDePaz?.data.data}
@@ -76,19 +76,19 @@ const VisitaDePazList = () => {
 
         {!casasDePaz ? (
           <div className='w-full p-4 bg-white shadow-lg dark:rounded-b-lg dark:bg-dark-secondary'>
-            <p>Carregando Casas de Paz...</p>
+            <p>Carregando Visitas de Paz...</p>
           </div>
         ) : (
           <ul className='w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
             {casasDePaz.data.data.length === 0 ? (
               <li className='text-center py-4 text-gray-500'>
-                Nenhuma Casa de Paz encontrada.
+                Nenhuma Visita de Paz encontrada.
               </li>
             ) : (
               casasDePaz.data.data?.map((grupo: CasaDePazModel) => (
-                <CasadePazItem
+                <VisitadePazItem
                   key={grupo._id}
-                  casasDePaz={grupo}
+                  visitasDePaz={grupo}
                   onEdit={() => handleEdit(grupo)}
                   basePath={asPath}
                 />

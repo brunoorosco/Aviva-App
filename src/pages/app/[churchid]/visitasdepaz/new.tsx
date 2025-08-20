@@ -15,14 +15,14 @@ import { Loader2Icon } from 'lucide-react'
 
 type FormValues = {
   casas: LeaderPair[]
-  data: string
+  data_inicial: string
 }
 
 const NovaVisitaDePaz = () => {
   const { control, handleSubmit, watch } = useForm<FormValues>({
     defaultValues: {
       casas: [],
-      data: new Date().toISOString().split('T')[0] // "YYYY-MM-DD"
+      data_inicial: new Date().toISOString().split('T')[0] // "YYYY-MM-DD"
     }
   })
 
@@ -66,7 +66,7 @@ const NovaVisitaDePaz = () => {
 
         <div className='flex items-end gap-2'>
           <Controller
-            name='data'
+            name='data_inicial'
             control={control}
             render={({ field }) => (
               <div className='flex flex-col'>
