@@ -1,4 +1,4 @@
-import { createCasasDePazService } from '@/infra/services/casasdepaz'
+import { createCasasDePazService, getCasasDePazService } from '@/infra/services/casasdepaz'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -8,7 +8,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const user = await createCasasDePazService(churchId, req.body)
       res.status(201).json({ user })
     } else if (req.method == 'GET') {
-      res.send('casas de paz')
+      const casas = await getCasasDePazService(churchId)
+      res.send(casas)
     } else {
       res.send('')
     }

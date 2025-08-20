@@ -10,8 +10,8 @@ export class CasasDePazRepository {
   async getCasasDePazById(id: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      const encontro = await collection.findOne({ _id: new ObjectId(id) })
-      return encontro
+      const casaDePaz = await collection.findOne({ _id: new ObjectId(id) })
+      return casaDePaz
     } catch (error) {
       console.error('Error finding user by email:', error)
       throw error
@@ -54,13 +54,10 @@ export class CasasDePazRepository {
    casas:any
   ): Promise<any> {
     try {
-      console.log(casas)
       const collection = await MongoHelper.getCollection(this.collectionName)
       const result = await collection.insertOne(casas)
       return {
         success: true,
-        // insertedCount: result.insertedCount,
-        // insertedIds: result.insertedIds
       }
     } catch (error) {
       console.error('Error inserting casas de paz:', error)

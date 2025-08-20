@@ -1,32 +1,37 @@
 import { CasaDePaz } from '@/domain/models/casaDePaz'
+import { ObjectId } from 'mongodb'
 import { CasasDePazRepository } from '../db/repositories/mongo/casasDePaz'
 import { EncontroComDeusRepository } from '../db/repositories/mongo/encontroComDeus'
 
-export const getEncontroComDeusService = async (churchId: string) => {
-  const encontroRepository = new EncontroComDeusRepository()
-  const result = await encontroRepository.getEncontroComDeus(churchId)
+export const getCasasDePazService = async (churchId: string) => {
+  const casasdePazRepository = new CasasDePazRepository()
+  const result = await casasdePazRepository.getCasasDePaz(churchId)
 
   return result
 }
-export const getEncontroComDeusByIdService = async (
+export const getCasasdePazByIdService = async (
   churchId: string,
-  encontroId: string
+  casaDePazId: string
 ) => {
-  const encontroRepository = new EncontroComDeusRepository()
-  const result = await encontroRepository.getEncontroComDeusById(encontroId)
+  const casasdePazRepository = new CasasDePazRepository()
+  const result = await casasdePazRepository.getCasasDePazById(casaDePazId)
 
   return result
 }
 
 export const createCasasDePazService = async (
   churchId: string,
-  data: { casas: CasaDePaz[]; data: string }
+  data: { casas: CasaDePaz[]; data_inicial: string }
 ): Promise<any> => {
   const casasdePazRepository = new CasasDePazRepository()
+  const casaMap = data.casas.map((casa) => {
+    return { ...casa, _id: new ObjectId() }
+  })
+
   const response = await casasdePazRepository.createCasaDePaz({
     church_id: churchId,
-    data: data.data,
-    casas: data.casas
+    data_inicial: data.data_inicial,
+    casas: casaMap
   })
   return response
 }
