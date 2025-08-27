@@ -1,6 +1,9 @@
+import { Button } from '@/components/ui/button'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
 import { useHttpGet } from '@/hooks/api'
 import { getEncontroComDeusByIdService } from '@/infra/services/encontroComDeus'
+import { ArrowLeft } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { GetServerSideProps } from 'next/types'
 
 function formatDate(dateValue: any) {
@@ -15,20 +18,38 @@ type Props = {
 }
 
 export default function EncontroPage({ encontro }: Props) {
+  const router = useRouter()
   if (!encontro) return <p>Encontro não encontrado.</p>
   return (
     <div className='sm:p-6 max-w-4xl mx-auto'>
-      <h1 className='sm:text-2xl font-bold mb-2 text-xl'>
-        Encontro nº {encontro.numero} | Data {formatDate(encontro.data)}
-      </h1>
-      <div className='grid sm:grid-cols-4 sm:col-span-2 grid-cols-2'>
-        <p className='text-gray-600 text-sm mb-4'>
-          Igreja: <label className='font-bold'>{encontro.igreja}</label>
-        </p>
-        <p className='text-gray-600 text-sm mb-4'>
-          Total de Encontrista:{' '}
-          <label className='font-bold'>{encontro.encontristas.length}</label>
-        </p>
+      <div className='flex justify-between'>
+        <div>
+          <h1 className='sm:text-2xl font-bold mb-2 text-xl'>
+            Encontro {encontro.numero ? `nº ${encontro.numero}` : ''} | Data{' '}
+            {formatDate(encontro.data)}
+          </h1>
+          <div className='grid sm:grid-cols-4 sm:col-span-2 grid-cols-2'>
+            <p className='text-gray-600 text-sm mb-4'>
+              Igreja: <label className='font-bold'>{encontro.igreja}</label>
+            </p>
+            <p className='text-gray-600 text-sm mb-4'>
+              Total de Encontrista:{' '}
+              <label className='font-bold'>
+                {encontro.encontristas.length}
+              </label>
+            </p>
+          </div>
+        </div>
+        <div>
+          <Button
+            variant='default'
+            className='flex items-center gap-2 text-gray-100 hover:text-gray-600'
+            onClick={() => router.back()}
+          >
+            <ArrowLeft size={18} />
+            Voltar
+          </Button>
+        </div>
       </div>
 
       <div className='bg-white dark:bg-gray-800 p-4 rounded-md shadow'>

@@ -21,6 +21,8 @@ type People = {
   email?: string
   telefone?: string
   igreja?: string
+  endereco?: string
+  bairro?: string
 }
 
 export type TPeople = People

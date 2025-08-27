@@ -43,7 +43,7 @@ const CasaDePazList = () => {
   return (
     <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg dark:text-dark-primary'>
       {/* Botão Voltar */}
-      <div className='mb-3'>
+      {/* <div className='mb-3'>
         <Button
           variant='ghost'
           className='flex items-center gap-2 text-gray-600 hover:text-gray-900'
@@ -52,7 +52,7 @@ const CasaDePazList = () => {
           <ArrowLeft size={18} />
           Voltar
         </Button>
-      </div>
+      </div> */}
 
       {showEditModal && selectedBatismo && (
         <EditMemberModal

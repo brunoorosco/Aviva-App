@@ -6,6 +6,8 @@ import EditMemberModal from '@/components/Member/EditMemberModal'
 import EncontroComDeusHeader from './EncontroComDeusHeader'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
 import EncontroComDeusItem from './EncontroComDeusItem'
+import { Button } from '@/components/ui/button'
+import { ArrowLeft } from 'lucide-react'
 
 const EncontroComDeusList = () => {
   const router = useRouter()
@@ -31,7 +33,6 @@ const EncontroComDeusList = () => {
     `/api/protected/churches/${churchid}/encontroComDeus?page=${page}&limit=${limit}`
   )
 
-
   const handleEdit = (batismo: TEncontroComDeus) => {
     setSelectedEncontro(batismo)
     setShowEditModal(true)
@@ -39,6 +40,7 @@ const EncontroComDeusList = () => {
 
   return (
     <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg dark:text-dark-primary'>
+     
       {showEditModal && selectedEncontro && (
         <EditMemberModal
           member={selectedEncontro}
@@ -52,7 +54,7 @@ const EncontroComDeusList = () => {
 
       <div className='shadow-sm'>
         <EncontroComDeusHeader
-          pathname={''}
+          pathname={asPath}
           inputFileRef={inputFileRef}
           encontro={encontros?.data.data || []}
         />
@@ -71,17 +73,52 @@ const EncontroComDeusList = () => {
           )}
         </ul>
 
-        {/* {encontros?.data.totalPages && (
+        {encontros?.data.totalPages ? (
           <Pagination
             currentPage={page}
             pageSize={limit}
             items={encontros.data.total}
             onPageChange={setPage}
           />
-        )} */}
+        ) : (
+          ''
+        )}
       </div>
     </div>
   )
+}
+
+{
+  /* {casasDePaz && (
+          <CasadePazHeader
+            pathname={asPath}
+            inputFileRef={inputFileRef}
+            casasdepaz={casasDePaz?.data.data}
+          />
+        )}
+
+        {!casasDePaz ? (
+          <div className='w-full p-4 bg-white shadow-lg dark:rounded-b-lg dark:bg-dark-secondary'>
+            <p>Carregando Casas de Paz...</p>
+          </div>
+        ) : (
+          <ul className='w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
+            {casasDePaz.data.data.length === 0 ? (
+              <li className='text-center py-4 text-gray-500'>
+                Nenhuma Casa de Paz encontrada.
+              </li>
+            ) : (
+              casasDePaz.data.data?.map((grupo: CasaDePazModel) => (
+                <CasadePazItem
+                  key={grupo._id}
+                  casasDePaz={grupo}
+                  onEdit={() => handleEdit(grupo)}
+                  basePath={asPath}
+                />
+              ))
+            )}
+          </ul>
+        )} */
 }
 
 export default EncontroComDeusList

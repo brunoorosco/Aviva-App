@@ -53,7 +53,7 @@ const SignIn = () => {
           />
 
           {/* Login Social Google */}
-          <button
+          {/* <button
             onClick={() => signIn('google')}
             className="w-full flex items-center justify-center mb-4 px-4 py-2 text-sm font-medium text-[#DB4437] border border-gray-300 rounded-lg shadow hover:bg-gray-50 transition"
           >
@@ -61,7 +61,7 @@ const SignIn = () => {
               <path d="M488 261.8C488 403.3 391.1..." />
             </svg>
             Entrar com Google
-          </button>
+          </button> */}
 
           <form onSubmit={onSubmit} className="w-full space-y-4 mt-4">
             <div>
@@ -95,12 +95,12 @@ const SignIn = () => {
             <ButtonSubmit text="Entrar" type="submit" loading={isLoading} />
           </form>
 
-          <p className="text-sm text-gray-500 mt-6">
+          {/* <p className="text-sm text-gray-500 mt-6">
             Ainda não tem conta?{' '}
             <a href="/sign-up" className="text-lime-400 hover:underline">
               Cadastre-se
             </a>
-          </p>
+          </p> */}
         </div>
       </div>
     </div>
