@@ -64,7 +64,7 @@ const MembersWithImportExport = () => {
       )}
       <MembersHeader
         total={members?.data?.total || 0}
-        pathname={pathname}
+        pathname={asPath}
         inputFileRef={inputFileRef}
         members={members?.data.data || []}
       />

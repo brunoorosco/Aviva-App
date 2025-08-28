@@ -53,7 +53,6 @@ export class CellsMongoRepository {
   async getCellsByName(churchId: string, cemName: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      console.log(cemName)
       const church = await collection.findOne<ChurchModel>(
         {
           _id: new ObjectId(churchId),

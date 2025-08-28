@@ -7,11 +7,9 @@ export class ChurChMongoRepository {
   }
 
   async getChurchById(churchId: string): Promise<any> {
-    console.log('churchId', churchId)
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
       const church = await collection.findOne({ _id: new ObjectId(churchId) })
-      console.log('church', church)
       return church
     } catch (error) {
       console.error('Error finding user by email:', error)

@@ -47,7 +47,6 @@ const NovoBatismo = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log(data)
       setIsLoading(true)
       const response = await useHttpPost({
         url: `/api/protected/churches/${session?.user.churchId}/baptisms`,

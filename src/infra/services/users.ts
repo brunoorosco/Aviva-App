@@ -76,3 +76,15 @@ export const getUsersByChurch = async (
 
   return users
 }
+
+export const getUserByName = async (
+  churchId: string,
+  name: string
+) => {
+  const userRepository = new UsersMongoRepository()
+  const users = await userRepository.getUserByName(
+    churchId,
+    name
+   )
+  return users
+  }

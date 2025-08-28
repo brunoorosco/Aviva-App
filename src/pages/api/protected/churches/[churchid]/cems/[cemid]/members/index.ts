@@ -22,7 +22,11 @@ export default async function handler(
     const pageNumber = parseInt(page as string, 10)
     const limitNumber = parseInt(limit as string, 10)
 
-    const members = await getMembersByCellId(cemid as string, pageNumber, limitNumber)
+    const members = await getMembersByCellId(
+      cemid as string,
+      pageNumber,
+      limitNumber
+    )
 
     return res.status(200).json(members)
   } else if (req.method === 'POST') {
@@ -30,6 +34,7 @@ export default async function handler(
     const members = await createUser({
       churchId: req.query.churchid,
       cemId: req.query.cemid,
+      active: true,
       ...params
     })
 

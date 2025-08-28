@@ -48,7 +48,6 @@ export default function VisitaDePazIdPage({ visitasDePaz }: Props) {
         url: `/api/protected/churches/${session?.user.churchId}/visitasdepaz/${visitasDePaz?._id}`,
         data
       })
-      console.log('Editar casa:', response)
       Toast.showSuccess('Sucesso ao Editar')
       return
     }
@@ -58,7 +57,6 @@ export default function VisitaDePazIdPage({ visitasDePaz }: Props) {
       data
     })
 
-    console.log('Nova casa:', casa)
     Toast.showSuccess('Sucesso ao Salvar')
     return
     // depois você pode chamar mutate() ou refresh dos dados

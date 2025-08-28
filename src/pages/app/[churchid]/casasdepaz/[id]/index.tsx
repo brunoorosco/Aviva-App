@@ -48,7 +48,6 @@ export default function EncontroPage({ casasDePaz }: Props) {
         url: `/api/protected/churches/${session?.user.churchId}/casasdepaz/${casasDePaz?._id}`,
         data
       })
-      console.log('Editar casa:', response)
       Toast.showSuccess('Sucesso ao Editar')
       return
     }

@@ -33,7 +33,6 @@ export class UsersMongoRepository {
 
   async create(user: any): Promise<any> {
     try {
-      console.log('user', user)
       const collection = await MongoHelper.getCollection(this.collectionName)
       const result = collection.insertOne(user)
       return result // Retorna o usuário inserido
@@ -60,7 +59,7 @@ export class UsersMongoRepository {
           .skip(skip)
           .limit(limit)
           .toArray(),
-        collection.countDocuments({ 'cem.id': cemId,role: { $ne: 'bispo' } })
+        collection.countDocuments({ 'cem.id': cemId, role: { $ne: 'bispo' } })
       ])
       return {
         data,
@@ -113,6 +112,24 @@ export class UsersMongoRepository {
       return result
     } catch (error) {
       console.error('Error updating user:', error)
+      throw error
+    }
+  }
+  async getUserByName(churchId: string, name: string): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName)
+      const result = await collection.find(
+        { name: new RegExp(name, 'i'), churchId: churchId },
+        {
+          projection: {
+            name: 1,
+            _id: 1
+          }
+        }
+      ).toArray()
+      return result
+    } catch (error) {
+      console.error('Error get user:', error)
       throw error
     }
   }
