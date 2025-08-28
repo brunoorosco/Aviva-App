@@ -1,4 +1,5 @@
 import CryptAdapter from '../cryptography/bcrypt'
+import { CellsMongoRepository } from '../db/repositories/mongo/cells'
 import { ChurChMongoRepository } from '../db/repositories/mongo/churchs'
 import { UsersMongoRepository } from '../db/repositories/mongo/users'
 
@@ -15,12 +16,10 @@ type TUser = {
   churchId: string
 }
 
-export const createUser = async (params: TUser) => {
-  const church = new ChurChMongoRepository()
+export const createUserByCem = async (params: TUser) => {
   const userRepository = new UsersMongoRepository()
   const cripto = new CryptAdapter()
 
-  const churchId = await church.getChurchById(params.churchId)
   const randowPass = await cripto.randonPassword()
 
   const setPassword = cripto.hashPassword(randowPass)
@@ -31,6 +30,30 @@ export const createUser = async (params: TUser) => {
     permissions: ['user'],
     zipcode,
     password: setPassword
+  })
+  return user
+}
+export const createUser = async (params: TUser) => {
+  const userRepository = new UsersMongoRepository()
+  const cripto = new CryptAdapter()
+
+  const randowPass = await cripto.randonPassword()
+  const setPassword = cripto.hashPassword(randowPass)
+  const zipcode = params.zipcode?.replace('-', '')
+
+  const cem = params.cemId.split('-')
+
+  if (params && 'cemId' in params) {
+    //@ts-ignore
+    delete params.cemId
+  }
+
+  const user = await userRepository.create({
+    ...params,
+    permissions: ['user'],
+    zipcode,
+    password: setPassword,
+    cem: { id: cem[0], name: cem[1] }
   })
   return user
 }
@@ -77,14 +100,8 @@ export const getUsersByChurch = async (
   return users
 }
 
-export const getUserByName = async (
-  churchId: string,
-  name: string
-) => {
+export const getUserByName = async (churchId: string, name: string) => {
   const userRepository = new UsersMongoRepository()
-  const users = await userRepository.getUserByName(
-    churchId,
-    name
-   )
+  const users = await userRepository.getUserByName(churchId, name)
   return users
-  }
+}

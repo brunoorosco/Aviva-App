@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getMembersByCellId } from '@/infra/services/members'
-import { createUser } from '@/infra/services/users'
+import { createUserByCem } from '@/infra/services/users'
 import { User } from '@/domain/models/users'
 
 type Error = {
@@ -31,7 +31,7 @@ export default async function handler(
     return res.status(200).json(members)
   } else if (req.method === 'POST') {
     const params = req.body
-    const members = await createUser({
+    const members = await createUserByCem({
       churchId: req.query.churchid,
       cemId: req.query.cemid,
       active: true,

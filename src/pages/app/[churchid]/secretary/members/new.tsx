@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input'
 import { useHttpPost } from '@/hooks/api'
 import Toast from '@/components/Toast'
 import { Masks } from '@/utils/masks'
-import { SelectSupervisorCem } from '@/components/Select/SelectSupervisoresCem'
 import { SelectProfile } from '@/components/Select/SelectProfile'
 import { roles } from '@/utils/constants/roles'
 import ButtonSubmit from '@/components/ButtonSubmit'
@@ -40,7 +39,7 @@ const NewMember = () => {
     try {
       setIsLoading(true)
       const response = await useHttpPost({
-        url: `/api/protected/churches/${churchId}/cems/${cemId}/members`,
+        url: `/api/protected/churches/${churchId}/secretary/users`,
         data
       })
       setIsLoading(false)
@@ -67,7 +66,10 @@ const NewMember = () => {
         </h1>
       </div>
 
-      <form onSubmit={onSubmit} className='w-full max-w-2xl mt-6 flex flex-col gap-4'>
+      <form
+        onSubmit={onSubmit}
+        className='w-full max-w-2xl mt-6 flex flex-col gap-4'
+      >
         {/* Nome */}
         <NameInput control={control} churchId={churchId} />
 
@@ -100,7 +102,12 @@ const NewMember = () => {
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <Input {...field} type='date' className='w-full' placeholder='Data de Nascimento' />
+              <Input
+                {...field}
+                type='date'
+                className='w-full'
+                placeholder='Data de Nascimento'
+              />
             )}
           />
         </div>
@@ -115,14 +122,22 @@ const NewMember = () => {
                 {...field}
                 placeholder='Logradouro'
                 className='uppercase w-full md:w-2/3'
-                onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
+                onChange={(e) =>
+                  field.onChange(Masks.inputName(e.target.value))
+                }
               />
             )}
           />
           <Controller
             name='number'
             control={control}
-            render={({ field }) => <Input {...field} placeholder='Nº' className='uppercase w-full md:w-1/3' />}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder='Nº'
+                className='uppercase w-full md:w-1/3'
+              />
+            )}
           />
         </div>
 
@@ -136,7 +151,9 @@ const NewMember = () => {
                 {...field}
                 placeholder='Cidade'
                 className='uppercase w-full md:w-2/3'
-                onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
+                onChange={(e) =>
+                  field.onChange(Masks.inputName(e.target.value))
+                }
               />
             )}
           />
@@ -155,10 +172,22 @@ const NewMember = () => {
         </div>
 
         {/* Supervisor */}
-        <SelectCem name='cemId' control={control} errors={false} title='Rede' churchId={churchId} />
+        <SelectCem
+          name='cemId'
+          control={control}
+          errors={false}
+          title='Rede'
+          churchId={churchId}
+        />
 
         {/* Perfil */}
-        <SelectProfile name='profileId' control={control} errors={false} options={roles} title='Cargo Eclesiástico' />
+        <SelectProfile
+          name='role'
+          control={control}
+          errors={false}
+          options={roles}
+          title='Cargo Eclesiástico'
+        />
 
         {/* Botão */}
         <ButtonSubmit text='Salvar' type='submit' disabled={isLoading} />
