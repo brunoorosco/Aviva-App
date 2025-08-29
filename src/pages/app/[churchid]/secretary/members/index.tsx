@@ -94,6 +94,7 @@ const MembersWithImportExport = () => {
                 onDeactive={() => handleDesactive(member._id)}
                 onActive={() => handleActive(member._id)}
                 basePath={asPath}
+                viewCargo={true}
               />
             ))}
           </Suspense>

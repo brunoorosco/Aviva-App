@@ -17,13 +17,13 @@ export default async function handler(
   >
 ) {
   if (req.method === 'GET') {
-    const { cemid, page = 1, limit = 10 } = req.query
+    const { cemid, page = 1, limit = 10, name } = req.query
 
     const pageNumber = parseInt(page as string, 10)
     const limitNumber = parseInt(limit as string, 10)
-
     const members = await getMembersByCellId(
       cemid as string,
+      name as string,
       pageNumber,
       limitNumber
     )

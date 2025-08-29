@@ -55,7 +55,7 @@ const MemberItem = ({
           </div>
           {viewCargo && (
             <div className='col-start-3 row-start-2 text-sm text-gray-600 dark:text-gray-400 uppercase truncate leading-tight'>
-              {member.role || 'Sem rede'}
+              {member.role || 'Membro'}
             </div>
           )}
           {/* Botões e checkbox: agora em linha */}

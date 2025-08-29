@@ -78,9 +78,9 @@ export const createUser = async (params: TUser) => {
 //   return user
 // }
 
-export const getUsersByCem = async (cemId: string) => {
+export const getUsersByCem = async (cemId: string, name: string) => {
   const userRepository = new UsersMongoRepository()
-  const members = await userRepository.getUsersByCellId(cemId)
+  const members = await userRepository.getUsersByCellId(cemId, name)
 
   return members
 }

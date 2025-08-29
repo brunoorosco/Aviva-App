@@ -15,6 +15,7 @@ const MembersWithImportExport = () => {
   const [search, setSearch] = useState('')
   const [showEditModal, setShowEditModal] = useState(false)
   const [selectedMember, setSelectedMember] = useState<User | null>(null)
+  const [debouncedSearch, setDebouncedSearch] = useState('')
 
   const [page, setPage] = useState(1)
   const limit = 10
@@ -25,7 +26,10 @@ const MembersWithImportExport = () => {
     page: number
     totalPages: number
   }>(
-    `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}`
+    // `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}`
+     `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}${
+      search ? `&name=${search}` : ''
+    }`
   )
 
   const handleDesactive = async (id: string) => {
@@ -64,11 +68,14 @@ const MembersWithImportExport = () => {
           onUpdated={refreshMembers}
         />
       )}
-      <MembersHeader
+     <MembersHeader
         total={members?.data?.total || 0}
         pathname={asPath}
         inputFileRef={inputFileRef}
         members={members?.data.data || []}
+        churchId={churchid as string}
+        search={search}
+        setSearch={setSearch}
       />
 
       <div className='shadow-sm'>

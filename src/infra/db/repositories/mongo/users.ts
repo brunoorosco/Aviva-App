@@ -44,23 +44,40 @@ export class UsersMongoRepository {
 
   async getUsersByCellId(
     cemId: string,
+    name?: string,
     page: number = 1,
     limit: number = 10
-  ): Promise<any> {
+  ): Promise<{
+    data: any[]
+    total: number
+    page: number
+    totalPages: number
+  }> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
       const skip = (page - 1) * limit
 
+      // 🔹 filtro dinâmico
+      const filter: any = {
+        'cem._id': cemId,
+        role: { $ne: 'bispo' } // sempre exclui bispo
+      }
+
+      if (name && name.trim().length > 0) {
+        filter.name = { $regex: name, $options: 'i' } // case-insensitive
+      }
+
       const [data, total] = await Promise.all([
         collection
-          .find({ 'cem.id': cemId, role: { $ne: 'bispo' } })
+          .find(filter)
           .collation({ locale: 'pt', strength: 1 })
           .sort({ name: 1 })
           .skip(skip)
           .limit(limit)
           .toArray(),
-        collection.countDocuments({ 'cem.id': cemId, role: { $ne: 'bispo' } })
+        collection.countDocuments(filter)
       ])
+
       return {
         data,
         total,
@@ -68,7 +85,7 @@ export class UsersMongoRepository {
         totalPages: Math.ceil(total / limit)
       }
     } catch (error) {
-      console.error('Error get users:', error)
+      console.error('Error get users by cell:', error)
       throw error
     }
   }

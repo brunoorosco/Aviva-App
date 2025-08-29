@@ -13,8 +13,10 @@ export default async function handler(
 ) {
   const churchId = req.query.churchid as string
   const cemId = req.query.cemid as string
+  const name = req.query.name as string
+
   if (req.method == 'GET') {
-    const cem = await getUsersByCem(cemId)
+    const cem = await getUsersByCem(cemId, name)
     return res.status(200).json(cem)
   }
   if (req.method == 'DELETE') {
