@@ -9,7 +9,7 @@ interface Error {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<CellsModel[] | CellsModel | Error | null>
+  res: NextApiResponse<any | null>
 ) {
   const churchId = req.query.churchid as string
   const cemId = req.query.cemid as string

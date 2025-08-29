@@ -38,7 +38,7 @@ const Cem = () => {
         <div className='flex justify-between px-3 pt-5 mt-2 bg-white rounded-t-lg dark:bg-dark-secondary'>
           <div className=''>
             <div className='flex justify-between'>
-              <p className='mr-3 text-2xl font-bold leading-5'>Nossas CEM</p>
+              <p className='mr-3 text-2xl font-bold leading-5'>Nossas CEMs</p>
               <div className='leading-5'>
                 <GiMeepleGroup size={24} />
               </div>
