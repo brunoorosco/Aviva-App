@@ -23,3 +23,5 @@ export function useMembers(churchId: string, query: string) {
     isError: error
   }
 }
+
+export default useMembers
