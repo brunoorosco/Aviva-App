@@ -88,13 +88,15 @@ export const getUsersByCem = async (cemId: string) => {
 export const getUsersByChurch = async (
   churchId: string,
   pageNumber: number,
-  limitNumber: number
+  limitNumber: number,
+  name?: string
 ) => {
   const userRepository = new UsersMongoRepository()
   const users = await userRepository.getUsersByChurchId(
     churchId,
     pageNumber,
-    limitNumber
+    limitNumber,
+    name
   )
 
   return users

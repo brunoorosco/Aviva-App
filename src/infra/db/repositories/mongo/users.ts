@@ -118,15 +118,17 @@ export class UsersMongoRepository {
   async getUserByName(churchId: string, name: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      const result = await collection.find(
-        { name: new RegExp(name, 'i'), churchId: churchId },
-        {
-          projection: {
-            name: 1,
-            _id: 1
+      const result = await collection
+        .find(
+          { name: new RegExp(name, 'i'), churchId: churchId },
+          {
+            projection: {
+              name: 1,
+              _id: 1
+            }
           }
-        }
-      ).toArray()
+        )
+        .toArray()
       return result
     } catch (error) {
       console.error('Error get user:', error)
@@ -137,7 +139,8 @@ export class UsersMongoRepository {
   async getUsersByChurchId(
     churchId: string,
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
+    name?: string // 🔹 parâmetro opcional
   ): Promise<{
     data: any[]
     total: number
@@ -146,18 +149,23 @@ export class UsersMongoRepository {
   }> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-
       const skip = (page - 1) * limit
+
+      // 🔹 filtro dinâmico
+      const filter: any = { churchId }
+      if (name && name.trim().length > 0) {
+        filter.name = { $regex: name, $options: 'i' } // case-insensitive
+      }
 
       const [data, total] = await Promise.all([
         collection
-          .find({ churchId })
+          .find(filter)
           .collation({ locale: 'pt', strength: 1 })
           .sort({ name: 1 })
           .skip(skip)
           .limit(limit)
           .toArray(),
-        collection.countDocuments({ churchId })
+        collection.countDocuments(filter)
       ])
 
       return {
