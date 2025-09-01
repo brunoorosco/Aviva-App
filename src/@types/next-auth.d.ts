@@ -9,7 +9,7 @@ declare module 'next-auth' {
     user: {
       id?: string
       cem:{
-        id:string
+        _id:string
         name: string
       }
       churchId?: string
