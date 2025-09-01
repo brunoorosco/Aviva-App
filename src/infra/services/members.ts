@@ -12,7 +12,7 @@ export const getMembersByCellId = async (
   return user
 }
 
-export const getMembersById = async (userId: string) => {
+export const getMembersById = async (churchId:string, userId: string) => {
   const userRepository = new UsersMongoRepository()
   const user = await userRepository.geUserById(userId)
   return user

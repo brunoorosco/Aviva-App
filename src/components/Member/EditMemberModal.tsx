@@ -4,7 +4,6 @@ import { useForm, Controller } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useHttpPatch } from '@/hooks/api'
-import { useSession } from 'next-auth/react'
 import Toast from '@/components/Toast'
 import { Masks } from '@/utils/masks'
 import { SelectProfile } from '@/components/Select/SelectProfile'
@@ -13,6 +12,7 @@ import { SelectCem } from '../Select/SelectCem'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { roles } from '@/utils/constants/roles'
+import { Checkbox } from '@/components/ui/checkbox'
 
 type FormValues = {
   name: string
@@ -22,6 +22,13 @@ type FormValues = {
   cemId?: string
   birth: string
   role?: string
+  encontroComDeus?: boolean
+  reencontroComDeus?: boolean
+  sejaLivre?: boolean
+  batizado?: boolean
+  discipulado?: boolean
+  cae?: boolean
+  escolaProfeta?: boolean
 }
 
 type Props = {
@@ -31,19 +38,27 @@ type Props = {
 }
 
 const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
-  const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(false)
   const [initialData, setInitialData] = useState<FormValues | null>(null)
 
-  const { control, handleSubmit, setValue, formState: { errors } } = useForm<FormValues>()
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors }
+  } = useForm<FormValues>()
 
   useEffect(() => {
     if (!member) return
 
     const normalizedRole = member.role?.toLowerCase() || ''
-    const matchingRole = roles.find(r => r.toLowerCase() === normalizedRole) || ''
+    const matchingRole =
+      roles.find((r) => r.toLowerCase() === normalizedRole) || ''
 
-    const cemValue = member.cem?._id && member.cem?.name ? `${member.cem._id}-${member.cem.name}` : ''
+    const cemValue =
+      member.cem?._id && member.cem?.name
+        ? `${member.cem._id}-${member.cem.name}`
+        : ''
 
     const init: FormValues = {
       name: member.name || '',
@@ -52,19 +67,32 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
       birth: member.birthDate?.split('T')[0] || '',
       street: member.street || '',
       cemId: cemValue,
-      role: matchingRole
+      role: matchingRole,
+      encontroComDeus: member.encontroComDeus ?? false,
+      reencontroComDeus: member.reencontroComDeus ?? false,
+      sejaLivre: member.sejaLivre ?? false,
+      batizado: member.batizado ?? false,
+      discipulado: member.discipulado ?? false,
+      cae: member.cae ?? false,
+      escolaProfeta: member.escolaProfeta ?? false
     }
 
     setInitialData(init)
-    Object.entries(init).forEach(([key, value]) => setValue(key as keyof FormValues, value))
+    Object.entries(init).forEach(([key, value]) =>
+      setValue(key as keyof FormValues, value)
+    )
   }, [member, setValue])
 
   const onSubmit = handleSubmit(async (data) => {
     if (!initialData) return
 
-    const changes: Partial<FormValues & { cem: { _id: string; name: string } }> = {}
+    const changes: Partial<
+      FormValues & { cem: { _id: string; name: string } }
+    > = {}
     Object.entries(data).forEach(([key, value]) => {
-      if (value !== (initialData as any)[key]) changes[key as keyof FormValues] = value
+      if (value !== (initialData as any)[key])
+        //@ts-ignore
+        changes[key as keyof FormValues] = value
     })
 
     if (Object.keys(changes).length === 0) {
@@ -124,9 +152,13 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
                     {...field}
                     placeholder='Nome Completo'
                     className='uppercase'
-                    onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
+                    onChange={(e) =>
+                      field.onChange(Masks.inputName(e.target.value))
+                    }
                   />
-                  {errors.name && <p className='text-sm text-red-400'>Obrigatório</p>}
+                  {errors.name && (
+                    <p className='text-sm text-red-400'>Obrigatório</p>
+                  )}
                 </div>
               )}
             />
@@ -136,11 +168,7 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
               render={({ field }) => (
                 <div className='flex flex-col flex-1'>
                   <Label>Email</Label>
-                  <Input
-                    {...field}
-                    placeholder='Email'
-                    className='lowercase'
-                  />
+                  <Input {...field} placeholder='Email' className='lowercase' />
                 </div>
               )}
             />
@@ -157,9 +185,13 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
                   <Input
                     {...field}
                     placeholder='WhatsApp'
-                    onChange={(e) => field.onChange(Masks.phone(e.target.value))}
+                    onChange={(e) =>
+                      field.onChange(Masks.phone(e.target.value))
+                    }
                   />
-                  {errors.phone && <p className='text-sm text-red-400'>Obrigatório</p>}
+                  {errors.phone && (
+                    <p className='text-sm text-red-400'>Obrigatório</p>
+                  )}
                 </div>
               )}
             />
@@ -169,11 +201,10 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
               render={({ field }) => (
                 <div className='flex flex-col flex-1'>
                   <Label>Data de Nascimento</Label>
-                  <Input
-                    {...field}
-                    type='date'
-                  />
-                  {errors.birth && <p className='text-sm text-red-400'>Obrigatório</p>}
+                  <Input {...field} type='date' />
+                  {errors.birth && (
+                    <p className='text-sm text-red-400'>Obrigatório</p>
+                  )}
                 </div>
               )}
             />
@@ -212,6 +243,102 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
             errors={errors}
             options={roles}
           />
+
+          {/* Checkboxes */}
+          <div className='grid grid-cols-2 gap-3'>
+            <Controller
+              name='encontroComDeus'
+              control={control}
+              render={({ field }) => (
+                <label className='flex items-center gap-2'>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <span>Encontro com Deus</span>
+                </label>
+              )}
+            />
+            <Controller
+              name='cae'
+              control={control}
+              render={({ field }) => (
+                <label className='flex items-center gap-2'>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <span>C.A.E</span>
+                </label>
+              )}
+            />
+            <Controller
+              name='reencontroComDeus'
+              control={control}
+              render={({ field }) => (
+                <label className='flex items-center gap-2'>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <span>Reencontro com Deus</span>
+                </label>
+              )}
+            />
+            <Controller
+              name='sejaLivre'
+              control={control}
+              render={({ field }) => (
+                <label className='flex items-center gap-2'>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <span>Seja Livre</span>
+                </label>
+              )}
+            />
+            <Controller
+              name='batizado'
+              control={control}
+              render={({ field }) => (
+                <label className='flex items-center gap-2'>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <span>Batizado</span>
+                </label>
+              )}
+            />
+            <Controller
+              name='discipulado'
+              control={control}
+              render={({ field }) => (
+                <label className='flex items-center gap-2'>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <span>Discipulado</span>
+                </label>
+              )}
+            />
+
+            <Controller
+              name='escolaProfeta'
+              control={control}
+              render={({ field }) => (
+                <label className='flex items-center gap-2'>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <span>Escola de Profetas</span>
+                </label>
+              )}
+            />
+          </div>
 
           {/* Botões */}
           <div className='flex flex-col sm:flex-row justify-end gap-2 mt-4'>

@@ -20,6 +20,7 @@ export class UsersMongoRepository {
 
   async geUserById(id: string): Promise<any> {
     try {
+      console.log(id)
       const collection = await MongoHelper.getCollection(this.collectionName)
       //@ts-ignore
       const user = await collection.findOne({ _id: new ObjectId(id) })
