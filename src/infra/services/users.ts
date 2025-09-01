@@ -53,7 +53,7 @@ export const createUser = async (params: TUser) => {
     permissions: ['user'],
     zipcode,
     password: setPassword,
-    cem: { id: cem[0], name: cem[1] }
+    cem: { _id: cem[0], name: cem[1] }
   })
   return user
 }
