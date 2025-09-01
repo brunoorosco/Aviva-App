@@ -18,7 +18,7 @@ type FormValues = {
   name: string
   email?: string
   phone: string
-  address?: string
+  street?: string
   cemId?: string
   birth: string
   role?: string
@@ -50,7 +50,7 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
       email: member.email || '',
       phone: member.phone || '',
       birth: member.birthDate?.split('T')[0] || '',
-      address: member.address || '',
+      street: member.street || '',
       cemId: cemValue,
       role: matchingRole
     }
@@ -181,7 +181,7 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
 
           {/* Address */}
           <Controller
-            name='address'
+            name='street'
             control={control}
             render={({ field }) => (
               <div className='flex flex-col w-full'>
