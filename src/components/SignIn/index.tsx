@@ -47,9 +47,9 @@ const SignIn = () => {
           <Image
             src="/logo-preto.png"
             alt="Logo"
-            width={160}
-            height={100}
-            className="mb-6"
+            width={260}
+            height={200}
+            className="mb-[-50px]"
           />
 
           {/* Login Social Google */}
@@ -63,7 +63,7 @@ const SignIn = () => {
             Entrar com Google
           </button> */}
 
-          <form onSubmit={onSubmit} className="w-full space-y-4 mt-4">
+          <form onSubmit={onSubmit} className="w-full space-y-4">
             <div>
               <input
                 {...register('email', { required: 'E-mail é obrigatório' })}
