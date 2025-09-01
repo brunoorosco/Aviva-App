@@ -36,7 +36,7 @@ const NewMember = () => {
     try {
       setIsLoading(true)
       const response = await useHttpPost({
-        url: `/api/protected/churches/${session?.user.churchId}/cems/${session?.user.cem.id}/members`,
+        url: `/api/protected/churches/${session?.user.churchId}/cems/${session?.user.cem._id}/members`,
         data
       })
       setIsLoading(false)

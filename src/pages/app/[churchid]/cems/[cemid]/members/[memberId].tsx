@@ -26,7 +26,7 @@ const MembersById = (path: any) => {
   const { query } = router
   const { data: session } = useSession()
   const churchId = session?.user.churchId as string
-  const cemId = session?.user.cem.id as string
+  const cemId = session?.user.cem._id as string
   const {
     data: member,
     error,

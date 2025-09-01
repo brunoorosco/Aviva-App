@@ -33,7 +33,7 @@ const NewMember = () => {
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(false)
   const churchId = session?.user.churchId as string
-  const cemId = session?.user.cem.id as string
+  const cemId = session?.user.cem._id as string
 
   const onSubmit = handleSubmit(async (data) => {
     try {
