@@ -18,6 +18,8 @@ type Props = {
   members: User[]
   churchId: string
   search: string
+  totalAtivo?: number
+  totalInativo?: number
   setSearch: (value: string) => void
 }
 
@@ -30,20 +32,10 @@ const MembersHeader = ({
   inputFileRef,
   members,
   search,
-  setSearch
+  setSearch,
+  totalAtivo,
+  totalInativo
 }: Props) => {
-  const { ativos, inativos } = members.reduce(
-    (acc, user) => {
-      if (user.active) {
-        acc.ativos++
-      } else {
-        acc.inativos++
-      }
-      return acc
-    },
-    { ativos: 0, inativos: 0 }
-  )
-
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
 
@@ -76,11 +68,13 @@ const MembersHeader = ({
           </p>
           <p>
             Ativos:{' '}
-            <label className='text-gray-700 font-semibold'>{ativos}</label>
+            <label className='text-gray-700 font-semibold'>{totalAtivo}</label>
           </p>
           <p>
             Inativos:{' '}
-            <label className='text-gray-700 font-semibold'>{inativos}</label>
+            <label className='text-gray-700 font-semibold'>
+              {totalInativo}
+            </label>
           </p>
         </div>
 

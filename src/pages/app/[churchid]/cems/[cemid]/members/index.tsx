@@ -25,6 +25,8 @@ const MembersWithImportExport = () => {
     total: number
     page: number
     totalPages: number
+    totalAtivos:number
+    totalInativos: number
   }>(
     // `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}`
      `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}${
@@ -76,6 +78,8 @@ const MembersWithImportExport = () => {
         churchId={churchid as string}
         search={search}
         setSearch={setSearch}
+        totalAtivo={members?.data.totalAtivos}
+        totalInativo={members?.data.totalInativos}
       />
 
       <div className='shadow-sm'>

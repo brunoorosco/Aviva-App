@@ -33,14 +33,15 @@ const MembersById = (dataMember: any) => {
   const { data: session } = useSession()
   const churchId = session?.user.churchId as string
   const cemId = session?.user.cem._id as string
+
+  console.log(query)
   const {
     data: member,
     error,
     isLoading
   } = useHttpGet<TMembers>(
-    `/api/protected/churches/${churchId}/cems/${cemId}/members/${query.memberId}`
+    `/api/protected/churches/${churchId}/cems/${cemId}/members/${query.id}`
   )
-  console.log("aquiuuiui",dataMember)
 
   if (error) {
     return <p>Ocorreu um erro: {error.message}</p>

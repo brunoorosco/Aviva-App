@@ -53,6 +53,8 @@ export class UsersMongoRepository {
     total: number
     page: number
     totalPages: number
+    totalAtivos: number
+    totalInativos: number
   }> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
@@ -68,7 +70,7 @@ export class UsersMongoRepository {
         filter.name = { $regex: name, $options: 'i' } // case-insensitive
       }
 
-      const [data, total] = await Promise.all([
+      const [data, total, totalInativos, totalAtivos] = await Promise.all([
         collection
           .find(filter)
           .collation({ locale: 'pt', strength: 1 })
@@ -76,14 +78,18 @@ export class UsersMongoRepository {
           .skip(skip)
           .limit(limit)
           .toArray(),
-        collection.countDocuments(filter)
+        collection.countDocuments(filter),
+        collection.countDocuments({ active: false, ...filter }),
+        collection.countDocuments({ active: true, ...filter })
       ])
 
       return {
         data,
         total,
         page,
-        totalPages: Math.ceil(total / limit)
+        totalPages: Math.ceil(total / limit),
+        totalAtivos,
+        totalInativos
       }
     } catch (error) {
       console.error('Error get users by cell:', error)
