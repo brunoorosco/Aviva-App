@@ -3,15 +3,16 @@ import { UsersMongoRepository } from '../infra/db/repositories/mongo/users'
 
 export const getMembersByCellId = async (
   cemId: string,
+  name: string,
   page: number,
   limit: number
 ) => {
   const userRepository = new UsersMongoRepository()
-  const user = await userRepository.getUsersByCellId(cemId, page, limit)
+  const user = await userRepository.getUsersByCellId(cemId, name, page, limit)
   return user
 }
 
-export const getMembersById = async (userId: string) => {
+export const getMembersById = async (churchId:string, userId: string) => {
   const userRepository = new UsersMongoRepository()
   const user = await userRepository.geUserById(userId)
   return user

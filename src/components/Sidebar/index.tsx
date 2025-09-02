@@ -11,6 +11,7 @@ type SidebarWrapperProps = {
 export const SidebarWrapper = ({ closeSidebar }: SidebarWrapperProps) => {
   const { data: session, status } = useSession()
   const [isClient, setIsClient] = useState(false)
+  console.log(session)
 
   useEffect(() => {
     setIsClient(true)
@@ -19,7 +20,7 @@ export const SidebarWrapper = ({ closeSidebar }: SidebarWrapperProps) => {
   if (!isClient || status !== 'authenticated') return null
   
   const churchId = session?.user?.churchId
-  const cemId = session?.user?.cem.id
+  const cemId = session?.user?.cem._id
 
   if (!churchId || !cemId) return null
 

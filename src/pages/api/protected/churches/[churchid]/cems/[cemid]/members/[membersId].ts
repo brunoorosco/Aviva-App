@@ -10,10 +10,8 @@ export default async function handler(
   res: NextApiResponse<any[] | Error>
 ) {
   if (req.method === 'GET') {
-    const { churchid } = req.query
-    const user = await getMembersById(
-      churchid as string
-    )
+    const { churchid, membersId } = req.query
+    const user = await getMembersById(churchid as string, membersId as string)
 
     return res.status(200).json(user)
   }

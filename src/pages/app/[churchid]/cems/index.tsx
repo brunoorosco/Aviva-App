@@ -1,14 +1,14 @@
-import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
+'use client'
+
+import Link from 'next/link'
 import Toast from '@/components/Toast'
+import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CellsModel } from '@/domain/models/cells'
-// import Skeleton from '@/components/Skeleton'
 import { useHttpGet } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Suspense } from 'react'
-import { FaEdit, FaTrash } from 'react-icons/fa'
-import { GiMeepleGroup } from 'react-icons/gi'
 
 const Cem = () => {
   const router = useRouter()
@@ -17,74 +17,49 @@ const Cem = () => {
   const { data: cems, mutate } = useHttpGet<CellsModel[]>(
     `/api/protected/churches/${session?.user.churchId}/cems`
   )
-  // if (error) {
-  //   return <p>Ocorreu um erro: {error.message}</p>
-  // }
+
   const handleDelete = async (id: string) => {
     Toast.showDelete(
       `/api/protected/churches/${session?.user.churchId}/cems/${id}`
     )
-
     await mutate()
   }
 
+  const goToMembers = (cemId: string) => {
+    router.push(`/app/${churchId}/cems/${cemId}/members`)
+  }
+
   return (
-    <div className='flex flex-col content-center w-full max-w-3xl p-3 mx-auto rounded-lg dark:text-dark-primary'>
-      <Suspense fallback={'teste loading'}>
-        {/* {isLoading ? (
-        <Skeleton />
-      ) : (
-        <> */}
-        <div className='flex justify-between px-3 pt-5 mt-2 bg-white rounded-t-lg dark:bg-dark-secondary'>
-          <div className=''>
-            <div className='flex justify-between'>
-              <p className='mr-3 text-2xl font-bold leading-5'>Nossas CEM</p>
-              <div className='leading-5'>
-                <GiMeepleGroup size={24} />
-              </div>
-            </div>
-            <p className='mt-2 mb-5 text-gray-400'>{cems?.data.length}</p>
+    <div className='flex flex-col w-full max-w-6xl p-3 mx-auto rounded-lg dark:text-dark-primary'>
+      <Suspense fallback={<p>Carregando Redes...</p>}>
+        {/* Cabeçalho */}
+        <div className='flex justify-between align-middle items-center px-3 pt-5 mt-2 bg-white rounded-t-lg dark:bg-dark-secondary'>
+          <div className='flex items-center gap-2'>
+            <p className='text-2xl font-bold'>Nossas Redes</p>
           </div>
-          <div>
-            <Link href={'../' + churchId + '/cems/new'}>
-              <ButtonNew />
-            </Link>
-          </div>
+          <Link href={`../${churchId}/cems/new`}>
+            <ButtonNew />
+          </Link>
         </div>
 
-        <div className='shadow-sm'>
-          <ul className='w-full p-4 mx-auto bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
-            {cems &&
-              cems.data.map((cem: CellsModel) => (
-                <li className='pb-3 sm:pb-4' key={cem._id}>
-                  <div className='flex items-center space-x-4'>
-                    <div className='flex items-center justify-center w-12 h-12 mt-2 text-2xl text-white rounded-full bg-app-bg'>
-                      Aviv
-                    </div>
-                    <div className='flex-1 min-w-0'>
-                      <p className='text-sm font-medium text-gray-900 uppercase truncate dark:text-gray-200'>
-                        {cem.name}
-                      </p>
-                      <p className='text-sm text-gray-500 uppercase truncate dark:text-gray-400'>
-                        {cem.street + ', ' + cem.number + ' - ' + cem.city}
-                      </p>
-                    </div>
-                    <div className='inline-flex items-center text-base font-semibold text-gray-900 dark:text-dark-primary'>
-                      <FaEdit className='mx-2 cursor-pointer' size={18} />
-                      <FaTrash
-                        className='mx-2 cursor-pointer'
-                        size={17}
-                        onClick={() => handleDelete(cem._id)}
-                      />
-                    </div>
-                  </div>
-                </li>
-              ))}
-          </ul>
+        {/* Grid de Cards */}
+        <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-4'>
+          {cems?.data.map((cem: CellsModel) => (
+            <Card
+              key={cem._id}
+              className='rounded-2xl shadow-md hover:shadow-lg transition cursor-pointer'
+              onClick={() => goToMembers(cem._id)}
+            >
+              <CardHeader className='flex flex-col items-center'>
+                <CardTitle className='mt-2 text-lg'>{cem.name}</CardTitle>
+              </CardHeader>
+              <CardContent className='text-center'>
+                <p className='text-gray-600 mb-2 text-xl font-semibold'>{cem.membersActive || 0} <span className='text-base font-normal'>membros</span> </p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </Suspense>
-      {/* </>
-      )} */}
     </div>
   )
 }

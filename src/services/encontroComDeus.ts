@@ -26,12 +26,23 @@ export const createEncontroComDeusService = async (data: any): Promise<any> => {
     data,
     'Avivamento Sede'
   )
-  const novoBatismo = {
+  const novoEncontro = {
     data: new Date(),
     encontristas: dataNormalizada
   }
-  const saved = await encontroRepository.create(novoBatismo)
+  console.log(novoEncontro)
+  const saved = await encontroRepository.create(novoEncontro)
   return saved
+}
+
+function limparObjeto<T extends Record<string, any>>(obj: T): Partial<T> {
+  const novo: Partial<T> = {}
+  for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
+    if (value !== undefined && value !== '' && value !== null) {
+      novo[key] = value
+    }
+  }
+  return novo
 }
 
 function normalizarEncontristasPorIgreja(
@@ -39,22 +50,27 @@ function normalizarEncontristasPorIgreja(
   nomeDaIgreja: string
 ): TPeople[] {
   return entradas.map((entrada) => {
-    if (typeof entrada === "string") {
-      const contemIgreja = entrada.toLowerCase().includes("igreja");
+    if (typeof entrada === 'string') {
+      const contemIgreja = entrada.toLowerCase().includes('igreja')
 
       return {
-        nome: "",
+        nome: '',
         igreja: contemIgreja ? entrada : nomeDaIgreja,
-        ...(contemIgreja ? {} : { rede: entrada }),
-      };
+        ...(contemIgreja ? {} : { rede: entrada })
+      }
     }
 
-    const contemIgreja = entrada.rede?.toLowerCase().includes("igreja");
+    const contemIgreja = entrada.rede?.toLowerCase().includes('igreja')
 
-    return {
+    const obj = {
       nome: entrada.nome,
+      idade: entrada.idade,
+      telefone: entrada.telefone,
+      endereco: entrada.endereco ? `${entrada.endereco} ${entrada.bairro}`.trim() : null,
       igreja: contemIgreja ? entrada.rede! : nomeDaIgreja,
-      ...(contemIgreja ? {} : { rede: entrada.rede }),
-    };
-  });
+      ...(contemIgreja ? {} : { rede: entrada.rede })
+    }
+
+    return limparObjeto(obj) as TPeople
+  })
 }

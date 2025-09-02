@@ -1,9 +1,8 @@
 import Avatar from '@/components/Avatar'
 import Loading from '@/components/Select/loading'
-// import Skeleton from '@/components/Skeleton'
-import { useHttpDelete, useHttpGet } from '@/hooks/api'
+import { Button } from '@/components/ui/button'
+import { useHttpGet } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 export type TMembers = {
@@ -13,20 +12,28 @@ export type TMembers = {
   birth?: Date
   image?: string
   profile: string
-  street: string
-  number: string
-  city: string
-  cep: string
-  state: string
+  street?: string
+  number?: string
+  city?: string
+  cep?: string
+  state?: string
   phone: string
+  cae?: boolean
+  batizado?: boolean
+  discipulado?: boolean
+  encontroComDeus?: boolean
+  reencontroComDeus?: boolean
+  sejaLivre?: boolean
+  escolaProfeta?: boolean
 }
 
-const MembersById = (path: any) => {
+const MembersById = () => {
   const router = useRouter()
   const { query } = router
   const { data: session } = useSession()
   const churchId = session?.user.churchId as string
-  const cemId = session?.user.cem.id as string
+  const cemId = session?.user.cem._id as string
+
   const {
     data: member,
     error,
@@ -38,23 +45,44 @@ const MembersById = (path: any) => {
   if (error) {
     return <p>Ocorreu um erro: {error.message}</p>
   }
+
+  if (isLoading) {
+    return <Loading />
+  }
+
   return (
     <div className='container'>
       {member?.data ? (
-        <div className='relative w-5/6 mx-auto mt-20 bg-white rounded-lg shadow md:w-5/6 lg:w-4/6 xl:w-3/6 md:mt-24'>
+        <div className='relative w-5/6 mx-auto mt-20 bg-white rounded-lg shadow md:w-5/6 lg:w-4/6 xl:w-3/6 md:mt-24 p-4'>
+          {/* Botão voltar */}
+          <div className='absolute top-4 left-4'>
+            <Button
+              variant='outline'
+              onClick={() => router.back()}
+              className='rounded-2xl shadow-md'
+            >
+              Voltar
+            </Button>
+          </div>
+
+          {/* Avatar */}
           <div className='flex justify-center'>
             <Avatar
               name={member.data.name}
               className='absolute mx-auto text-4xl transition duration-200 transform w-28 h-28 -top-20 hover:scale-110'
             />
           </div>
+
           <div className='mt-16'>
+            {/* Nome */}
             <h1 className='text-3xl font-bold text-center text-gray-900'>
               {member.data.name}
             </h1>
             <p className='text-sm font-medium text-center text-gray-400'>
               {member.data.profile || ''}
             </p>
+
+            {/* Contato */}
             <div className='px-6 my-5'>
               <div className='flex flex-col px-6 py-3 font-medium leading-6 text-center text-gray-200 bg-gray-900 rounded-lg'>
                 <span className='font-bold'>{member.data.email}</span>
@@ -64,70 +92,61 @@ const MembersById = (path: any) => {
                 </span>
               </div>
             </div>
-            <div className='flex items-center justify-between px-6 my-5'>
-              <a
-                href=''
-                className='w-full py-3 text-sm font-medium text-center text-gray-500 transition duration-150 ease-in rounded hover:text-gray-900 hover:bg-gray-100'
-              >
-                TMAC
-              </a>
 
-              <a
-                href=''
-                className='w-full py-3 text-sm font-medium text-center text-gray-500 transition duration-150 ease-in rounded hover:text-gray-900 hover:bg-gray-100'
-              >
-                Batismo
-              </a>
-            </div>
-            <div className='w-full'>
-              <h3 className='px-6 font-medium text-left text-gray-900'>
-                Participante dos Ministérios
+            {/* Informações extras */}
+            <div className='px-6 my-5'>
+              <h3 className='font-medium text-left text-gray-900 mb-3'>
+                Informações
               </h3>
-              <div className='flex flex-col items-center w-full mt-5 overflow-hidden text-sm'>
-                <a
-                  href='#'
-                  className='block w-full py-4 pl-6 pr-3 text-gray-600 transition duration-150 border-t border-gray-100 hover:bg-gray-100'
-                >
-                  <img
-                    src='https://avatars0.githubusercontent.com/u/35900628?v=4'
-                    alt=''
-                    className='inline-block h-6 mr-2 rounded-full shadow-md'
-                  />
-                  Ministério 1
-                </a>
-                <a
-                  href='#'
-                  className='block w-full py-4 pl-6 pr-3 text-gray-600 transition duration-150 border-t border-gray-100 hover:bg-gray-100'
-                >
-                  <img
-                    src='https://avatars0.githubusercontent.com/u/35900628?v=4'
-                    alt=''
-                    className='inline-block h-6 mr-2 rounded-full shadow-md'
-                  />
-                  Ministério 2
-                </a>
-              </div>
+              <ul className='grid grid-cols-2 gap-3 text-sm'>
+                {member.data.cae && (
+                  <li className='flex items-center gap-2'>
+                    ✅ <span>CAE</span>
+                  </li>
+                )}
+                {member.data.batizado && (
+                  <li className='flex items-center gap-2'>
+                    ✅ <span>Batizado</span>
+                  </li>
+                )}
+                {member.data.discipulado && (
+                  <li className='flex items-center gap-2'>
+                    ✅ <span>Discipulado</span>
+                  </li>
+                )}
+                {member.data.encontroComDeus && (
+                  <li className='flex items-center gap-2'>
+                    ✅ <span>Encontro com Deus</span>
+                  </li>
+                )}
+                {member.data.reencontroComDeus && (
+                  <li className='flex items-center gap-2'>
+                    ✅ <span>Reencontro com Deus</span>
+                  </li>
+                )}
+                {member.data.sejaLivre && (
+                  <li className='flex items-center gap-2'>
+                    ✅ <span>Seja Livre</span>
+                  </li>
+                )}
+                {member.data.escolaProfeta && (
+                  <li className='flex items-center gap-2 mb-4'>
+                    ✅ <span>Escola do Profeta</span>
+                  </li>
+                )}
+              </ul>
             </div>
           </div>
         </div>
       ) : (
-        <section className='h-screen p-16 mx-auto bg-gray-50 dark:bg-gray-800'>
-          <Loading />
-        </section>
+        <section className='h-screen p-16 mx-auto bg-gray-50 dark:bg-gray-800'></section>
       )}
     </div>
   )
 }
 
 const Address = ({ children }: any) => {
-  // const address = member.address as TAddress[]
-  const fullAddress =
-    // address.length > 0
-    // ?
-    `${children?.street || ''}, ${children?.number || ''} - ${
-      children?.city || ''
-    }`
-  // : ''
+  const fullAddress = `${children?.street || ''} - ${children?.city || ''}`
 
   return (
     <p className='text-sm text-gray-500 truncate dark:text-gray-400'>

@@ -21,7 +21,7 @@ export default async function handler(
 ) {
   if (req.method === 'GET') {
     try {
-      const { churchid, page = 1, limit = 10 } = req.query
+      const { churchid, page = 1, limit = 10, name } = req.query
 
       const pageNumber = parseInt(page as string, 10)
       const limitNumber = parseInt(limit as string, 10)
@@ -29,7 +29,8 @@ export default async function handler(
       const users = await getUsersByChurch(
         churchid as string,
         pageNumber,
-        limitNumber
+        limitNumber,
+        name as string
       )
 
       return res.status(200).json(users)
@@ -44,7 +45,7 @@ export default async function handler(
     })
 
     return res.status(201).json({ message: 'ok' })
-  } 
+  }
 
   return res.status(200).json([])
 }

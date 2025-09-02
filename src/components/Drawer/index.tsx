@@ -15,7 +15,7 @@ export interface IDrawer {
 const Drawer: React.FC<IDrawer> = ({ toggleSidebar, isOpen, closeSidebar }) => {
   const { data: session } = useSession()
   const churchId = session?.user.churchId as string
-  const cemId = session?.user.cem.id as string
+  const cemId = session?.user.cem._id as string
   const menu = menuItems({ churchId, cemId })
   const pathRouter = `/app/${churchId}`
 

@@ -1,4 +1,4 @@
-import { Suspense, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useHttpGet, useHttpPatch } from '@/hooks/api'
 import MemberItem from '../../../../../components/Member/MemberItem'
@@ -15,16 +15,27 @@ const MembersWithImportExport = () => {
   const [search, setSearch] = useState('')
   const [showEditModal, setShowEditModal] = useState(false)
   const [selectedMember, setSelectedMember] = useState<User | null>(null)
+  const [debouncedSearch, setDebouncedSearch] = useState('')
 
   const [page, setPage] = useState(1)
   const limit = 8
+
+  // 🔹 debounce da pesquisa
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedSearch(search), 500)
+    return () => clearTimeout(handler)
+  }, [search])
 
   const { data: members, mutate: refreshMembers } = useHttpGet<{
     data: User[]
     total: number
     page: number
     totalPages: number
-  }>(`/api/protected/churches/${churchid}/users?page=${page}&limit=${limit}`)
+  }>(
+    `/api/protected/churches/${churchid}/users?page=${page}&limit=${limit}${
+      debouncedSearch ? `&name=${debouncedSearch}` : ''
+    }`
+  )
 
   const handleDesactive = async (id: string) => {
     await useHttpPatch({
@@ -64,9 +75,12 @@ const MembersWithImportExport = () => {
       )}
       <MembersHeader
         total={members?.data?.total || 0}
-        pathname={pathname}
+        pathname={asPath}
         inputFileRef={inputFileRef}
         members={members?.data.data || []}
+        churchId={churchid as string}
+        search={search}
+        setSearch={setSearch}
       />
 
       <div className='shadow-sm'>
@@ -80,6 +94,7 @@ const MembersWithImportExport = () => {
                 onDeactive={() => handleDesactive(member._id)}
                 onActive={() => handleActive(member._id)}
                 basePath={asPath}
+                viewCargo={true}
               />
             ))}
           </Suspense>

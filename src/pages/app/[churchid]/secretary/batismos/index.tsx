@@ -67,7 +67,7 @@ const BatismoList = () => {
         {batismos && (
           <>
             <BatismoHeader
-              pathname={''}
+              pathname={asPath}
               inputFileRef={inputFileRef}
               batismo={batismos?.data.data}
             />

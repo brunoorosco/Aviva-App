@@ -9,12 +9,14 @@ interface Error {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<CellsModel[] | CellsModel | Error | null>
+  res: NextApiResponse<any | null>
 ) {
   const churchId = req.query.churchid as string
   const cemId = req.query.cemid as string
+  const name = req.query.name as string
+
   if (req.method == 'GET') {
-    const cem = await getUsersByCem(cemId)
+    const cem = await getUsersByCem(cemId, name)
     return res.status(200).json(cem)
   }
   if (req.method == 'DELETE') {

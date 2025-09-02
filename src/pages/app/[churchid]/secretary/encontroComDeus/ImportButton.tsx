@@ -5,11 +5,20 @@ import Toast from '@/components/Toast'
 import * as XLSX from 'xlsx'
 import { Upload } from 'lucide-react'
 
-type Props = {
-  inputFileRef: React.RefObject<HTMLInputElement>
+type TEncontrista = {
+  _id: string
+  name: string
+  rede: string
+  telefone: string
+  email: string
 }
 
-const ImportButton = ({ inputFileRef }: Props) => {
+type Props = {
+  inputFileRef: React.RefObject<HTMLInputElement>
+  onImport?: (imported: TEncontrista[]) => void
+}
+
+const ImportButton = ({ inputFileRef, onImport }: Props) => {
   const { data: session } = useSession()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -25,7 +34,7 @@ const ImportButton = ({ inputFileRef }: Props) => {
 
       setIsLoading(true)
       const response = await useHttpPost({
-        url: `/api/protected/churches/${session?.user.churchId}/reencontroComDeus`,
+        url: `/api/protected/churches/${session?.user.churchId}/encontroComDeus`,
         data: json
       })
       setIsLoading(false)

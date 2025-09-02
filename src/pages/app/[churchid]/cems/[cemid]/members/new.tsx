@@ -1,15 +1,17 @@
-import TextInput from '@/components/Input'
-import { useRouter } from 'next/router'
-import { useForm } from 'react-hook-form'
+'use client'
+
+import { useForm, Controller } from 'react-hook-form'
 import { useState } from 'react'
-import ButtonSubmit from '@/components/ButtonSubmit'
-import { useHttpPost } from '@/hooks/api'
+import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import { Input } from '@/components/ui/input'
+import { useHttpPost } from '@/hooks/api'
 import Toast from '@/components/Toast'
 import { Masks } from '@/utils/masks'
 import { SelectSupervisorCem } from '@/components/Select/SelectSupervisoresCem'
 import { SelectProfile } from '@/components/Select/SelectProfile'
 import { roles } from '@/utils/constants/roles'
+import ButtonSubmit from '@/components/ButtonSubmit'
 
 type FormValues = {
   name: string
@@ -25,41 +27,31 @@ type FormValues = {
 }
 
 const NewMember = () => {
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<FormValues>()
+  const { control, handleSubmit } = useForm<FormValues>()
   const router = useRouter()
   const { data: session } = useSession()
-  const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       setIsLoading(true)
-      setError('')
       const response = await useHttpPost({
-        url: `/api/protected/churches/${session?.user.churchId}/cems/${session?.user.cem.id}/members`,
+        url: `/api/protected/churches/${session?.user.churchId}/cems/${session?.user.cem._id}/members`,
         data
       })
-
       setIsLoading(false)
-      if (response) {
-        Toast.showSuccess('Salvo com Sucesso!')
-      }
 
       if (response?.error) {
         Toast.showError('Erro ao Salvar!')
-        setError('')
         return
       }
 
+      Toast.showSuccess('Salvo com Sucesso!')
       router.back()
     } catch (error) {
       setIsLoading(false)
-      console.log('[LOGIN_ERROR]: ', error)
+      console.error('[ERROR]:', error)
+      Toast.showError('Erro ao salvar')
     }
   })
 
@@ -72,107 +64,112 @@ const NewMember = () => {
       </div>
 
       <form onSubmit={onSubmit} className='w-full max-w-2xl mt-6 flex flex-col gap-4'>
-        <TextInput
-          {...register('name', { required: true })}
+        {/* Nome */}
+        <Controller
           name='name'
-          className='uppercase'
-          placeholder='Nome Completo'
           control={control}
-          mask={(e: string) => Masks.inputName(e)}
-          error={errors.name ? 'Preenchimento Obrigatório' : ''}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <Input
+              {...field}
+              placeholder='Nome Completo'
+              className='uppercase w-full'
+              onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
+            />
+          )}
         />
 
-        <TextInput
-          {...register('email')}
+        {/* Email */}
+        <Controller
           name='email'
-          className='uppercase'
-          placeholder='Email'
           control={control}
+          render={({ field }) => (
+            <Input {...field} placeholder='Email' className='w-full' />
+          )}
         />
 
+        {/* Phone e Birth */}
         <div className='flex flex-col md:flex-row gap-4'>
-          <div className='w-full md:w-1/2'>
-            <TextInput
-              {...register('phone', { required: true })}
-              name='phone'
-              placeholder='WhatsApp'
-              mask={(e: string) => Masks.phone(e)}
-              className='uppercase'
-              control={control}
-              error={errors.phone ? 'Preenchimento Obrigatório' : ''}
-            />
-          </div>
-          <div className='w-full md:w-1/2'>
-            <TextInput
-              {...register('birth')}
-              name='birth'
-              type='date'
-              placeholder='Data de Nascimento'
-              className='uppercase'
-              control={control}
-              error={errors.birth ? 'Preenchimento Obrigatório' : ''}
-            />
-          </div>
+          <Controller
+            name='phone'
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder='WhatsApp'
+                className='w-full'
+                onChange={(e) => field.onChange(Masks.phone(e.target.value))}
+              />
+            )}
+          />
+          <Controller
+            name='birth'
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Input {...field} type='date' className='w-full' placeholder='Data de Nascimento' />
+            )}
+          />
         </div>
 
+        {/* Logradouro e Número */}
         <div className='flex flex-col md:flex-row gap-4'>
-          <div className='w-full md:w-2/3'>
-            <TextInput
-              name='street'
-              placeholder='Logradouro'
-              className='uppercase'
-              mask={(e: string) => Masks.inputName(e)}
-              control={control}
-            />
-          </div>
-          <div className='w-full md:w-1/3'>
-            <TextInput
-              name='number'
-              placeholder='Nº'
-              control={control}
-              className='uppercase'
-            />
-          </div>
+          <Controller
+            name='street'
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder='Logradouro'
+                className='uppercase w-full md:w-2/3'
+                onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
+              />
+            )}
+          />
+          <Controller
+            name='number'
+            control={control}
+            render={({ field }) => <Input {...field} placeholder='Nº' className='uppercase w-full md:w-1/3' />}
+          />
         </div>
 
+        {/* Cidade e CEP */}
         <div className='flex flex-col md:flex-row gap-4'>
-          <div className='w-full md:w-2/3'>
-            <TextInput
-              name='city'
-              placeholder='Cidade'
-              control={control}
-              className='uppercase'
-              mask={(e: string) => Masks.inputName(e)}
-            />
-          </div>
-
-          <div className='w-full md:w-1/3'>
-            <TextInput
-              placeholder='CEP'
-              name='zipcode'
-              maxLength={9}
-              control={control}
-              mask={(e: string) => Masks.cep(e)}
-            />
-          </div>
+          <Controller
+            name='city'
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder='Cidade'
+                className='uppercase w-full md:w-2/3'
+                onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
+              />
+            )}
+          />
+          <Controller
+            name='zipcode'
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder='CEP'
+                className='w-full md:w-1/3'
+                onChange={(e) => field.onChange(Masks.cep(e.target.value))}
+              />
+            )}
+          />
         </div>
 
-        <SelectSupervisorCem
-          errors={false}
-          title={'Supervisores'}
-          name='cemId'
-          control={control}
-        />
+        {/* Supervisor */}
+        <SelectSupervisorCem name='cemId' control={control} errors={false} title='Supervisores' />
 
-        <SelectProfile
-           options={roles}
-          errors={false}
-          title={'Cargo Eclesiástico'}
-          name='profileId'
-          control={control}
-        />
+        {/* Perfil */}
+        <SelectProfile name='profileId' control={control} errors={false} options={roles} title='Cargo Eclesiástico' />
 
-        <ButtonSubmit text='Salvar' type='submit' />
+        {/* Botão */}
+        <ButtonSubmit text='Salvar' type='submit' disabled={isLoading} />
       </form>
     </div>
   )

@@ -23,7 +23,7 @@ export default async (req: NextRequest) => {
       return NextResponse.json(datas, { status: 200 })
     }
   } catch (error) {
-    console.log(error)
+    console.error(error)
     //  throw new Error(error as string)
   }
 }

@@ -1,5 +1,5 @@
 import { FaPeopleGroup, FaPeopleRoof } from 'react-icons/fa6'
-import { Users, GroupIcon, BookUserIcon } from 'lucide-react'
+import { Users, GroupIcon, BookUserIcon, ChartPieIcon, Calendar1Icon } from 'lucide-react'
 import HomeIcon from './icons'
 
 type TMenu = {
@@ -18,7 +18,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     },
     {
       id: 2,
-      label: 'CEMs',
+      label: 'Redes',
       icon: <GroupIcon size={25} />,
       link: `${base}/cems`
     },
@@ -57,6 +57,30 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
       label: 'Flow',
       icon: <FaPeopleGroup size={25} />,
       link: `${base}/flow`
+    },
+    {
+      id:12,
+      label: 'Casas de Paz',
+      icon: <FaPeopleGroup size={25} />,
+      link: `${base}/casasdepaz`
+    },
+    {
+      id: 9,
+      label: 'Visitas de Paz',
+      icon: <FaPeopleGroup size={25} />,
+      link: `${base}/visitasdepaz`
+    },
+    {
+      id: 10,
+      label: 'Metricas',
+      icon: <ChartPieIcon />,
+      link: `${base}/dashboard`
+    },
+    {
+      id: 11,
+      label: 'Agenda',
+      icon: <Calendar1Icon />,
+      link: `${base}/agenda`
     }
   ]
 }

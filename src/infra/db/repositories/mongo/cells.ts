@@ -12,6 +12,7 @@ export class CellsMongoRepository {
   async getCells(churchId: string): Promise<any[]> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
+      const collectionUsers = await MongoHelper.getCollection('users')
       const church = await collection.findOne<ChurchModel>(
         { _id: new ObjectId(churchId) },
         {
@@ -21,10 +22,32 @@ export class CellsMongoRepository {
           }
         }
       )
+      if (!church?.cells) return []
+
+      // para cada cell, pega contagem de membros ativos/inativos
+      const cellsWithMembers = await Promise.all(
+        church.cells.map(async (cell) => {
+          const filterBase = {
+            'cem._id': cell._id.toString(),
+            role: { $ne: 'bispo' } // exclui bispo
+          }
+
+          const totalAtivos = await collectionUsers.countDocuments({
+            ...filterBase,
+            active: true
+          })
+
+          return {
+            ...cell,
+            membersActive: totalAtivos
+          }
+        })
+      )
+
       if (!church) {
         throw new Error(`Church with ID ${churchId} not found`)
       }
-      return church.cells || []
+      return cellsWithMembers || []
     } catch (error) {
       console.error('Error getting cells:', error)
       throw error
@@ -53,7 +76,6 @@ export class CellsMongoRepository {
   async getCellsByName(churchId: string, cemName: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      console.log(cemName)
       const church = await collection.findOne<ChurchModel>(
         {
           _id: new ObjectId(churchId),

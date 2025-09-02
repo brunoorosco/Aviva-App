@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import TextInput from '@/components/Input'
-import { Masks } from '@/utils/masks'
-import useSWR from 'swr'
-import { useForm } from 'react-hook-form'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useForm, Controller } from 'react-hook-form'
 import { useSession } from 'next-auth/react'
-import { SelectSupervisor } from '@/components/Select/SelectSupervisores'
-import ButtonSubmit from '@/components/ButtonSubmit'
+import useSWR from 'swr'
+import axios from 'axios'
+
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Masks } from '@/utils/masks'
+import { SelectCem } from '@/components/Select/SelectCem'
 import RadioInput from '@/components/RadioInput'
 import { optionAccepted, optionBapstism } from '@/components/RadioInput/options'
-import { SelectCem } from '@/components/Select/SelectCem'
 
 type FormValues = {
   name: string
@@ -17,149 +20,138 @@ type FormValues = {
   phone: string
   cem: string
   accepted: string
-  bapstism: boolean
+  baptism: boolean
   acceptedAt: string
 }
-const fetcher = (url: string) => axios.get(url).then((res) => res.data)
+
+const fetcher = (url: string) => axios.get(url).then(res => res.data)
 
 const AceitouJesus = () => {
   const { data: session } = useSession()
-  const dataRetro = new Date()
-  dataRetro.setDate(dataRetro.getDate())
-  const dataRetroISO = dataRetro.toISOString().split('T')[0]
   const churchId = session?.user.churchId as string
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<FormValues>({ defaultValues: { acceptedAt: dataRetroISO } })
-  const { data, error } = useSWR(
-    `/api/protected/churches/${churchId}/cems`,
-    fetcher
-  )
 
-  const [erro, setError] = useState('')
+  const dataRetroISO = new Date().toISOString().split('T')[0]
+
+  const { control, handleSubmit, formState: { errors } } = useForm<FormValues>({
+    defaultValues: { acceptedAt: dataRetroISO }
+  })
+
+  const { data } = useSWR(`/api/protected/churches/${churchId}/cems`, fetcher)
+
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  // async function handleSubmit(evt: any) {
-  //   evt.preventDefault()
-  //   try {
-  //     const response = await axios.post('/api/escola-profeta/new', form)
-  //     if (response.status === 201) {
-  //       Toast.showSuccess(
-  //         `${response.data.name}, sua inscrição foi realizada com sucesso!!!`
-  //       )
-  //       setForm({ name: '', email: '', phone: '', tribe: '' })
-  //     }
-  //   } catch (error) {
-  //     Toast.showError('Não foi possível completar sua inscrição')
-  //   }
-  // }
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit(async (formData) => {
     try {
-      console.log('[LOGIN_ERROR]: ', data)
       setIsLoading(true)
       setError('')
-
+      console.log('Form Data:', formData)
+      // Aqui você faria o POST para salvar os dados
       setIsLoading(false)
-
-      //   if (response?.error) {
-      //     setError('Email ou senha inválidos')
-      //     return
-      //   }
-
-      //   router.replace('/app')
-    } catch (error) {
+    } catch (err) {
       setIsLoading(false)
-      console.log('[LOGIN_ERROR]: ', error)
+      console.error(err)
+      setError('Erro ao enviar o formulário')
     }
   })
 
   return (
     <div className='flex flex-col items-center p-3 mt-5 md:mt-5'>
       <div className='content-center w-full max-w-lg text-center'>
-        <div className='w-full px-3 mb-2 md:w-full md:mb-0'>
-          <label className='text-2xl text-gray-600 md:text-3xl dark:text-dark-primary'>
-            Aceitou Jesus
-          </label>
-        </div>
+        <Label className='text-2xl md:text-3xl dark:text-dark-primary'>
+          Aceitou Jesus
+        </Label>
       </div>
 
       <form
-        className='w-1/3 px-1 mt-5 text-black max-md:w-full'
         onSubmit={onSubmit}
-        method='post'
+        className='w-full max-w-lg mt-5 px-2 flex flex-col gap-4'
       >
-        <div className='mt-2 mb-2 md:mb-0'>
-          <TextInput
-            {...register('acceptedAt')}
-            name='acceptedAt'
-            type='date'
-            defaultValue={dataRetroISO}
-            className='text-lg text-center placeholder:text-gray-600'
-            control={control}
-          />
-        </div>
-        <div className='mt-2 mb-2 md:mb-0'>
-          <TextInput
-            {...register('name', { required: true })}
-            name='name'
-            className='placeholder:text-gray-600'
-            placeholder='Nome Completo'
-            control={control}
-            error={errors.name ? 'Preenchimento Obrigatório do Nome' : ''}
-            mask={(e: string) => Masks.inputName(e)}
-          />
-        </div>
-        <div className='w-full mt-2 mb-2 md:mb-0'>
-          <TextInput
-            {...register('email')}
-            name='email'
-            placeholder='E-mail'
-            control={control}
-          />
-        </div>
-        <div className='w-full mt-2 mb-2 md:mb-0'>
-          <TextInput
-            {...register('phone')}
-            name='phone'
-            placeholder='WhatsApp'
-            mask={(e: string) => Masks.phone(e)}
-            control={control}
-          />
-        </div>
-        <div className='w-full mb-5 md:mb-0'>
-          <SelectCem
-            churchId={churchId}
-            errors={false}
-            title={'Escolha uma Rede'}
-            name='cem'
-            control={control}
-          />
-        </div>
-        <div className='flex w-full max-w-md'>
-          <RadioInput
-            name='accepted'
-            control={control}
-            options={optionAccepted}
-          />
-        </div>
-        <div className='flex flex-col w-full max-w-md'>
-          <p className='mt-3 text-lg font-medium'>Batizado?</p>
-          <div className='mt-1'>
-            <RadioInput
-              name='baptism'
-              control={control}
-              options={optionBapstism}
-            />
-          </div>
+        {/* Data Aceitou */}
+        <Controller
+          name='acceptedAt'
+          control={control}
+          render={({ field }) => (
+            <div className='flex flex-col'>
+              <Label>Data Aceitou</Label>
+              <Input {...field} type='date' className='text-center' />
+            </div>
+          )}
+        />
+
+        {/* Nome */}
+        <Controller
+          name='name'
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <div className='flex flex-col'>
+              <Label>Nome Completo</Label>
+              <Input
+                {...field}
+                placeholder='Nome Completo'
+                className='uppercase'
+                onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
+              />
+              {errors.name && <p className='text-sm text-red-400'>Preenchimento obrigatório</p>}
+            </div>
+          )}
+        />
+
+        {/* Email */}
+        <Controller
+          name='email'
+          control={control}
+          render={({ field }) => (
+            <div className='flex flex-col'>
+              <Label>Email</Label>
+              <Input {...field} placeholder='Email' className='lowercase' />
+            </div>
+          )}
+        />
+
+        {/* WhatsApp */}
+        <Controller
+          name='phone'
+          control={control}
+          render={({ field }) => (
+            <div className='flex flex-col'>
+              <Label>WhatsApp</Label>
+              <Input
+                {...field}
+                placeholder='WhatsApp'
+                onChange={(e) => field.onChange(Masks.phone(e.target.value))}
+              />
+            </div>
+          )}
+        />
+
+        {/* Rede / CEM */}
+        <SelectCem
+          name='cem'
+          control={control}
+          churchId={churchId}
+          title='Escolha uma Rede'
+          errors={false}
+        />
+
+        {/* Aceitou? */}
+        <div className='flex flex-col'>
+          <Label>Aceitou?</Label>
+          <RadioInput name='accepted' control={control} options={optionAccepted} />
         </div>
 
-        <div className='flex'>
-          <div className='w-full mt-5 mb-6 md:w-full md:mb-0'>
-            <ButtonSubmit text='Salvar' type='submit' />
-          </div>
+        {/* Batizado? */}
+        <div className='flex flex-col'>
+          <Label>Batizado?</Label>
+          <RadioInput name='baptism' control={control} options={optionBapstism} />
+        </div>
+
+        {/* Botão */}
+        <div className='flex justify-end mt-4'>
+          <Button type='submit' disabled={isLoading}>
+            {isLoading ? 'Salvando...' : 'Salvar'}
+          </Button>
         </div>
       </form>
     </div>

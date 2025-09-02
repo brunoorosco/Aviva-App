@@ -1,7 +1,7 @@
 import Avatar from '@/components/Avatar'
 import Loading from '@/components/Select/loading'
 // import Skeleton from '@/components/Skeleton'
-import { useHttpDelete, useHttpGet } from '@/hooks/api'
+import { useHttpGet } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 
@@ -18,6 +18,13 @@ export type TMembers = {
   cep: string
   state: string
   phone: string
+  encontroComDeus?: boolean
+  reencontroComDeus?: boolean
+  sejaLivre?: boolean
+  batizado?: boolean
+  discipulado?: boolean
+  cae?: boolean
+  escolaProfeta?: boolean
 }
 
 const MembersById = (dataMember: any) => {
@@ -25,13 +32,15 @@ const MembersById = (dataMember: any) => {
   const { query } = router
   const { data: session } = useSession()
   const churchId = session?.user.churchId as string
-  const cemId = session?.user.cem.id as string
+  const cemId = session?.user.cem._id as string
+
+  console.log(query)
   const {
     data: member,
     error,
     isLoading
   } = useHttpGet<TMembers>(
-    `/api/protected/churches/${churchId}/cems/${cemId}/members/${query.memberId}`
+    `/api/protected/churches/${churchId}/cems/${cemId}/members/${query.id}`
   )
 
   if (error) {

@@ -52,7 +52,7 @@ export const Sidebar = ({ churchId, cemId, closeSidebar }: SidebarProps) => {
             )}
           </button>
           <div className='flex items-center gap-4 pl-1'>
-            <img src='/logo-preto.png' width='70%' className='mx-auto my-12' />
+            <img src='/logo-preto.png' width='70%' className='mx-auto' />
           </div>
         </div>
 

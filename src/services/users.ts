@@ -1,6 +1,5 @@
-import CryptAdapter from '../infra/cryptography/bcrypt'
-import { ChurChMongoRepository } from '../infra/db/repositories/mongo/churchs'
-import { UsersMongoRepository } from '../infra/db/repositories/mongo/users'
+import CryptAdapter from '@/infra/cryptography/bcrypt'
+import { UsersMongoRepository } from '@/infra/db/repositories/mongo/users'
 
 type TUser = {
   name: string
@@ -15,12 +14,10 @@ type TUser = {
   churchId: string
 }
 
-export const createUser = async (params: TUser) => {
-  const church = new ChurChMongoRepository()
+export const createUserByCem = async (params: TUser) => {
   const userRepository = new UsersMongoRepository()
   const cripto = new CryptAdapter()
 
-  const churchId = await church.getChurchById(params.churchId)
   const randowPass = await cripto.randonPassword()
 
   const setPassword = cripto.hashPassword(randowPass)
@@ -31,6 +28,30 @@ export const createUser = async (params: TUser) => {
     permissions: ['user'],
     zipcode,
     password: setPassword
+  })
+  return user
+}
+export const createUser = async (params: TUser) => {
+  const userRepository = new UsersMongoRepository()
+  const cripto = new CryptAdapter()
+
+  const randowPass = await cripto.randonPassword()
+  const setPassword = cripto.hashPassword(randowPass)
+  const zipcode = params.zipcode?.replace('-', '')
+
+  const cem = params.cemId.split('-')
+
+  if (params && 'cemId' in params) {
+    //@ts-ignore
+    delete params.cemId
+  }
+
+  const user = await userRepository.create({
+    ...params,
+    permissions: ['user'],
+    zipcode,
+    password: setPassword,
+    cem: { _id: cem[0], name: cem[1] }
   })
   return user
 }
@@ -55,9 +76,9 @@ export const createUser = async (params: TUser) => {
 //   return user
 // }
 
-export const getUsersByCem = async (cemId: string) => {
+export const getUsersByCem = async (cemId: string, name: string) => {
   const userRepository = new UsersMongoRepository()
-  const members = await userRepository.getUsersByCellId(cemId)
+  const members = await userRepository.getUsersByCellId(cemId, name)
 
   return members
 }
@@ -65,14 +86,22 @@ export const getUsersByCem = async (cemId: string) => {
 export const getUsersByChurch = async (
   churchId: string,
   pageNumber: number,
-  limitNumber: number
+  limitNumber: number,
+  name?: string
 ) => {
   const userRepository = new UsersMongoRepository()
   const users = await userRepository.getUsersByChurchId(
     churchId,
     pageNumber,
-    limitNumber
+    limitNumber,
+    name
   )
 
+  return users
+}
+
+export const getUserByName = async (churchId: string, name: string) => {
+  const userRepository = new UsersMongoRepository()
+  const users = await userRepository.getUserByName(churchId, name)
   return users
 }
