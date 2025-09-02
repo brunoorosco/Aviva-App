@@ -25,11 +25,11 @@ const MembersWithImportExport = () => {
     total: number
     page: number
     totalPages: number
-    totalAtivos:number
+    totalAtivos: number
     totalInativos: number
   }>(
     // `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}`
-     `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}${
+    `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}${
       search ? `&name=${search}` : ''
     }`
   )
@@ -42,6 +42,7 @@ const MembersWithImportExport = () => {
         active: false
       }
     })
+    refreshMembers()
   }
 
   const handleActive = async (id: string) => {
@@ -52,6 +53,7 @@ const MembersWithImportExport = () => {
         active: true
       }
     })
+    refreshMembers()
   }
   const handleEdit = (member: User) => {
     setSelectedMember(member)
@@ -70,7 +72,7 @@ const MembersWithImportExport = () => {
           onUpdated={refreshMembers}
         />
       )}
-     <MembersHeader
+      <MembersHeader
         total={members?.data?.total || 0}
         pathname={asPath}
         inputFileRef={inputFileRef}
