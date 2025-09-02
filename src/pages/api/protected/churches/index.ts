@@ -2,7 +2,7 @@ import {
   createChurchService,
   getChurchByIdService,
   getChurchService
-} from '@/infra/services/churchService'
+} from '@/services/churchService'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(

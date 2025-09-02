@@ -1,30 +1,32 @@
 import { CasaDePaz } from '@/domain/models/casaDePaz'
+import { CasasDePazRepository } from '@/infra/db/repositories/mongo/casasDePaz'
 import { ObjectId } from 'mongodb'
-import { VisitasDePazRepository } from '../db/repositories/mongo/visitasDePaz'
 
-const visitasdePazRepository = new VisitasDePazRepository()
-export const getVisitasDePazService = async (churchId: string) => {
-  const result = await visitasdePazRepository.getVisitasDePaz(churchId)
+const casasdePazRepository = new CasasDePazRepository()
+
+export const getCasasDePazService = async (churchId: string) => {
+  const result = await casasdePazRepository.getCasasDePaz(churchId)
 
   return result
 }
-export const getVisitasDePazByIdService = async (
+export const getCasasdePazByIdService = async (
   churchId: string,
   casaDePazId: string
 ) => {
-  const result = await visitasdePazRepository.getVisitasDePazById(casaDePazId)
+  const result = await casasdePazRepository.getCasasDePazById(casaDePazId)
 
   return result
 }
 
-export const createVisitasDePazService = async (
+export const createCasasDePazService = async (
   churchId: string,
   data: { casas: CasaDePaz[]; data_inicial: string }
 ): Promise<any> => {
   const casaMap = data.casas.map((casa) => {
     return { ...casa, _id: new ObjectId() }
   })
-  const response = await visitasdePazRepository.createVisitasDePaz({
+
+  const response = await casasdePazRepository.createCasaDePaz({
     church_id: churchId,
     data_inicial: data.data_inicial,
     casas: casaMap
@@ -32,7 +34,7 @@ export const createVisitasDePazService = async (
   return response
 }
 
-export const saveVisitaDePazService = async (params: {
+export const saveCasaDePazService = async (params: {
   visitaId?: string // se existir, faz update/add
   church_id: string
   dataInicial?: string
@@ -45,9 +47,9 @@ export const saveVisitaDePazService = async (params: {
 
   if (casa._id) {
     // Edita casa existente
-    return visitasdePazRepository.updateCasa(visitaId, casa)
+    return casasdePazRepository.updateCasa(visitaId, casa)
   }
 
   // Adiciona nova casa em documento existente
-  return visitasdePazRepository.addCasa(visitaId, casa)
+  return casasdePazRepository.addCasa(visitaId, casa)
 }

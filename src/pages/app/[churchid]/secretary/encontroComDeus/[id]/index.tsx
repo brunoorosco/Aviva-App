@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
-import { useHttpGet } from '@/hooks/api'
-import { getEncontroComDeusByIdService } from '@/infra/services/encontroComDeus'
+import { getEncontroComDeusByIdService } from '@/services/encontroComDeus'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { GetServerSideProps } from 'next/types'

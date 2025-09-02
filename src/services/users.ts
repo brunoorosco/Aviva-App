@@ -1,7 +1,5 @@
-import CryptAdapter from '../cryptography/bcrypt'
-import { CellsMongoRepository } from '../db/repositories/mongo/cells'
-import { ChurChMongoRepository } from '../db/repositories/mongo/churchs'
-import { UsersMongoRepository } from '../db/repositories/mongo/users'
+import CryptAdapter from '@/infra/cryptography/bcrypt'
+import { UsersMongoRepository } from '@/infra/db/repositories/mongo/users'
 
 type TUser = {
   name: string

@@ -1,7 +1,7 @@
 import {
   createReencontroComDeusService,
   getReencontroComDeusByIdService
-} from '@/infra/services/reencontroComDeus'
+} from '@/services/reencontroComDeus'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

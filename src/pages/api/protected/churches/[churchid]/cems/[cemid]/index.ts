@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getUsersByCem } from '@/infra/services/users'
+import { getUsersByCem } from '@/services/users'
 import { CellsModel } from '@/domain/models/cells'
-import { deleteCemService } from '@/infra/services/cemService'
+import { deleteCemService } from '@/services/cemService'
 
 interface Error {
   message: string

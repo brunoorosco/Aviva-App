@@ -9,6 +9,7 @@ import LayoutTenant from '@/components/Layout/LayoutTenant'
 import LayoutEmpty from '@/components/Layout/LayoutEmpty'
 import { SessionProvider, useSession } from 'next-auth/react'
 import Head from 'next/head'
+import '@xyflow/react/dist/style.css';
 
 function MyApp({
   Component,

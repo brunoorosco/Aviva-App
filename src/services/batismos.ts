@@ -1,4 +1,4 @@
-import { BatismoMongoRepository } from '../db/repositories/mongo/batismo'
+import { BatismoMongoRepository } from '../infra/db/repositories/mongo/batismo'
 
 export const getBatismoService = async (churchId:string) => {
   const batismoRepository = new BatismoMongoRepository()

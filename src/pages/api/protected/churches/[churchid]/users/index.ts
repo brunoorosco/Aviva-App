@@ -1,11 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getUsersByChurch } from '@/infra/services/users'
 import { User } from '@/domain/models/users'
-import { addUserImportService } from '@/infra/services/members'
+import { addUserImportService } from '@/services/members'
+import { getUsersByChurch } from '@/services/users'
 
-type CemId = {
-  id: String
-}
 type Error = {
   message: string
 }

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getMembersById } from '@/infra/services/members'
+import { getMembersById } from '@/services/members'
 
 type Error = {
   message: string

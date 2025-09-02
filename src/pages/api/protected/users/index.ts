@@ -1,4 +1,4 @@
-import { createUser } from '@/infra/services/users'
+import { createUser } from '@/services/users'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

@@ -1,5 +1,5 @@
 import { User } from '@/domain/models/users'
-import { changeStatusUser, updateMember } from '@/infra/services/members'
+import { changeStatusUser, updateMember } from '@/services/members'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 type CemId = {

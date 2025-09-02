@@ -1,7 +1,5 @@
-import {
-  getCasasdePazByIdService,
-  saveCasaDePazService
-} from '@/infra/services/casasdepaz'
+
+import { getCasasdePazByIdService, saveCasaDePazService } from '@/services/casasdepaz'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

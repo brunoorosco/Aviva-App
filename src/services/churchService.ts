@@ -1,4 +1,4 @@
-import { ChurChMongoRepository } from '../db/repositories/mongo/churchs'
+import { ChurChMongoRepository } from '../infra/db/repositories/mongo/churchs'
 
 export const createChurchService = async (cemId: string) => {
   const churchRepository = new ChurChMongoRepository()

@@ -54,6 +54,12 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     },
     {
       id: 8,
+      label: 'Flow',
+      icon: <FaPeopleGroup size={25} />,
+      link: `${base}/flow`
+    },
+    {
+      id:12,
       label: 'Casas de Paz',
       icon: <FaPeopleGroup size={25} />,
       link: `${base}/casasdepaz`

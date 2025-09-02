@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { createUser } from '@/infra/services/users'
 import { User } from '@/domain/models/users'
+import { createUser } from '@/services/users';
 
 type Error = {
   message: string

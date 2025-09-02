@@ -1,5 +1,5 @@
 import { ChurchModel } from '@/domain/models/churchs'
-import { getChurchByIdService } from '@/infra/services/churchService'
+import { getChurchByIdService } from '@/services/churchService'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 
