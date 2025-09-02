@@ -1,6 +1,6 @@
 import { CasaDePaz } from '@/domain/models/casaDePaz'
+import { CasasDePazRepository } from '@/infra/db/repositories/mongo/casasDePaz'
 import { ObjectId } from 'mongodb'
-import { CasasDePazRepository } from '../db/repositories/mongo/casasDePaz'
 
 const casasdePazRepository = new CasasDePazRepository()
 

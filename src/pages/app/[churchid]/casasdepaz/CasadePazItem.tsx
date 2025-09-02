@@ -9,11 +9,7 @@ type Props = {
   basePath: string
 }
 
-const CasadePazItem = ({
-  casasDePaz,
-  onEdit,
-  basePath
-}: Props) => {
+const CasadePazItem = ({ casasDePaz, onEdit, basePath }: Props) => {
   const [disabled, setDisabled] = useState(false)
   const toggleDisabled = () => setDisabled((prev) => !prev)
 
@@ -47,15 +43,6 @@ const CasadePazItem = ({
                   Casa de Paz realizadas: {casasDePaz.casas.length}
                 </p>
               </p>
-            </div>
-
-            {/* Botões e checkbox: agora em linha */}
-            <div className='flex items-center justify-end gap-3 col-start-4 row-span-2'>
-              <Edit
-                className='cursor-pointer hover:text-blue-600'
-                size={16}
-                onClick={onEdit}
-              />
             </div>
           </div>
         </div>

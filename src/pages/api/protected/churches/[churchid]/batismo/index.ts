@@ -1,5 +1,4 @@
 import { createBatismoService, getBatismoService,  } from '@/services/batismos'
-import { createUser } from '@/services/users'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

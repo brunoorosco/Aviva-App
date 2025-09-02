@@ -1,6 +1,6 @@
 import { CasaDePaz } from '@/domain/models/casaDePaz'
+import { VisitasDePazRepository } from '@/infra/db/repositories/mongo/visitasDePaz'
 import { ObjectId } from 'mongodb'
-import { VisitasDePazRepository } from '../db/repositories/mongo/visitasDePaz'
 
 const visitasdePazRepository = new VisitasDePazRepository()
 export const getVisitasDePazService = async (churchId: string) => {

@@ -43,13 +43,13 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
               </p>
             </div>
 
-            <div className='flex items-center justify-end gap-3 col-start-4 row-span-2'>
+            {/* <div className='flex items-center justify-end gap-3 col-start-4 row-span-2'>
               <Edit
                 className='cursor-pointer hover:text-blue-600'
                 size={16}
                 onClick={onEdit}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </li>

@@ -66,7 +66,9 @@ export default function ChurchFlowPage({ churchId }: { churchId: string }) {
   useEffect(() => {
     if (!rawFlow) return
     const { nodes: n, edges: e } = generateNodesAndEdges(rawFlow, collapsedNodes, handleToggle)
+    //@ts-ignore
     setNodes(n)
+    //@ts-ignore
     setEdges(e)
   }, [rawFlow, collapsedNodes, setNodes, setEdges, handleToggle])
 
