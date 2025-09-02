@@ -1,6 +1,5 @@
 'use client'
 import React, { useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,6 +8,7 @@ import { useHttpPost } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
 import Toast from '@/components/Toast'
 import { useRouter } from 'next/router'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 type User = { name: string; role: string }
 type Auxiliar = { name: string; users: User[] }
@@ -88,7 +88,7 @@ export default function HierarchyForm() {
     <div className='p-6 max-w-5xl mx-auto space-y-6'>
       {/* Pastor */}
       <Card>
-        <CardContent className='space-y-4'>
+        <CardContent className='space-y-4 mt-2'>
           <Label className='text-lg font-semibold'>Pastor Responsável</Label>
           <Input
             placeholder='Nome do Pastor'

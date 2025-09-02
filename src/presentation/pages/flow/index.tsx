@@ -15,25 +15,10 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { CollapsibleNode } from '@/components/Flow/CollapsibleNode'
-
-type FlowData = {
-  pastor: string
-  groups: {
-    sup1: string
-    sup2: string
-    cems: {
-      name: string
-      leaders: {
-        name1: string
-        name2: string
-        auxiliares: {
-          name: string
-          users: { name: string; role: string }[]
-        }[]
-      }[]
-    }[]
-  }[]
-}
+import { FlowData } from '@/components/Flow/types'
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 export default function ChurchFlowPage({ churchId }: { churchId: string }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([])
@@ -41,13 +26,16 @@ export default function ChurchFlowPage({ churchId }: { churchId: string }) {
   const [rawFlow, setRawFlow] = useState<FlowData | null>(null)
 
   // Guarda quais CEMs estão colapsados: chave = id do node (ex: "cem-0-2")
-  const [collapsedNodes, setCollapsedNodes] = useState<Record<string, boolean>>({})
+  const [collapsedNodes, setCollapsedNodes] = useState<Record<string, boolean>>(
+    {}
+  )
 
   const handleToggle = useCallback((id: string) => {
-    setCollapsedNodes(prev => ({ ...prev, [id]: !prev[id] }))
+    setCollapsedNodes((prev) => ({ ...prev, [id]: !prev[id] }))
   }, [])
 
-  const onConnect = (params: Connection) => setEdges(eds => addEdge(params, eds))
+  const onConnect = (params: Connection) =>
+    setEdges((eds) => addEdge(params, eds))
 
   // 1) Faz 1 fetch só
   useEffect(() => {
@@ -66,7 +54,11 @@ export default function ChurchFlowPage({ churchId }: { churchId: string }) {
   // 2) Sempre que rawFlow OU collapsedNodes mudarem, regera nodes/edges
   useEffect(() => {
     if (!rawFlow) return
-    const { nodes: n, edges: e } = generateNodesAndEdges(rawFlow, collapsedNodes, handleToggle)
+    const { nodes: n, edges: e } = generateNodesAndEdges(
+      rawFlow,
+      collapsedNodes,
+      handleToggle
+    )
     //@ts-ignore
     setNodes(n)
     //@ts-ignore
@@ -76,8 +68,13 @@ export default function ChurchFlowPage({ churchId }: { churchId: string }) {
   const nodeTypes = { collapsible: CollapsibleNode }
   const edgeTypes = {}
 
+  const router = useRouter()
+  const { asPath } = router
   return (
-    <div className="w-full h-[90vh]">
+    <div className='w-full h-[90vh]'>
+      <Link href={asPath + '/new'}>
+        <Button>Novo Flow</Button>
+      </Link>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -85,7 +82,7 @@ export default function ChurchFlowPage({ churchId }: { churchId: string }) {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         fitView
-        attributionPosition="top-right"
+        attributionPosition='top-right'
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
       >
@@ -123,7 +120,12 @@ function generateNodesAndEdges(
       extraData?: Record<string, any>
     }
   ) => {
-    const { bg = '#fff', color = '#000', type = 'default', extraData = {} } = opts || {}
+    const {
+      bg = '#fff',
+      color = '#000',
+      type = 'default',
+      extraData = {}
+    } = opts || {}
     nodes.push({
       id,
       type,
@@ -166,7 +168,9 @@ function generateNodesAndEdges(
       const cemId = `cem-${gIdx}-${cIdx}`
       const cemX =
         cemCount > 1
-          ? supX - (groupSpacingX / 2) + (cIdx * (groupSpacingX / (cemCount - 1 || 1)))
+          ? supX -
+            groupSpacingX / 2 +
+            cIdx * (groupSpacingX / (cemCount - 1 || 1))
           : supX
       const cemY = supY + levelY
 
@@ -187,7 +191,10 @@ function generateNodesAndEdges(
           const leaderX = cemX - 60 + lIdx * 120
           const leaderY = cemY + levelY
 
-          addNode(leaderId, leaderLabel, leaderX, leaderY, { bg: '#facc15', color: '#111827' })
+          addNode(leaderId, leaderLabel, leaderX, leaderY, {
+            bg: '#facc15',
+            color: '#111827'
+          })
           addEdge(cemId, leaderId)
 
           // Auxiliares
@@ -196,7 +203,10 @@ function generateNodesAndEdges(
             const auxX = leaderX - 40 + aIdx * 80
             const auxY = leaderY + levelY
 
-            addNode(auxId, aux.name, auxX, auxY, { bg: '#16a34a', color: '#fff' })
+            addNode(auxId, aux.name, auxX, auxY, {
+              bg: '#16a34a',
+              color: '#fff'
+            })
             addEdge(leaderId, auxId)
 
             // Usuários
