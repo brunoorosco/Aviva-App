@@ -88,37 +88,4 @@ const EncontroComDeusList = () => {
   )
 }
 
-{
-  /* {casasDePaz && (
-          <CasadePazHeader
-            pathname={asPath}
-            inputFileRef={inputFileRef}
-            casasdepaz={casasDePaz?.data.data}
-          />
-        )}
-
-        {!casasDePaz ? (
-          <div className='w-full p-4 bg-white shadow-lg dark:rounded-b-lg dark:bg-dark-secondary'>
-            <p>Carregando Casas de Paz...</p>
-          </div>
-        ) : (
-          <ul className='w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
-            {casasDePaz.data.data.length === 0 ? (
-              <li className='text-center py-4 text-gray-500'>
-                Nenhuma Casa de Paz encontrada.
-              </li>
-            ) : (
-              casasDePaz.data.data?.map((grupo: CasaDePazModel) => (
-                <CasadePazItem
-                  key={grupo._id}
-                  casasDePaz={grupo}
-                  onEdit={() => handleEdit(grupo)}
-                  basePath={asPath}
-                />
-              ))
-            )}
-          </ul>
-        )} */
-}
-
 export default EncontroComDeusList

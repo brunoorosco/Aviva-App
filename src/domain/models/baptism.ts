@@ -7,6 +7,6 @@ export type baptism = {
 
 type People = {
   name: string
-  cem?: string
+  rede?: string
   isCourse: boolean
 }

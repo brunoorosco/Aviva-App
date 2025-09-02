@@ -6,19 +6,19 @@ export class BatismoMongoRepository {
     this.collectionName = 'batismos'
   }
 
-  async getBatismoById(id: string): Promise<any> {
+  async getBatismoById(churchId: string, id: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      const batismos = await collection.findOne({ _id: new ObjectId(id) })
-      return batismos
+      const batismo = await collection.findOne({ _id: new ObjectId(id) })
+      return batismo
     } catch (error) {
-      console.error('Error finding user by email:', error)
+      console.error('Error finding batismo by id:', error)
       throw error
     }
   }
 
   async getBatismo(
-    churchId:string,
+    churchId: string,
     page: number = 1,
     limit: number = 10
   ): Promise<{

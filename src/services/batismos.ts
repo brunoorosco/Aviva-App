@@ -1,8 +1,15 @@
 import { BatismoMongoRepository } from '../infra/db/repositories/mongo/batismo'
 
-export const getBatismoService = async (churchId:string) => {
+export const getBatismoService = async (churchId: string) => {
   const batismoRepository = new BatismoMongoRepository()
   const result = await batismoRepository.getBatismo(churchId)
+
+  return result
+}
+
+export const getBatismoByIdService = async (churchId: string, id: string) => {
+  const batismoRepository = new BatismoMongoRepository()
+  const result = await batismoRepository.getBatismoById(churchId, id)
 
   return result
 }

@@ -64,47 +64,41 @@ const BatismoList = () => {
       )}
 
       <div className='shadow-sm'>
-        {batismos && (
-          <>
-            <BatismoHeader
-              pathname={asPath}
-              inputFileRef={inputFileRef}
-              batismo={batismos?.data.data}
-            />
-          </>
-        )}
-        {!batismos ? (
-          <div className='w-full p-4 bg-white shadow-lg dark:rounded-b-lg dark:bg-dark-secondary'>
-            <p>Carregando batismos...</p>
-          </div>
-        ) : (
-          <ul className='w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
-            {batismos.data.data.length === 0 ? (
-              <li className='text-center py-4 text-gray-500'>
-                Nenhum batismo encontrado.
-              </li>
-            ) : (
-              batismos.data.data.map((bat: baptism) => (
-                <BatismoItem
-                  key={bat._id}
-                  batismos={bat}
-                  onEdit={() => handleEdit(bat)}
-                  onDeactive={() => handleDesactive(bat._id)}
-                  onActive={() => handleActive(bat._id)}
-                  basePath={asPath}
-                />
-              ))
-            )}
-          </ul>
-        )}
+        <BatismoHeader
+          pathname={asPath}
+          inputFileRef={inputFileRef}
+          batismo={batismos?.data.data || []}
+        />
+        <ul className='w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
+          {!batismos ? (
+            <div className='w-full p-4 bg-white shadow-lg dark:rounded-b-lg dark:bg-dark-secondary'>
+              <p>Carregando batismos...</p>
+            </div>
+          ) : batismos.data.data.length === 0 ? (
+            <li className='text-center py-4 text-gray-500'>
+              Nenhum batismo encontrado.
+            </li>
+          ) : (
+            batismos.data.data.map((bat: baptism) => (
+              <BatismoItem
+                key={bat._id}
+                batismos={bat}
+                onEdit={() => handleEdit(bat)}
+                basePath={asPath}
+              />
+            ))
+          )}
+        </ul>
 
-        {batismos?.data.totalPages && (
+        {batismos?.data.totalPages ? (
           <Pagination
             currentPage={page}
             pageSize={limit}
             items={batismos.data.total}
             onPageChange={setPage}
           />
+        ) : (
+          ''
         )}
       </div>
     </div>
