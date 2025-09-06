@@ -1,6 +1,7 @@
 import * as XLSX from 'xlsx'
 import { User } from '@/domain/models/users'
 import { Download } from 'lucide-react'
+import { Button } from '../ui/button'
 
 type Props = {
   members: User[]
@@ -28,15 +29,15 @@ const ExportButton = ({ members }: Props) => {
   }
 
   return (
-    <button
+    <Button
       onClick={handleExport}
-      className="p-3 rounded bg-green-500 hover:bg-green-600 text-white"
-      aria-label="Exportar Membros"
-      title="Exportar Membros"
-      type="button"
+      className='p-3 rounded bg-green-500 hover:bg-green-600 text-white'
+      aria-label='Exportar Membros'
+      title='Exportar Membros'
+      type='button'
     >
       <Download size={20} />
-    </button>
+    </Button>
   )
 }
 

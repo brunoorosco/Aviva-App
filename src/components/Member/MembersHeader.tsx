@@ -1,15 +1,22 @@
 'use client'
 
-import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { FaPeopleRoof } from 'react-icons/fa6'
-import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
 import { User } from '@/domain/models/users'
 import ImportButton from './ImportButton'
 import ExportButton from './ExportButton'
 import { Input } from '../ui/input'
-import useSWR from 'swr'
-import axios from 'axios'
+
+// exemplo de modal (pode trocar pelo seu componente real de modal)
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Button } from '../ui/button'
+import MemberModal from './EditMemberModal'
+import EditMemberModal from './EditMemberModal'
 
 type Props = {
   total: number
@@ -23,12 +30,8 @@ type Props = {
   setSearch: (value: string) => void
 }
 
-// fetcher padrão para o SWR
-const fetcher = (url: string) => axios.get(url).then((res) => res.data)
-
 const MembersHeader = ({
   total,
-  pathname,
   inputFileRef,
   members,
   search,
@@ -38,6 +41,7 @@ const MembersHeader = ({
 }: Props) => {
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
 
   // debounce da query
   useEffect(() => {
@@ -55,9 +59,9 @@ const MembersHeader = ({
         <div className='flex gap-2 h-10'>
           <ExportButton members={members} />
           <ImportButton inputFileRef={inputFileRef} />
-          <Link href={`${pathname}/new`}>
-            <ButtonNew />
-          </Link>
+          {/* Botão abre modal */}
+          {/* <ButtonNew onClick={() => setIsOpen(true)} /> */}
+          <Button onClick={() => setIsOpen(true)}>Novo Membro</Button>
         </div>
       </div>
       <div className='flex w-full justify-between'>
@@ -88,6 +92,15 @@ const MembersHeader = ({
           />
         </div>
       </div>
+
+      {isOpen && (
+        <EditMemberModal
+          onClose={() => {
+            setIsOpen(false)
+          }}
+          onUpdated={() => {}}
+        />
+      )}
     </div>
   )
 }

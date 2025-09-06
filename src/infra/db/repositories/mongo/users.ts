@@ -74,7 +74,7 @@ export class UsersMongoRepository {
         collection
           .find(filter)
           .collation({ locale: 'pt', strength: 1 })
-          .sort({ name: 1 })
+          .sort({ active: -1, name: 1 })
           .skip(skip)
           .limit(limit)
           .toArray(),
@@ -185,7 +185,7 @@ export class UsersMongoRepository {
         collection
           .find(filter)
           .collation({ locale: 'pt', strength: 1 })
-          .sort({ name: 1 })
+          .sort({ active:-1,name: 1 })
           .skip(skip)
           .limit(limit)
           .toArray(),

@@ -4,6 +4,7 @@ import { useHttpPost } from '@/hooks/api'
 import Toast from '@/components/Toast'
 import * as XLSX from 'xlsx'
 import { Upload } from 'lucide-react'
+import { Button } from '../ui/button'
 
 type Props = {
   inputFileRef: React.RefObject<HTMLInputElement>
@@ -44,22 +45,22 @@ const ImportButton = ({ inputFileRef }: Props) => {
 
   return (
     <>
-      <button
+      <Button
         onClick={() => inputFileRef.current?.click()}
-        className="p-3 rounded bg-blue-500 hover:bg-blue-600 text-white"
-        aria-label="Importar Membros"
-        title="Importar Membros"
-        type="button"
+        className='p-3 rounded bg-blue-500 hover:bg-blue-600 text-white'
+        aria-label='Importar Membros'
+        title='Importar Membros'
+        type='button'
         disabled={isLoading}
       >
         <Upload size={20} />
-      </button>
+      </Button>
 
       <input
         ref={inputFileRef}
-        type="file"
-        accept=".xlsx,.xls"
-        className="hidden"
+        type='file'
+        accept='.xlsx,.xls'
+        className='hidden'
         onChange={handleImport}
       />
     </>

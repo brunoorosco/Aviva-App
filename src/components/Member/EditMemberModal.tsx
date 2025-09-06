@@ -3,7 +3,7 @@
 import { useForm, Controller } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { useHttpPatch } from '@/hooks/api'
+import { useHttpPatch, useHttpPost } from '@/hooks/api'
 import Toast from '@/components/Toast'
 import { Masks } from '@/utils/masks'
 import { SelectProfile } from '@/components/Select/SelectProfile'
@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { roles } from '@/utils/constants/roles'
 import { Checkbox } from '@/components/ui/checkbox'
+import { useSession } from 'next-auth/react'
 
 type FormValues = {
   name: string
@@ -32,24 +33,44 @@ type FormValues = {
 }
 
 type Props = {
-  member: any
+  member?: any // agora opcional
   onClose: () => void
   onUpdated: () => void
 }
 
-const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
+const MemberModal = ({ member, onClose, onUpdated }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
   const [initialData, setInitialData] = useState<FormValues | null>(null)
+  const isEdit = !!member // se tem member, é edição
+  const { data: session } = useSession()
 
   const {
     control,
     handleSubmit,
     setValue,
     formState: { errors }
-  } = useForm<FormValues>()
+  } = useForm<FormValues>({
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      birth: '',
+      street: '',
+      cemId: '',
+      role: '',
+      encontroComDeus: false,
+      reencontroComDeus: false,
+      sejaLivre: false,
+      batizado: false,
+      discipulado: false,
+      cae: false,
+      escolaProfeta: false
+    }
+  })
 
+  // 🔹 Preenche dados se for edição
   useEffect(() => {
-    if (!member) return
+    if (!isEdit) return
 
     const normalizedRole = member.role?.toLowerCase() || ''
     const matchingRole =
@@ -81,54 +102,72 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
     Object.entries(init).forEach(([key, value]) =>
       setValue(key as keyof FormValues, value)
     )
-  }, [member, setValue])
+  }, [isEdit, member, setValue])
 
   const onSubmit = handleSubmit(async (data) => {
-    if (!initialData) return
-
-    const changes: Partial<
-      FormValues & { cem: { _id: string; name: string } }
-    > = {}
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== (initialData as any)[key])
-        //@ts-ignore
-        changes[key as keyof FormValues] = value
-    })
-
-    if (Object.keys(changes).length === 0) {
-      Toast.showError('Nenhuma alteração para salvar.')
-      return
-    }
-
-    if (changes.cemId) {
-      changes.cem = {
-        _id: changes.cemId.split('-')[0],
-        name: changes.cemId.split('-')[1]
-      }
-      delete changes.cemId
-    }
-
     setIsLoading(true)
     try {
-      const response = await useHttpPatch({
-        url: `/api/protected/churches/${member.churchId}/users/${member._id}`,
-        data: changes
-      })
+      let response
+
+      if (isEdit) {
+        // PATCH → apenas campos alterados
+        const changes: Partial<
+          FormValues & { cem: { _id: string; name: string } }
+        > = {}
+
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== (initialData as any)?.[key]) {
+            //@ts-ignore
+            changes[key as keyof FormValues] = value
+          }
+        })
+
+        if (changes.cemId) {
+          changes.cem = {
+            _id: changes.cemId.split('-')[0],
+            name: changes.cemId.split('-')[1]
+          }
+          delete changes.cemId
+        }
+
+        response = await useHttpPatch({
+          url: `/api/protected/churches/${member.churchId}/users/${member._id}`,
+          data: changes
+        })
+      } else {
+        // POST → cria novo usuário
+        let payload: any = { ...data }
+
+        if (payload.cemId) {
+          payload.cem = {
+            _id: payload.cemId.split('-')[0],
+            name: payload.cemId.split('-')[1]
+          }
+          delete payload.cemId
+        }
+
+        response = await useHttpPost({
+          url: `/api/protected/churches/${member?.churchId || ''}/users`,
+          data: payload
+        })
+      }
 
       setIsLoading(false)
       await onUpdated()
 
       if (response?.error) {
-        Toast.showError('Erro ao atualizar!')
+        Toast.showError(isEdit ? 'Erro ao atualizar!' : 'Erro ao criar!')
         return
       }
 
-      Toast.showSuccess('Atualizado com sucesso!')
+      Toast.showSuccess(
+        isEdit ? 'Atualizado com sucesso!' : 'Criado com sucesso!'
+      )
       onClose()
     } catch (err) {
       setIsLoading(false)
       console.error(err)
-      Toast.showError('Erro ao atualizar!')
+      Toast.showError(isEdit ? 'Erro ao atualizar!' : 'Erro ao criar!')
     }
   })
 
@@ -136,7 +175,7 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
     <div className='fixed inset-0 bg-black/30 flex items-center justify-center z-50'>
       <div className='bg-white dark:bg-gray-900 p-6 rounded-md w-full max-w-2xl shadow-lg'>
         <h2 className='text-xl font-bold mb-6 text-center text-gray-700 dark:text-white'>
-          Editar Membro
+          {isEdit ? 'Editar Membro' : 'Criar Membro'}
         </h2>
 
         <form onSubmit={onSubmit} className='flex flex-col gap-4'>
@@ -145,6 +184,7 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
             <Controller
               name='name'
               control={control}
+              rules={{ required: true }}
               render={({ field }) => (
                 <div className='flex flex-col flex-1'>
                   <Label>Nome</Label>
@@ -179,6 +219,7 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
             <Controller
               name='phone'
               control={control}
+              rules={{ required: true }}
               render={({ field }) => (
                 <div className='flex flex-col flex-1'>
                   <Label>WhatsApp</Label>
@@ -198,6 +239,7 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
             <Controller
               name='birth'
               control={control}
+              rules={{ required: true }}
               render={({ field }) => (
                 <div className='flex flex-col flex-1'>
                   <Label>Data de Nascimento</Label>
@@ -230,7 +272,7 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
           <SelectCem
             name='cemId'
             control={control}
-            churchId={member.churchId}
+            churchId={member?.churchId || session?.user.churchId}
             title='CEM'
             errors={{}}
           />
@@ -246,98 +288,30 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
 
           {/* Checkboxes */}
           <div className='grid grid-cols-2 gap-3'>
-            <Controller
-              name='encontroComDeus'
-              control={control}
-              render={({ field }) => (
-                <label className='flex items-center gap-2'>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <span>Encontro com Deus</span>
-                </label>
-              )}
-            />
-            <Controller
-              name='cae'
-              control={control}
-              render={({ field }) => (
-                <label className='flex items-center gap-2'>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <span>C.A.E</span>
-                </label>
-              )}
-            />
-            <Controller
-              name='reencontroComDeus'
-              control={control}
-              render={({ field }) => (
-                <label className='flex items-center gap-2'>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <span>Reencontro com Deus</span>
-                </label>
-              )}
-            />
-            <Controller
-              name='sejaLivre'
-              control={control}
-              render={({ field }) => (
-                <label className='flex items-center gap-2'>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <span>Seja Livre</span>
-                </label>
-              )}
-            />
-            <Controller
-              name='batizado'
-              control={control}
-              render={({ field }) => (
-                <label className='flex items-center gap-2'>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <span>Batizado</span>
-                </label>
-              )}
-            />
-            <Controller
-              name='discipulado'
-              control={control}
-              render={({ field }) => (
-                <label className='flex items-center gap-2'>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <span>Discipulado</span>
-                </label>
-              )}
-            />
-
-            <Controller
-              name='escolaProfeta'
-              control={control}
-              render={({ field }) => (
-                <label className='flex items-center gap-2'>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <span>Escola de Profetas</span>
-                </label>
-              )}
-            />
+            {[
+              { name: 'encontroComDeus', label: 'Encontro com Deus' },
+              { name: 'cae', label: 'C.A.E' },
+              { name: 'reencontroComDeus', label: 'Reencontro com Deus' },
+              { name: 'sejaLivre', label: 'Seja Livre' },
+              { name: 'batizado', label: 'Batizado' },
+              { name: 'discipulado', label: 'Discipulado' },
+              { name: 'escolaProfeta', label: 'Escola de Profetas' }
+            ].map(({ name, label }) => (
+              <Controller
+                key={name}
+                name={name as keyof FormValues}
+                control={control}
+                render={({ field }) => (
+                  <label className='flex items-center gap-2'>
+                    <Checkbox
+                      checked={field.value as boolean}
+                      onCheckedChange={field.onChange}
+                    />
+                    <span>{label}</span>
+                  </label>
+                )}
+              />
+            ))}
           </div>
 
           {/* Botões */}
@@ -372,4 +346,4 @@ const EditMemberModal = ({ member, onClose, onUpdated }: Props) => {
   )
 }
 
-export default EditMemberModal
+export default MemberModal
