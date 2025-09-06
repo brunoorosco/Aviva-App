@@ -1,7 +1,20 @@
 import { AddressModel } from './address'
 
-export type Permission ='USER' | 'ADMIN_CHURCH' | 'SUPERADMIN' | 'SECRETARIA' | 'SUPERVISOR' | 'ADMIN_CELL' 
-export type Cargo ='MEMBRO' | 'DISCIPÚLO' | 'AUXILIAR' | 'LÍDER' | 'SUPERVISOR' | 'PASTOR' | 'BISPO'  
+export type Permission =
+  | 'USER'
+  | 'ADMIN_CHURCH'
+  | 'SUPERADMIN'
+  | 'SECRETARIA'
+  | 'SUPERVISOR'
+  | 'ADMIN_CELL'
+export type Cargo =
+  | 'MEMBRO'
+  | 'DISCIPÚLO'
+  | 'AUXILIAR'
+  | 'LÍDER'
+  | 'SUPERVISOR'
+  | 'PASTOR'
+  | 'BISPO'
 
 export type User = {
   _id: string
@@ -19,6 +32,13 @@ export type User = {
   password: string
   createdAt: string
   updatedAt: string
+  encontroComDeus?: boolean
+  reencontroComDeus?: boolean
+  sejaLivre?: boolean
+  batizado?: boolean
+  discipulado?: boolean
+  cae?: boolean
+  escolaProfeta?: boolean
 }
 
 type Cem = {
