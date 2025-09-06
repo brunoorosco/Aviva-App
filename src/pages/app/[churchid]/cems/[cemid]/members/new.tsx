@@ -22,7 +22,7 @@ type FormValues = {
   number: string
   city: string
   cemId: string
-  birth: string
+  birthDate: string
   profileId: number
 }
 
@@ -104,7 +104,7 @@ const NewMember = () => {
             )}
           />
           <Controller
-            name='birth'
+            name='birthDate'
             control={control}
             rules={{ required: true }}
             render={({ field }) => (

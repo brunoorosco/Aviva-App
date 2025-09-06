@@ -12,7 +12,7 @@ export type User = {
   phone: string
   image?: string
   active: boolean
-  birth: string
+  birthDate: string
   address?: AddressModel
   permissions: Permission[]
   role: Cargo

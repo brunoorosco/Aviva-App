@@ -10,7 +10,7 @@ type TUser = {
   number: string
   city: string
   cemId: string
-  birth: string
+  birthDate: string
   churchId: string
 }
 

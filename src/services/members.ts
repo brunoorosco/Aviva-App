@@ -54,7 +54,7 @@ export const addUserImportService = async (churchId: string, data: any) => {
         phone: data[key].telefone,
         permission: data[key].permissao,
         cargo: data[key].cargo,
-        birth: data[key].aniversario,
+        birthDate: data[key].aniversario,
         city: data[key].cidade,
         state: data[key].estado,
         street: data[key].rua,

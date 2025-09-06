@@ -21,7 +21,7 @@ type FormValues = {
   phone: string
   street?: string
   cemId?: string
-  birth: string
+  birthDate: string
   role?: string
   encontroComDeus?: boolean
   reencontroComDeus?: boolean
@@ -54,7 +54,7 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
       name: '',
       email: '',
       phone: '',
-      birth: '',
+      birthDate: '',
       street: '',
       cemId: '',
       role: '',
@@ -85,7 +85,7 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
       name: member.name || '',
       email: member.email || '',
       phone: member.phone || '',
-      birth: member.birthDate?.split('T')[0] || '',
+      birthDate: member.birthDate?.split('T')[0] || '',
       street: member.street || '',
       cemId: cemValue,
       role: matchingRole,
@@ -236,14 +236,14 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
               )}
             />
             <Controller
-              name='birth'
+              name='birthDate'
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
                 <div className='flex flex-col flex-1'>
                   <Label>Data de Nascimento</Label>
                   <Input {...field} type='date' />
-                  {errors.birth && (
+                  {errors.birthDate && (
                     <p className='text-sm text-red-400'>Obrigatório</p>
                   )}
                 </div>

@@ -9,7 +9,7 @@ export type TMembers = {
   _id: string
   name: string
   email: string
-  birth?: Date
+  birthDate?: Date
   image?: string
   profile: string
   street: string
