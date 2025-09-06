@@ -20,6 +20,12 @@ import {
 } from 'lucide-react'
 import { User as UserModel } from '@/domain/models/users'
 import { formatAddress } from '@/utils/formaatAddress'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '../ui/accordion'
 
 const getInitials = (name: string) =>
   name
@@ -127,15 +133,82 @@ export const MemberCard = ({ member }: Props) => {
       <Card className='shadow-soft border-0'>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
-            <GraduationCap className='w-5 h-5 text-accent' />
+            <GraduationCap className='w-5 h-5 text-blue-600' />
             Escola de Profeta
             {member.escolaProfeta && (
-              <Badge className='ml-2 bg-accent text-accent-foreground'>
+              <Badge className='ml-2 bg-palette-success text-black'>
                 Participante
               </Badge>
             )}
           </CardTitle>
         </CardHeader>
+        <CardContent>
+          {member.escolaProfeta ? (
+            <div className='space-y-3'>
+              {member.historicoEscolaProfeta &&
+              member.historicoEscolaProfeta.length > 0 ? (
+                <Accordion
+                  type='single'
+                  collapsible
+                  className='w-full'
+                  defaultValue='item-1'
+                >
+                  <AccordionItem value='item-1'>
+                    <div className='space-y-3'>
+                      <AccordionTrigger>
+                        <h4 className='font-semibold text-foreground'>
+                          Módulos Cursados
+                        </h4>
+                      </AccordionTrigger>
+                      <div className='grid gap-3'>
+                        <AccordionContent className='flex flex-col gap-4 text-balance'>
+                          {member.historicoEscolaProfeta.map((module) => (
+                            <div
+                              key={module.curso_id}
+                              className='flex items-center justify-between p-4 bg-accent-light rounded-lg border border-accent/20'
+                            >
+                              <div className='space-y-1'>
+                                <h5 className='font-medium text-foreground'>
+                                  {module.cursoName}
+                                </h5>
+                                {/* <p className='text-sm text-muted-foreground'>
+                            {format(module.date, 'dd/MM/yyyy', {
+                              locale: ptBR
+                            })}
+                          </p> */}
+                              </div>
+                              <StatusBadge
+                                status={
+                                  module.status === 'APROVADO' ? true : false
+                                }
+                                label={
+                                  module.status === 'APROVADO'
+                                    ? 'Aprovado'
+                                    : 'Reprovado'
+                                }
+                                variant='module'
+                              />
+                            </div>
+                          ))}
+                        </AccordionContent>
+                      </div>
+                    </div>
+                  </AccordionItem>
+                </Accordion>
+              ) : (
+                <div className='text-center py-6 text-muted-foreground'>
+                  <GraduationCap className='w-12 h-12 mx-auto mb-4 opacity-50' />
+                  <p>Nenhum módulo cursado ainda</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className='text-center py-6 text-muted-foreground '>
+              <GraduationCap className='w-12 h-12 mx-auto mb-4 opacity-50' />
+              <p>Não participa da Escola de Profeta</p>
+            </div>
+          )}
+        </CardContent>
       </Card>
     </div>
   )

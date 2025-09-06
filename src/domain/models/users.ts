@@ -39,6 +39,13 @@ export type User = {
   discipulado?: boolean
   cae?: boolean
   escolaProfeta?: boolean
+  historicoEscolaProfeta?: Historico[]
+}
+
+type Historico = {
+  curso_id: string
+  cursoName: string
+  status: 'APROVADO' | 'REPROVADO'
 }
 
 type Cem = {
