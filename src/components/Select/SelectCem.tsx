@@ -19,7 +19,7 @@ export function SelectCem({ control, name, title, churchId, errors }: DropdownPr
       <Controller
         name={name}
         control={control}
-        rules={{ required: 'Selecione um CEM' }}
+        rules={{ required: 'Selecione uma Rede' }}
         render={({ field }) => (
           <Select
             onValueChange={field.onChange}

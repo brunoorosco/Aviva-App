@@ -272,7 +272,7 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
             name='cemId'
             control={control}
             churchId={member?.churchId || session?.user.churchId}
-            title='CEM'
+            title='Rede'
             errors={{}}
           />
 
