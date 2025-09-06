@@ -145,9 +145,8 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
           }
           delete payload.cemId
         }
-
         response = await useHttpPost({
-          url: `/api/protected/churches/${member?.churchId || ''}/users`,
+          url: `/api/protected/churches/${session?.user.churchId}/cems/${session?.user.cem._id}/members`,
           data: payload
         })
       }
