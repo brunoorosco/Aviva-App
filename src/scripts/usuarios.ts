@@ -255,7 +255,7 @@ export const historico = [
     ]
   },
   {
-    nome: 'ANDERSON OLIVEIRA B. DOS SANTOS',
+    nome: 'ANDERSON OLIVEIRA BISPO DOS SANTOS',
     historico: [
       {
         curso_id: '1baf44ba4a6c13e54ca28a2a',
@@ -1190,7 +1190,7 @@ export const historico = [
     ]
   },
   {
-    nome: 'FRANCILDO S. OLIVEIRA',
+    nome: 'FRANCILDO SILVA DE OLIVEIRA',
     historico: [
       {
         curso_id: '2dc477ac10d6c07b3fe008f6',
@@ -2730,7 +2730,7 @@ export const historico = [
     ]
   },
   {
-    nome: 'ROGERIO O. DOS SANTOS',
+    nome: 'ROGERIO OLIVEIRA DOS SANTOS',
     historico: [
       {
         curso_id: '2dc477ac10d6c07b3fe008f6',

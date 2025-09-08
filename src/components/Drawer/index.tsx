@@ -49,9 +49,9 @@ const Drawer: React.FC<IDrawer> = ({ toggleSidebar, isOpen, closeSidebar }) => {
               <div key={index}>
                 <LinkMenu
                   closeSidebar={closeSidebar}
-                  href={ menu.link}
+                  href={ menu.link as string}
                 >
-                  <div style={{ width: '2.5rem' }}>{menu.icon}</div>
+                  <div style={{ width: '2.5rem' }}><menu.icon/></div>
                   <span
                     className={classNames(
                       'text-md font-medium text-text-light'
