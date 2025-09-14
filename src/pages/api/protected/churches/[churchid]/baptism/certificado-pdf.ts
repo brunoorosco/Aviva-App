@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { Buffer } from 'buffer'
 import { generatePdf } from 'html-pdf-node-ts'
 import { htmlPdf } from '@/utils/html/template'
 
@@ -15,24 +14,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       printBackground: true
     }
 
-    const file = {
-      content: htmlPdf(nomeBatizando, dataBatismo)
-    }
-
+    const file = { content: htmlPdf(nomeBatizando, dataBatismo) }
     const pdfFile = await generatePdf(file, options)
-
     const pdfBuffer = Buffer.from(pdfFile.buffer)
 
-    res.setHeader('Cache-Control', 'no-cache')
-    res.setHeader(
-      'Content-Disposition',
-      `inline; filename="Certificado-${nomeBatizando}.pdf"`
-    )
-    res.setHeader('Content-Type', 'application/pdf')
-    res.setHeader('Content-Length', pdfBuffer.length.toString())
+    res.writeHead(200, {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `inline; filename="Certificado-${nomeBatizando}.pdf"`,
+      'Content-Length': pdfBuffer.length,
+      'Cache-Control': 'no-cache'
+    })
 
-    res.end(pdfBuffer) // <-- mais seguro que res.send para binário
+    res.end(pdfBuffer)
   } catch (error) {
-    res.status(500).json({ error: 'failed to fetch data' })
+    res.status(500).json({ error: 'failed to generate PDF' })
   }
 }
