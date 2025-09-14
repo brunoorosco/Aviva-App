@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button'
 import { baptism } from '@/domain/models/baptism'
 import { getBatismoByIdService } from '@/services/batismos'
-import { ArrowLeft } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { capitalizeFirst } from '@/utils/capitalizaFirst'
+import { ArrowLeft, PrinterIcon } from 'lucide-react'
+import Link from 'next/link'
+import { useParams, useRouter } from 'next/navigation'
 import { GetServerSideProps } from 'next/types'
 
 function formatDate(dateValue: any) {
@@ -18,6 +20,7 @@ type Props = {
 
 export default function batismoPage({ batismo }: Props) {
   const router = useRouter()
+  const { churchid } = useParams()
   if (!batismo) return <p>batismo não encontrado.</p>
   return (
     <div className='sm:p-6 max-w-4xl mx-auto'>
@@ -55,19 +58,37 @@ export default function batismoPage({ batismo }: Props) {
         ) : (
           <ul className='space-y-2'>
             {batismo.batizandos.map((pessoa, index) => (
-              <li key={index} className='p-2'>
-                <p className='text-sm font-medium'>
-                  {index + 1} - {pessoa.nome}
-                </p>
-                {pessoa.rede && (
-                  <>
-                    Rede:{' '}
-                    <span className='font-semibold text-gray-600'>
-                      {pessoa.rede}
-                    </span>
-                  </>
-                )}
-              </li>
+              <div className='flex gap-3'>
+                <li key={index} className='p-2 w-1/3'>
+                  <p className='text-sm font-medium'>
+                    {index + 1} - {pessoa.nome}
+                  </p>
+                  {pessoa.rede && (
+                    <>
+                      Rede:{' '}
+                      <span className='font-semibold text-gray-600'>
+                        {pessoa.rede}
+                      </span>
+                    </>
+                  )}
+                </li>
+                <div className='inline-flex items-center text-base font-semibold text-gray-900 dark:text-dark-primary'>
+                  <Link
+                    download={true}
+                    target='_blank'
+                    replace
+                    href={{
+                      pathname: `/api/protected/churches/${churchid}/baptism/certificado-pdf`,
+                      query: {
+                        nome: capitalizeFirst(pessoa.nome),
+                        data: formatDate(batismo.data)
+                      }
+                    }}
+                  >
+                    <PrinterIcon className='w-4' />
+                  </Link>
+                </div>
+              </div>
             ))}
           </ul>
         )}
