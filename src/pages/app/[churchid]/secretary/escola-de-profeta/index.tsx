@@ -1,20 +1,9 @@
 'use client'
 
-import React from 'react'
-import { Bell, Eye, Edit, Trash2, Plus } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { Eye, Edit, Trash2, Plus } from 'lucide-react'
 
-// shadcn/ui components
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
 import {
   Table,
   TableBody,
@@ -24,46 +13,36 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { Card, CardContent } from '@/components/ui/card'
+import { useHttpGet } from '@/hooks/api'
+import { Router, useRouter } from 'next/router'
+import { TEscolaProfeta } from '@/domain/models/escolaProfeta'
 
 // Tailwind primary color via CSS var
 const PRIMARY = '#137fec'
 
-const rows = [
-  {
-    name: 'Introduction to Programming',
-    course: 'Computer Science 101',
-    status: 'Published' as const
-  },
-  {
-    name: 'Advanced Data Structures',
-    course: 'Computer Science 202',
-    status: 'Draft' as const
-  },
-  {
-    name: 'Machine Learning Fundamentals',
-    course: 'Data Science 301',
-    status: 'Published' as const
-  },
-  {
-    name: 'Web Development Basics',
-    course: 'Web Development 101',
-    status: 'Published' as const
-  },
-  {
-    name: 'Mobile App Development',
-    course: 'Mobile Development 201',
-    status: 'Draft' as const
-  }
-]
-
 export default function ModulesPage() {
+  const [course, setCourse] = useState()
+  const router = useRouter()
+  const { asPath, query, isReady } = router
+  const { churchid } = query
+  const [page, setPage] = useState(1)
+  const limit = 8
+
+  const { data: courses } = useHttpGet<{
+    data: TEscolaProfeta[]
+    total: number
+    page: number
+    totalPages: number
+  }>(
+    `/api/protected/churches/${churchid}/escola-profeta?page=${page}&limit=${limit}`
+  )
   return (
     <div
       className='min-h-screen bg-gray-50'
       style={{ ['--primary-color' as any]: PRIMARY }}
     >
       {/* Header */}
-      <header className='flex items-center justify-between px-6 py-3 bg-white border-b md:px-10'>
+      {/* <header className='flex items-center justify-between px-6 py-3 bg-white border-b md:px-10'>
         <div className='flex items-center gap-3 text-gray-900'>
           <div className='size-8 text-[var(--primary-color)]'>
             <svg
@@ -126,18 +105,21 @@ export default function ModulesPage() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </header>
+      </header> */}
 
       {/* Main */}
-      <main className='px-6 py-8 md:px-10'>
+      <main className='px-6 py-2 md:px-10'>
         <div className='mx-auto max-w-7xl'>
           <div className='flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between'>
             <h1 className='text-2xl font-bold text-gray-900 md:text-3xl'>
-              Manage Modules
+              Escola de Profeta
             </h1>
-            <Button className='bg-[var(--primary-color)] hover:opacity-90'>
+            <Button
+              className='bg-[var(--primary-color)] hover:opacity-90'
+              onClick={() => router.push(asPath + '/new')}
+            >
               <Plus className='mr-2 size-4' />
-              New Module
+              Novo Modúlo
             </Button>
           </div>
 
@@ -146,63 +128,51 @@ export default function ModulesPage() {
               <Table>
                 <TableHeader>
                   <TableRow className='bg-gray-50'>
-                    <TableHead>Module Name</TableHead>
-                    <TableHead>Course</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className='text-right'>Actions</TableHead>
+                    <TableHead>Tema</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Alunos</TableHead>
+                    <TableHead className='text-right'></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.name}>
-                      <TableCell className='font-medium text-gray-900'>
-                        {row.name}
-                      </TableCell>
-                      <TableCell className='text-gray-600'>
-                        {row.course}
-                      </TableCell>
-                      <TableCell>
-                        {row.status === 'Published' ? (
-                          <Badge className='text-green-800 bg-green-100 hover:bg-green-100'>
-                            Published
-                          </Badge>
-                        ) : (
-                          <Badge
-                            variant='secondary'
-                            className='text-yellow-800 bg-yellow-100 hover:bg-yellow-100'
-                          >
-                            Draft
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className='text-right'>
-                        <div className='flex items-center justify-end gap-1'>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            aria-label={`View ${row.name}`}
-                          >
-                            <Eye className='size-4' />
-                          </Button>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            aria-label={`Edit ${row.name}`}
-                          >
-                            <Edit className='size-4' />
-                          </Button>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            className='text-red-600 hover:text-red-700'
-                            aria-label={`Delete ${row.name}`}
-                          >
-                            <Trash2 className='size-4' />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {courses &&
+                    courses?.data.data.map((course) => (
+                      <TableRow key={course.tema}>
+                        <TableCell className='font-medium text-gray-900'>
+                          {course.tema.toUpperCase()}
+                        </TableCell>
+                        <TableCell className='text-gray-600'>
+                          {course.data}
+                        </TableCell>
+                        <TableCell>{course?.alunos?.length ?? 0}</TableCell>
+                        <TableCell className='text-right'>
+                          <div className='flex items-center justify-end gap-1'>
+                            <Button
+                              variant='ghost'
+                              size='icon'
+                              aria-label={`View ${course._id}`}
+                            >
+                              <Eye className='w-4' />
+                            </Button>
+                            <Button
+                              variant='ghost'
+                              size='icon'
+                              aria-label={`Edit ${course._id}`}
+                            >
+                              <Edit className='w-4' />
+                            </Button>
+                            <Button
+                              variant='ghost'
+                              size='icon'
+                              className='text-red-600 hover:text-red-700'
+                              aria-label={`Delete ${course._id}`}
+                            >
+                              <Trash2 className='w-4' />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </CardContent>
