@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { useState } from 'react'
-import { Printer } from 'lucide-react'
+import { Printer, PrinterIcon } from 'lucide-react'
 import { baptism } from '@/domain/models/baptism'
+import { gerarCertificados } from './[id]/pdf'
 
 type Props = {
   batismos: baptism
@@ -44,7 +45,16 @@ const BatismoItem = ({ batismos, onEdit, basePath }: Props) => {
             </div>
           </div>
         </div>
-        <Printer className={'w-4'} onClick={()=>alert('teste')}/>
+        <button
+          onClick={(e) => {
+            e.preventDefault()
+            gerarCertificados(batismos.churchId, batismos)
+          }}
+          className='flex items-center gap-1 text-blue-600 hover:underline'
+        >
+          <PrinterIcon className='w-4' />
+          Imprimir Todos
+        </button>
       </li>
     </Link>
   )

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { baptism } from '@/domain/models/baptism'
 import { getBatismoByIdService } from '@/services/batismos'
-import { capitalizeFirst } from '@/utils/capitalizaFirst'
+import { capitalizeWords } from '@/utils/capitalizaFirst'
 import { ArrowLeft, PrinterIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -80,7 +80,7 @@ export default function batismoPage({ batismo }: Props) {
                     href={{
                       pathname: `/api/protected/churches/${churchid}/baptism/certificado-pdf`,
                       query: {
-                        nome: capitalizeFirst(pessoa.nome),
+                        nome: capitalizeWords(pessoa.nome),
                         data: formatDate(batismo.data)
                       }
                     }}
