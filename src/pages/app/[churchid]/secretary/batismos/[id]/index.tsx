@@ -59,7 +59,7 @@ export default function batismoPage({ batismo }: Props) {
           <ul className='space-y-2'>
             {batismo.batizandos.map((pessoa, index) => (
               <div className='flex gap-3'>
-                <li key={index} className='p-2 w-1/3'>
+                <li key={index} className='p-2 w-1/2'>
                   <p className='text-sm font-medium'>
                     {index + 1} - {pessoa.nome}
                   </p>

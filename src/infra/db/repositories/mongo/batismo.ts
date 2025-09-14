@@ -9,7 +9,23 @@ export class BatismoMongoRepository {
   async getBatismoById(churchId: string, id: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      const batismo = await collection.findOne({ _id: new ObjectId(id) })
+
+      const [batismo] = await collection
+        .aggregate([
+          {
+            $match: { _id: new ObjectId(id) }
+          },
+          {
+            $project: {
+              data: 1,
+              batizandos: {
+                $sortArray: { input: '$batizandos', sortBy: { nome: 1 } }
+              }
+            }
+          }
+        ])
+        .toArray()
+
       return batismo
     } catch (error) {
       console.error('Error finding batismo by id:', error)

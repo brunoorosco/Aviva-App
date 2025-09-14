@@ -31,20 +31,6 @@ const BatismoList = () => {
     totalPages: number
   }>(`/api/protected/churches/${churchid}/batismo?page=${page}&limit=${limit}`)
 
-  const handleDesactive = async (id: string) => {
-    await useHttpPatch({
-      url: `/api/protected/churches/${churchid}/batismo/${id}`,
-      data: { id, active: false }
-    })
-  }
-
-  const handleActive = async (id: string) => {
-    await useHttpPatch({
-      url: `/api/protected/churches/${churchid}/batismo/${id}`,
-      data: { id, active: true }
-    })
-  }
-
   const handleEdit = (batismo: baptism) => {
     setSelectedBatismo(batismo)
     setShowEditModal(true)
