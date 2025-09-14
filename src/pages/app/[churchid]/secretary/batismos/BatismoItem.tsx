@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { useState } from 'react'
-import { Printer, PrinterIcon } from 'lucide-react'
+import {  PrinterIcon } from 'lucide-react'
 import { baptism } from '@/domain/models/baptism'
-import { gerarCertificados } from './[id]/pdf'
+import { gerarCertificados } from '../../../../../lib/pdf'
 
 type Props = {
   batismos: baptism
