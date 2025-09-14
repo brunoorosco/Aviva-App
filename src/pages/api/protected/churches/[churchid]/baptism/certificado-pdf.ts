@@ -19,20 +19,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       content: htmlPdf(nomeBatizando, dataBatismo)
     }
 
-    const pdfFile = await generatePdf(file, options).then((output: any) => {
-      return output
-    })
+    const pdfFile = await generatePdf(file, options)
 
     const pdfBuffer = Buffer.from(pdfFile.buffer)
 
-    res.setHeader('Control-cache', 'no-cache')
+    res.setHeader('Cache-Control', 'no-cache')
     res.setHeader(
-      'Content-disposition',
+      'Content-Disposition',
       `inline; filename="Certificado-${nomeBatizando}.pdf"`
     )
-    res.setHeader('Content-type', 'application/pdf')
-    res.send(pdfBuffer)
+    res.setHeader('Content-Type', 'application/pdf')
+    res.setHeader('Content-Length', pdfBuffer.length.toString())
+
+    res.end(pdfBuffer) // <-- mais seguro que res.send para binário
   } catch (error) {
-    res.status(500).send({ error: 'failed to fetch data' })
+    res.status(500).json({ error: 'failed to fetch data' })
   }
 }
