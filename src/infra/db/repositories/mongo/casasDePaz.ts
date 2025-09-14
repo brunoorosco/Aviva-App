@@ -36,7 +36,7 @@ export class CasasDePazRepository {
       collection
         .find({})
         .collation({ locale: 'pt', strength: 1 })
-        .sort({ name: 1 })
+        .sort({ data_inicial: -1 })
         .skip(skip)
         .limit(limit)
         .toArray(),

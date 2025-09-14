@@ -6,7 +6,7 @@ export type baptism = {
 }
 
 type People = {
-  name: string
+  nome: string
   rede?: string
   isCourse: boolean
 }

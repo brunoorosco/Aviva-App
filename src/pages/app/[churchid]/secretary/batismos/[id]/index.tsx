@@ -28,7 +28,7 @@ export default function batismoPage({ batismo }: Props) {
           </h1>
           <div className='grid sm:grid-cols-4 sm:col-span-2 grid-cols-2'>
             <p className='text-gray-600 text-sm mb-4'>
-              Total de Encontrista:{' '}
+              Total de Batizandos:{' '}
               <label className='font-bold'>{batismo.batizandos.length}</label>
             </p>
           </div>
@@ -57,7 +57,7 @@ export default function batismoPage({ batismo }: Props) {
             {batismo.batizandos.map((pessoa, index) => (
               <li key={index} className='p-2'>
                 <p className='text-sm font-medium'>
-                  {index + 1} - {pessoa.name}
+                  {index + 1} - {pessoa.nome}
                 </p>
                 {pessoa.rede && (
                   <>
@@ -88,8 +88,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       batismo: {
         ...batismo,
         _id: batismo._id.toString(),
-        data: batismo.data.toISOString(),
-        encontristas: batismo.encontristas || []
+        data: batismo?.data?.toString(),
+        batizandos: batismo.batizandos || []
       }
     }
   }

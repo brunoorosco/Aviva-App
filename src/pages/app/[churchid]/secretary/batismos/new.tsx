@@ -2,9 +2,9 @@
 
 import { useRouter } from 'next/router'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import ButtonSubmit from '@/components/ButtonSubmit'
-import { useHttpPost, useHttpGet } from '@/hooks/api'
+import { useHttpPost } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
 import Toast from '@/components/Toast'
 import { Masks } from '@/utils/masks'
@@ -12,14 +12,19 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SupervisorSelect } from '@/components/Select/SelectSupervisores'
 import ExportButton from '@/components/ExportButton'
-import Link from 'next/link'
-import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
 import ImportButton from './ImportButton'
-import { baptism } from '@/domain/models/baptism'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 
 type Person = {
   name: string
   supervisorId: string
+  sexo: '' | 'M' | 'F'
 }
 
 type FormValues = {
@@ -36,7 +41,7 @@ const NovoBatismo = () => {
     watch,
     formState: { errors }
   } = useForm<FormValues>({
-    defaultValues: { people: [{ name: '', supervisorId: '' }] }
+    defaultValues: { people: [{ name: '', supervisorId: '', sexo: '' }] }
   })
   const inputFileRef = useRef<HTMLInputElement>(null)
 
@@ -49,7 +54,7 @@ const NovoBatismo = () => {
     try {
       setIsLoading(true)
       const response = await useHttpPost({
-        url: `/api/protected/churches/${session?.user.churchId}/baptisms`,
+        url: `/api/protected/churches/${session?.user.churchId}/batismo`,
         data
       })
       setIsLoading(false)
@@ -136,7 +141,7 @@ const NovoBatismo = () => {
           <button
             type='button'
             className='px-4 py-2 text-sm bg-blue-500 text-white rounded-lg mt-2 self-start'
-            onClick={() => append({ name: '', supervisorId: '' })}
+            onClick={() => append({ name: '', supervisorId: '', sexo: 'F' })}
           >
             + Adicionar Pessoa
           </button>
@@ -167,6 +172,31 @@ const NovoBatismo = () => {
 
               {/* Supervisor */}
               <div className='w-1/4'>
+                <Controller
+                  control={control}
+                  name={`people.${index}.sexo`}
+                  defaultValue='' // garante valor inicial vazio
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || ''}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className='w-full'>
+                        <SelectValue placeholder='Sexo' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem key='M' value='M'>
+                          Masculino
+                        </SelectItem>
+                        <SelectItem key='F' value='F'>
+                          Feminino
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+              <div className='w-1/4'>
                 <SupervisorSelect
                   key={index}
                   control={control}
@@ -177,7 +207,6 @@ const NovoBatismo = () => {
                   <p className='text-sm text-red-400'>Obrigatório</p>
                 )}
               </div>
-
               {/* Remover */}
               <button
                 type='button'
