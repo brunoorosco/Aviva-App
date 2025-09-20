@@ -49,7 +49,7 @@ const SignIn = () => {
             alt="Logo"
             width={260}
             height={200}
-            className="mb-[-50px]"
+            className="mb-12"
           />
 
           {/* Login Social Google */}
