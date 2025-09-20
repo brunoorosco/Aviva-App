@@ -15,7 +15,6 @@ import {
 import { ChevronRight, ChevronUp, User2 } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { BiLogOut } from 'react-icons/bi'
-import { Button } from '../ui/button'
 import {
   Collapsible,
   CollapsibleContent,
@@ -38,7 +37,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className='flex items-center'>
-          <img src='/logo-preto.png' width='70%' className='mx-auto' />
+          <img src='/logo-preto.png' width='80%' className='mx-auto' />
         </div>
       </SidebarHeader>
       <SidebarContent>

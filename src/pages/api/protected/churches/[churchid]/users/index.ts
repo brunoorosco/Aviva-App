@@ -37,7 +37,7 @@ export default async function handler(
     }
   } else if (req.method === 'POST') {
     const params = req.body
-    const members = await addUserImportService(req.query.churchid as string, {
+    await addUserImportService(req.query.churchid as string, {
       ...params
     })
 

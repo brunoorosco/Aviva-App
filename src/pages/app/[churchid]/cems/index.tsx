@@ -33,8 +33,8 @@ const Cem = () => {
     <div className='flex flex-col w-full max-w-6xl p-3 mx-auto rounded-lg dark:text-dark-primary'>
       <Suspense fallback={<p>Carregando Redes...</p>}>
         {/* Cabeçalho */}
-        <div className='flex justify-between align-middle items-center px-3 pt-5 mt-2 bg-white rounded-t-lg dark:bg-dark-secondary'>
-          <div className='flex items-center gap-2'>
+        <div className='flex items-center justify-between px-3 py-4 bg-white rounded-lg dark:bg-dark-secondary'>
+          <div>
             <p className='text-2xl font-bold'>Nossas Redes</p>
           </div>
           <Link href={`../${churchId}/cems/new`}>
@@ -54,7 +54,10 @@ const Cem = () => {
                 <CardTitle className='mt-2 text-lg'>{cem.name}</CardTitle>
               </CardHeader>
               <CardContent className='text-center'>
-                <p className='text-gray-600 mb-2 text-xl font-semibold'>{cem.membersActive || 0} <span className='text-base font-normal'>membros</span> </p>
+                <p className='text-gray-600 mb-2 text-xl font-semibold'>
+                  {cem.membersActive || 0}{' '}
+                  <span className='text-base font-normal'>membros</span>{' '}
+                </p>
               </CardContent>
             </Card>
           ))}
