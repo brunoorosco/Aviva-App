@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { VariantProps, cva } from 'class-variance-authority'
-import { PanelLeft } from 'lucide-react'
+import { PanelLeft, X } from 'lucide-react'
 
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
@@ -269,28 +269,59 @@ Sidebar.displayName = 'Sidebar'
 
 const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
-  React.ComponentProps<typeof Button>
+  React.ComponentPropsWithoutRef<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, state, isMobile } = useSidebar()
 
-  return (
+  const triggerButton = (
     <Button
       ref={ref}
-      data-sidebar='trigger'
-      variant='ghost'
-      size='icon'
-      className={cn('h-7 w-7', className)}
+      data-sidebar="trigger"
+      variant="ghost"
+      size="icon"
+      className={cn("h-7 w-7", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <PanelLeft />
-      <span className='sr-only'>Toggle Sidebar</span>
+      <X
+        className={cn(
+          "transition-transform",
+          state === "collapsed" ? "rotate-180" : "rotate-0"
+        )}
+      />
     </Button>
   )
+
+  if (state === "expanded" && !isMobile) {
+    // Desktop → botão dentro do sidebar
+    return (
+      <div className="absolute top-2 left-56 z-50">
+        {triggerButton}
+      </div>
+    )
+  }
+
+  if (isMobile) {
+    // Mobile → botão fixo sobre o sidebar (overlay)
+    return (
+      <div className="fixed top-2 left-2 z-50">
+        {triggerButton}
+      </div>
+    )
+  }
+
+  // Sidebar fechado (desktop) → botão no canto da página
+  return (
+    <div className="fixed top-2 left-2 z-50">
+      {triggerButton}
+    </div>
+  )
 })
+
+
 SidebarTrigger.displayName = 'SidebarTrigger'
 
 const SidebarRail = React.forwardRef<

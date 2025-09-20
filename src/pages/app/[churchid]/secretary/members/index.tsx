@@ -1,3 +1,5 @@
+'use client'
+
 import { Suspense, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useHttpGet, useHttpPatch } from '@/hooks/api'
@@ -6,10 +8,12 @@ import { User } from '@/domain/models/users'
 import Pagination from '@/components/Pagination'
 import EditMemberModal from '@/components/Member/EditMemberModal'
 import MembersHeader from '@/components/Member/MembersHeader'
+import { Button } from '@/components/ui/button'
+import { Edit, Eye, Trash2 } from 'lucide-react'
 
 const MembersWithImportExport = () => {
   const router = useRouter()
-  const { pathname, asPath, query } = router
+  const { asPath, query } = router
   const { churchid } = query
   const inputFileRef = useRef<HTMLInputElement>(null)
   const [search, setSearch] = useState('')
@@ -40,22 +44,17 @@ const MembersWithImportExport = () => {
   const handleDesactive = async (id: string) => {
     await useHttpPatch({
       url: `/api/protected/churches/${churchid}/users/${id}`,
-      data: {
-        id,
-        active: false
-      }
+      data: { id, active: false }
     })
   }
 
   const handleActive = async (id: string) => {
     await useHttpPatch({
       url: `/api/protected/churches/${churchid}/users/${id}`,
-      data: {
-        id,
-        active: true
-      }
+      data: { id, active: true }
     })
   }
+
   const handleEdit = (member: User) => {
     setSelectedMember(member)
     setShowEditModal(true)
@@ -73,6 +72,7 @@ const MembersWithImportExport = () => {
           onUpdated={refreshMembers}
         />
       )}
+
       <MembersHeader
         total={members?.data?.total || 0}
         pathname={asPath}
@@ -83,7 +83,8 @@ const MembersWithImportExport = () => {
         setSearch={setSearch}
       />
 
-      <div className='shadow-sm'>
+      {/* Desktop/List view */}
+      <div className='hidden sm:block shadow-sm'>
         <ul className='w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
           <Suspense fallback={<p>Carregando membros...</p>}>
             {members?.data?.data.map((member) => (
@@ -99,16 +100,56 @@ const MembersWithImportExport = () => {
             ))}
           </Suspense>
         </ul>
-
-        {members?.data.totalPages && (
-          <Pagination
-            currentPage={page} // Página atual controlada por estado
-            pageSize={limit} // Quantos itens por página
-            items={members.data.total} // Total de itens disponíveis
-            onPageChange={setPage}
-          />
-        )}
       </div>
+
+      {/* Mobile/Card view */}
+      <div className='sm:hidden flex flex-col gap-4'>
+        {members?.data?.data.map((member) => (
+          <div
+            key={member._id}
+            className='p-4 bg-white rounded-lg shadow-md dark:bg-dark-secondary'
+          >
+            <div className='flex justify-between items-center'>
+              <h2 className='font-semibold text-lg'>{member.name.toUpperCase()}</h2>
+              <div className='flex items-center gap-1'>
+                <Button variant='ghost' size='icon' onClick={() => handleEdit(member)}>
+                  <Edit className='w-4' />
+                </Button>
+                {member.active ? (
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    className='text-red-600 hover:text-red-700'
+                    onClick={() => handleDesactive(member._id)}
+                  >
+                    <Trash2 className='w-4' />
+                  </Button>
+                ) : (
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    className='text-green-600 hover:text-green-700'
+                    onClick={() => handleActive(member._id)}
+                  >
+                    <Eye className='w-4' />
+                  </Button>
+                )}
+              </div>
+            </div>
+            <div className='mt-2 text-gray-600'>Email: {member.email}</div>
+            <div className='text-gray-600'>Cargo: {`${member.role.charAt(0).toUpperCase()}${member.role?.substring(1).toLowerCase()}`}</div>
+          </div>
+        ))}
+      </div>
+
+      {members?.data.totalPages && (
+        <Pagination
+          currentPage={page}
+          pageSize={limit}
+          items={members.data.total}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   )
 }

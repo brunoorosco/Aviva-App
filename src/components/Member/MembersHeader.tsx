@@ -1,21 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { FaPeopleRoof } from 'react-icons/fa6'
 import { User } from '@/domain/models/users'
 import ImportButton from './ImportButton'
 import ExportButton from './ExportButton'
 import { Input } from '../ui/input'
-
-// exemplo de modal (pode trocar pelo seu componente real de modal)
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
 import { Button } from '../ui/button'
-import MemberModal from './EditMemberModal'
 import EditMemberModal from './EditMemberModal'
 
 type Props = {
@@ -39,51 +30,46 @@ const MembersHeader = ({
   totalAtivo,
   totalInativo
 }: Props) => {
-  const [query, setQuery] = useState('')
-  const [debouncedQuery, setDebouncedQuery] = useState('')
   const [isOpen, setIsOpen] = useState(false)
-
-  // debounce da query
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedQuery(query), 500)
-    return () => clearTimeout(handler)
-  }, [query])
 
   return (
     <div className='px-3 pt-5 mt-2 w-full bg-white rounded-t-lg dark:bg-dark-secondary'>
-      <div className='flex justify-between mb-2'>
+      {/* Topo: Título + Botões */}
+      <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-2'>
         <div className='flex items-center gap-2'>
           <h2 className='text-2xl font-bold'>Membros</h2>
           <FaPeopleRoof size={24} />
         </div>
-        <div className='flex gap-2 h-10'>
-          <ExportButton members={members} />
-          <ImportButton inputFileRef={inputFileRef} />
-          {/* Botão abre modal */}
-          {/* <ButtonNew onClick={() => setIsOpen(true)} /> */}
+
+        <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
+          <div className='flex gap-2'>
+            <ExportButton members={members} />
+            <ImportButton inputFileRef={inputFileRef} />
+          </div>
           <Button onClick={() => setIsOpen(true)}>Novo Membro</Button>
         </div>
       </div>
-      <div className='flex w-full justify-between'>
-        <div className='flex gap-5 mt-2 text-gray-400'>
+
+      {/* Totais + Busca */}
+      <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3'>
+        {/* Totais */}
+        <div className='flex flex-wrap gap-5 text-gray-400'>
           <p>
             Total de Membros:{' '}
-            <label className='text-gray-700 font-semibold'>{total}</label>
+            <span className='text-gray-700 font-semibold'>{total}</span>
           </p>
           <p>
             Ativos:{' '}
-            <label className='text-gray-700 font-semibold'>{totalAtivo}</label>
+            <span className='text-gray-700 font-semibold'>{totalAtivo}</span>
           </p>
           <p>
             Inativos:{' '}
-            <label className='text-gray-700 font-semibold'>
-              {totalInativo}
-            </label>
+            <span className='text-gray-700 font-semibold'>{totalInativo}</span>
           </p>
         </div>
 
         {/* Input de busca */}
-        <div className='flex w-1/2 mb-1'>
+        <div className='w-full sm:w-1/3'>
           <Input
             placeholder='Pesquisar por nome'
             value={search}
@@ -93,11 +79,10 @@ const MembersHeader = ({
         </div>
       </div>
 
+      {/* Modal Novo Membro */}
       {isOpen && (
         <EditMemberModal
-          onClose={() => {
-            setIsOpen(false)
-          }}
+          onClose={() => setIsOpen(false)}
           onUpdated={() => {}}
         />
       )}
