@@ -6,7 +6,12 @@ import {
   ChartPieIcon,
   Calendar1Icon,
   WorkflowIcon,
-  CrossIcon
+  CrossIcon,
+  Waves,
+  GraduationCapIcon,
+  BookOpenCheckIcon,
+  UserPlus,
+  UserPlus2
 } from 'lucide-react'
 import HomeIcon from './icons'
 
@@ -35,12 +40,12 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     },
     {
       label: 'Boas Vindas',
-      icon: Users,
+      icon: UserPlus,
       link: `${base}/aceitou-jesus`,
       children: [
         {
           label: 'Visitantes',
-          icon: Users,
+          icon: UserPlus2,
           link: `${base}/visitantes`
         },
         {
@@ -56,22 +61,22 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
       children: [
         {
           label: 'Batismo',
-          icon: FaPeopleGroup,
+          icon: Waves,
           link: `${base}/secretary/batismos`
         },
         {
           label: 'Discipulado',
-          icon: FaPeopleGroup,
+          icon: BookOpenCheckIcon,
           link: `${base}/secretary/discipulado`
         },
         {
           label: 'Escola de Profeta',
-          icon: FaPeopleGroup,
+          icon: GraduationCapIcon,
           link: `${base}/secretary/escola-de-profeta`
         },
         {
           label: 'Membros',
-          icon: FaPeopleGroup,
+          icon: Users,
           link: `${base}/secretary/members`
         }
       ]

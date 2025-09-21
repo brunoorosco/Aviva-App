@@ -37,6 +37,7 @@
     "cssnano": "^5.1.14",
     "date-fns": "^4.1.0",
     "eslint-config-next": "13.1.4",
+    "framer-motion": "^12.23.16",
     "google-auth-library": "^9.2.0",
     "google-spreadsheet": "^4.1.1",
     "html-pdf-node-ts": "^1.0.7",
