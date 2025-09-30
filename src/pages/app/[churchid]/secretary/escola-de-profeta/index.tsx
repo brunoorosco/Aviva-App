@@ -16,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useHttpGet } from '@/hooks/api'
 import { useRouter } from 'next/router'
 import { TEscolaProfeta } from '@/domain/models/escolaProfeta'
+import Link from 'next/link'
 
 // Tailwind primary color via CSS var
 const PRIMARY = '#137fec'
@@ -75,14 +76,26 @@ export default function ModulesPage() {
                         <TableCell className='font-medium text-gray-900'>
                           {course.tema.toUpperCase()}
                         </TableCell>
-                        <TableCell className='text-gray-600'>{course.data}</TableCell>
+                        <TableCell className='text-gray-600'>
+                          {course.data}
+                        </TableCell>
                         <TableCell>{course?.alunos?.length ?? 0}</TableCell>
                         <TableCell className='text-right'>
                           <div className='flex items-center justify-end gap-1'>
-                            <Button variant='ghost' size='icon' aria-label={`View ${course._id}`}>
-                              <Eye className='w-4' />
-                            </Button>
-                            <Button variant='ghost' size='icon' aria-label={`Edit ${course._id}`}>
+                            <Link href={`${asPath}/${course._id}`}>
+                              <Button
+                                variant='ghost'
+                                size='icon'
+                                aria-label={`View ${course._id}`}
+                              >
+                                <Eye className='w-4' />
+                              </Button>
+                            </Link>
+                            <Button
+                              variant='ghost'
+                              size='icon'
+                              aria-label={`Edit ${course._id}`}
+                            >
                               <Edit className='w-4' />
                             </Button>
                             <Button
@@ -109,12 +122,24 @@ export default function ModulesPage() {
               <Card key={course._id}>
                 <CardContent className='flex flex-col gap-2'>
                   <div className='flex justify-between items-center'>
-                    <h2 className='font-semibold text-lg'>{course.tema.toUpperCase()}</h2>
+                    <h2 className='font-semibold text-lg'>
+                      {course.tema.toUpperCase()}
+                    </h2>
                     <div className='flex items-center gap-1'>
-                      <Button variant='ghost' size='icon' aria-label={`View ${course._id}`}>
-                        <Eye className='w-4' />
-                      </Button>
-                      <Button variant='ghost' size='icon' aria-label={`Edit ${course._id}`}>
+                      <Link href={`/${course._id}`}>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          aria-label={`View ${course._id}`}
+                        >
+                          <Eye className='w-4' />
+                        </Button>
+                      </Link>
+                      <Button
+                        variant='ghost'
+                        size='icon'
+                        aria-label={`Edit ${course._id}`}
+                      >
                         <Edit className='w-4' />
                       </Button>
                       <Button

@@ -39,7 +39,7 @@ const ModuleView = () => {
     page: number
     totalPages: number
   }>(`/api/protected/churches/${churchid}/escola-profeta/${id}`)
-  const course = courseData?.data.data
+  const course = courseData?.data
   if (!course) {
     return (
       <div className='min-h-screen bg-background flex items-center justify-center'>
@@ -59,10 +59,8 @@ const ModuleView = () => {
       </div>
     )
   }
-
-  const aprovados = course.alunos.filter(
-    (a) => a.status === 'Aprovado'
-  ).length
+  console.log(course.alunos)
+  const aprovados = course.alunos.filter((a) => a.status === 'Aprovado').length
   const reprovados = course.alunos.filter(
     (a) => a.status === 'Reprovado'
   ).length
@@ -85,8 +83,7 @@ const ModuleView = () => {
               <div className='flex items-center gap-4 text-muted-foreground'>
                 <div className='flex items-center'>
                   <Calendar className='mr-2 h-4 w-4' />
-                  Início:{' '}
-                  {new Date(course.data).toLocaleDateString(
+                  Início: {new Date(course.data).toLocaleDateString(
                     'pt-BR'
                   )} - {course.numeroAulas} dias de aula
                 </div>
@@ -169,7 +166,7 @@ const ModuleView = () => {
           </CardHeader>
           <CardContent>
             <div className='overflow-x-auto'>
-              <Table>
+              {/* <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className='min-w-[150px] sticky left-0 bg-card z-10'>
@@ -248,7 +245,7 @@ const ModuleView = () => {
                     )
                   })}
                 </TableBody>
-              </Table>
+              </Table> */}
             </div>
           </CardContent>
         </Card>
