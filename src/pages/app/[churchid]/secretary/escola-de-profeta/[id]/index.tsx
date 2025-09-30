@@ -1,3 +1,4 @@
+'use client'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -27,21 +28,39 @@ import Link from 'next/link'
 import { TEscolaProfeta } from '@/domain/models/escolaProfeta'
 import { useHttpGet } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
+import { useMemo } from 'react'
+import { useRouter } from 'next/router'
 
 const ModuleView = () => {
   const { id } = useParams()
+  const router = useRouter()
   const { data: session } = useSession()
   const churchid = session?.user.churchId as string
 
-  const { data: courseData, isLoading } = useHttpGet<{
-    resp: TEscolaProfeta
-    total: number
-    page: number
-    totalPages: number
-  }>(`/api/protected/churches/${churchid}/escola-profeta/${id}`)
+  const { data: courseData, isLoading } = useHttpGet<TEscolaProfeta>(
+    `/api/protected/churches/${churchid}/escola-profeta/${id}`
+  )
   const course = courseData?.data
 
-  if (!course && isLoading) {
+  const aprovados = useMemo(
+    () => course?.alunos.filter((a) => a.status === 'Aprovado').length ?? 0,
+    [course]
+  )
+
+  const reprovados = useMemo(
+    () => course?.alunos.filter((a) => a.status === 'Reprovado').length ?? 0,
+    [course]
+  )
+
+  if (isLoading) {
+    return (
+      <div className='min-h-screen bg-background flex items-center justify-center'>
+        carregando...
+      </div>
+    )
+  }
+
+  if (!course) {
     return (
       <div className='min-h-screen bg-background flex items-center justify-center'>
         <Card>
@@ -60,28 +79,21 @@ const ModuleView = () => {
       </div>
     )
   }
-  if (isLoading) {
-    return (
-      <div className='min-h-screen bg-background flex items-center justify-center'>
-        carregando...
-      </div>
-    )
-  }
-
-  const aprovados = course.alunos.filter((a) => a.status === 'Aprovado').length
-  const reprovados = course.alunos.filter(
-    (a) => a.status === 'Reprovado'
-  ).length
 
   return (
     <div className='min-h-screen bg-background'>
       <header className='border-b bg-card'>
         <div className='container mx-auto px-4 py-6'>
-          <Button asChild variant='ghost' className='mb-4'>
-            <Link href='../'>
+          <Button
+            asChild
+            variant='ghost'
+            className='mb-4 cursor-pointer'
+            onClick={() => router.back()}
+          >
+            <div className='flex'>
               <ArrowLeft className='mr-2 h-4 w-4' />
               Voltar
-            </Link>
+            </div>
           </Button>
           <div className='flex items-start justify-between'>
             <div>
@@ -97,12 +109,12 @@ const ModuleView = () => {
                 </div>
                 <Badge
                   variant={
-                    course.tipoCourse === 'ESCOLA DE PROFETA'
+                    course.tipoCurso === 'ESCOLA DE PROFETA'
                       ? 'default'
                       : 'secondary'
                   }
                 >
-                  {course.tipoCourse}
+                  {course.tipoCurso}
                 </Badge>
               </div>
             </div>
@@ -174,86 +186,103 @@ const ModuleView = () => {
           </CardHeader>
           <CardContent>
             <div className='overflow-x-auto'>
-              {/* <Table>
+              <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className='min-w-[150px] sticky left-0 bg-card z-10'>
                       Nome
                     </TableHead>
-                    {course.diasAula.map((dia, index) => (
-                      <TableHead
-                        key={dia}
-                        className='text-center min-w-[100px]'
-                      >
-                        Aula {index + 1}
-                        <div className='text-xs text-muted-foreground font-normal'>
-                          {new Date(dia).toLocaleDateString('pt-BR', {
-                            day: '2-digit',
-                            month: '2-digit'
-                          })}
-                        </div>
-                      </TableHead>
-                    ))}
+                    {course.diasAula &&
+                      course.diasAula.map((dia, index) => (
+                        <TableHead
+                          key={dia}
+                          className='text-center min-w-[100px]'
+                        >
+                          Aula {index + 1}
+                          <div className='text-xs text-muted-foreground font-normal'>
+                            {(() => {
+                              const [diaStr, mesStr, anoStr] = dia.split('/')
+                              const parsedDate = new Date(
+                                Number(anoStr),
+                                Number(mesStr) - 1, // mês em JS começa do 0
+                                Number(diaStr)
+                              )
+
+                              return parsedDate.toLocaleDateString('pt-BR', {
+                                day: '2-digit',
+                                month: '2-digit'
+                              })
+                            })()}
+                          </div>
+                        </TableHead>
+                      ))}
                     <TableHead className='text-center min-w-[120px]'>
                       Status
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {course.alunos.map((aluno) => {
-                    const presencasCount = Object.values(
-                      aluno.presencas
-                    ).filter((p) => p === 'P').length
-                    const totalAulas = course.diasAula.length
-                    const percentualPresenca = (
-                      (presencasCount / totalAulas) *
-                      100
-                    ).toFixed(0)
+                  {course.alunos
+                    ?.slice() // faz uma cópia para não mutar o original
+                    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+                    .map((aluno) => {
+                      const presencasCount = Object.values(
+                        aluno.presencas
+                      ).filter((p) => p === true).length
 
-                    return (
-                      <TableRow key={aluno._id}>
-                        <TableCell className='font-medium sticky left-0 bg-card z-10'>
-                          {aluno.nome}
-                          <div className='text-xs text-muted-foreground'>
-                            {presencasCount}/{totalAulas} ({percentualPresenca}
-                            %)
-                          </div>
-                        </TableCell>
-                        {course.diasAula.map((dia) => (
-                          <TableCell key={dia} className='text-center'>
+                      const totalAulas =
+                        (course.diasAula && course.diasAula.length) || 1
+
+                      const percentualPresenca = (
+                        (presencasCount / totalAulas) *
+                        100
+                      ).toFixed(0)
+
+                      return (
+                        <TableRow key={aluno._id}>
+                          <TableCell className='font-medium sticky left-0 bg-card z-10'>
+                            {aluno.nome}
+                            <div className='text-xs text-muted-foreground'>
+                              {presencasCount}/{totalAulas} (
+                              {percentualPresenca}%)
+                            </div>
+                          </TableCell>
+                          {course.diasAula &&
+                            course.diasAula.map((dia: string, index) => (
+                              <TableCell key={dia} className='text-center'>
+                                <Badge
+                                  variant={
+                                    aluno.presencas[index] === true
+                                      ? 'default'
+                                      : 'secondary'
+                                  }
+                                  className='w-12'
+                                >
+                                  {aluno.presencas[index] ? 'P' : '-'}
+                                </Badge>
+                              </TableCell>
+                            ))}
+                          <TableCell className='text-center'>
                             <Badge
                               variant={
-                                aluno.presencas[dia] === 'P'
-                                  ? 'default'
-                                  : 'secondary'
+                                aluno.status.toLowerCase() === 'aprovado'
+                                  ? 'outline'
+                                  : 'destructive'
                               }
-                              className='w-12'
+                              className={
+                                aluno.status.toLowerCase() === 'aprovado'
+                                  ? 'bg-green-500 hover:bg-success/90'
+                                  : ''
+                              }
                             >
-                              {aluno.presencas[dia] || '-'}
+                              {aluno.status}
                             </Badge>
                           </TableCell>
-                        ))}
-                        <TableCell className='text-center'>
-                          <Badge
-                            variant={
-                              aluno.status === 'Aprovado'
-                                ? 'default'
-                                : 'destructive'
-                            }
-                            className={
-                              aluno.status === 'Aprovado'
-                                ? 'bg-success hover:bg-success/90'
-                                : ''
-                            }
-                          >
-                            {aluno.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
+                        </TableRow>
+                      )
+                    })}
                 </TableBody>
-              </Table> */}
+              </Table>
             </div>
           </CardContent>
         </Card>

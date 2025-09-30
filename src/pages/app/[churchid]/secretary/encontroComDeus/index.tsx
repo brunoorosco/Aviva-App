@@ -6,8 +6,6 @@ import EditMemberModal from '@/components/Member/EditMemberModal'
 import EncontroComDeusHeader from './EncontroComDeusHeader'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
 import EncontroComDeusItem from './EncontroComDeusItem'
-import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
 
 const EncontroComDeusList = () => {
   const router = useRouter()

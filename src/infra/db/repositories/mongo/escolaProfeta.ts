@@ -13,6 +13,7 @@ export class EscolaProfetaRepository {
         _id: new ObjectId(id),
         tipoCurso: 'ESCOLA DE PROFETA'
       })
+
       return encontro
     } catch (error) {
       console.error('Error finding user by email:', error)

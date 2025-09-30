@@ -2,6 +2,7 @@ type TAlunos = {
   _id: string
   nome: string
   status: string
+  presencas: boolean[]
 }
 
 export type TEscolaProfeta = {
@@ -9,6 +10,7 @@ export type TEscolaProfeta = {
   tema: string
   numeroAulas:number
   data: string
-  tipoCourse: 'ESCOLA DE PROFETA' | 'DISCIPULADO'
+  tipoCurso: 'ESCOLA DE PROFETA' | 'DISCIPULADO'
   alunos: TAlunos[]
+  diasAula?: string[]
 }
