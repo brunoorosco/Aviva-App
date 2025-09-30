@@ -52,10 +52,10 @@ export class EscolaProfetaRepository {
     }
   }
 
-  async create(encontro: any): Promise<any> {
+  async create(data: any): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
-      const result = await collection.insertOne(encontro)
+      const result = await collection.insertOne(data)
       return result // Retorna o usuário inserido
     } catch (error) {
       console.error('Error creating batismo:', error)

@@ -19,18 +19,8 @@ export const getEscolaProfetaByIdService = async (
 }
 
 export const createEscolaProfetaService = async (data: any): Promise<any> => {
-  const encontroRepository = new EscolaProfetaRepository()
-  const churchRepository = new ChurChMongoRepository()
-  const churchs = await churchRepository.getChurch()
-  const dataNormalizada = normalizarEncontristasPorIgreja(
-    data,
-    'Avivamento Sede'
-  )
-  const novoEncontro = {
-    data: new Date(),
-    encontristas: dataNormalizada
-  }
-  const saved = await encontroRepository.create(novoEncontro)
+  const escolaProfetaRepository = new EscolaProfetaRepository()
+  const saved = await escolaProfetaRepository.create(data)
   return saved
 }
 
@@ -44,34 +34,3 @@ function limparObjeto<T extends Record<string, any>>(obj: T): Partial<T> {
   return novo
 }
 
-function normalizarEncontristasPorIgreja(
-  entradas: (string | TPeople)[],
-  nomeDaIgreja: string
-): TPeople[] {
-  return entradas.map((entrada) => {
-    if (typeof entrada === 'string') {
-      const contemIgreja = entrada.toLowerCase().includes('igreja')
-
-      return {
-        nome: '',
-        igreja: contemIgreja ? entrada : nomeDaIgreja,
-        ...(contemIgreja ? {} : { rede: entrada })
-      }
-    }
-
-    const contemIgreja = entrada.rede?.toLowerCase().includes('igreja')
-
-    const obj = {
-      nome: entrada.nome,
-      idade: entrada.idade,
-      telefone: entrada.telefone,
-      endereco: entrada.endereco
-        ? `${entrada.endereco} ${entrada.bairro}`.trim()
-        : null,
-      igreja: contemIgreja ? entrada.rede! : nomeDaIgreja,
-      ...(contemIgreja ? {} : { rede: entrada.rede })
-    }
-
-    return limparObjeto(obj) as TPeople
-  })
-}

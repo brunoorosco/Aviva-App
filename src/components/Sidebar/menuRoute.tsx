@@ -89,7 +89,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: 'Encontro Seja Livre',
       icon: FaPeopleGroup,
-      link: `${base}/secretary/encontroSejaLivre`
+      link: `${base}/secretary/sejaLivre`
     },
     {
       label: 'Reencontro com Deus',
