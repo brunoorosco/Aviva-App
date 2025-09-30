@@ -1,5 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+'use client'
 import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   Table,
@@ -9,173 +16,279 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { Download } from 'lucide-react'
+import {
+  ArrowLeft,
+  Calendar,
+  BookOpen,
+  CheckCircle2,
+  XCircle
+} from 'lucide-react'
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import { TEscolaProfeta } from '@/domain/models/escolaProfeta'
+import { useHttpGet } from '@/hooks/api'
+import { useSession } from 'next-auth/react'
+import { useMemo } from 'react'
+import { useRouter } from 'next/router'
 
-export default function PageEscolaProfetraById() {
-  const students = [
-    {
-      name: 'Sophia Clark',
-      lessons: ['Present', 'Present', 'Absent', 'Present'],
-      status: 'Completed'
-    },
-    {
-      name: 'Ethan Carter',
-      lessons: ['Present', 'Absent', 'Present', 'Present'],
-      status: 'Completed'
-    },
-    {
-      name: 'Olivia Bennett',
-      lessons: ['Absent', 'Present', 'Present', 'Absent'],
-      status: 'In Progress'
-    },
-    {
-      name: 'Liam Foster',
-      lessons: ['Present', 'Present', 'Present', 'Present'],
-      status: 'Completed'
-    },
-    {
-      name: 'Ava Harper',
-      lessons: ['Absent', 'Absent', 'Absent', 'Absent'],
-      status: 'In Progress'
-    }
-  ]
+const ModuleView = () => {
+  const { id } = useParams()
+  const router = useRouter()
+  const { data: session } = useSession()
+  const churchid = session?.user.churchId as string
 
-  const getBadge = (value: string) => {
-    switch (value) {
-      case 'Present':
-        return (
-          <Badge variant='outline' className='text-green-800 bg-green-100'>
-            {value}
-          </Badge>
-        )
-      case 'Absent':
-        return (
-          <Badge variant='outline' className='text-red-800 bg-red-100'>
-            {value}
-          </Badge>
-        )
-      case 'Completed':
-        return (
-          <Badge variant='outline' className='text-blue-800 bg-blue-100'>
-            {value}
-          </Badge>
-        )
-      case 'In Progress':
-        return (
-          <Badge variant='outline' className='text-yellow-800 bg-yellow-100'>
-            {value}
-          </Badge>
-        )
-      default:
-        return <Badge variant='secondary'>{value}</Badge>
-    }
+  const { data: courseData, isLoading } = useHttpGet<TEscolaProfeta>(
+    `/api/protected/churches/${churchid}/escola-profeta/${id}`
+  )
+  const course = courseData?.data
+
+  const aprovados = useMemo(
+    () => course?.alunos.filter((a) => a.status === 'Aprovado').length ?? 0,
+    [course]
+  )
+
+  const reprovados = useMemo(
+    () => course?.alunos.filter((a) => a.status === 'Reprovado').length ?? 0,
+    [course]
+  )
+
+  if (isLoading) {
+    return (
+      <div className='min-h-screen bg-background flex items-center justify-center'>
+        carregando...
+      </div>
+    )
+  }
+
+  if (!course) {
+    return (
+      <div className='min-h-screen bg-background flex items-center justify-center'>
+        <Card>
+          <CardHeader>
+            <CardTitle>Módulo não encontrado</CardTitle>
+            <CardDescription>
+              O módulo que você está procurando não existe.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild>
+              <Link href='/'>Voltar para listagem</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
-    <div className='flex flex-col min-h-screen bg-gray-50'>
-      {/* Header */}
-      <header className='flex items-center justify-between px-10 py-3 bg-white border-b border-gray-200'>
-        <div className='flex items-center gap-2'>
-          <div className='text-blue-600 size-6'>
-            <svg fill='currentColor' viewBox='0 0 48 48'>
-              <path d='M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z' />
-            </svg>
-          </div>
-          <h2 className='text-lg font-bold'>Course Platform</h2>
-        </div>
-        <nav className='flex items-center gap-2'>
-          <Button variant='ghost'>Home</Button>
-          <Button className='text-white bg-blue-600 hover:bg-blue-700'>
-            Courses
-          </Button>
-          <Button variant='ghost'>Students</Button>
-          <Button variant='ghost'>Reports</Button>
-          <div
-            className='ml-6 bg-center bg-cover rounded-full size-10'
-            style={{
-              backgroundImage:
-                'url(https://lh3.googleusercontent.com/aida-public/AB6AXuDcVY0lxn7LJNVMkn2Yg0fRbE2qX6ZQHVQnj0bzmrD1J7QiYItszFzWP6kJ-gNtc-nNyPi-ap8V_hHxALNOjivTMu7sADl1GPs9BWK-XOlm73Xs89Moj4kNZq7MDTh2dna7bU7tcbF-OUCquzzs1_5bXlIRvjduVKtquNX_JQqPv3cobKsCr2qME0NU3mjwLO0aGpDMmhuUldFdih4qNg_CLE0YXo1E-DlJWVP3DUh4OB92lKHabpo9Jwqxp69mTzofYSONd9OidkU)'
-            }}
-          />
-        </nav>
-      </header>
-
-      {/* Main */}
-      <main className='flex justify-center flex-1 px-10 py-8'>
-        <div className='flex flex-col w-full max-w-6xl gap-8'>
-          <div className='flex items-center justify-between'>
-            <div>
-              <h1 className='text-3xl font-bold'>Module Attendance</h1>
-              <p className='text-gray-500'>
-                Track student attendance for the 'Advanced Data Analysis'
-                module.
-              </p>
+    <div className='min-h-screen bg-background'>
+      <header className='border-b bg-card'>
+        <div className='container mx-auto px-4 py-6'>
+          <Button
+            asChild
+            variant='ghost'
+            className='mb-4 cursor-pointer'
+            onClick={() => router.back()}
+          >
+            <div className='flex'>
+              <ArrowLeft className='mr-2 h-4 w-4' />
+              Voltar
             </div>
-            <Button className='text-white bg-blue-600 hover:bg-blue-700'>
-              <Download className='w-4 h-4 mr-2' /> Export Data
+          </Button>
+          <div className='flex items-start justify-between'>
+            <div>
+              <h1 className='text-3xl font-bold text-foreground mb-2'>
+                {course.tema}
+              </h1>
+              <div className='flex items-center gap-4 text-muted-foreground'>
+                <div className='flex items-center'>
+                  <Calendar className='mr-2 h-4 w-4' />
+                  Início: {new Date(course.data).toLocaleDateString(
+                    'pt-BR'
+                  )} - {course.numeroAulas} dias de aula
+                </div>
+                <Badge
+                  variant={
+                    course.tipoCurso === 'ESCOLA DE PROFETA'
+                      ? 'default'
+                      : 'secondary'
+                  }
+                >
+                  {course.tipoCurso}
+                </Badge>
+              </div>
+            </div>
+            <Button asChild>
+              <Link href={`/module/${course._id}/edit`}>Editar Módulo</Link>
             </Button>
           </div>
+        </div>
+      </header>
 
-          {/* Module Overview */}
+      <main className='container mx-auto px-4 py-8'>
+        <div className='grid gap-6 md:grid-cols-3 mb-8'>
           <Card>
-            <CardHeader>
-              <CardTitle>Module Overview</CardTitle>
+            <CardHeader className='pb-3'>
+              <CardTitle className='text-sm font-medium text-muted-foreground'>
+                Total de Alunos
+              </CardTitle>
             </CardHeader>
-            <CardContent className='grid grid-cols-1 gap-4 text-sm md:grid-cols-3'>
-              <div>
-                <p className='text-gray-500'>Module Name</p>
-                <p className='font-medium'>Advanced Data Analysis</p>
-              </div>
-              <div>
-                <p className='text-gray-500'>Start Date</p>
-                <p className='font-medium'>2024-01-15</p>
-              </div>
-              <div>
-                <p className='text-gray-500'>End Date</p>
-                <p className='font-medium'>2024-03-15</p>
+            <CardContent>
+              <div className='flex items-center'>
+                <BookOpen className='h-8 w-8 text-primary mr-3' />
+                <span className='text-3xl font-bold'>
+                  {course.alunos.length}
+                </span>
               </div>
             </CardContent>
           </Card>
 
-          {/* Student Attendance */}
           <Card>
-            <CardHeader>
-              <CardTitle>Student Attendance</CardTitle>
+            <CardHeader className='pb-3'>
+              <CardTitle className='text-sm font-medium text-muted-foreground'>
+                Aprovados
+              </CardTitle>
             </CardHeader>
             <CardContent>
+              <div className='flex items-center'>
+                <CheckCircle2 className='h-8 w-8 text-success mr-3' />
+                <span className='text-3xl font-bold text-success'>
+                  {aprovados}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className='pb-3'>
+              <CardTitle className='text-sm font-medium text-muted-foreground'>
+                Reprovados
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='flex items-center'>
+                <XCircle className='h-8 w-8 text-destructive mr-3' />
+                <span className='text-3xl font-bold text-destructive'>
+                  {reprovados}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Lista de Chamada</CardTitle>
+            <CardDescription>
+              Visualize a presença de cada aluno por dia de aula e seu status
+              final
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className='overflow-x-auto'>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Student Name</TableHead>
-                    <TableHead className='text-center'>Lesson 1</TableHead>
-                    <TableHead className='text-center'>Lesson 2</TableHead>
-                    <TableHead className='text-center'>Lesson 3</TableHead>
-                    <TableHead className='text-center'>Lesson 4</TableHead>
-                    <TableHead className='text-center'>Final Status</TableHead>
+                    <TableHead className='min-w-[150px] sticky left-0 bg-card z-10'>
+                      Nome
+                    </TableHead>
+                    {course.diasAula &&
+                      course.diasAula.map((dia, index) => (
+                        <TableHead
+                          key={dia}
+                          className='text-center min-w-[100px]'
+                        >
+                          Aula {index + 1}
+                          <div className='text-xs text-muted-foreground font-normal'>
+                            {(() => {
+                              const [diaStr, mesStr, anoStr] = dia.split('/')
+                              const parsedDate = new Date(
+                                Number(anoStr),
+                                Number(mesStr) - 1, // mês em JS começa do 0
+                                Number(diaStr)
+                              )
+
+                              return parsedDate.toLocaleDateString('pt-BR', {
+                                day: '2-digit',
+                                month: '2-digit'
+                              })
+                            })()}
+                          </div>
+                        </TableHead>
+                      ))}
+                    <TableHead className='text-center min-w-[120px]'>
+                      Status
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {students.map((student, i) => (
-                    <TableRow key={i}>
-                      <TableCell className='font-medium'>
-                        {student.name}
-                      </TableCell>
-                      {student.lessons.map((lesson, idx) => (
-                        <TableCell className='text-center' key={idx}>
-                          {getBadge(lesson)}
-                        </TableCell>
-                      ))}
-                      <TableCell className='text-center'>
-                        {getBadge(student.status)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {course.alunos
+                    ?.slice() // faz uma cópia para não mutar o original
+                    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+                    .map((aluno) => {
+                      const presencasCount = Object.values(
+                        aluno.presencas
+                      ).filter((p) => p === true).length
+
+                      const totalAulas =
+                        (course.diasAula && course.diasAula.length) || 1
+
+                      const percentualPresenca = (
+                        (presencasCount / totalAulas) *
+                        100
+                      ).toFixed(0)
+
+                      return (
+                        <TableRow key={aluno._id}>
+                          <TableCell className='font-medium sticky left-0 bg-card z-10'>
+                            {aluno.nome}
+                            <div className='text-xs text-muted-foreground'>
+                              {presencasCount}/{totalAulas} (
+                              {percentualPresenca}%)
+                            </div>
+                          </TableCell>
+                          {course.diasAula &&
+                            course.diasAula.map((dia: string, index) => (
+                              <TableCell key={dia} className='text-center'>
+                                <Badge
+                                  variant={
+                                    aluno.presencas[index] === true
+                                      ? 'default'
+                                      : 'secondary'
+                                  }
+                                  className='w-12'
+                                >
+                                  {aluno.presencas[index] ? 'P' : '-'}
+                                </Badge>
+                              </TableCell>
+                            ))}
+                          <TableCell className='text-center'>
+                            <Badge
+                              variant={
+                                aluno.status.toLowerCase() === 'aprovado'
+                                  ? 'outline'
+                                  : 'destructive'
+                              }
+                              className={
+                                aluno.status.toLowerCase() === 'aprovado'
+                                  ? 'bg-green-500 hover:bg-success/90'
+                                  : ''
+                              }
+                            >
+                              {aluno.status}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
                 </TableBody>
               </Table>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
       </main>
     </div>
   )
 }
+
+export default ModuleView
