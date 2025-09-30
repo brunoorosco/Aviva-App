@@ -1,89 +1,129 @@
-import axios, { AxiosResponse } from 'axios'
+// http.ts
 import useSWR from 'swr'
+import useSWRMutation from 'swr/mutation'
 
-interface IPost<T> {
-  url: string
-  data: T
-  headers?: { [key: string]: string }
+export class HttpError<T = unknown> extends Error {
+  status: number
+  data?: T
+  constructor(message: string, status: number, data?: T) {
+    super(message)
+    this.name = 'HttpError'
+    this.status = status
+    this.data = data
+  }
 }
 
-interface IPatch<T> {
-  url: string
-  data: Partial<T> // Para PATCH faz sentido ser parcial, PUT geralmente é completo
+type Json = Record<string, unknown> | unknown[] | null
+
+type RequestOptions = {
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+  headers?: HeadersInit
+  body?: unknown
+  signal?: AbortSignal
 }
 
-interface IDelete {
-  url: string
-}
-interface IResponseData<T> {
-  data: T
-  headers: Record<string, any>
-}
-
-const fetcher = async <T = any>(url: string): Promise<{ data: T; headers: any }> => {
-  const response: AxiosResponse<T> = await axios.get(url);
-  return { data: response.data, headers: response.headers };
-};
-
-const useHttpGet = <T = any>(url: string) => {
-  return useSWR<{ data: T; headers: any }, Error>(url, fetcher)
+async function parseBody<T>(res: Response): Promise<T | undefined> {
+  if (res.status === 204) return undefined as T
+  const ct = res.headers.get('content-type') ?? ''
+  if (!ct.includes('application/json')) {
+    const text = await res.text()
+    // @ts-expect-error: permitir string caso não seja JSON
+    return text as T
+  }
+  return (await res.json()) as T
 }
 
-
-const useHttpPost = async <T>({ url, data, headers }: IPost<T>) => {
+export async function request<T = Json>(url: string, opts: RequestOptions = {}) {
+  const { method = 'GET', headers, body, signal } = opts
   const res = await fetch(url, {
-    method: 'POST',
+    method,
     headers: {
-      'content-type': 'application/json',
-      ...headers
+      'Content-Type': 'application/json',
+      ...headers,
     },
-    body: JSON.stringify(data)
+    body: body === undefined ? undefined : JSON.stringify(body),
+    signal,
   })
 
-  return res.json()
-}
-
-const useHttpPatch = async <T>({ url, data }: IPatch<T>) => {
-  const res = await fetch(url, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  })
+  const data = await parseBody<T>(res)
 
   if (!res.ok) {
-    throw new Error(`HTTP error! status: ${res.status}`)
+    throw new HttpError(
+      `HTTP ${res.status} ${res.statusText || ''}`.trim(),
+      res.status,
+      data
+    )
   }
 
-  return res.json()
-}
-
-const useHttpPut = async <T>({ url, data }: IPatch<T>) => {
-  const res = await fetch(url, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  })
-
-  if (!res.ok) {
-    throw new Error(`HTTP error! status: ${res.status}`)
+  return {
+    data: data as T,
+    status: res.status,
+    headers: res.headers,
   }
-
-  return res.json()
 }
 
-const useHttpDelete = async ({ url }: IDelete) => {
-  const res = await fetch(url, {
-    method: 'DELETE',
-    headers: {
-      'content-type': 'application/json'
+// ---------- Hooks ----------
+
+// GET com SWR (key = url)
+export function useHttpGet<T = Json>(url?: string | null) {
+  return useSWR<{ data: T; status: number; headers: Headers }>(
+    url,
+    (key, { signal }) => request<T>(key, { signal }),
+    {
+      // configs úteis:
+      revalidateOnFocus: false,
+      shouldRetryOnError: false,
     }
-  })
-
-  return res.json()
+  )
 }
 
-export { useHttpDelete, useHttpPatch, useHttpGet, useHttpPost, useHttpPut }
+// Mutations com SWRMutation (POST/PATCH/PUT/DELETE)
+type MutatorArg<B> = { url: string; body?: B; headers?: HeadersInit }
+
+export function useHttpPost<TResp = Json, TBody = Json>() {
+  return useSWRMutation<
+    { data: TResp; status: number; headers: Headers },
+    HttpError,
+    string,               // chave (pode ser um namespace, ex: 'POST')
+    MutatorArg<TBody>
+  >('POST', (_, { arg, signal }) =>
+    request<TResp>(arg.url, {
+      method: 'POST',
+      body: arg.body,
+      headers: arg.headers,
+      signal,
+    })
+  )
+}
+
+export function useHttpPatch<TResp = Json, TBody = Partial<Json>>() {
+  return useSWRMutation('PATCH', (_, { arg, signal }) =>
+    request<TResp>(arg.url, {
+      method: 'PATCH',
+      body: arg.body,
+      headers: arg.headers,
+      signal,
+    })
+  )
+}
+
+export function useHttpPut<TResp = Json, TBody = Json>() {
+  return useSWRMutation('PUT', (_, { arg, signal }) =>
+    request<TResp>(arg.url, {
+      method: 'PUT',
+      body: arg.body,
+      headers: arg.headers,
+      signal,
+    })
+  )
+}
+
+export function useHttpDelete<TResp = Json>() {
+  return useSWRMutation('DELETE', (_, { arg, signal }) =>
+    request<TResp>(arg.url, {
+      method: 'DELETE',
+      headers: arg.headers,
+      signal,
+    })
+  )
+}
