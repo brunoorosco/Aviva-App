@@ -70,7 +70,7 @@ const ModuleView = () => {
       <header className='border-b bg-card'>
         <div className='container mx-auto px-4 py-6'>
           <Button asChild variant='ghost' className='mb-4'>
-            <Link href='/'>
+            <Link href='../'>
               <ArrowLeft className='mr-2 h-4 w-4' />
               Voltar
             </Link>
