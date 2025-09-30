@@ -33,14 +33,15 @@ const ModuleView = () => {
   const { data: session } = useSession()
   const churchid = session?.user.churchId as string
 
-  const { data: courseData } = useHttpGet<{
-    data: TEscolaProfeta
+  const { data: courseData, isLoading } = useHttpGet<{
+    resp: TEscolaProfeta
     total: number
     page: number
     totalPages: number
   }>(`/api/protected/churches/${churchid}/escola-profeta/${id}`)
   const course = courseData?.data
-  if (!course) {
+
+  if (!course && isLoading) {
     return (
       <div className='min-h-screen bg-background flex items-center justify-center'>
         <Card>
@@ -59,7 +60,14 @@ const ModuleView = () => {
       </div>
     )
   }
-  console.log(course.alunos)
+  if (isLoading) {
+    return (
+      <div className='min-h-screen bg-background flex items-center justify-center'>
+        carregando...
+      </div>
+    )
+  }
+
   const aprovados = course.alunos.filter((a) => a.status === 'Aprovado').length
   const reprovados = course.alunos.filter(
     (a) => a.status === 'Reprovado'
