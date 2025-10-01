@@ -342,7 +342,7 @@ const ModuleEdit = () => {
                     onChange={(e) =>
                       setCourse({
                         ...course,
-                        data:  new Date(e.target.value).toISOString()
+                        data: e.target.value
                       } as TEscolaProfeta)
                     }
                   />
