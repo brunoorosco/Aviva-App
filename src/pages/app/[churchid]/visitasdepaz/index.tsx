@@ -8,8 +8,8 @@ import EditMemberModal from '@/components/Member/EditMemberModal'
 import { CasaDePazModel } from '@/domain/models/casaDePaz'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
-import VisitadePazHeader from './VisitadePazHeader'
-import VisitadePazItem from './VisitadePazItem'
+import VisitadePazHeader from '@/components/visitaDePaz/VisitadePazHeader'
+import VisitadePazItem from '@/components/visitaDePaz/VisitadePazItem'
 
 const VisitaDePazList = () => {
   const router = useRouter()

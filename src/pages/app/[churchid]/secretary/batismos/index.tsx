@@ -1,14 +1,13 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useHttpGet, useHttpPatch } from '@/hooks/api'
-import BatismoItem from './BatismoItem'
+import { useHttpGet } from '@/hooks/api'
+import BatismoItem from '@/components/batismo/BatismoItem'
 import Pagination from '@/components/Pagination'
 import EditMemberModal from '@/components/Member/EditMemberModal'
 import { baptism } from '@/domain/models/baptism'
-import BatismoHeader from './BatismoHeader'
-import ImportButton from './ImportButton'
+import BatismoHeader from '@/components/batismo/BatismoHeader'
 
 const BatismoList = () => {
   const router = useRouter()
@@ -16,7 +15,6 @@ const BatismoList = () => {
   const { churchid } = query
   const inputFileRef = useRef<HTMLInputElement>(null)
 
-  const [search, setSearch] = useState('')
   const [showEditModal, setShowEditModal] = useState(false)
   const [selectedBatismo, setSelectedBatismo] = useState<baptism | null>(null)
   const [page, setPage] = useState(1)

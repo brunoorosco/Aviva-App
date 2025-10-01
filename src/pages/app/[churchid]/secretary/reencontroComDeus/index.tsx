@@ -1,11 +1,10 @@
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useHttpGet } from '@/hooks/api'
-import Pagination from '@/components/Pagination'
 import EditMemberModal from '@/components/Member/EditMemberModal'
-import {  TReencontroComDeus } from '@/domain/models/encontroComDeus'
-import ReencontroComDeusItem from './ReencontroComDeusItem'
-import ReencontroComDeusHeader from './ReencontroComDeusHeader'
+import { TReencontroComDeus } from '@/domain/models/encontroComDeus'
+import ReencontroComDeusItem from '@/components/reencontroComDeus/ReencontroComDeusItem'
+import ReencontroComDeusHeader from '@/components/reencontroComDeus/ReencontroComDeusHeader'
 
 const ReencontroComDeusList = () => {
   const router = useRouter()
@@ -28,7 +27,6 @@ const ReencontroComDeusList = () => {
   }>(
     `/api/protected/churches/${churchid}/reencontroComDeus?page=${page}&limit=${limit}`
   )
-
 
   const handleEdit = (reencontro: TReencontroComDeus) => {
     setSelectedEncontro(reencontro)
