@@ -402,7 +402,7 @@ const ModuleEdit = () => {
 
               {(course.diasAula || []).length > 0 ? (
                 <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3'>
-                  {course.diasAula.map((dia, index) => (
+                  {course.diasAula.map((dia: string, index: number) => (
                     <div
                       key={dia}
                       className='flex items-center justify-between p-3 border rounded-lg'
@@ -414,7 +414,6 @@ const ModuleEdit = () => {
                             Aula {index + 1}
                           </div>
                           <div className='text-xs text-muted-foreground'>
-                            {/* {new Date(dia).toLocaleDateString('pt-BR')} */}
                             {dia}
                           </div>
                         </div>
@@ -467,17 +466,14 @@ const ModuleEdit = () => {
                         <TableHead className='min-w-[150px] sticky left-0 bg-card z-10'>
                           Nome
                         </TableHead>
-                        {course.diasAula.map((dia, index) => (
+                        {course.diasAula.map((dia: string, index: number) => (
                           <TableHead
                             key={dia}
                             className='text-center min-w-[100px]'
                           >
                             Aula {index + 1}
                             <div className='text-xs text-muted-foreground font-normal'>
-                              {new Date(dia).toLocaleDateString('pt-BR', {
-                                day: '2-digit',
-                                month: '2-digit'
-                              })}
+                              {dia.substring(0, 5)}
                             </div>
                           </TableHead>
                         ))}
@@ -492,16 +488,18 @@ const ModuleEdit = () => {
                     <TableBody>
                       {(course.alunos || [])
                         ?.slice() // faz uma cópia para não mutar o original
-                        .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+                        .sort((a: TAluno, b: TAluno) =>
+                          a.nome.localeCompare(b.nome, 'pt-BR')
+                        )
                         .map((aluno: any) => (
                           <TableRow key={aluno._id}>
                             <TableCell className='font-medium sticky left-0 bg-card z-10'>
                               {aluno.nome}
                             </TableCell>
-                            {course.diasAula.map((dia) => (
+                            {course.diasAula.map((dia: string, index:number) => (
                               <TableCell key={dia} className='text-center'>
                                 <Select
-                                  value={aluno.presencas?.[dia] || 'P'}
+                                  value={aluno.presencas?.[index] || 'P'}
                                   onValueChange={(value: 'P' | 'F') =>
                                     handleUpdatePresenca(aluno._id, dia, value)
                                   }
