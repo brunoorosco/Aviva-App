@@ -5,8 +5,8 @@ import { useRouter } from 'next/router'
 import { useHttpGet } from '@/hooks/api'
 import Pagination from '@/components/Pagination'
 import EditMemberModal from '@/components/Member/EditMemberModal'
-import CasadePazHeader from './CasadePazHeader'
-import CasadePazItem from './CasadePazItem'
+import CasadePazHeader from '@/components/casaDePaz/CasadePazHeader'
+import CasadePazItem from '@/components/casaDePaz/CasadePazItem'
 import { CasaDePazModel } from '@/domain/models/casaDePaz'
 
 const CasaDePazList = () => {

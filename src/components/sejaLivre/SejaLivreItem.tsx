@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Edit, EyeIcon } from 'lucide-react'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
 
 type Props = {

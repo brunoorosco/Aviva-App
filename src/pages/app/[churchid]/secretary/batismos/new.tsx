@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SupervisorSelect } from '@/components/Select/SelectSupervisores'
 import ExportButton from '@/components/ExportButton'
-import ImportButton from './ImportButton'
+import ImportButton from '../../../../../components/batismo/ImportButton'
 import {
   Select,
   SelectContent,

@@ -12,5 +12,5 @@ export type TEscolaProfeta = {
   data: string
   tipoCurso: 'ESCOLA DE PROFETA' | 'DISCIPULADO'
   alunos: TAlunos[]
-  diasAula?: string[]
+  diasAula: string[]
 }

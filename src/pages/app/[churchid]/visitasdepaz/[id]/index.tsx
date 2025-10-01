@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { GetServerSideProps } from 'next/types'
 import { useState } from 'react'
-import VisitaDePazModal from '../VisitaDePazModal'
+import VisitaDePazModal from '../../../../../components/visitaDePaz/VisitaDePazModal'
 
 function formatDate(dateValue: any) {
   if (!dateValue) return ''

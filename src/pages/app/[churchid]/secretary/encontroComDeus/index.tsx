@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useHttpGet, useHttpPatch } from '@/hooks/api'
+import { useHttpGet } from '@/hooks/api'
 import Pagination from '@/components/Pagination'
 import EditMemberModal from '@/components/Member/EditMemberModal'
-import EncontroComDeusHeader from './EncontroComDeusHeader'
+import EncontroComDeusHeader from '@/components/encontroComDeus/EncontroComDeusHeader'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
-import EncontroComDeusItem from './EncontroComDeusItem'
+import EncontroComDeusItem from '@/components/encontroComDeus/EncontroComDeusItem'
 
 const EncontroComDeusList = () => {
   const router = useRouter()
@@ -13,7 +13,6 @@ const EncontroComDeusList = () => {
   const { churchid } = query
   const inputFileRef = useRef<HTMLInputElement>(null)
 
-  const [search, setSearch] = useState('')
   const [showEditModal, setShowEditModal] = useState(false)
   const [selectedEncontro, setSelectedEncontro] =
     useState<TEncontroComDeus | null>(null)
@@ -38,7 +37,6 @@ const EncontroComDeusList = () => {
 
   return (
     <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg dark:text-dark-primary'>
-     
       {showEditModal && selectedEncontro && (
         <EditMemberModal
           member={selectedEncontro}

@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useHttpGet, useHttpPatch } from '@/hooks/api'
+import { useHttpGet } from '@/hooks/api'
 import Pagination from '@/components/Pagination'
 import EditMemberModal from '@/components/Member/EditMemberModal'
-import SejaLivreHeader from './SejaLivreHeader'
+import SejaLivreHeader from '@/components/sejaLivre/SejaLivreHeader'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
-import EncontroComDeusItem from './SejaLivreItem'
+import EncontroComDeusItem from '@/components/sejaLivre/SejaLivreItem'
 
 const SejaLivreList = () => {
   const router = useRouter()
