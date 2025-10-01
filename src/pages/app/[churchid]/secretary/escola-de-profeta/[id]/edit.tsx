@@ -71,7 +71,7 @@ const ModuleEdit = () => {
       return {
         _id: courseEdit._id,
         tema: courseEdit.tema,
-        data: new Date().toISOString().split('T')[0], // Se quiser manter a data original, pode usar courseEdit.data
+        data: new Date(courseEdit.data).toISOString().split('T')[0], // Se quiser manter a data original, pode usar courseEdit.data
         diasAula: courseEdit.diasAula ?? [],
         tipoCurso: courseEdit.tipoCurso ?? 'ESCOLA DE PROFETA',
         alunos: courseEdit.alunos ?? [],
@@ -342,7 +342,7 @@ const ModuleEdit = () => {
                     onChange={(e) =>
                       setCourse({
                         ...course,
-                        data: e.target.value
+                        data:  new Date(e.target.value).toISOString()
                       } as TEscolaProfeta)
                     }
                   />
