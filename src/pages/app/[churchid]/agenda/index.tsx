@@ -73,8 +73,6 @@ const CalendarPage = () => {
       const arr = Array.isArray(eventsData.data)
         ? eventsData.data
         : eventsData.data.data ?? []
-
-      console.log('index.tsx:77', arr)
       setEvents(arr)
     }
   }, [eventsData])
