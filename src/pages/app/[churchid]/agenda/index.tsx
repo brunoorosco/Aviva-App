@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   format,
   startOfMonth,
@@ -17,7 +17,8 @@ import {
   ChevronRight,
   Plus,
   Clock,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  Loader2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -30,14 +31,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
-
 import { cn } from '@/lib/utils'
 import { TEvent } from '@/domain/models/events'
-import { mockEvents } from '@/infra/mocks/events'
+import { useHttpDelete, useHttpGet, useHttpPost } from '@/hooks/api'
+import { useSession } from 'next-auth/react'
+import { parseDateNoTimezone } from '@/utils/date'
 
 const CalendarPage = () => {
   const [currentDate, setCurrentDate] = useState(new Date())
-  const [events, setEvents] = useState<TEvent[]>(mockEvents)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [editingEvent, setEditingEvent] = useState<TEvent | null>(null)
@@ -48,6 +49,9 @@ const CalendarPage = () => {
   const [horaInicio, setHoraInicio] = useState('')
   const [horaFim, setHoraFim] = useState('')
   const [descricao, setDescricao] = useState('')
+  const [dataFim, setDataFim] = useState<Date | null>(null)
+  const [events, setEvents] = useState<TEvent[]>([])
+  const { data: session } = useSession()
 
   const monthStart = startOfMonth(currentDate)
   const monthEnd = endOfMonth(currentDate)
@@ -58,13 +62,33 @@ const CalendarPage = () => {
     end: calendarEnd
   })
 
-  const monthEvents = events.filter((event) => {
-    const eventDate = new Date(event.data)
-    return isSameMonth(eventDate, currentDate)
-  })
+  const baseURl = `/api/protected/churches/${session?.user.churchId}/events`
+
+  const { data: eventsData, isLoading } = useHttpGet<{
+    data: TEvent[]
+  }>(baseURl)
+
+  useEffect(() => {
+    if (eventsData?.data) {
+      const arr = Array.isArray(eventsData.data)
+        ? eventsData.data
+        : eventsData.data.data ?? []
+      setEvents(arr)
+    }
+  }, [eventsData])
+
+  const monthEvents = useMemo(() => {
+    if (!Array.isArray(events)) return []
+    return events.filter((event) =>
+      isSameMonth(new Date(`${event.data}T12:00:00`), currentDate)
+    )
+  }, [events, currentDate])
 
   const getEventsForDay = (day: Date) => {
-    return events.filter((event) => isSameDay(new Date(event.data), day))
+    if (!Array.isArray(events)) return []
+    return events.filter((event) =>
+      isSameDay(new Date(`${event.data}T12:00:00`), day)
+    )
   }
 
   const handleDayClick = (day: Date) => {
@@ -83,6 +107,7 @@ const CalendarPage = () => {
     setHoraInicio(event.horaInicio || '')
     setHoraFim(event.horaFim || '')
     setDescricao(event.descricao || '')
+    setDataFim(event.dataFim ? new Date(event.dataFim) : null)
     setIsModalOpen(true)
   }
 
@@ -92,40 +117,62 @@ const CalendarPage = () => {
     setHoraInicio('')
     setHoraFim('')
     setDescricao('')
+    setDataFim(null)
   }
 
-  const handleSaveEvent = () => {
+  const handleSaveEvent = async () => {
     if (!titulo.trim() || !selectedDate) return
 
     const eventData: TEvent = {
-      _id: editingEvent?._id || Date.now().toString(),
+      _id: editingEvent?._id,
       titulo: titulo.trim(),
       data: format(selectedDate, 'yyyy-MM-dd'),
+      dataFim: dataFim ? format(dataFim, 'yyyy-MM-dd') : undefined,
       diaInteiro,
       horaInicio: diaInteiro ? undefined : horaInicio,
       horaFim: diaInteiro ? undefined : horaFim,
-      descricao: descricao.trim() || undefined
+      descricao: descricao.trim() || undefined,
+      churchId: session?.user.churchId as string
     }
 
-    if (editingEvent) {
-      setEvents(events.map((e) => (e._id === editingEvent._id ? eventData : e)))
-    } else {
-      setEvents([...events, eventData])
+    const resp = await useHttpPost<TEvent>({
+      url: baseURl,
+      data: eventData
+    })
+    if (resp) {
+      setEvents((prev) => [...prev, resp]) // atualiza lista local
     }
-
     setIsModalOpen(false)
     resetForm()
   }
 
   const handleDeleteEvent = () => {
     if (editingEvent) {
-      setEvents(events.filter((e) => e._id !== editingEvent._id))
-      setIsModalOpen(false)
-      resetForm()
+      try {
+        useHttpDelete({ url: `${baseURl}/${editingEvent._id}` })
+        setEvents((prev) => prev.filter((e) => e._id !== editingEvent._id))
+        resetForm()
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setIsModalOpen(false)
+      }
     }
   }
 
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
+
+  // 💡 LOADING UI
+  if (isLoading) {
+    return (
+      <div className='min-h-screen bg-background flex flex-col items-center justify-center'>
+        <Loader2 className='h-10 w-10 text-primary animate-spin mb-3' />
+        <p className='text-muted-foreground text-sm'>
+          Carregando eventos, aguarde...
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className='min-h-screen bg-background'>
@@ -141,7 +188,6 @@ const CalendarPage = () => {
           {/* Calendar Section */}
           <div className='lg:col-span-2'>
             <div className='bg-card rounded-lg border shadow-sm p-6'>
-              {/* Calendar Header */}
               <div className='flex items-center justify-between mb-6'>
                 <h2 className='text-2xl font-semibold capitalize'>
                   {format(currentDate, 'MMMM yyyy', { locale: ptBR })}
@@ -164,9 +210,7 @@ const CalendarPage = () => {
                 </div>
               </div>
 
-              {/* Calendar Grid */}
               <div className='grid grid-cols-7 gap-2'>
-                {/* Week day headers */}
                 {weekDays.map((day) => (
                   <div
                     key={day}
@@ -176,7 +220,6 @@ const CalendarPage = () => {
                   </div>
                 ))}
 
-                {/* Calendar days */}
                 {calendarDays.map((day, idx) => {
                   const dayEvents = getEventsForDay(day)
                   const isCurrentMonth = isSameMonth(day, currentDate)
@@ -187,12 +230,11 @@ const CalendarPage = () => {
                       key={idx}
                       onClick={() => handleDayClick(day)}
                       className={cn(
-                        'relative min-h-24 px-2 py-6 flex flex-col rounded-lg border border-gray-200 transition-colors text-left hover:bg-gray-300',
+                        'relative min-h-24 px-2 py-6 flex flex-col rounded-lg border transition-colors text-left hover:bg-accent/40',
                         isCurrentMonth ? 'bg-card' : 'bg-muted/30',
                         isToday && 'ring-2 ring-primary'
                       )}
                     >
-                      {/* número do dia no topo */}
                       <span
                         className={cn(
                           'absolute top-1 left-1 text-xs font-semibold',
@@ -202,7 +244,6 @@ const CalendarPage = () => {
                         {format(day, 'd')}
                       </span>
 
-                      {/* eventos */}
                       <div className='mt-5 space-y-1'>
                         {dayEvents.slice(0, 2).map((event) => (
                           <div
@@ -226,7 +267,7 @@ const CalendarPage = () => {
             </div>
           </div>
 
-          {/* Events List Section */}
+          {/* Events List */}
           <div className='lg:col-span-1'>
             <div className='bg-card rounded-lg border shadow-sm p-6'>
               <div className='flex items-center justify-between mb-4'>
@@ -246,39 +287,80 @@ const CalendarPage = () => {
                   monthEvents
                     .sort(
                       (a, b) =>
-                        new Date(a.data).getTime() - new Date(b.data).getTime()
+                        new Date(`${a.data}T12:00:00`).getTime() -
+                        new Date(`${b.data}T12:00:00`).getTime()
                     )
-                    .map((event) => (
-                      <div
-                        key={event._id}
-                        onClick={(e) => handleEventClick(event, e)}
-                        className='p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors'
-                      >
-                        <div className='flex items-start justify-between gap-2 mb-1'>
-                          <h4 className='font-medium text-sm'>
-                            {event.titulo}
-                          </h4>
-                          <span className='text-xs text-muted-foreground whitespace-nowrap'>
-                            {format(new Date(event.data), 'dd/MM')}
-                          </span>
-                        </div>
-                        <div className='flex items-center gap-1 text-xs text-muted-foreground'>
-                          <Clock className='h-3 w-3' />
-                          {event.diaInteiro ? (
-                            <span>Dia inteiro</span>
-                          ) : (
-                            <span>
-                              {event.horaInicio} - {event.horaFim}
+                    .map((event) => {
+                      const startDate = new Date(`${event.data}T12:00:00`)
+                      const endDate = event.dataFim
+                        ? new Date(`${event.dataFim}T12:00:00`)
+                        : null
+
+                      return (
+                        <div
+                          key={event._id}
+                          onClick={(e) => handleEventClick(event, e)}
+                          className='p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors'
+                        >
+                          <div className='flex items-start justify-between gap-2 mb-1'>
+                            <h4 className='font-medium text-sm'>
+                              {event.titulo}
+                            </h4>
+                            <span className='text-xs text-muted-foreground whitespace-nowrap'>
+                              {endDate
+                                ? `${format(startDate, 'dd/MM')} a ${format(
+                                    endDate,
+                                    'dd/MM'
+                                  )}`
+                                : format(startDate, 'dd/MM')}
                             </span>
+                          </div>
+                          <div className='flex items-center gap-1 text-xs text-muted-foreground'>
+                            <Clock className='h-3 w-3' />
+                            {event.diaInteiro ? (
+                              event.dataFim ? (
+                                <span>
+                                  {format(
+                                    parseDateNoTimezone(event.data),
+                                    'dd/MM'
+                                  )}{' '}
+                                  a{' '}
+                                  {format(
+                                    parseDateNoTimezone(event.dataFim),
+                                    'dd/MM'
+                                  )}
+                                </span>
+                              ) : (
+                                <span>Dia inteiro</span>
+                              )
+                            ) : event.dataFim ? (
+                              <span>
+                                {event.horaInicio} - {event.horaFim} (
+                                {format(
+                                  parseDateNoTimezone(event.data),
+                                  'dd/MM'
+                                )}{' '}
+                                a{' '}
+                                {format(
+                                  parseDateNoTimezone(event.dataFim),
+                                  'dd/MM'
+                                )}
+                                )
+                              </span>
+                            ) : (
+                              <span>
+                                {event.horaInicio} - {event.horaFim}
+                              </span>
+                            )}
+                          </div>
+                          {event.descricao && (
+                            <p className='text-xs text-muted-foreground mt-1 line-clamp-2'>
+                              {event.descricao}
+                            </p>
                           )}
                         </div>
-                        {event.descricao && (
-                          <p className='text-xs text-muted-foreground mt-1 line-clamp-2'>
-                            {event.descricao}
-                          </p>
-                        )}
-                      </div>
-                    ))
+                      )
+                    })
                 )}
               </div>
             </div>
@@ -286,7 +368,7 @@ const CalendarPage = () => {
         </div>
       </div>
 
-      {/* Event Modal */}
+      {/* Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className='sm:max-w-[500px]'>
           <DialogHeader>
@@ -306,13 +388,35 @@ const CalendarPage = () => {
               />
             </div>
 
-            <div className='space-y-2'>
-              <Label>Data</Label>
-              <div className='text-sm text-muted-foreground'>
-                {selectedDate &&
-                  format(selectedDate, "dd 'de' MMMM 'de' yyyy", {
-                    locale: ptBR
-                  })}
+            <div className='grid grid-cols-2 gap-4'>
+              <div className='space-y-2'>
+                <Label>Data Início</Label>
+                <div className='text-sm text-muted-foreground'>
+                  {selectedDate &&
+                    format(selectedDate, "dd 'de' MMMM 'de' yyyy", {
+                      locale: ptBR
+                    })}
+                </div>
+              </div>
+              <div className='space-y-2'>
+                <Label htmlFor='dataFim'>Data Fim (Opcional)</Label>
+                <Input
+                  id='dataFim'
+                  type='date'
+                  value={dataFim ? format(dataFim, 'yyyy-MM-dd') : ''}
+                  onChange={(e) =>
+                    setDataFim(
+                      e.target.value
+                        ? new Date(`${e.target.value}T12:00:00`)
+                        : null
+                    )
+                  }
+                  min={
+                    selectedDate
+                      ? format(selectedDate, 'yyyy-MM-dd')
+                      : undefined
+                  }
+                />
               </div>
             </div>
 
@@ -320,7 +424,7 @@ const CalendarPage = () => {
               <Checkbox
                 id='diaInteiro'
                 checked={diaInteiro}
-                onCheckedChange={(checked) => setDiaInteiro(checked as boolean)}
+                onCheckedChange={(checked) => setDiaInteiro(!!checked)}
               />
               <Label htmlFor='diaInteiro' className='cursor-pointer'>
                 Evento o dia inteiro

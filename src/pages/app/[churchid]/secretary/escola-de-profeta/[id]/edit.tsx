@@ -488,32 +488,36 @@ const ModuleEdit = () => {
                     <TableBody>
                       {(course.alunos || [])
                         ?.slice() // faz uma cópia para não mutar o original
-                        .sort((a: TAluno, b: TAluno) =>
-                          a.nome.localeCompare(b.nome, 'pt-BR')
-                        )
+                        .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
                         .map((aluno: any) => (
                           <TableRow key={aluno._id}>
                             <TableCell className='font-medium sticky left-0 bg-card z-10'>
                               {aluno.nome}
                             </TableCell>
-                            {course.diasAula.map((dia: string, index:number) => (
-                              <TableCell key={dia} className='text-center'>
-                                <Select
-                                  value={aluno.presencas?.[index] || 'P'}
-                                  onValueChange={(value: 'P' | 'F') =>
-                                    handleUpdatePresenca(aluno._id, dia, value)
-                                  }
-                                >
-                                  <SelectTrigger className='w-20 mx-auto'>
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value='P'>P</SelectItem>
-                                    <SelectItem value='F'>F</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </TableCell>
-                            ))}
+                            {course.diasAula.map(
+                              (dia: string, index: number) => (
+                                <TableCell key={dia} className='text-center'>
+                                  <Select
+                                    value={aluno.presencas?.[index] || 'P'}
+                                    onValueChange={(value: 'P' | 'F') =>
+                                      handleUpdatePresenca(
+                                        aluno._id,
+                                        dia,
+                                        value
+                                      )
+                                    }
+                                  >
+                                    <SelectTrigger className='w-20 mx-auto'>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value='P'>P</SelectItem>
+                                      <SelectItem value='F'>F</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </TableCell>
+                              )
+                            )}
                             <TableCell className='text-center'>
                               <Select
                                 value={aluno.status || 'Aprovado'}
