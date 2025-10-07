@@ -258,7 +258,7 @@ const ModuleView = () => {
                                   }
                                   className='w-12'
                                 >
-                                  {aluno.presencas[index] ? 'P' : '-'}
+                                  {aluno.presencas[index] === true ? 'P' : '-'}
                                 </Badge>
                               </TableCell>
                             ))}
