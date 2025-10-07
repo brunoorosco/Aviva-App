@@ -30,7 +30,7 @@ import Toast from '@/components/Toast'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
-import { useHttpGet } from '@/hooks/api'
+import { useHttpGet, useHttpPut } from '@/hooks/api'
 
 // Se quiser tipar o aluno localmente:
 type TAluno = {
@@ -50,9 +50,8 @@ const ModuleEdit = () => {
   const isNew = id === 'new' || !id
   const isEdit = !isNew
 
-  const { data: courseData, isLoading } = useHttpGet<TEscolaProfeta>(
-    `/api/protected/churches/${churchId}/escola-profeta/${id}`
-  )
+  const baseUrl = `/api/protected/churches/${churchId}/escola-profeta/${id}`
+  const { data: courseData, isLoading } = useHttpGet<TEscolaProfeta>(baseUrl)
   const courseEdit = courseData?.data
 
   const emptyCourse: TEscolaProfeta = {
@@ -231,22 +230,21 @@ const ModuleEdit = () => {
     } as TEscolaProfeta)
   }
 
-  const handleUpdatePresenca = (
+  const handleUpdatePresenca = async (
     alunoId: string,
-    dia: string,
+    dia: number,
     presenca: 'P' | 'F'
   ) => {
+    await useHttpPut({
+      url: `${baseUrl}/aluno/${alunoId}/presenca`,
+      data: { dia, presenca }
+    })
+
     setCourse({
       ...course,
-      alunos: (course.alunos || []).map((a: any) =>
+      alunos: (course.alunos || []).map((a) =>
         a._id === alunoId
-          ? {
-              ...a,
-              presencas: {
-                ...a.presencas,
-                [dia]: presenca
-              }
-            }
+          ? { ...a, presencas: { ...a.presencas, [dia]: presenca } }
           : a
       )
     } as TEscolaProfeta)
@@ -498,11 +496,16 @@ const ModuleEdit = () => {
                               (dia: string, index: number) => (
                                 <TableCell key={dia} className='text-center'>
                                   <Select
-                                    value={aluno.presencas?.[index] || 'P'}
+                                    disabled={!aluno._id}
+                                    value={
+                                      aluno.presencas?.[index] === true
+                                        ? 'P'
+                                        : ''
+                                    }
                                     onValueChange={(value: 'P' | 'F') =>
                                       handleUpdatePresenca(
                                         aluno._id,
-                                        dia,
+                                        index,
                                         value
                                       )
                                     }

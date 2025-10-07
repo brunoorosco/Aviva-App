@@ -63,4 +63,24 @@ export class EscolaProfetaRepository {
       throw error
     }
   }
+
+  async updatePresence(
+    id: string,
+    alunoId: string,
+    data: { dia: number; presenca: boolean }
+  ): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName)
+      const result = await collection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { [`alunos.$[aluno].presencas.${data.dia}`]: data.presenca } },
+        { arrayFilters: [{ 'aluno._id': alunoId }] }
+      )
+      console.log(result)
+      return result
+    } catch (error) {
+      console.error('Error updating presence:', error)
+      throw error
+    }
+  }
 }
