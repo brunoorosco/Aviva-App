@@ -1,20 +1,7 @@
 import { AddressModel } from './address'
+import { Cargo, Permission, TMinisterialLevel } from './ministerial'
 
-export type Permission =
-  | 'USER'
-  | 'ADMIN_CHURCH'
-  | 'SUPERADMIN'
-  | 'SECRETARIA'
-  | 'SUPERVISOR'
-  | 'ADMIN_CELL'
-export type Cargo =
-  | 'MEMBRO'
-  | 'DISCIPÚLO'
-  | 'AUXILIAR'
-  | 'LÍDER'
-  | 'SUPERVISOR'
-  | 'PASTOR'
-  | 'BISPO'
+
 
 export type User = {
   _id: string
@@ -40,6 +27,7 @@ export type User = {
   cae?: boolean
   escolaProfeta?: boolean
   historicoEscolaProfeta?: Historico[]
+ consagracao?: Consagracao[]
 }
 
 type Historico = {
@@ -51,4 +39,9 @@ type Historico = {
 type Cem = {
   _id: string
   name: string
+}
+
+type Consagracao = {
+  data: string
+  ministerialLevel: TMinisterialLevel
 }

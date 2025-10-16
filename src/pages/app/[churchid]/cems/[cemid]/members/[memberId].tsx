@@ -28,7 +28,7 @@ const MembersById = () => {
 
   return (
     <div className='min-h-screen bg-gradient-bg p-2'>
-      <div className='max-w-4xl mx-auto space-y-4'>
+      <div className='max-w-7xl mx-auto space-y-4'>
         <Button
           variant='ghost'
           className='flex items-center gap-2'

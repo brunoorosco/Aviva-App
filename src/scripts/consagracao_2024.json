@@ -1,0 +1,84 @@
+[
+  {
+    "name": "Willian da Cunha Leão",
+    "ministerialLevel": "Separado ao Pastorado",
+    "data": "2024-12-15"
+  },
+  {
+    "name": "Sumária Almeida Leão",
+    "ministerialLevel": "Separado ao Pastorado",
+    "data": "2024-12-15"
+  },
+
+  { "name": "Hiago Macedo Miranda", "ministerialLevel": "Supervisor", "data": "2024-12-15" },
+  { "name": "Irineia Ferreira Damasceno", "ministerialLevel": "Supervisor", "data": "2024-12-15" },
+
+  {
+    "name": "Lizandra Verrone da Silva",
+    "ministerialLevel": "Separado à Supervisão",
+    "data": "2024-12-15"
+  },
+  { "name": "Leandro Batista", "ministerialLevel": "Separado à Supervisão", "data": "2024-12-15" },
+  {
+    "name": "Jorge Silva Filho",
+    "ministerialLevel": "Separado à Supervisão",
+    "data": "2024-12-15"
+  },
+  {
+    "name": "Rogério Oliveira dos Santos",
+    "ministerialLevel": "Separado à Supervisão",
+    "data": "2024-12-15"
+  },
+
+  { "name": "Rafael Araújo Gomes", "ministerialLevel": "Líder", "data": "2024-12-15" },
+  { "name": "Barbara Souza dos Passos", "ministerialLevel": "Líder", "data": "2024-12-15" },
+  { "name": "Alex da Silva Soares Borges", "ministerialLevel": "Líder", "data": "2024-12-15" },
+  { "name": "Rogério dos Santos Andrade", "ministerialLevel": "Líder", "data": "2024-12-15" },
+  { "name": "Kate Laís Pires dos Santos", "ministerialLevel": "Líder", "data": "2024-12-15" },
+  { "name": "Vanessa Pires dos Santos", "ministerialLevel": "Líder", "data": "2024-12-15" },
+  { "name": "Luciano José de Oliveira Santana", "ministerialLevel": "Líder", "data": "2024-12-15" },
+  { "name": "Jorge Luiz Alves Pedroso", "ministerialLevel": "Líder", "data": "2024-12-15" },
+  { "name": "Sarah da Silva Araújo Severiano", "ministerialLevel": "Líder", "data": "2024-12-15" },
+  { "name": "Elaine Gomes de Oliveira Santos", "ministerialLevel": "Líder", "data": "2024-12-15" },
+
+  {
+    "name": "Robson Saint Clair Correia da Silva",
+    "ministerialLevel": "Auxiliar",
+    "data": "2024-12-15"
+  },
+  {
+    "name": "Cristiane dos Santos Ferreira Silva",
+    "ministerialLevel": "Auxiliar",
+    "data": "2024-12-15"
+  },
+  { "name": "Robson da Silva Matos", "ministerialLevel": "Auxiliar", "data": "2024-12-15" },
+  { "name": "Karine Neves Costa Matos", "ministerialLevel": "Auxiliar", "data": "2024-12-15" },
+  {
+    "name": "Kailane Isabel de Oliveira Borges",
+    "ministerialLevel": "Auxiliar",
+    "data": "2024-12-15"
+  },
+  { "name": "Alanis Leticia de Melo Isaías", "ministerialLevel": "Auxiliar", "data": "2024-12-15" },
+  {
+    "name": "Tharsila Stephanie Nunes Alves",
+    "ministerialLevel": "Auxiliar",
+    "data": "2024-12-15"
+  },
+  { "name": "Guilherme de Barros Alves", "ministerialLevel": "Auxiliar", "data": "2024-12-15" },
+  { "name": "Joyce Carolina Aguiar", "ministerialLevel": "Auxiliar", "data": "2024-12-15" },
+  { "name": "Alice Silva Damasceno", "ministerialLevel": "Auxiliar", "data": "2024-12-15" },
+  { "name": "Rayssa Caroline Silva", "ministerialLevel": "Auxiliar", "data": "2024-12-15" },
+  {
+    "name": "Vinícius de Sousa Rodrigues Batista",
+    "ministerialLevel": "Auxiliar",
+    "data": "2024-12-15"
+  },
+  { "name": "Adriana Rodrigues de Araújo", "ministerialLevel": "Auxiliar", "data": "2024-12-15" },
+  { "name": "Ivaneide Pereira Amaral", "ministerialLevel": "Auxiliar", "data": "2024-12-15" },
+  {
+    "name": "Laiza Camila Borges Pereira da Silva",
+    "ministerialLevel": "Auxiliar",
+    "data": "2024-12-15"
+  },
+  { "name": "Douglas Ramos da Silva Borges", "ministerialLevel": "Auxiliar", "data": "2024-12-15" }
+]

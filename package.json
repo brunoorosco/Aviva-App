@@ -83,5 +83,8 @@
     "string-similarity": "^4.0.4",
     "tailwindcss": "^3.2.4",
     "tsx": "^4.20.3"
+  },
+  "prettier":{
+    "printWidth": 100
   }
 }
