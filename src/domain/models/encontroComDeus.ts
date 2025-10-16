@@ -23,6 +23,8 @@ type People = {
   igreja?: string
   endereco?: string
   bairro?: string
+  sexo?: string
+  dataNascimento?: string
 }
 
 export type TPeople = People

@@ -18,6 +18,7 @@ type Props = {
 
 export default function EncontroPage({ encontro }: Props) {
   const router = useRouter()
+ 
   if (!encontro) return <p>Encontro não encontrado.</p>
   return (
     <div className='sm:p-6 max-w-4xl mx-auto'>

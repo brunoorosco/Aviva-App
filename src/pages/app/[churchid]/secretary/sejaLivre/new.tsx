@@ -20,6 +20,7 @@ type TEncontrista = {
   email?: string
   endereco?: string
   idade?: number
+  dataNascimento?: string
 }
 type FormValues = {
   encontristas: TEncontrista[]

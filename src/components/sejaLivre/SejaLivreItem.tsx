@@ -7,7 +7,7 @@ type Props = {
   basePath: string
 }
 
-const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
+const SejaLivreItem = ({ encontro, onEdit, basePath }: Props) => {
   // const [disabled, setDisabled] = useState(false)
   // const toggleDisabled = () => setDisabled((prev) => !prev)
 
@@ -56,4 +56,4 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
   )
 }
 
-export default EncontroComDeusItem
+export default SejaLivreItem

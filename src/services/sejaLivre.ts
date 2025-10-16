@@ -1,4 +1,5 @@
 import { TPeople } from '@/domain/models/encontroComDeus'
+import { excelDateToJSDate } from '@/utils/date'
 import { ChurChMongoRepository } from '../infra/db/repositories/mongo/churchs'
 import { SejaLivreRepository } from '../infra/db/repositories/mongo/sejaLivre'
 
@@ -30,7 +31,6 @@ export const createSejaLivreService = async (data: any): Promise<any> => {
     data: new Date(),
     encontristas: dataNormalizada
   }
-  console.log(novoEncontro)
   const saved = await encontroRepository.create(novoEncontro)
   return saved
 }
@@ -63,12 +63,20 @@ function normalizarEncontristasPorIgreja(
     const contemIgreja = entrada.rede?.toLowerCase().includes('igreja')
 
     const obj = {
-      nome: entrada.nome,
+      nome: entrada.nome.trim(),
       idade: entrada.idade,
-      telefone: entrada.telefone,
-      endereco: entrada.endereco ? `${entrada.endereco} ${entrada.bairro}`.trim() : null,
-      igreja: contemIgreja ? entrada.rede! : nomeDaIgreja,
-      ...(contemIgreja ? {} : { rede: entrada.rede })
+      telefone: entrada?.telefone ? entrada?.telefone : null,
+      sexo: entrada?.sexo ? entrada.sexo.trim() : null,
+      dataNascimento: entrada.dataNascimento
+        ? excelDateToJSDate(Number(entrada.dataNascimento)).toLocaleDateString(
+            'pt-BR'
+          )
+        : null,
+      endereco: entrada.endereco?.trim()
+        ? `${entrada.endereco} ${entrada.bairro}`.trim()
+        : null,
+      igreja: contemIgreja ? entrada.rede!.trim() : nomeDaIgreja,
+      ...(contemIgreja ? {} : { rede: entrada.rede?.trim() })
     }
 
     return limparObjeto(obj) as TPeople

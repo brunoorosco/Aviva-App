@@ -5,7 +5,7 @@ import Pagination from '@/components/Pagination'
 import EditMemberModal from '@/components/Member/EditMemberModal'
 import SejaLivreHeader from '@/components/sejaLivre/SejaLivreHeader'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
-import EncontroComDeusItem from '@/components/sejaLivre/SejaLivreItem'
+import SejaLivreItem from '@/components/sejaLivre/SejaLivreItem'
 
 const SejaLivreList = () => {
   const router = useRouter()
@@ -30,8 +30,8 @@ const SejaLivreList = () => {
     `/api/protected/churches/${churchid}/sejaLivre?page=${page}&limit=${limit}`
   )
 
-  const handleEdit = (batismo: TEncontroComDeus) => {
-    setSelectedEncontro(batismo)
+  const handleEdit = (encontrista: TEncontroComDeus) => {
+    setSelectedEncontro(encontrista)
     setShowEditModal(true)
   }
 
@@ -59,7 +59,7 @@ const SejaLivreList = () => {
             <p>Carregando encontros...</p>
           ) : (
             encontros?.data.data.map((encontro: TEncontroComDeus) => (
-              <EncontroComDeusItem
+              <SejaLivreItem
                 key={encontro._id}
                 encontro={encontro}
                 onEdit={() => handleEdit(encontro)}

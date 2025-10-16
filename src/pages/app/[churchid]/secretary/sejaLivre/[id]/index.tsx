@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
 import { getEncontroComDeusByIdService } from '@/services/encontroComDeus'
+import { getSejaLivreByIdService } from '@/services/sejaLivre'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { GetServerSideProps } from 'next/types'
@@ -100,7 +101,7 @@ export default function EncontroPage({ encontro }: Props) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const id = ctx.params?.id as string
   const churchid = ctx.params?.churchid as string
-  const encontro = await getEncontroComDeusByIdService(churchid, id)
+  const encontro = await getSejaLivreByIdService(churchid, id)
 
   if (!encontro) return { props: { encontro: null } }
 
