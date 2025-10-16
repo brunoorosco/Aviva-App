@@ -1,0 +1,108 @@
+[
+  { "name": "Alessandra Estevão", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Danila Dantas moreira gonçalves", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Ivan Macedo", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "jhonny gonçalves dos santos", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Marina Dantas", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Rivaldo Moreira", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+
+  { "name": "Jorge Luiz Alves Pedroso", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  {
+    "name": "Luciano José de Oliveira Santana",
+    "ministerialLevel": "Auxiliar",
+    "data": "2023-12-10"
+  },
+  {
+    "name": "Rosemeire Ferreira de Almeida Mattoso",
+    "ministerialLevel": "Auxiliar",
+    "data": "2023-12-10"
+  },
+
+  { "name": "Clécia dos Santos", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Eduardo Costa", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Elias Mascarenhas", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Gabriel Lourenço", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Paloma Ferreira Santos", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Rafael Batista da Silva", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Robert Lorasque", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Rosana Patrocínio", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Vitória Leite Borba", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+
+  { "name": "Eliezer Teixeira de Lima", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Jessica Gomes de Lima", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  {
+    "name": "Luciola Dias Bezerra Lima Santos",
+    "ministerialLevel": "Auxiliar",
+    "data": "2023-12-10"
+  },
+  { "name": "Marcia Correa Pimentel", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Maria Cassiana dos Santos", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Maria Ivonete Vieira de Sales", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Reinaldo Barbosa Dos Santos", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Simone Costa Silva", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+
+  { "name": "Camila da Silva", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Daniel Kanashiro dos Reis", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Igor Moreira Gomes", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Juliana Elisbão de Souza", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Maria Ap Santos Nunes", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  {
+    "name": "Valdemar Inácio de Souza Júnior",
+    "ministerialLevel": "Auxiliar",
+    "data": "2023-12-10"
+  },
+  { "name": "Víctor Gabriel da Silva", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+
+  { "name": "Alex Silva Soares Borges", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Alexandra Lourenço da Silva", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Alvaro Augusto Pires", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  {
+    "name": "Bárbara Lavínia Alves da Silva",
+    "ministerialLevel": "Auxiliar",
+    "data": "2023-12-10"
+  },
+  { "name": "Bruna Miranda da Silva", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Carlita Pinto Santos", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Cleones Cardoso da Silva", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Esther Pereira de Souza Dias", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Kathleen Silveira Santos", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Katia Silveira Lemos", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Roberta Luz Orosco", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Rogério dos Santos Andrade", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Thays Marques Angelini Pires", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Vanessa Cristina da Silva", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Victor Silva Daniel", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+  { "name": "Dionef Jonathen de Jesus", "ministerialLevel": "Auxiliar", "data": "2023-12-10" },
+
+  {
+    "name": "Anderson OLIVEIRA BISPO DOS SANTOS",
+    "ministerialLevel": "Separado à Supervisão",
+    "data": "2023-12-10"
+  },
+  { "name": "Rinaldo Lorasque", "ministerialLevel": "Separado à Supervisão", "data": "2023-12-10" },
+  { "name": "Regiane Lorasque", "ministerialLevel": "Separado à Supervisão", "data": "2023-12-10" },
+
+  { "name": "Cinthia Souza de Paula", "ministerialLevel": "Líder", "data": "2023-12-10" },
+  {
+    "name": "Edson Ferreira Mattoso de Almeida",
+    "ministerialLevel": "Líder",
+    "data": "2023-12-10"
+  },
+  { "name": "Maria Natália da Silva Menezes", "ministerialLevel": "Líder", "data": "2023-12-10" },
+  { "name": "Rodrigo Morais Paulino", "ministerialLevel": "Líder", "data": "2023-12-10" },
+
+  { "name": "Gilson Souza Santana", "ministerialLevel": "Líder", "data": "2023-12-10" },
+  { "name": "Jilmar Souza Santana", "ministerialLevel": "Líder", "data": "2023-12-10" },
+  { "name": "Joelma Reis Santos", "ministerialLevel": "Líder", "data": "2023-12-10" },
+
+  { "name": "Carla Regina Silva", "ministerialLevel": "Líder", "data": "2023-12-10" },
+  { "name": "Isabele Regina de França", "ministerialLevel": "Líder", "data": "2023-12-10" },
+  { "name": "Nathalya Barbosa Raimundo", "ministerialLevel": "Líder", "data": "2023-12-10" },
+
+  {
+    "name": "Ivanilde Silva Santos de Oliveira",
+    "ministerialLevel": "Líder",
+    "data": "2023-12-10"
+  },
+  { "name": "Roque Thomé de Oliveira", "ministerialLevel": "Líder", "data": "2023-12-10" }
+]
