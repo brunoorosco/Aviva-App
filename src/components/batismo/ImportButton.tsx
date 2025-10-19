@@ -25,7 +25,7 @@ const ImportButton = ({ inputFileRef }: Props) => {
 
       setIsLoading(true)
       const response = await useHttpPost({
-        url: `/api/protected/churches/${session?.user.churchId}/batismo`,
+        url: `/api/protected/churches/${session?.user.churchId}/batismo/imported`,
         data: json
       })
       setIsLoading(false)
