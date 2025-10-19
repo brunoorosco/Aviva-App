@@ -81,8 +81,9 @@ const NovoBatismo = () => {
           <ExportButton
             items={watchPeople} // <-- aqui é a lista do formulário
             mapExport={(item) => ({
-              nome: item.name,
-              rede: item.supervisorId
+              nome: "nome",
+              rede: "cem",
+              sexo: "F ou M"
             })}
             sheetName={'batismo'}
             filename={'batismo.xlsx'}
