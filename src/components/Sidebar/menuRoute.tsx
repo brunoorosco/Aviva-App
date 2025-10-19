@@ -78,6 +78,11 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
           label: 'Membros',
           icon: Users,
           link: `${base}/secretary/members`
+        },
+        {
+          label: 'Consagração',
+          icon: Users,
+          link: `${base}/secretary/consagracao`
         }
       ]
     },
