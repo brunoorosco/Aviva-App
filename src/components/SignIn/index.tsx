@@ -1,57 +1,55 @@
-import { useState, useEffect } from 'react'
-import { signIn, useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import ButtonSubmit from '../ButtonSubmit'
-import Image from 'next/image'
-import { Input } from '../ui/input'
+import { useState, useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import ButtonSubmit from "../ButtonSubmit";
+import Image from "next/image";
+import { Input } from "../ui/input";
 
 type FormValues = {
-  email: string
-  password: string
-}
+  email: string;
+  password: string;
+};
 
 const SignIn = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>()
-  const router = useRouter()
-  const { status, data: session } = useSession()
-  const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>();
+  const router = useRouter();
+  const { status, data: session } = useSession();
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (status === 'authenticated') {
-      router.push('/app')
+    if (status === "authenticated") {
+      router.push("/app");
     }
-  }, [status, router])
+  }, [status, router]);
 
   const onSubmit = handleSubmit(async ({ email, password }) => {
-    setIsLoading(true)
-    setError('')
-    const res = await signIn('credentials', {
+    setIsLoading(true);
+    setError("");
+    const res = await signIn("credentials", {
       redirect: false,
       email,
       password,
-    })
+    });
 
-    setIsLoading(false)
+    setIsLoading(false);
     if (res?.error) {
-      setError('Email ou senha inválidos')
+      setError("Email ou senha inválidos");
     } else {
-      router.replace('/app')
+      router.replace("/app");
     }
-  })
+  });
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4 bg-[#393E46]">
       <div className="w-full max-w-md bg-[#434a53] rounded-2xl p-6 shadow-xl">
         <div className="flex flex-col items-center">
-          <Image
-            src="/logo-preto.png"
-            alt="Logo"
-            width={260}
-            height={200}
-            className="mb-12"
-          />
+          <Image src="/logo-preto.png" alt="Logo" width={260} height={200} className="mb-12" />
 
           {/* Login Social Google */}
           {/* <button
@@ -67,25 +65,23 @@ const SignIn = () => {
           <form onSubmit={onSubmit} className="w-full space-y-4">
             <div>
               <Input
-                {...register('email', { required: 'E-mail é obrigatório' })}
+                {...register("email", { required: "E-mail é obrigatório" })}
                 type="email"
                 placeholder="E-mail"
-                className="text-base text-white"
+                className="text-base  bg-slate-300"
               />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
-              )}
+              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
             <div>
               <Input
-                {...register('password', {
-                  required: 'Senha é obrigatória',
-                  minLength: { value: 6, message: 'Mínimo 6 caracteres' }
+                {...register("password", {
+                  required: "Senha é obrigatória",
+                  minLength: { value: 6, message: "Mínimo 6 caracteres" },
                 })}
                 type="password"
                 placeholder="Senha"
-                className="text-base text-white"
+                className="text-base  bg-slate-300"
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
@@ -105,7 +101,7 @@ const SignIn = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SignIn
+export default SignIn;

@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { mockMinisterialHistory } from "./mockMinisterial";
+import { mockMinisterialHistory } from "../../../../../mocks/mockMinisterial";
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
