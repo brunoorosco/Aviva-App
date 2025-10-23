@@ -1,131 +1,126 @@
-'use client'
+"use client";
 
-import { useForm, Controller } from 'react-hook-form'
-import { useState } from 'react'
-import { useRouter } from 'next/router'
-import { useSession } from 'next-auth/react'
-import { Input } from '@/components/ui/input'
-import { useHttpPost } from '@/hooks/api'
-import Toast from '@/components/Toast'
-import { Masks } from '@/utils/masks'
-import ButtonSubmit from '@/components/ButtonSubmit'
-import { SelectSupervisorCem } from '@/components/Select/SelectSupervisoresCem'
+import { useForm, Controller } from "react-hook-form";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import { Input } from "@/components/ui/input";
+import { useHttpPost } from "@/hooks/api";
+import Toast from "@/components/Toast";
+import { Masks } from "@/utils/masks";
+import ButtonSubmit from "@/components/ButtonSubmit";
+import { SelectSupervisorCem } from "@/components/Select/SelectSupervisoresCem";
+import { Textarea } from "@/components/ui/textarea";
 
 type FormValues = {
-  name: string
-  zipcode: string
-  street: string
-  number: string
-  city: string
-  pastor_id?: string
-  supervisor_id?: string
-}
+  name: string;
+  zipcode: string;
+  street: string;
+  number: string;
+  city: string;
+  pastor_id?: string;
+  supervisor_id?: string;
+  description?: string;
+};
 
 const NewRede = () => {
-  const { control, handleSubmit } = useForm<FormValues>()
-  const router = useRouter()
-  const { data: session } = useSession()
-  const [isLoading, setIsLoading] = useState(false)
+  const { control, handleSubmit } = useForm<FormValues>();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const response = await useHttpPost({
         url: `/api/protected/churches/${session?.user.churchId}/cems`,
-        data
-      })
-      setIsLoading(false)
+        data,
+      });
+      setIsLoading(false);
 
       if (response?.error) {
-        Toast.showError('Erro ao Salvar!')
-        return
+        Toast.showError("Erro ao Salvar!");
+        return;
       }
 
-      Toast.showSuccess('Salvo com Sucesso!')
-      router.back()
+      Toast.showSuccess("Salvo com Sucesso!");
+      router.back();
     } catch (error) {
-      setIsLoading(false)
-      console.error('[ERROR]:', error)
-      Toast.showError('Erro ao salvar')
+      setIsLoading(false);
+      console.error("[ERROR]:", error);
+      Toast.showError("Erro ao salvar");
     }
-  })
+  });
 
   return (
-    <div className='flex flex-col items-center p-4 md:p-6 lg:p-8'>
-      <div className='w-full max-w-5xl text-center'>
-        <h1 className='text-2xl md:text-3xl text-gray-600 dark:text-dark-primary'>
+    <div className="flex flex-col items-center p-4 md:p-6 lg:p-8">
+      <div className="w-full max-w-5xl text-center">
+        <h1 className="text-2xl md:text-3xl text-gray-600 dark:text-dark-primary">
           Cadastro de Rede
         </h1>
       </div>
 
-      <form
-        onSubmit={onSubmit}
-        className='w-full max-w-5xl mt-6 flex flex-col gap-4'
-      >
+      <form onSubmit={onSubmit} className="w-full max-w-3xl mt-6 flex flex-col gap-4">
         {/* Nome da Rede */}
         <Controller
-          name='name'
+          name="name"
           control={control}
           rules={{ required: true }}
           render={({ field }) => (
             <Input
               {...field}
-              placeholder='Nome da Rede'
-              className='uppercase w-full'
+              placeholder="Nome da Rede"
+              className="uppercase w-full"
               onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
             />
           )}
         />
 
         {/* Logradouro e Número */}
-        <div className='flex flex-col md:flex-row gap-4'>
+        <div className="flex flex-col md:flex-row gap-4">
           <Controller
-            name='street'
+            name="street"
             control={control}
             render={({ field }) => (
               <Input
                 {...field}
-                placeholder='Logradouro'
-                className='uppercase w-full md:w-2/3'
+                placeholder="Logradouro"
+                className="uppercase w-full md:w-2/3"
                 onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
               />
             )}
           />
           <Controller
-            name='number'
+            name="number"
             control={control}
             render={({ field }) => (
-              <Input
-                {...field}
-                placeholder='Nº'
-                className='uppercase w-full md:w-1/3'
-              />
+              <Input {...field} placeholder="Nº" className="uppercase w-full md:w-1/3" />
             )}
           />
         </div>
 
         {/* Cidade e CEP */}
-        <div className='flex flex-col md:flex-row gap-4'>
+        <div className="flex flex-col md:flex-row gap-4">
           <Controller
-            name='city'
+            name="city"
             control={control}
             render={({ field }) => (
               <Input
                 {...field}
-                placeholder='Cidade'
-                className='uppercase w-full md:w-2/3'
+                placeholder="Cidade"
+                className="uppercase w-full md:w-2/3"
                 onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
               />
             )}
           />
           <Controller
-            name='zipcode'
+            name="zipcode"
             control={control}
             render={({ field }) => (
               <Input
                 {...field}
-                placeholder='CEP'
-                className='w-full md:w-1/3'
+                placeholder="CEP"
+                className="w-full md:w-1/3"
                 onChange={(e) => field.onChange(Masks.cep(e.target.value))}
               />
             )}
@@ -133,22 +128,36 @@ const NewRede = () => {
         </div>
 
         {/* Supervisor */}
-        <div className='w-full'>
+        {/* <div className="w-full">
           <SelectSupervisorCem
             errors={false}
-            title='Supervisores'
-            name='supervisor_id'
+            title="Supervisores"
+            name="supervisor_id"
             control={control}
+          />
+        </div> */}
+        <div className="w-full">
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <Textarea
+                {...field}
+                placeholder="Descrição"
+                className="w-full"
+                onChange={(e) => field.onChange(e.target.value)}
+              />
+            )}
           />
         </div>
 
         {/* Botão */}
-        <div className='w-full'>
-          <ButtonSubmit text='Salvar' type='submit' disabled={isLoading} />
+        <div className="w-full">
+          <ButtonSubmit text="Salvar" type="submit" disabled={isLoading} />
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default NewRede
+export default NewRede;

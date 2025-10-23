@@ -1,7 +1,8 @@
-import { AddressModel } from './address'
+import { AddressModel } from "./address";
 
 export type CellsModel = {
-  _id: string
-  name: string
-  membersActive?: number
-} & AddressModel
+  _id: string;
+  name: string;
+  membersActive?: number;
+  description?: string;
+} & AddressModel;
