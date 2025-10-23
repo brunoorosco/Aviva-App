@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import { Loading } from '../Loading'
 import ButtonSubmit from '../ButtonSubmit'
 
 type FormValues = {

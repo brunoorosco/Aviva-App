@@ -51,7 +51,8 @@ const Cem = () => {
               onClick={() => goToMembers(cem._id)}
             >
               <CardHeader className='flex flex-col items-center'>
-                <CardTitle className='mt-2 text-lg'>{cem.name}</CardTitle>
+                <CardTitle className='-mb-2 text-lg'>{cem.name}</CardTitle>
+                <span className='text-sm line-clamp-1'>{cem.description}</span>
               </CardHeader>
               <CardContent className='text-center'>
                 <p className='text-gray-600 mb-2 text-xl font-semibold'>
