@@ -8,6 +8,7 @@ import {
   Award,
   BookOpen,
   Calendar,
+  Edit,
   GraduationCap,
   Heart,
   Mail,
@@ -15,7 +16,7 @@ import {
   Phone,
   Plus,
   Shield,
-  User,
+  UserIcon,
   Users,
   Waves,
 } from "lucide-react";
@@ -28,6 +29,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useState } from "react";
+import { User } from "@/domain/models/users";
+import EditMemberModal from "@/components/Member/EditMemberModal";
 import {
   ministerialLevels,
   TMinisterialLevel,
@@ -61,6 +64,8 @@ export const MemberCard = ({ member }: Props) => {
   const [newPersonName, setNewPersonName] = useState("");
   const [selectedLevel, setSelectedLevel] = useState<TMinisterialLevel>("Auxiliar");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<User | null>(null);
 
   const handleAddRecord = () => {
     if (!selectedPersonId) return;
@@ -87,8 +92,23 @@ export const MemberCard = ({ member }: Props) => {
     setSelectedPersonId("");
   };
 
+  function handleModal() {
+    setShowEditModal(true)
+  }
+
   return (
     <div className="space-y-4">
+      {showEditModal && (
+        <EditMemberModal
+          member={selectedMember}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedMember(null);
+          }}
+          onUpdated={() => {}}
+        />
+      )}
+
       {/* Header Card */}
       <Card className="shadow-soft border-0">
         <CardContent className="py-6 px-8">
@@ -100,8 +120,16 @@ export const MemberCard = ({ member }: Props) => {
                   {getInitials(member.name)}
                 </AvatarFallback>
               </Avatar>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="absolute -top-8 -left-4 w-8 h-8 rounded-full hover:bg-gray-200 text-gray-500 bg-transparent"
+                onClick={handleModal}
+              >
+                <Edit className="w-4 h-4" />
+              </Button>
               <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-soft">
-                <User className="w-4 h-4 text-white" />
+                <UserIcon className="w-4 h-4 text-white" />
               </div>
             </div>
 

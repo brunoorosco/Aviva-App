@@ -30,7 +30,7 @@ const MembersWithImportExport = () => {
     return () => clearTimeout(handler)
   }, [search])
 
-  const { data: members, mutate: refreshMembers } = useHttpGet<{
+ const { data: members, mutate: refreshMembers } = useHttpGet<{
     data: User[]
     total: number
     page: number
@@ -39,7 +39,7 @@ const MembersWithImportExport = () => {
     `/api/protected/churches/${churchid}/users?page=${page}&limit=${limit}${
       debouncedSearch ? `&name=${debouncedSearch}` : ''
     }`
-  )
+  ) 
 
   const handleDesactive = async (id: string) => {
     await useHttpPatch({

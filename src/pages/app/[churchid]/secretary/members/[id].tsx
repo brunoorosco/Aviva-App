@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { User } from '@/domain/models/users'
 import { MemberCard } from '@/components/Member/MemberCard'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, PenIcon } from 'lucide-react'
 
 const MembersById = () => {
   const router = useRouter()
