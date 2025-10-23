@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Plus, Calendar, User, FileText } from "lucide-react";
+import { ArrowLeft, Plus, Calendar, User, FileText, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { mockMinisterialHistory } from "../../../../../mocks/mockMinisterial";
+import { mockConsagracoes, mockMinisterialHistory, mockPeople } from "../../../../../mocks/mockMinisterial";
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -27,10 +27,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useRouter } from "next/router";
 import {
   ministerialLevels,
+  TConsagracao,
+  TConsagracaoUser,
   TMinisterialHistory,
   TMinisterialLevel,
   TMinisterialRecord,
+  TPerson,
 } from "@/domain/models/ministerial";
+import { Badge } from "@/components/ui/badge";
 
 const MinisterialHistory = () => {
   const navigate = useRouter();
@@ -39,11 +43,15 @@ const MinisterialHistory = () => {
   const [selectedPersonId, setSelectedPersonId] = useState<string>("");
   const [isPdfDialogOpen, setIsPdfDialogOpen] = useState(false);
   const [pdfSortOrder, setPdfSortOrder] = useState<"alfabetica" | "celula" | "cargo">("alfabetica");
+  const [consagracoes, setConsagracoes] = useState<TConsagracao[]>(mockConsagracoes);
 
   // Form states
   const [newPersonName, setNewPersonName] = useState("");
   const [selectedLevel, setSelectedLevel] = useState<TMinisterialLevel>("Auxiliar");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCargo, setSelectedCargo] = useState<TMinisterialLevel>("Auxiliar");
+  const [selectedUsers, setSelectedUsers] = useState<TConsagracaoUser[]>([]);
 
   const handleAddNewPerson = () => {
     if (!newPersonName.trim()) return;
@@ -103,13 +111,58 @@ const MinisterialHistory = () => {
 
   const pendingConsecrations = getPendingConsecrations();
 
+  const filteredPeople = mockPeople.filter((person) =>
+    person.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleAddPersonToList = (person: TPerson) => {
+    // Check if person is already in the list
+    if (selectedUsers.some((u) => u.user_id === person._id)) return;
+
+    setSelectedUsers([
+      ...selectedUsers,
+      {
+        user_id: person._id,
+        name: person.name,
+        cell_id: person.cell_id,
+      },
+    ]);
+    setSearchQuery("");
+  };
+  const handleRemovePersonFromList = (userId: string) => {
+    setSelectedUsers(selectedUsers.filter((u) => u.user_id !== userId));
+  };
+
+  const handleSaveConsagracao = () => {
+    if (selectedUsers.length === 0) return;
+
+    const newConsagracao: TConsagracao = {
+      _id: Date.now().toString(),
+      consagracao_at: format(selectedDate, "yyyy-MM-dd"),
+      cargo: selectedCargo,
+      users: selectedUsers,
+    };
+
+    setConsagracoes(
+      [...consagracoes, newConsagracao].sort((a, b) =>
+        b.consagracao_at.localeCompare(a.consagracao_at)
+      )
+    );
+
+    // Reset form
+    setSelectedUsers([]);
+    setSelectedCargo("Auxiliar");
+    setSelectedDate(new Date());
+    setIsAddDialogOpen(false);
+  };
+
   const generatePDF = () => {
     const doc = new jsPDF();
     let yPosition = 20;
 
     // Title
     doc.setFontSize(16);
-    doc.text("Relatório de Mudanças Ministeriais", 20, yPosition);
+    doc.text(`Consagração Ministerial - ${new Date().getFullYear()} `, 20, yPosition);
     yPosition += 10;
 
     doc.setFontSize(10);
@@ -272,151 +325,182 @@ const MinisterialHistory = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Add New Person */}
+            {/* Add New Consagracao */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Adicionar Nova Pessoa
+                  <Plus className="h-5 w-5" />
+                  Nova Consagração
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Nome completo"
-                    value={newPersonName}
-                    onChange={(e) => setNewPersonName(e.target.value)}
-                  />
-                  <Button onClick={handleAddNewPerson}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Adicionar
-                  </Button>
-                </div>
+                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="w-full">
+                      <Users className="h-4 w-4 mr-2" />
+                      Adicionar Consagração
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Adicionar Nova Consagração</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="cargo">Cargo Ministerial</Label>
+                        <Select
+                          value={selectedCargo}
+                          onValueChange={(value) => setSelectedCargo(value as TMinisterialLevel)}
+                        >
+                          <SelectTrigger id="cargo">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ministerialLevels.map((level) => (
+                              <SelectItem key={level} value={level}>
+                                {level}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="date">Data da Consagração</Label>
+                        <Input
+                          id="date"
+                          type="date"
+                          value={format(selectedDate, "yyyy-MM-dd")}
+                          onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="search">Buscar Pessoa</Label>
+                        <Input
+                          id="search"
+                          placeholder="Digite o nome..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        {searchQuery && filteredPeople.length > 0 && (
+                          <div className="mt-2 border rounded-md max-h-48 overflow-y-auto">
+                            {filteredPeople.map((person) => (
+                              <div
+                                key={person._id}
+                                className="p-3 hover:bg-muted cursor-pointer border-b last:border-b-0"
+                                onClick={() => handleAddPersonToList(person)}
+                              >
+                                <p className="font-medium">{person.name}</p>
+                                <p className="text-sm text-muted-foreground">{person.cell_name}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {selectedUsers.length > 0 && (
+                        <div>
+                          <Label>Pessoas Selecionadas</Label>
+                          <div className="mt-2 space-y-2">
+                            {selectedUsers.map((user) => {
+                              const person = mockPeople.find((p) => p._id === user.user_id);
+                              return (
+                                <div
+                                  key={user.user_id}
+                                  className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                                >
+                                  <div>
+                                    <p className="font-medium">{user.name}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {person?.cell_name}
+                                    </p>
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleRemovePersonFromList(user.user_id)}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      <Button
+                        onClick={handleSaveConsagracao}
+                        className="w-full"
+                        disabled={selectedUsers.length === 0}
+                      >
+                        Salvar Consagração
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </CardContent>
             </Card>
 
-            {/* People List with Timeline */}
-            {histories.map((person) => (
-              <Card key={person._id}>
+            {/* Consagracoes List */}
+            {consagracoes.map((consagracao) => (
+              <Card key={consagracao._id}>
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl">{person.name}</CardTitle>
-                    <Dialog
-                      open={isAddDialogOpen && selectedPersonId === person._id}
-                      onOpenChange={(open) => {
-                        setIsAddDialogOpen(open);
-                        if (open) setSelectedPersonId(person._id);
-                        else setSelectedPersonId("");
-                      }}
-                    >
-                      <DialogTrigger asChild>
-                        <Button size="sm" onClick={() => setSelectedPersonId(person._id)}>
-                          <Plus className="h-4 w-4 mr-2" />
-                          Nova Mudança
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Adicionar Mudança Ministerial</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div>
-                            <Label htmlFor="level">Nível Ministerial</Label>
-                            <Select
-                              value={selectedLevel}
-                              onValueChange={(value) =>
-                                setSelectedLevel(value as TMinisterialLevel)
-                              }
-                            >
-                              <SelectTrigger id="level">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {ministerialLevels.map((level) => (
-                                  <SelectItem key={level} value={level}>
-                                    {level}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label htmlFor="date">Data</Label>
-                            <Input
-                              id="date"
-                              type="date"
-                              value={format(selectedDate, "yyyy-MM-dd")}
-                              onChange={(e) => setSelectedDate(new Date(e.target.value))}
-                            />
-                          </div>
-                          <Button onClick={handleAddRecord} className="w-full">
-                            Adicionar
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                    <div>
+                      <CardTitle className="text-xl">{consagracao.cargo}</CardTitle>
+                      <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
+                        <Calendar className="h-3 w-3" />
+                        {format(new Date(consagracao.consagracao_at), "dd 'de' MMMM 'de' yyyy", {
+                          locale: ptBR,
+                        })}
+                      </p>
+                    </div>
+                    <Badge variant="secondary">{consagracao.users.length} pessoas</Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {person.consagracao.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-4">
-                      Nenhum histórico registrado
-                    </p>
-                  ) : (
-                    <div className="relative pl-8 space-y-4">
-                      {/* Timeline line */}
-                      <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-border" />
-
-                      {person.consagracao.map((record, idx) => (
-                        <div key={idx} className="relative">
-                          {/* Timeline dot */}
-                          <div className="absolute -left-8 top-1 w-6 h-6 rounded-full bg-primary border-4 border-background" />
-
-                          <div className="bg-muted/50 rounded-lg p-4">
-                            <div className="flex items-start justify-between gap-4">
-                              <div>
-                                <p className="font-semibold text-lg">{record.type}</p>
-                                <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                                  <Calendar className="h-3 w-3" />
-                                  {format(new Date(record.data), "dd 'de' MMMM 'de' yyyy", {
-                                    locale: ptBR,
-                                  })}
-                                </p>
-                              </div>
-                            </div>
+                  <div className="space-y-2">
+                    {consagracao.users.map((user) => {
+                      const person = mockPeople.find((p) => p._id === user.user_id);
+                      return (
+                        <div
+                          key={user.user_id}
+                          className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                        >
+                          <div>
+                            <p className="font-medium">{user.name}</p>
+                            <p className="text-sm text-muted-foreground">{person?.cell_name}</p>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      );
+                    })}
+                  </div>
                 </CardContent>
               </Card>
             ))}
           </div>
 
-          {/* Sidebar - Pending Consecrations */}
+          {/* Sidebar - Summary */}
           <div className="lg:col-span-1">
             <Card className="sticky top-8">
               <CardHeader>
-                <CardTitle>Pendentes de Consagração</CardTitle>
+                <CardTitle>Resumo</CardTitle>
               </CardHeader>
               <CardContent>
-                {pendingConsecrations.length === 0 ? (
-                  <p className="text-muted-foreground text-sm text-center py-4">
-                    Nenhuma consagração pendente
-                  </p>
-                ) : (
-                  <div className="space-y-3">
-                    {pendingConsecrations.map((item, idx) => (
-                      <div key={idx} className="bg-muted rounded-lg p-3">
-                        <p className="font-medium">{item?.nome}</p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Aguardando: {item?.pendingFor}
-                        </p>
-                      </div>
-                    ))}
+                <div className="space-y-3">
+                  <div className="bg-muted rounded-lg p-3">
+                    <p className="text-sm text-muted-foreground">Total de Consagrações</p>
+                    <p className="text-2xl font-bold">{consagracoes.length}</p>
                   </div>
-                )}
+                  <div className="bg-muted rounded-lg p-3">
+                    <p className="text-sm text-muted-foreground">Total de Pessoas</p>
+                    <p className="text-2xl font-bold">
+                      {consagracoes.reduce((acc, c) => acc + c.users.length, 0)}
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
