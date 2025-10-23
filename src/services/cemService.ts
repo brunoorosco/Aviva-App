@@ -1,43 +1,55 @@
-import { CellsMongoRepository } from '../infra/db/repositories/mongo/cells'
-import { ObjectId } from 'mongodb'
+import { CellsMongoRepository } from "../infra/db/repositories/mongo/cells";
+import { ObjectId } from "mongodb";
 
-const createCemService = async (
-  data: any,
-  churchesId: string
-): Promise<any> => {
-  const cemRepository = new CellsMongoRepository()
+const createCemService = async (data: any, churchesId: string): Promise<any> => {
+  const cemRepository = new CellsMongoRepository();
   const newCell = {
     name: data.name.toUpperCase(),
     number: data.number,
-    cep: data.zipcode.replace('-', ''),
+    cep: data.zipcode.replace("-", ""),
     city: data.city,
     street: data.street,
     state: data.state,
-    _id: new ObjectId()
-  }
-  const saved = await cemRepository.create(churchesId, newCell)
-  return saved
-}
+    _id: new ObjectId(),
+  };
+  const saved = await cemRepository.create(churchesId, newCell);
+  return saved;
+};
+
+const updateCemService = async (data: any, churchId: string, cemId: string): Promise<any> => {
+  const cemRepository = new CellsMongoRepository();
+  const newCell = {
+    name: data.name.toUpperCase(),
+    number: data.number,
+    cep: data.zipcode.replace("-", ""),
+    city: data.city,
+    street: data.street,
+    state: data.state,
+    _id: new ObjectId(),
+  };
+  const saved = await cemRepository.update(churchId, cemId, newCell);
+  return saved;
+};
 
 const getCemService = async (churchid: string) => {
-  const cemRepository = new CellsMongoRepository()
-  const result = await cemRepository.getCells(churchid)
+  const cemRepository = new CellsMongoRepository();
+  const result = await cemRepository.getCells(churchid);
 
-  return result
-}
+  return result;
+};
 
 const getCemByIdService = async (churchid: string, cemId: string) => {
-  const cemRepository = new CellsMongoRepository()
-  const result = await cemRepository.getCellsById(churchid, cemId)
-
-  return result
-}
+  const cemRepository = new CellsMongoRepository();
+  const result = await cemRepository.getCellsById(churchid, cemId);
+  console.log("cemService.ts:32", result);
+  return result;
+};
 
 const deleteCemService = async (churchId: string, cemId: string) => {
-  const cemRepository = new CellsMongoRepository()
-  const result = await cemRepository.delete(churchId, cemId)
-  return result
-}
+  const cemRepository = new CellsMongoRepository();
+  const result = await cemRepository.delete(churchId, cemId);
+  return result;
+};
 
 // const getCembyUserId = async (email: string) => {
 //   const church = await prisma.user.findUnique({
@@ -58,4 +70,4 @@ const deleteCemService = async (churchId: string, cemId: string) => {
 //   return cem
 // }
 
-export { getCemByIdService, getCemService, deleteCemService, createCemService }
+export { getCemByIdService, getCemService, deleteCemService, createCemService, updateCemService };

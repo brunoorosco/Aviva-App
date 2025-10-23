@@ -124,16 +124,16 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
       link: `${base}/dashboard`,
     },
     {
-      label: "Agenda",
+      label: "Agendas",
       icon: Calendar1Icon,
       children: [
         {
-          label: "Agenda Sede",
+          label: "Anual",
           link: `${base}/agenda`,
           icon: Calendar1Icon,
         },
         {
-          label: "Agenda Chacará Peniel",
+          label: "Chacará Aviva",
           link: `${base}/agenda/chacara-peniel`,
           icon: Calendar1Icon,
         },

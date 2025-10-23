@@ -1,14 +1,15 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import Toast from '@/components/Toast'
-import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { CellsModel } from '@/domain/models/cells'
-import { useHttpGet } from '@/hooks/api'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
-import { Suspense } from 'react'
+import Link from "next/link"
+import Toast from "@/components/Toast"
+import ButtonNew from "@/components/ButtonSubmit/buttonAdd"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CellsModel } from "@/domain/models/cells"
+import { useHttpGet } from "@/hooks/api"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/router"
+import { Suspense } from "react"
+import { Pencil } from "lucide-react"
 
 const Cem = () => {
   const router = useRouter()
@@ -30,12 +31,12 @@ const Cem = () => {
   }
 
   return (
-    <div className='flex flex-col w-full max-w-6xl p-3 mx-auto rounded-lg dark:text-dark-primary'>
+    <div className="flex flex-col w-full max-w-6xl p-3 mx-auto rounded-lg dark:text-dark-primary">
       <Suspense fallback={<p>Carregando Redes...</p>}>
         {/* Cabeçalho */}
-        <div className='flex items-center justify-between px-3 py-4 bg-white rounded-lg dark:bg-dark-secondary'>
+        <div className="flex items-center justify-between px-3 py-4 bg-white rounded-lg dark:bg-dark-secondary">
           <div>
-            <p className='text-2xl font-bold'>Nossas Redes</p>
+            <p className="text-2xl font-bold">Nossas Redes</p>
           </div>
           <Link href={`../${churchId}/cems/new`}>
             <ButtonNew />
@@ -43,24 +44,34 @@ const Cem = () => {
         </div>
 
         {/* Grid de Cards */}
-        <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-4'>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
           {cems?.data.map((cem: CellsModel) => (
-            <Card
-              key={cem._id}
-              className='rounded-2xl shadow-md hover:shadow-lg transition cursor-pointer'
-              onClick={() => goToMembers(cem._id)}
-            >
-              <CardHeader className='flex flex-col items-center'>
-                <CardTitle className='-mb-2 text-lg'>{cem.name}</CardTitle>
-                <span className='text-sm line-clamp-1'>{cem.description}</span>
-              </CardHeader>
-              <CardContent className='text-center'>
-                <p className='text-gray-600 mb-2 text-xl font-semibold'>
-                  {cem.membersActive || 0}{' '}
-                  <span className='text-base font-normal'>membros</span>{' '}
-                </p>
-              </CardContent>
-            </Card>
+            <div key={cem._id} className="relative">
+              {/* Ícone de edição */}
+              <Link
+                href={`../${churchId}/cems/${cem._id}`}
+                onClick={(e) => e.stopPropagation()} // evita abrir membros
+                className="absolute top-2 left-2 z-10 hover:bg-gray-200 hover:rounded-full p-1.5"
+              >
+                <Pencil className="w-4 h-4 text-gray-400" />
+              </Link>
+
+              <Card
+                className="rounded-2xl shadow-md hover:shadow-lg transition cursor-pointer"
+                onClick={() => goToMembers(cem._id)}
+              >
+                <CardHeader className="flex flex-col items-center">
+                  <CardTitle className="-mb-2 text-lg">{cem.name}</CardTitle>
+                  <span className="text-sm line-clamp-1">{cem.description}</span>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <p className="text-gray-600 mb-2 text-xl font-semibold">
+                    {cem.membersActive || 0}{" "}
+                    <span className="text-base font-normal">membros</span>
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
           ))}
         </div>
       </Suspense>
