@@ -16,18 +16,17 @@ const createCemService = async (data: any, churchesId: string): Promise<any> => 
   return saved;
 };
 
-const updateCemService = async (data: any, churchId: string, cemId: string): Promise<any> => {
+const updateCemService = async (churchId: string, cemId: string, data: any): Promise<any> => {
   const cemRepository = new CellsMongoRepository();
-  const newCell = {
+  const updateCell = {
     name: data.name.toUpperCase(),
     number: data.number,
-    cep: data.zipcode.replace("-", ""),
-    city: data.city,
-    street: data.street,
-    state: data.state,
-    _id: new ObjectId(),
+    cep: data.zipcode ? data.zipcode.replace("-", "") : "",
+    city: data.city ?? data.city,
+    street: data.street ?? data.street,
+    state: data.state ?? data.state,
   };
-  const saved = await cemRepository.update(churchId, cemId, newCell);
+  const saved = await cemRepository.update(churchId, cemId, updateCell);
   return saved;
 };
 
