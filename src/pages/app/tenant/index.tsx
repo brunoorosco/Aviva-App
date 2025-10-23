@@ -78,7 +78,6 @@ const UserUpdatedChurchApp = () => {
                 <Suspense fallback={'...carregando'}>
                   <SelectCem
                     control={control}
-                    errors={false}
                     title={'Selecione sua Rede'}
                     name='cem'
                     churchId={church}
