@@ -42,3 +42,23 @@ export const ministerialLevels: TMinisterialLevel[] = [
   "Separado a Pastorado",
   "Pastor",
 ];
+
+export type TConsagracaoUser = {
+  user_id: string;
+  name: string;
+  cell_id: string;
+};
+
+export type TConsagracao = {
+  _id: string;
+  consagracao_at: string; // YYYY-MM-DD
+  cargo: TMinisterialLevel;
+  users: TConsagracaoUser[];
+};
+
+export type TPerson = {
+  _id: string;
+  name: string;
+  cell_id: string;
+  cell_name: string;
+};

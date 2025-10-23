@@ -62,7 +62,7 @@ export class CellsMongoRepository {
           _id: new ObjectId(churchId),
           cells: { $elemMatch: { _id: new ObjectId(cemId) } }
         },
-        { projection: { cells: 1, _id: 0 } }
+        { projection: { "cells.$": 1, _id: 0 } }
       )
       if (!church) {
         throw new Error(`Church with ID ${churchId} not found`)
