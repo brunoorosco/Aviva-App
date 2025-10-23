@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import ButtonSubmit from '../ButtonSubmit'
 import Image from 'next/image'
+import { Input } from '../ui/input'
 
 type FormValues = {
   email: string
@@ -65,11 +66,11 @@ const SignIn = () => {
 
           <form onSubmit={onSubmit} className="w-full space-y-4">
             <div>
-              <input
+              <Input
                 {...register('email', { required: 'E-mail é obrigatório' })}
                 type="email"
                 placeholder="E-mail"
-                className="w-full p-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-800"
+                className="text-base text-white"
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
@@ -77,14 +78,14 @@ const SignIn = () => {
             </div>
 
             <div>
-              <input
+              <Input
                 {...register('password', {
                   required: 'Senha é obrigatória',
                   minLength: { value: 6, message: 'Mínimo 6 caracteres' }
                 })}
                 type="password"
                 placeholder="Senha"
-                className="w-full p-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-800"
+                className="text-base text-white"
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
