@@ -25,6 +25,7 @@ const updateCemService = async (churchId: string, cemId: string, data: any): Pro
     city: data.city ?? data.city,
     street: data.street ?? data.street,
     state: data.state ?? data.state,
+    description: data.description
   };
   const saved = await cemRepository.update(churchId, cemId, updateCell);
   return saved;
