@@ -1,4 +1,4 @@
-import { FaPeopleGroup, FaPeopleRoof } from 'react-icons/fa6'
+import { FaPeopleGroup, FaPeopleRoof } from "react-icons/fa6";
 import {
   Users,
   GroupIcon,
@@ -11,120 +11,122 @@ import {
   GraduationCapIcon,
   BookOpenCheckIcon,
   UserPlus,
-  UserPlus2
-} from 'lucide-react'
-import HomeIcon from './icons'
+  UserPlus2,
+} from "lucide-react";
+import HomeIcon from "./icons";
 
 type TMenu = {
-  churchId: string
-  cemId: string
-}
+  churchId: string;
+  cemId: string;
+};
 
 export const menuItems = ({ churchId, cemId }: TMenu) => {
-  const base = `/app/${churchId}`
+  const base = `/app/${churchId}`;
   return [
     {
-      label: 'Home',
+      label: "Home",
       icon: HomeIcon,
-      link: `${base}/`
+      link: `${base}/`,
     },
     {
-      label: 'Redes',
+      label: "Redes",
       icon: GroupIcon,
-      link: `${base}/cems`
+      link: `${base}/cems`,
     },
     {
-      label: 'Membros',
+      label: "Membros",
       icon: FaPeopleRoof,
-      link: `${base}/cems/${cemId}/members`
+      link: `${base}/cems/${cemId}/members`,
     },
     {
-      label: 'Boas Vindas',
+      label: "Boas Vindas",
       icon: UserPlus,
       link: `${base}/aceitou-jesus`,
       children: [
         {
-          label: 'Visitantes',
+          label: "Visitantes",
           icon: UserPlus2,
-          link: `${base}/visitantes`
+          link: `${base}/visitantes`,
         },
         {
-          label: 'Aceitou Jesus',
+          label: "Aceitou Jesus",
           icon: CrossIcon,
-          link: `${base}/aceitou-jesus`
-        }
-      ]
+          link: `${base}/aceitou-jesus`,
+        },
+      ],
     },
     {
-      label: 'Secretária',
+      label: "Secretária",
       icon: BookUserIcon,
       children: [
         {
-          label: 'Batismo',
+          label: "Membros",
+          icon: Users,
+          link: `${base}/secretary/members`,
+        },
+        {
+          label: "Batismo",
           icon: Waves,
-          link: `${base}/secretary/batismos`
+          link: `${base}/secretary/batismos`,
         },
         {
-          label: 'Discipulado',
+          label: "Discipulado",
           icon: BookOpenCheckIcon,
-          link: `${base}/secretary/discipulado`
+          link: `${base}/secretary/discipulado`,
         },
         {
-          label: 'Escola de Profeta',
+          label: "Escola de Profeta",
           icon: GraduationCapIcon,
-          link: `${base}/secretary/escola-de-profeta`
+          link: `${base}/secretary/escola-de-profeta`,
+        },
+
+        {
+          label: "Encontro com Deus",
+          icon: FaPeopleGroup,
+          link: `${base}/secretary/encontroComDeus`,
         },
         {
-          label: 'Membros',
-          icon: Users,
-          link: `${base}/secretary/members`
+          label: "Encontro Seja Livre",
+          icon: FaPeopleGroup,
+          link: `${base}/secretary/sejaLivre`,
         },
         {
-          label: 'Consagração',
+          label: "Reencontro com Deus",
+          icon: FaPeopleGroup,
+          link: `${base}/secretary/reencontroComDeus`,
+        },
+        {
+          label: "Consagração",
           icon: Users,
-          link: `${base}/secretary/consagracao`
-        }
-      ]
+          link: `${base}/secretary/consagracao`,
+        },
+      ],
     },
+
     {
-      label: 'Encontro com Deus',
+      label: "Casas de Paz - V2",
       icon: FaPeopleGroup,
-      link: `${base}/secretary/encontroComDeus`
+      link: `${base}/casasdepaz`,
     },
     {
-      label: 'Encontro Seja Livre',
+      label: "Visitas de Paz",
       icon: FaPeopleGroup,
-      link: `${base}/secretary/sejaLivre`
+      link: `${base}/visitasdepaz`,
     },
     {
-      label: 'Reencontro com Deus',
-      icon: FaPeopleGroup,
-      link: `${base}/secretary/reencontroComDeus`
-    },
-    {
-      label: 'Casas de Paz - V2',
-      icon: FaPeopleGroup,
-      link: `${base}/casasdepaz`
-    },
-    {
-      label: 'Visitas de Paz',
-      icon: FaPeopleGroup,
-      link: `${base}/visitasdepaz`
-    },
-    {
-      label: 'Flow',
+      label: "Flow",
       icon: WorkflowIcon,
-      link: `${base}/flow`
+      link: `${base}/flow`,
     },
     {
-      label: 'Metricas',
+      label: "Metricas",
       icon: ChartPieIcon,
-      link: `${base}/dashboard`
+      link: `${base}/dashboard`,
     },
     {
-      label: 'Agenda',
+      label: "Agenda",
       icon: Calendar1Icon,
-      link: `${base}/agenda`
-    }
-  ]
-}
+      link: `${base}/agenda`,
+    },
+  ];
+};
