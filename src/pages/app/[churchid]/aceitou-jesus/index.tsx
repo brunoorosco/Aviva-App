@@ -13,6 +13,7 @@ import { Masks } from "@/utils/masks";
 import { SelectCem } from "@/components/Select/SelectCem";
 import RadioInput from "@/components/RadioInput";
 import { optionAccepted, optionBapstism } from "@/components/RadioInput/options";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 type FormValues = {
   name: string;
@@ -73,7 +74,7 @@ const AceitouJesus = () => {
           render={({ field }) => (
             <div className="flex flex-col">
               <Label>Data Aceitou</Label>
-              <Input {...field} type="date" className="text-center" />
+              <Input {...field} type="date" className="" />
             </div>
           )}
         />
@@ -126,28 +127,35 @@ const AceitouJesus = () => {
         />
 
         {/* Rede / CEM */}
-        <SelectCem
-          name="cem"
-          control={control}
-          churchId={churchId}
-          title="Escolha uma Rede"
-        />
+        <SelectCem name="cem" control={control} churchId={churchId} title="Escolha uma Rede" />
 
-        {/* Aceitou? */}
-        <div className="flex flex-col">
-          <Label>Aceitou?</Label>
-          <RadioInput name="accepted" control={control} options={optionAccepted} />
-        </div>
+        <RadioGroup defaultValue="false" name="accept" className="flex gap-10">
+          <div className="flex items-center gap-3">
+            <RadioGroupItem value="true" id="r1" />
+            <Label htmlFor="r1">Reconciliou</Label>
+          </div>
+          <div className="flex items-center gap-3">
+            <RadioGroupItem value="false" id="r2" />
+            <Label htmlFor="r2">Aceitou</Label>
+          </div>
+        </RadioGroup>
 
         {/* Batizado? */}
-        <div className="flex flex-col">
-          <Label>Batizado?</Label>
-          <RadioInput name="baptism" control={control} options={optionBapstism} />
-        </div>
+        <Label>Batizado?</Label>
+        <RadioGroup defaultValue="false" name="batizado" className="flex gap-10">
+          <div className="flex items-center gap-3">
+            <RadioGroupItem value="true" id="r1" />
+            <Label htmlFor="r1">Sim</Label>
+          </div>
+          <div className="flex items-center gap-3">
+            <RadioGroupItem value="false" id="r2" />
+            <Label htmlFor="r2">Não</Label>
+          </div>
+        </RadioGroup>
 
         {/* Botão */}
-        <div className="flex justify-end mt-4">
-          <Button type="submit" disabled={isLoading}>
+        <div className="flex w-full mt-4">
+          <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Salvando..." : "Salvar"}
           </Button>
         </div>
