@@ -20,6 +20,7 @@ type DropdownProps = {
 export function SelectCem({ control, name, title, churchId, errors }: DropdownProps) {
   const { data, isLoading } = useHttpGet<any[]>(`/api/protected/churches/${churchId}/cems`);
 
+  console.log(data)
   const items = data?.data ?? []; // segurança
 
   return (
@@ -35,7 +36,7 @@ export function SelectCem({ control, name, title, churchId, errors }: DropdownPr
               const [id] = value.split("-");
               field.onChange(id);
             }}
-            value={items.find((i) => i._id === field.value)?.["value"] ?? ""}
+            value={items.find((i) => i._id === field.value)?.["value"] ?? "te"}
           >
             <SelectTrigger className="w-full bg-gray-200 dark:bg-zinc-700 dark:text-gray-100">
               <SelectValue placeholder={title} />

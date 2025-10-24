@@ -104,7 +104,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     },
 
     {
-      label: "Casas de Paz - V2",
+      label: "Casas de Paz",
       icon: FaPeopleGroup,
       link: `${base}/casasdepaz`,
     },

@@ -44,7 +44,7 @@ const VisitadePazItem = ({
               >
                 {formatDate(visitasDePaz.data_inicial)}
                 <p className='text-xs font-normal'>
-                  Casa de Paz realizadas: {visitasDePaz.casas.length}
+                  Visita de Paz realizadas: {visitasDePaz.casas.length}
                 </p>
               </p>
             </div>

@@ -34,7 +34,7 @@ const Cem = () => {
     <div className="flex flex-col w-full max-w-6xl p-3 mx-auto rounded-lg dark:text-dark-primary">
       <Suspense fallback={<p>Carregando Redes...</p>}>
         {/* Cabeçalho */}
-        <div className="flex items-center justify-between px-3 py-4 bg-white rounded-lg dark:bg-dark-secondary">
+        <div className="flex items-center justify-between px-3 py-4  rounded-lg dark:bg-dark-secondary">
           <div>
             <p className="text-2xl font-bold">Nossas Redes</p>
           </div>

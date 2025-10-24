@@ -100,7 +100,7 @@ export const MemberCard = ({ member }: Props) => {
     <div className="space-y-4">
       {showEditModal && (
         <EditMemberModal
-          member={selectedMember}
+          member={member}
           onClose={() => {
             setShowEditModal(false);
             setSelectedMember(null);
