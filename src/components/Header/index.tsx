@@ -24,7 +24,7 @@ const Header = ({ toggleSidebar }: SidebarProps) => {
       </div>
       <div className='relative z-20 flex flex-col justify-end h-full px-3 md:w-full'>
         <div className='relative flex items-center justify-end w-full p-1 pr-3 mb-1 space-x-4'>
-          {session?.user?.rules?.includes('F003') && (
+          {session?.user?.permissions?.includes('admin') && (
             <>
               <Link href={'/app/admin'}>
                 <MdAdminPanelSettings
