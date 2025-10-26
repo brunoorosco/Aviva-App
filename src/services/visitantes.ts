@@ -2,6 +2,8 @@ import { VisitantesRepository } from "@/infra/db/repositories/mongo/visitantes";
 
 export const createVisitantesService = async (data: any, churchId: string): Promise<any> => {
   const visitantesRepository = new VisitantesRepository();
+
+  // Monta a rede se existir
   let rede: { name: string; _id: string } | undefined = undefined;
   if (data?.cem) {
     rede = {
@@ -10,14 +12,20 @@ export const createVisitantesService = async (data: any, churchId: string): Prom
     };
   }
 
-  const dataFormatted = {
+  // Monta o objeto final
+  const dataFormatted: any = {
     visitedAt: new Date(data.visitedAt),
-    name: data.name?.trim() as string,
-    email: data.email?.trim() || null,
-    phone: data.phone.replace(/[^0-9]/g, "") || null,
-    rede,
+    name: data.name?.trim(),
+    phone: data.phone?.replace(/[^0-9]/g, "") || null,
     description: data.description?.trim() || null,
+    region: data.region?.trim() || null,
+    howHeard: data.howHeard || null,
   };
+
+  // Só inclui invitedBy se howHeard for "invited"
+  if (data.howHeard === "invited") {
+    dataFormatted.invitedBy = data.invitedBy?.trim() || null;
+  }
 
   const saved = await visitantesRepository.create(dataFormatted, churchId);
   return saved;

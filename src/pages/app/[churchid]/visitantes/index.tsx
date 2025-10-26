@@ -13,13 +13,22 @@ import { Textarea } from "@/components/ui/textarea";
 import Toast from "@/components/Toast";
 import { useHttpPost } from "@/hooks/api";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 type FormValues = {
   name: string;
-  email?: string;
   phone?: string;
-  cem?: string;
   description?: string;
   visitedAt: string;
+  howHeard?: string;
+  invitedBy?: string;
+  region?: string;
 };
 
 const VisitantesPage = () => {
@@ -32,26 +41,29 @@ const VisitantesPage = () => {
     control,
     handleSubmit,
     formState: { errors },
+    watch,
     reset,
   } = useForm<FormValues>({
     defaultValues: {
       visitedAt: dataRetroISO,
       name: "",
-      email: "",
-      cem: "",
-      description: "",
       phone: "",
+      description: "",
+      howHeard: "",
+      invitedBy: "",
+      region: "",
     },
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  const howHeardValue = watch("howHeard");
 
   const onSubmit = handleSubmit(async (formData) => {
     try {
       setIsLoading(true);
       const response = await useHttpPost({
-        url: `/api/protected/churches/${session?.user.churchId}/visitantes`,
+        url: `/api/protected/churches/${churchId}/visitantes`,
         data: formData,
       });
 
@@ -76,7 +88,7 @@ const VisitantesPage = () => {
       </div>
 
       <form onSubmit={onSubmit} className="w-full max-w-lg mt-5 px-2 flex flex-col gap-4">
-        {/* Data Aceitou */}
+        {/* Data da Visita */}
         <Controller
           name="visitedAt"
           control={control}
@@ -105,17 +117,6 @@ const VisitantesPage = () => {
           )}
         />
 
-        {/* Email */}
-        <Controller
-          name="email"
-          control={control}
-          render={({ field }) => (
-            <div className="flex flex-col">
-              <Input {...field} placeholder="E-mail" />
-            </div>
-          )}
-        />
-
         {/* WhatsApp */}
         <Controller
           name="phone"
@@ -131,24 +132,59 @@ const VisitantesPage = () => {
           )}
         />
 
-        {/* Rede / CEM */}
-        <SelectCem
-          name="cem"
+        {/* Região / Localização */}
+        <Controller
+          name="region"
           control={control}
-          churchId={churchId}
-          title="Veio a convite de alguém"
+          render={({ field }) => (
+            <div className="flex flex-col">
+              <Input {...field} placeholder="Região / Localização" />
+            </div>
+          )}
         />
 
+        {/* Como nos conheceu (shadcn Select) */}
+        <Controller
+          name="howHeard"
+          control={control}
+          render={({ field }) => (
+            <div className="flex flex-col">
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger className="w-full bg-gray-200 dark:bg-zinc-700 dark:text-gray-100">
+                  <SelectValue placeholder="Como nos Conheceu" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="youtube">YouTube</SelectItem>
+                  <SelectItem value="instagram">Instagram</SelectItem>
+                  <SelectItem value="facebook">Facebook</SelectItem>
+                  <SelectItem value="invited">Alguém convidou</SelectItem>
+                  <SelectItem value="other">Outros</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        />
+
+        {/* Input para quem convidou */}
+        {howHeardValue === "invited" && (
+          <Controller
+            name="invitedBy"
+            control={control}
+            render={({ field }) => (
+              <div className="flex flex-col">
+                <Input {...field} placeholder="Nome da pessoa que convidou?" />
+              </div>
+            )}
+          />
+        )}
+
+        {/* Observações / Descrição */}
         <Controller
           name="description"
           control={control}
           render={({ field }) => (
             <div className="flex flex-col">
-              <Textarea
-                {...field}
-                placeholder="Descrição"
-                onChange={(e) => field.onChange(e.target.value)}
-              />
+              <Textarea {...field} placeholder="Descrição" />
             </div>
           )}
         />
