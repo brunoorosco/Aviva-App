@@ -8,8 +8,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const user = await createAceitouService(req.body, churchId);
       res.status(201).json({ user });
     } else if (req.method == "GET") {
-      const batismo = await getAceitouService(churchId);
-      res.send(batismo);
+      const users = await getAceitouService(churchId);
+      res.send(users);
     } else {
       res.send("");
     }

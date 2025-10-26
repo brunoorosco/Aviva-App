@@ -1,264 +1,108 @@
 "use client";
 
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useHttpGet } from "@/hooks/api";
+import { AceitouModel } from "@/domain/models/aceitou";
 import { Button } from "@/components/ui/button";
-import { Masks } from "@/utils/masks";
-import { SelectCem } from "@/components/Select/SelectCem";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
-import Toast from "@/components/Toast";
-import { useHttpPost } from "@/hooks/api";
+import { useRouter } from "next/router";
 
-type FormValues = {
-  name: string;
-  email: string;
-  phone: string;
-  cem: string;
-  accepted: string;
-  baptism: string;
-  acceptedAt: string;
-  description?: string;
-  encontro?: string;
-  hasEncontro?: boolean;
-};
-
-const AceitouJesus = () => {
+export const AceitouJesusList = () => {
   const { data: session } = useSession();
   const churchId = session?.user.churchId as string;
-
-  const dataRetroISO = new Date().toISOString().split("T")[0];
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const router = useRouter();
+  const path = router.asPath;
 
   const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<FormValues>({
-    defaultValues: {
-      acceptedAt: dataRetroISO,
-      name: "",
-      email: "",
-      baptism: "false",
-      accepted: "false",
-      hasEncontro: false,
-      cem: "",
-      description: "",
-      phone: "",
-    },
-  });
+    data: users,
+    isLoading,
+    mutate,
+  } = useHttpGet<AceitouModel[]>(`/api/protected/churches/${churchId}/aceitou`);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const onSubmit = handleSubmit(async (formData) => {
-    try {
-      setIsLoading(true);
-      setError("");
-      const response = await useHttpPost({
-        url: `/api/protected/churches/${session?.user.churchId}/aceitou`,
-        data: formData,
-      });
-
-      if (response?.error) {
-        Toast.showError("Erro ao tentar registrar!");
-      } else {
-        Toast.showSuccess("Registrado com sucesso!");
-        reset();
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Erro ao enviar o formulário");
-    } finally {
-      setIsLoading(false);
-    }
-  });
+  // Memoiza o filtro para evitar recalcular toda hora
+  const filteredRecords = useMemo(() => {
+    if (!users?.data) return [];
+    return users.data.filter((r: AceitouModel) =>
+      r.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [users?.data, search]);
 
   return (
-    <div className="flex flex-col items-center p-3 mt-5 md:mt-5">
-      <div className="content-center w-full max-w-lg text-center">
-        <Label className="text-2xl md:text-3xl dark:text-dark-primary">Aceitou Jesus</Label>
+    <div className="p-4 w-full max-w-6xl mx-auto">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
+        <Label className="text-2xl">Lista Aceitou Jesus</Label>
+        <div className="flex flex-row gap-2">
+          <Input
+            placeholder="Buscar por nome..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="max-w-xs"
+          />
+          <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
+        </div>
       </div>
 
-      <form onSubmit={onSubmit} className="w-full max-w-lg mt-5 px-2 flex flex-col gap-4">
-        {/* Data Aceitou */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-          {/* Data do Ocorrido */}
-          <div className="col-span-1">
-            <Controller
-              name="acceptedAt"
-              control={control}
-              render={({ field }) => (
-                <div className="flex flex-col">
-                  <Label>Data do Ocorrido</Label>
-                  <Input {...field} type="date" />
-                </div>
-              )}
-            />
-          </div>
-
-          {/* Checkbox + Campo do Encontro */}
-          <div className="col-span-1 md:col-span-2">
-            <Controller
-              name="hasEncontro"
-              control={control}
-              defaultValue={false} // booleano
-              render={({ field }) => (
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-2 mt-3">
-                  {/* Checkbox */}
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      id="hasEncontro"
-                      checked={field.value} // booleano
-                      onChange={(e) => field.onChange(e.target.checked)} // retorna booleano
-                      className="h-4 w-4 accent-blue-600 cursor-pointer"
-                    />
-                    <Label htmlFor="hasEncontro">Encontro</Label>
-                  </div>
-
-                  {/* Campo de número do encontro */}
-                  <Controller
-                    name="encontro"
-                    control={control}
-                    render={({ field: encontroField }) => (
-                      <Input
-                        {...encontroField}
-                        placeholder="Nº do Encontro"
-                        className="w-full"
-                        disabled={!field.value} // usa booleano direto
-                      />
-                    )}
-                  />
-                </div>
-              )}
-            />
-          </div>
-        </div>
-
-        {/* Nome */}
-        <Controller
-          name="name"
-          control={control}
-          rules={{ required: true }}
-          render={({ field }) => (
-            <div className="flex flex-col">
-              <Input
-                {...field}
-                placeholder="Nome Completo"
-                onChange={(e) => field.onChange(Masks.inputName(e.target.value))}
-              />
-              {errors.name && <p className="text-sm text-red-400">Preenchimento obrigatório</p>}
-            </div>
-          )}
-        />
-
-        {/* Email */}
-        <Controller
-          name="email"
-          control={control}
-          render={({ field }) => (
-            <div className="flex flex-col">
-              <Input {...field} placeholder="E-mail" />
-            </div>
-          )}
-        />
-
-        {/* WhatsApp */}
-        <Controller
-          name="phone"
-          control={control}
-          render={({ field }) => (
-            <div className="flex flex-col">
-              <Input
-                {...field}
-                placeholder="WhatsApp"
-                onChange={(e) => field.onChange(Masks.phone(e.target.value))}
-              />
-            </div>
-          )}
-        />
-
-        {/* Rede / CEM */}
-        <SelectCem name="cem" control={control} churchId={churchId} title="Escolha uma Rede" />
-
-        <Controller
-          name="accepted"
-          control={control}
-          defaultValue="false"
-          render={({ field }) => (
-            <div className="flex flex-col gap-2">
-              <Label>Tipo de decisão</Label>
-              <RadioGroup
-                value={field.value}
-                onValueChange={field.onChange}
-                className="flex gap-10"
-              >
-                <div className="flex items-center gap-3">
-                  <RadioGroupItem value="true" id="r1" />
-                  <Label htmlFor="r1">Reconciliou</Label>
-                </div>
-                <div className="flex items-center gap-3">
-                  <RadioGroupItem value="false" id="r2" />
-                  <Label htmlFor="r2">Aceitou</Label>
-                </div>
-              </RadioGroup>
-            </div>
-          )}
-        />
-
-        <Controller
-          name="baptism"
-          control={control}
-          defaultValue="false"
-          render={({ field }) => (
-            <div className="flex flex-col gap-2">
-              <Label>Batizado?</Label>
-              <RadioGroup
-                value={field.value}
-                onValueChange={field.onChange}
-                className="flex gap-10"
-              >
-                <div className="flex items-center gap-3">
-                  <RadioGroupItem value="true" id="b1" />
-                  <Label htmlFor="b1">Sim</Label>
-                </div>
-                <div className="flex items-center gap-3">
-                  <RadioGroupItem value="false" id="b2" />
-                  <Label htmlFor="b2">Não</Label>
-                </div>
-              </RadioGroup>
-            </div>
-          )}
-        />
-
-        <Controller
-          name="description"
-          control={control}
-          render={({ field }) => (
-            <div className="flex flex-col">
-              <Textarea
-                {...field}
-                placeholder="Descrição"
-                onChange={(e) => field.onChange(e.target.value)}
-              />
-            </div>
-          )}
-        />
-
-        {/* Botão */}
-        <div className="flex w-full mt-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Salvando..." : "Salvar"}
-          </Button>
-        </div>
-      </form>
+      <div className="overflow-x-auto border rounded-md">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nome</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>WhatsApp</TableHead>
+              <TableHead>Rede / CEM</TableHead>
+              <TableHead>Data</TableHead>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Batizado</TableHead>
+              <TableHead>Encontro</TableHead>
+              <TableHead>Descrição</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center py-4">
+                  Carregando...
+                </TableCell>
+              </TableRow>
+            ) : filteredRecords.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center py-4">
+                  Nenhum registro encontrado
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredRecords.map((r) => (
+                <TableRow key={r._id}>
+                  <TableCell>{r.name}</TableCell>
+                  <TableCell>{r.email || "-"}</TableCell>
+                  <TableCell>{r.phone || "-"}</TableCell>
+                  <TableCell>{r.rede?.name || "-"}</TableCell>
+                  <TableCell>
+                    {new Date(r.acceptedAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
+                  </TableCell>{" "}
+                  <TableCell>{r.accepted ? "Reconciliou" : "Aceitou"}</TableCell>
+                  <TableCell>{r.baptism ? "Sim" : "Não"}</TableCell>
+                  <TableCell>{r.numberEncontro || "-"}</TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
 
-export default AceitouJesus;
+export default AceitouJesusList;
