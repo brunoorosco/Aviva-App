@@ -15,18 +15,26 @@ type DropdownProps = {
   title: string;
   churchId: string;
   errors?: FieldErrors;
+  isRequired?: boolean;
 };
 
-export function SelectCem({ control, name, title, churchId, errors }: DropdownProps) {
+export function SelectCem({
+  control,
+  name,
+  title,
+  churchId,
+  errors,
+  isRequired = false,
+}: DropdownProps) {
   const { data, isLoading } = useHttpGet<any[]>(`/api/protected/churches/${churchId}/cems`);
   const items = data?.data ?? [];
-
+  const required = isRequired ? { required: "Selecione uma Rede" } : {};
   return (
     <div className="flex flex-col w-full my-2">
       <Controller
         name={name}
         control={control}
-        rules={{ required: "Selecione uma Rede" }}
+        rules={required}
         render={({ field }) => {
           return (
             <Select onValueChange={field.onChange} value={field.value}>

@@ -47,11 +47,10 @@ const VisitantesPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const onSubmit = async (formData: FormValues) => {
+  const onSubmit = handleSubmit(async (formData) => {
     console.log("index.tsx:51", formData);
     try {
       setIsLoading(true);
-      setError("");
       const response = await useHttpPost({
         url: `/api/protected/churches/${session?.user.churchId}/visitantes`,
         data: formData,
@@ -65,11 +64,11 @@ const VisitantesPage = () => {
       }
     } catch (err) {
       console.error(err);
-      setError("Erro ao enviar o formulário");
+      Toast.showError("Erro ao enviar o formulário");
     } finally {
       setIsLoading(false);
     }
-  };
+  });
 
   return (
     <div className="flex flex-col items-center p-3 mt-5 md:mt-5">
@@ -77,7 +76,7 @@ const VisitantesPage = () => {
         <Label className="text-2xl md:text-3xl dark:text-dark-primary">Visitantes</Label>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg mt-5 px-2 flex flex-col gap-4">
+      <form onSubmit={onSubmit} className="w-full max-w-lg mt-5 px-2 flex flex-col gap-4">
         {/* Data Aceitou */}
         <Controller
           name="visitedAt"
