@@ -5,6 +5,7 @@ export type AceitouModel = {
   phone: string;
   accepted: boolean;
   baptism: boolean;
+  number_encontro: number
   acceptedAt: Date;
   createdAt: Date;
   rede?: {

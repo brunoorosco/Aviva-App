@@ -23,6 +23,8 @@ type FormValues = {
   baptism: string;
   acceptedAt: string;
   description?: string;
+  encontro?: string;
+  hasEncontro?: boolean;
 };
 
 const AceitouJesus = () => {
@@ -83,16 +85,59 @@ const AceitouJesus = () => {
 
       <form onSubmit={onSubmit} className="w-full max-w-lg mt-5 px-2 flex flex-col gap-4">
         {/* Data Aceitou */}
-        <Controller
-          name="acceptedAt"
-          control={control}
-          render={({ field }) => (
-            <div className="flex flex-col">
-              <Label>Data do Ocorrido</Label>
-              <Input {...field} type="date" className="" />
-            </div>
-          )}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          {/* Data do Ocorrido */}
+          <div className="col-span-1">
+            <Controller
+              name="acceptedAt"
+              control={control}
+              render={({ field }) => (
+                <div className="flex flex-col">
+                  <Label>Data do Ocorrido</Label>
+                  <Input {...field} type="date" />
+                </div>
+              )}
+            />
+          </div>
+
+          {/* Checkbox + Campo do Encontro */}
+          <div className="col-span-1 md:col-span-2">
+            <Controller
+              name="hasEncontro"
+              control={control}
+              defaultValue={false}
+              render={({ field }) => (
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-2 mt-2">
+                  {/* Checkbox */}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="hasEncontro"
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      className="h-4 w-4 accent-blue-600 cursor-pointer"
+                    />
+                    <Label htmlFor="hasEncontro">Encontro</Label>
+                  </div>
+
+                  {/* Campo de número do encontro */}
+                  <Controller
+                    name="encontro"
+                    control={control}
+                    render={({ field: encontroField }) => (
+                      <Input
+                        {...encontroField}
+                        placeholder="Nº do Encontro"
+                        className="w-full"
+                        disabled={!field.value}
+                      />
+                    )}
+                  />
+                </div>
+              )}
+            />
+          </div>
+        </div>
 
         {/* Nome */}
         <Controller
