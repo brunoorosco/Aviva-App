@@ -13,8 +13,9 @@ declare module 'next-auth' {
         name: string
       }
       churchId?: string
-      rules?: string[]
+      role?: string
       profileId?: number
+      permissions?: string[]
     } & DefaultSession['user']
   }
 }

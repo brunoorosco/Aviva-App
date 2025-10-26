@@ -10,51 +10,73 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubItem
-} from '@/components/ui/sidebar'
-import { ChevronRight, ChevronUp, User2 } from 'lucide-react'
-import { signOut, useSession } from 'next-auth/react'
-import { BiLogOut } from 'react-icons/bi'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from '../ui/collapsible'
+  SidebarMenuSubItem,
+} from "@/components/ui/sidebar";
+import { ChevronRight, ChevronUp, User2 } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
+import { BiLogOut } from "react-icons/bi";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from '../ui/dropdown-menu'
-import { menuItems } from './menuRoute'
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { menuItems } from "./menuRoute";
 
 export function AppSidebar() {
-  const { data: session } = useSession()
-  const churchId = session?.user.churchId as string
-  const cemId = session?.user.cem._id as string
-  const items = menuItems({ churchId, cemId })
+  const { data: session } = useSession();
+  const churchId = session?.user.churchId as string;
+  const cemId = session?.user.cem?._id as string;
+  const permission = (session?.user?.permissions ?? []) as string[];
+  const role = session?.user?.role ?? "";
+  const roles = [...new Set([role, ...permission])];
+
+  const items = menuItems({ churchId, cemId });
+  const isAdmin = roles.includes("admin");
+  const filteredItems = items
+    .filter((item) => {
+      const itemRoles = item.roles ?? item.role; // aceita os dois
+      if (isAdmin) return true;
+      if (itemRoles === undefined) return true; // público
+      if (Array.isArray(itemRoles) && itemRoles.length === 0) return false; // reservado p/ admin
+      return itemRoles.some((r: string) => roles.includes(r));
+    })
+    .map((item) => ({
+      ...item,
+      children: item.children?.filter((sub) => {
+        //@ts-ignore
+        const subRoles = sub.roles ?? sub.role;
+        if (isAdmin) return true;
+        if (subRoles === undefined) return true;
+        if (Array.isArray(subRoles) && subRoles.length === 0) return false;
+        return subRoles.some((r: string) => roles.includes(r));
+      }),
+    }));
+
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className='flex items-center'>
-          <img src='/logo-preto.png' width='80%' className='mx-auto' />
+        <div className="flex items-center">
+          <img src="/logo-preto.png" width="80%" className="mx-auto" />
         </div>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Avivamento Sede</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) =>
+              {filteredItems.map((item) =>
                 item.children ? (
-                  <Collapsible key={item.label} className='group/collapsible'>
+                  <Collapsible key={item.label} className="group/collapsible">
                     <SidebarMenuItem>
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton>
                           <item.icon size={20} />
-                          <span className='text-md'>{item.label}</span>
+                          <span className="text-md">{item.label}</span>
                           <ChevronRight
-                            className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90'
+                            className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
                             size={16}
                           />
                         </SidebarMenuButton>
@@ -80,7 +102,7 @@ export function AppSidebar() {
                     <SidebarMenuButton asChild>
                       <a href={item.link}>
                         <item.icon size={20} />
-                        <span className='text-md'>{item.label}</span>
+                        <span className="text-md">{item.label}</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -90,6 +112,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -97,13 +120,10 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
                   <User2 /> {session?.user.name}
-                  <ChevronUp className='ml-auto' />
+                  <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side='top'
-                className='w-[--radix-popper-anchor-width]'
-              >
+              <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
                 <DropdownMenuItem>
                   <span>Account</span>
                 </DropdownMenuItem>
@@ -116,5 +136,5 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

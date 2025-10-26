@@ -30,21 +30,25 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
       label: "Home",
       icon: House,
       link: `${base}/`,
+      roles: ["lider","supervisor", "pastor", "auxiliar"],
     },
     {
       label: "Redes",
       icon: GroupIcon,
       link: `${base}/cems`,
+      roles: ["pastor", "supervisor"],
     },
     {
       label: "Membros",
       icon: FaPeopleRoof,
       link: `${base}/cems/${cemId}/members`,
+      roles: ["pastor", "supervisor"],
     },
     {
       label: "Boas Vindas",
       icon: UserPlus,
       link: `${base}/aceitou-jesus`,
+      roles: ["secretaria", "boas-vindas"],
       children: [
         {
           label: "Visitantes",
@@ -61,6 +65,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Secretária",
       icon: BookUserIcon,
+      role: ["admin", "secretaria"],
       children: [
         {
           label: "Membros",
@@ -123,10 +128,12 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Flow",
       icon: WorkflowIcon,
+      role: ["admin", "secretaria"],
       link: `${base}/flow`,
     },
     {
       label: "Metricas",
+
       icon: ChartPieIcon,
       link: `${base}/dashboard`,
     },
