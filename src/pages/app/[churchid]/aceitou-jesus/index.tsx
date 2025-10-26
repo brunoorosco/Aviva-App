@@ -56,7 +56,6 @@ const AceitouJesus = () => {
     try {
       setIsLoading(true);
       setError("");
-      console.log('index.tsx:59', formData);
       const response = await useHttpPost({
         url: `/api/protected/churches/${session?.user.churchId}/aceitou`,
         data: formData,

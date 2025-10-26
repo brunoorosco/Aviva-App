@@ -48,7 +48,6 @@ const VisitantesPage = () => {
   const [error, setError] = useState("");
 
   const onSubmit = handleSubmit(async (formData) => {
-    console.log("index.tsx:51", formData);
     try {
       setIsLoading(true);
       const response = await useHttpPost({
