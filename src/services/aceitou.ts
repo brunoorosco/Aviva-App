@@ -26,6 +26,8 @@ export const createAceitouService = async (data: any, churchId: string): Promise
     accepted: data.accepted === "true",
     baptism: data.baptism === "true",
     description: data.description?.trim() || null,
+    hasEncontro: data.hasEncontro === "true",
+    numberEncontro: data.numberEncontro || null
   };
 
   const saved = await aceitouRepository.create(dataFormatted, churchId);

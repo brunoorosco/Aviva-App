@@ -24,7 +24,7 @@ type FormValues = {
   acceptedAt: string;
   description?: string;
   encontro?: string;
-  hasEncontro?: boolean;
+  hasEncontro?: string;
 };
 
 const AceitouJesus = () => {
@@ -45,6 +45,7 @@ const AceitouJesus = () => {
       email: "",
       baptism: "false",
       accepted: "false",
+      hasEncontro:"false",
       cem: "",
       description: "",
       phone: "",
@@ -105,7 +106,6 @@ const AceitouJesus = () => {
             <Controller
               name="hasEncontro"
               control={control}
-              defaultValue={false}
               render={({ field }) => (
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-2 mt-2">
                   {/* Checkbox */}
@@ -113,7 +113,7 @@ const AceitouJesus = () => {
                     <input
                       type="checkbox"
                       id="hasEncontro"
-                      checked={field.value}
+                      checked={!!field.value}
                       onChange={(e) => field.onChange(e.target.checked)}
                       className="h-4 w-4 accent-blue-600 cursor-pointer"
                     />
