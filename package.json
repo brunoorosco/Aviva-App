@@ -44,7 +44,7 @@
     "html-pdf-node-ts": "^1.0.7",
     "html5-qrcode": "^2.3.4",
     "jspdf": "^3.0.3",
-    "lucide-react": "^0.525.0",
+    "lucide-react": "^0.548.0",
     "mongodb": "^6.7.0",
     "mysql2": "^3.14.1",
     "next": "^14.2.3",

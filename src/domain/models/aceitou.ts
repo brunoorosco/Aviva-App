@@ -3,7 +3,12 @@ export type AceitouModel = {
   name: string;
   email: string;
   phone: string;
-  aceitou: boolean;
-  batizado: boolean;
+  accepted: boolean;
+  baptism: boolean;
+  acceptedAt: Date;
   createdAt: Date;
+  rede?: {
+    name: string;
+    _id: string;
+  };
 };

@@ -1,4 +1,4 @@
-import { FaPeopleGroup, FaPeopleRoof } from "react-icons/fa6";
+import { FaPeopleRoof } from "react-icons/fa6";
 import {
   Users,
   GroupIcon,
@@ -12,8 +12,11 @@ import {
   BookOpenCheckIcon,
   UserPlus,
   UserPlus2,
+  BicepsFlexed,
+  HouseHeartIcon,
+  House,
+  MapPinHouse,
 } from "lucide-react";
-import HomeIcon from "./icons";
 
 type TMenu = {
   churchId: string;
@@ -25,7 +28,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
   return [
     {
       label: "Home",
-      icon: HomeIcon,
+      icon: House,
       link: `${base}/`,
     },
     {
@@ -79,21 +82,35 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
           icon: GraduationCapIcon,
           link: `${base}/secretary/escola-de-profeta`,
         },
-
+        {
+          label: "Casas de Paz",
+          icon: HouseHeartIcon,
+          link: `${base}/casasdepaz`,
+        },
+        {
+          label: "Visitas de Paz",
+          icon: HouseHeartIcon,
+          link: `${base}/visitasdepaz`,
+        },
         {
           label: "Encontro com Deus",
-          icon: FaPeopleGroup,
+          icon: MapPinHouse,
           link: `${base}/secretary/encontroComDeus`,
         },
         {
           label: "Encontro Seja Livre",
-          icon: FaPeopleGroup,
+          icon: MapPinHouse,
           link: `${base}/secretary/sejaLivre`,
         },
         {
           label: "Reencontro com Deus",
-          icon: FaPeopleGroup,
+          icon: MapPinHouse,
           link: `${base}/secretary/reencontroComDeus`,
+        },
+        {
+          label: "Ministérios",
+          icon: BicepsFlexed,
+          link: `${base}/secretary/ministerio`,
         },
         {
           label: "Consagração",
@@ -103,16 +120,6 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
       ],
     },
 
-    {
-      label: "Casas de Paz",
-      icon: FaPeopleGroup,
-      link: `${base}/casasdepaz`,
-    },
-    {
-      label: "Visitas de Paz",
-      icon: FaPeopleGroup,
-      link: `${base}/visitasdepaz`,
-    },
     {
       label: "Flow",
       icon: WorkflowIcon,

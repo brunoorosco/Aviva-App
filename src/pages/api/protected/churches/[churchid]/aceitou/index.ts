@@ -5,7 +5,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const churchId = (req.query?.churchid as string) || "";
     if (req.method == "POST") {
-      console.log(req.body);
       const user = await createAceitouService(req.body, churchId);
       res.status(201).json({ user });
     } else if (req.method == "GET") {

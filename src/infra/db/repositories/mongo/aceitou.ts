@@ -1,5 +1,5 @@
+import { AceitouModel } from "@/domain/models/aceitou";
 import { TEvent } from "@/domain/models/events";
-import { ObjectId } from "mongodb";
 import { MongoHelper } from "../../mongoHelper";
 
 export class AceitouRepository {
@@ -33,23 +33,22 @@ export class AceitouRepository {
     return data;
   }
 
-  async create(data: Omit<TEvent, "_id">): Promise<TEvent> {
+  async create(data: Omit<AceitouModel, "_id" | "createdAt">, churchId: string) {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
       const result = await collection.insertOne({
         ...data,
+        churchId,
         createdAt: new Date(),
       });
-      return {
-        _id: result.insertedId.toString(),
-        ...data,
-      };
+
+      return result;
     } catch (error) {
       console.error("Error creating event:", error);
       throw error;
     }
   }
-  
+
   async import(data: Omit<TEvent, "_id">): Promise<TEvent> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
