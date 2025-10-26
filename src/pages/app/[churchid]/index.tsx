@@ -38,7 +38,7 @@ const IndexApp = () => {
       </div>
 
       {/* Metade de baixo */}
-      <div className="flex flex-col justify-center items-center h-1/2 bg-white border-t px-4 sm:px-8">
+      {/* <div className="flex flex-col justify-center items-center h-1/2 bg-white border-t px-4 sm:px-8">
         <div className="w-full max-w-6xl">
           <StepProgressBar
             steps={steps.map((step) => ({
@@ -48,7 +48,7 @@ const IndexApp = () => {
             }))}
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
