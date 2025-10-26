@@ -9,6 +9,7 @@ export const getAceitouService = async (churchId: string) => {
 
 export const createAceitouService = async (data: any, churchId: string): Promise<any> => {
   const aceitouRepository = new AceitouRepository();
+
   let rede: { name: string; _id: string } | undefined = undefined;
   if (data?.cem) {
     rede = {
@@ -17,17 +18,21 @@ export const createAceitouService = async (data: any, churchId: string): Promise
     };
   }
 
-  const dataFormatted = {
+  // Converte booleanos corretamente
+  const hasEncontro = data.hasEncontro === true || data.hasEncontro === "true";
+
+  // Monta objeto dinamicamente
+  const dataFormatted: any = {
     acceptedAt: new Date(data.acceptedAt),
     name: data.name?.trim() as string,
     email: data.email?.trim() || null,
     phone: data.phone.replace(/[^0-9]/g, "") || null,
     rede,
-    accepted: data.accepted === "true",
-    baptism: data.baptism === "true",
+    accepted: data.accepted === true || data.accepted === "true",
+    baptism: data.baptism === true || data.baptism === "true",
     description: data.description?.trim() || null,
-    hasEncontro: data.hasEncontro === "true",
-    numberEncontro: data.numberEncontro || null
+    hasEncontro,
+    ...(hasEncontro && { numberEncontro: data.numberEncontro?.trim() || null }), // só adiciona se hasEncontro for true
   };
 
   const saved = await aceitouRepository.create(dataFormatted, churchId);

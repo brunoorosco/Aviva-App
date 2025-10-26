@@ -24,7 +24,7 @@ type FormValues = {
   acceptedAt: string;
   description?: string;
   encontro?: string;
-  hasEncontro?: string;
+  hasEncontro?: boolean;
 };
 
 const AceitouJesus = () => {
@@ -45,7 +45,7 @@ const AceitouJesus = () => {
       email: "",
       baptism: "false",
       accepted: "false",
-      hasEncontro:"false",
+      hasEncontro: false,
       cem: "",
       description: "",
       phone: "",
@@ -106,15 +106,16 @@ const AceitouJesus = () => {
             <Controller
               name="hasEncontro"
               control={control}
+              defaultValue={false} // booleano
               render={({ field }) => (
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-2 mt-2">
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-2 mt-3">
                   {/* Checkbox */}
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
                       id="hasEncontro"
-                      checked={!!field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
+                      checked={field.value} // booleano
+                      onChange={(e) => field.onChange(e.target.checked)} // retorna booleano
                       className="h-4 w-4 accent-blue-600 cursor-pointer"
                     />
                     <Label htmlFor="hasEncontro">Encontro</Label>
@@ -129,7 +130,7 @@ const AceitouJesus = () => {
                         {...encontroField}
                         placeholder="Nº do Encontro"
                         className="w-full"
-                        disabled={!field.value}
+                        disabled={!field.value} // usa booleano direto
                       />
                     )}
                   />
