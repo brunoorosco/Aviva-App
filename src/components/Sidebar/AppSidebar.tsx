@@ -28,15 +28,16 @@ export function AppSidebar() {
   const { data: session } = useSession();
   const churchId = session?.user.churchId as string;
   const cemId = session?.user.cem?._id as string;
-  const permission = (session?.user?.permissions ?? []) as string[];
+  const permission = (session?.user?.permission ?? []) as string[];
   const role = session?.user?.role ?? "";
   const roles = [...new Set([role, ...permission])];
 
   const items = menuItems({ churchId, cemId });
+
   const isAdmin = roles.includes("admin");
   const filteredItems = items
     .filter((item) => {
-      const itemRoles = item.roles ?? item.role; // aceita os dois
+      const itemRoles = item.roles;
       if (isAdmin) return true;
       if (itemRoles === undefined) return true; // público
       if (Array.isArray(itemRoles) && itemRoles.length === 0) return false; // reservado p/ admin

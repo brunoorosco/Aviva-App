@@ -65,7 +65,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Secretária",
       icon: BookUserIcon,
-      role: ["admin", "secretaria"],
+      roles: ["admin", "secretaria"],
       children: [
         {
           label: "Membros",
