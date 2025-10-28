@@ -13,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import Toast from "@/components/Toast";
 import { useHttpPost } from "@/hooks/api";
+import { useRouter } from "next/navigation";
 
 type FormValues = {
   name: string;
@@ -30,6 +31,7 @@ type FormValues = {
 const AceitouJesus = () => {
   const { data: session } = useSession();
   const churchId = session?.user.churchId as string;
+  const router = useRouter()
 
   const dataRetroISO = new Date().toISOString().split("T")[0];
 
@@ -251,7 +253,10 @@ const AceitouJesus = () => {
         />
 
         {/* Botão */}
-        <div className="flex w-full mt-4">
+        <div className="flex w-full mt-4 gap-4">
+           <Button type="button" className="w-full " variant="outline" onClick={()=> router.back() }>
+            Voltar
+          </Button>
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Salvando..." : "Salvar"}
           </Button>
