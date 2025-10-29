@@ -9,16 +9,21 @@ export class VisitantesRepository {
     this.collectionName = "visitantes";
   }
 
-  async getVisitantes(churchId: string) {
+  async getVisitantes(churchId: string, page: number = 1, limit: number = 10) {
     const collection = await MongoHelper.getCollection(this.collectionName);
+    const skip = (page - 1) * limit;
 
-    const data = await collection
-      .find({ churchId })
-      .collation({ locale: "pt", strength: 1 })
-      .sort({ data: -1 })
-      .toArray();
-
-    return data;
+    const [data, total] = await Promise.all([
+      collection
+        .find({ churchId })
+        .collation({ locale: "pt", strength: 1 })
+        .sort({ visitedAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .toArray(),
+      collection.countDocuments(),
+    ]);
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async getVisitantesByCem(churchId: string, cemId: string) {
@@ -49,16 +54,13 @@ export class VisitantesRepository {
     }
   }
 
-  async import(data: Omit<TEvent, "_id">): Promise<TEvent> {
+  async import(data: VisitantesModel[]) {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
-      const result = await collection.insertOne({
-        ...data,
-        createdAt: new Date(),
-      });
+      //@ts-ignore
+      const result = await collection.insertMany(data);
       return {
-        _id: result.insertedId.toString(),
-        ...data,
+        insertedCount: result.insertedCount,
       };
     } catch (error) {
       console.error("Error creating event:", error);

@@ -8,7 +8,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const user = await createVisitantesService(req.body, churchId);
       res.status(201).json({ user });
     } else if (req.method == "GET") {
-      const batismo = await getVisitantesService(churchId);
+      const { page = 1, limit = 10 } = req.query;
+      const pageNumber = parseInt(page as string, 10);
+      const limitNumber = parseInt(limit as string, 10);
+      const batismo = await getVisitantesService(churchId, pageNumber, limitNumber);
       res.send(batismo);
     } else {
       res.send("");

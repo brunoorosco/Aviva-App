@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Label } from "@/components/ui/label";
@@ -14,89 +14,197 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useHttpGet } from "@/hooks/api";
+import { useHttpGet, useHttpPost } from "@/hooks/api";
 import { Input } from "@/components/ui/input";
+import * as XLSX from "xlsx";
+import Toast from "@/components/Toast";
+import Pagination from "@/components/Pagination";
 
 export default function VisitantesList() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
   const churchId = session?.user.churchId as string;
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const router = useRouter();
-  const path = router.asPath;
+  const [page, setPage] = useState(1);
+  const limit = 8;
 
   const {
     data: users,
     isLoading,
     mutate,
-  } = useHttpGet<VisitantesModel[]>(`/api/protected/churches/${churchId}/visitantes`);
+  } = useHttpGet<{
+    data: VisitantesModel[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }>(`/api/protected/churches/${churchId}/visitantes?page=${page}&limit=${limit}`);
 
-  // Memoiza o filtro para evitar recalcular toda hora
   const filteredRecords = useMemo(() => {
     if (!users?.data) return [];
-    return users.data.filter((r: VisitantesModel) =>
+    return users.data?.data?.filter((r: VisitantesModel) =>
       r.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [users?.data, search]);
 
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet);
+
+      setLoading(true);
+      const response = await useHttpPost({
+        url: `/api/protected/churches/${session?.user.churchId}/visitantes/import`,
+        data: json,
+      });
+      setLoading(false);
+
+      if (response?.error) {
+        Toast.showError("Erro na importação!");
+      } else {
+        Toast.showSuccess("Importado com sucesso!");
+        mutate();
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("[IMPORT_ERROR]:", error);
+      Toast.showError("Erro durante o processo de importação.");
+    } finally {
+      e.target.value = "";
+    }
+  };
+
   return (
-    <div className="p-4 w-full max-w-6xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
-        <Label className="text-2xl">Visitantes</Label>
+    <div className="p-4 mt-6 w-full max-w-6xl mx-auto">
+      {/* Cabeçalho */}
+      <div className="flex items-left justify-between mb-4 gap-2">
+        <div className="flex flex-col">
+        <Label className="text-2xl font-semibold">Visitantes</Label>
+        <Label className="text-xs font-semibold">{`Total de Vsitantes - ${users?.data.total}`}</Label>
+        </div>
+
+
         <div className="flex flex-row gap-2">
-          <Input
-            name=""
+          {/* <Input
             placeholder="Buscar por nome..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-xs"
+          /> */}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx,.xls,.csv"
+            className="hidden"
+            onChange={handleImport}
           />
+
+          <Button
+            type="button"
+            className="bg-green-500 text-white"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            Importar
+          </Button>
+
           <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
         </div>
       </div>
 
-      <div className="overflow-x-auto border rounded-md">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>WhatsApp</TableHead>
-              <TableHead>Região</TableHead>
-              <TableHead>Como nos conheceu</TableHead>
-              <TableHead>Quem Convidou</TableHead>
-              <TableHead>Data da Visita</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={9} className="text-center py-4">
-                  Carregando...
-                </TableCell>
-              </TableRow>
-            ) : filteredRecords.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={9} className="text-center py-4">
-                  Nenhum registro encontrado
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredRecords.map((r) => (
-                <TableRow key={r._id}>
-                  <TableCell>{r.name}</TableCell>
-                  <TableCell>{r.phone || "-"}</TableCell>
-                  <TableCell>{r.region || "-"}</TableCell>
-                  <TableCell>{r.howHeard || "-"}</TableCell>
-                  <TableCell>{r.invitedBy || "-"}</TableCell>
-                  <TableCell>
-                    {new Date(r.visitedAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
-                  </TableCell>{" "}
+      {/* Conteúdo */}
+      {loading || isLoading ? (
+        <div className="text-center py-6 text-gray-500">Carregando...</div>
+      //  ) : filteredRecords?.length === 0 ? (
+      //   <div className="text-center py-6 text-gray-500">Nenhum registro encontrado</div>
+      ) : (
+        <>
+          {/* Versão mobile (cards) */}
+          <div className="flex flex-col gap-3 md:hidden">
+            {users?.data.data?.map((r) => (
+              <div key={r._id} className="border rounded-xl p-3 shadow-sm bg-white">
+                <div className="font-semibold text-lg">{r.name}</div>
+
+                {r.phone && (
+                  <div className="text-sm text-gray-700">
+                    📱 <span className="font-medium">WhatsApp:</span> {r.phone}
+                  </div>
+                )}
+                {r.region && (
+                  <div className="text-sm text-gray-700">
+                    📍 <span className="font-medium">Região:</span> {r.region}
+                  </div>
+                )}
+                {r.howHeard && (
+                  <div className="text-sm text-gray-700">
+                    💬 <span className="font-medium">Como nos conheceu:</span>{" "}
+                    {r.howHeard === "invited" ? "Convidado" : r.howHeard || "-"}
+                  </div>
+                )}
+                {r.invitedBy && (
+                  <div className="text-sm text-gray-700">
+                    🙋 <span className="font-medium">Quem convidou:</span> {r.invitedBy}
+                  </div>
+                )}
+                <div className="text-sm text-gray-700">
+                  📅 <span className="font-medium">Data da visita:</span>{" "}
+                  {new Date(r.visitedAt).toLocaleDateString("pt-BR", {
+                    timeZone: "UTC",
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Versão desktop (tabela) */}
+          <div className="hidden md:block overflow-x-auto border rounded-md">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>WhatsApp</TableHead>
+                  <TableHead>Região</TableHead>
+                  <TableHead>Como nos conheceu</TableHead>
+                  <TableHead>Quem convidou</TableHead>
+                  <TableHead>Data da visita</TableHead>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              </TableHeader>
+              <TableBody>
+                {users?.data.data?.map((r) => (
+                  <TableRow key={r._id}>
+                    <TableCell>{r.name}</TableCell>
+                    <TableCell>{r.phone || "-"}</TableCell>
+                    <TableCell>{r.region || "-"}</TableCell>
+                    <TableCell>
+                      {r.howHeard === "invited" ? "Convidado" : r.howHeard || "-"}
+                    </TableCell>
+                    <TableCell>{r.invitedBy || "-"}</TableCell>
+                    <TableCell>
+                      {new Date(r.visitedAt).toLocaleDateString("pt-BR", {
+                        timeZone: "UTC",
+                      })}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </>
+      )}
+      {users?.data.totalPages && (
+        <Pagination
+          currentPage={page}
+          pageSize={limit}
+          items={users.data.total}
+          onPageChange={setPage}
+        />
+      )}
     </div>
-  );
-};
+  )
+}
