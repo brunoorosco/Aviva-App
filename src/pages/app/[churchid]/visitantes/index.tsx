@@ -28,7 +28,7 @@ export default function VisitantesList() {
   const [search, setSearch] = useState("");
   const router = useRouter();
   const [page, setPage] = useState(1);
-  const limit = 8;
+  const limit = 10;
 
   const {
     data: users,
