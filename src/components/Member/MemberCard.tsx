@@ -222,12 +222,12 @@ export const MemberCard = ({ member }: Props) => {
                               >
                                 <div className="space-y-1">
                                   <h5 className="font-medium text-foreground">
-                                    {module.cursoName}
+                                    {module.cursoName.toLocaleUpperCase()}
                                   </h5>
                                 </div>
                                 <StatusBadge
-                                  status={module.status === "APROVADO"}
-                                  label={module.status === "APROVADO" ? "Aprovado" : "Reprovado"}
+                                  status={module.status.toLocaleUpperCase() === "APROVADO"}
+                                  label={module.status.toLocaleUpperCase() === "APROVADO" ? "Aprovado" : "Reprovado"}
                                   variant="module"
                                 />
                               </div>

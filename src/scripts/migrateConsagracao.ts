@@ -17,7 +17,7 @@ async function run() {
     const usersCollection = await MongoHelper.getCollection("users");
 
     // 🔹 Carrega o arquivo JSON local
-    const jsonData = fs.readFileSync("./src/scripts/consagracao_2024.json", "utf-8");
+    const jsonData = fs.readFileSync("./src/scripts/consagracao_2023.json", "utf-8");
     const consagracoes: Consagracao[] = JSON.parse(jsonData);
 
     const allUsers = await usersCollection.find().toArray();
