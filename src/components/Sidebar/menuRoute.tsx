@@ -30,7 +30,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
       label: "Home",
       icon: House,
       link: `${base}/`,
-      roles: ["lider","supervisor", "pastor", "auxiliar"],
+      roles: ["lider", "supervisor", "pastor", "auxiliar"],
     },
     {
       label: "Redes",
@@ -128,18 +128,19 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Flow",
       icon: WorkflowIcon,
-      role: ["admin", "secretaria"],
+      roles: ["admin", "secretaria"],
       link: `${base}/flow`,
     },
     {
       label: "Metricas",
-
+      roles: ["admin", "secretaria"],
       icon: ChartPieIcon,
       link: `${base}/dashboard`,
     },
     {
       label: "Agendas",
       icon: Calendar1Icon,
+      roles: ["admin", "secretaria"],
       children: [
         {
           label: "Anual",
