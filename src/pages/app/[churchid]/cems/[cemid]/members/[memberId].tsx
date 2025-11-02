@@ -27,16 +27,16 @@ const MembersById = () => {
   if (!member?.data) return <p>Membro não encontrado.</p>
 
   return (
-    <div className='min-h-screen bg-gradient-bg p-2'>
-      <div className='max-w-7xl mx-auto space-y-4'>
-        <Button
-          variant='ghost'
-          className='flex items-center gap-2'
-          onClick={() => router.back()}
-        >
-          <ArrowLeft className='w-4 h-4' />
+  <div className="min-h-screen bg-gradient-bg p-2 max-w-8xl mx-auto">
+      <div className="flex items-center justify-end md:justify-start">
+        <div></div> {/* Espaço vazio para empurrar o botão para o lado oposto */}
+        <Button variant="outline" className="flex items-center gap-2" onClick={() => router.back()}>
+          <ArrowLeft className="w-4 h-4" />
           Voltar
         </Button>
+      </div>
+
+      <div className="mt-4">
         <MemberCard member={member.data} />
       </div>
     </div>

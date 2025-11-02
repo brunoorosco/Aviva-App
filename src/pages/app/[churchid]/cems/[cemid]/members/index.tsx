@@ -1,75 +1,75 @@
-import { Suspense, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useHttpGet, useHttpPatch } from '@/hooks/api'
-import { User } from '@/domain/models/users'
-import Pagination from '@/components/Pagination'
-import EditMemberModal from '@/components/Member/EditMemberModal'
-import MembersHeader from '@/components/Member/MembersHeader'
-import MemberItem from '@/components/Member/MemberItem'
-import { Button } from '@/components/ui/button'
-import { Edit, Eye, Trash2 } from 'lucide-react'
+import { Suspense, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import { useHttpGet, useHttpPatch } from "@/hooks/api";
+import { User } from "@/domain/models/users";
+import Pagination from "@/components/Pagination";
+import EditMemberModal from "@/components/Member/EditMemberModal";
+import MembersHeader from "@/components/Member/MembersHeader";
+import MemberItem from "@/components/Member/MemberItem";
+import { Button } from "@/components/ui/button";
+import { Edit, Eye, Trash2 } from "lucide-react";
 
 const MembersWithImportExport = () => {
-  const router = useRouter()
-  const { pathname, asPath, query } = router
-  const { churchid, cemid } = query
-  const inputFileRef = useRef<HTMLInputElement>(null)
-  const [search, setSearch] = useState('')
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [selectedMember, setSelectedMember] = useState<User | null>(null)
-  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const router = useRouter();
+  const { pathname, asPath, query } = router;
+  const { churchid, cemid } = query;
+  const inputFileRef = useRef<HTMLInputElement>(null);
+  const [search, setSearch] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<User | null>(null);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const [page, setPage] = useState(1)
-  const limit = 10
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   const { data: members, mutate: refreshMembers } = useHttpGet<{
-    data: User[]
-    total: number
-    page: number
-    totalPages: number
-    totalAtivos: number
-    totalInativos: number
+    data: User[];
+    total: number;
+    page: number;
+    totalPages: number;
+    totalAtivos: number;
+    totalInativos: number;
   }>(
     // `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}`
     `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}${
-      search ? `&name=${search}` : ''
+      search ? `&name=${search}` : ""
     }`
-  )
+  );
 
   const handleDesactive = async (id: string) => {
     await useHttpPatch({
       url: `/api/protected/churches/${churchid}/users/${id}`,
       data: {
         id,
-        active: false
-      }
-    })
-    refreshMembers()
-  }
+        active: false,
+      },
+    });
+    refreshMembers();
+  };
 
   const handleActive = async (id: string) => {
     await useHttpPatch({
       url: `/api/protected/churches/${churchid}/users/${id}`,
       data: {
         id,
-        active: true
-      }
-    })
-    refreshMembers()
-  }
+        active: true,
+      },
+    });
+    refreshMembers();
+  };
   const handleEdit = (member: User) => {
-    setSelectedMember(member)
-    setShowEditModal(true)
-  }
+    setSelectedMember(member);
+    setShowEditModal(true);
+  };
 
   return (
-    <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg dark:text-dark-primary'>
+    <div className="flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg dark:text-dark-primary">
       {showEditModal && (
         <EditMemberModal
           member={selectedMember}
           onClose={() => {
-            setShowEditModal(false)
-            setSelectedMember(null)
+            setShowEditModal(false);
+            setSelectedMember(null);
           }}
           onUpdated={refreshMembers}
         />
@@ -86,8 +86,8 @@ const MembersWithImportExport = () => {
         totalInativo={members?.data.totalInativos}
       />
 
-      <div className='hidden sm:block shadow-sm'>
-        <ul className='w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
+      <div className="hidden sm:block shadow-sm">
+        <ul className="w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary">
           <Suspense fallback={<p>Carregando membros...</p>}>
             {members?.data?.data.map((member) => (
               <MemberItem
@@ -103,51 +103,63 @@ const MembersWithImportExport = () => {
           </Suspense>
         </ul>
       </div>
-      <div className='sm:hidden flex flex-col gap-4'>
+      <div className="sm:hidden flex flex-col gap-4">
         {members?.data?.data.map((member) => (
           <div
             key={member._id}
-            className='p-4 bg-white rounded-lg shadow-md dark:bg-dark-secondary'
+            className="p-4 bg-white rounded-lg shadow-md dark:bg-dark-secondary cursor-pointer transition hover:shadow-lg"
+            onClick={() => router.push(`/${asPath}/${member._id}`)}
           >
-            <div className='flex justify-between items-center'>
-              <h2 className='font-semibold text-lg'>
-                {member.name.toUpperCase()}
-              </h2>
-              <div className='flex items-center gap-1'>
+            <div className="flex justify-between items-center">
+              <h2 className="font-semibold text-lg">{(member.name || "Sem nome").toUpperCase()}</h2>
+
+              <div className="flex items-center gap-1">
                 <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => handleEdit(member)}
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEdit(member);
+                  }}
                 >
-                  <Edit className='w-4' />
+                  <Edit className="w-4 h-4" />
                 </Button>
+
                 {member.active ? (
                   <Button
-                    variant='ghost'
-                    size='icon'
-                    className='text-red-600 hover:text-red-700'
-                    onClick={() => handleDesactive(member._id)}
+                    variant="ghost"
+                    size="icon"
+                    className="text-red-600 hover:text-red-700"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDesactive(member._id);
+                    }}
                   >
-                    <Trash2 className='w-4' />
+                    <Trash2 className="w-4 h-4" />
                   </Button>
                 ) : (
                   <Button
-                    variant='ghost'
-                    size='icon'
-                    className='text-green-600 hover:text-green-700'
-                    onClick={() => handleActive(member._id)}
+                    variant="ghost"
+                    size="icon"
+                    className="text-green-600 hover:text-green-700"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleActive(member._id);
+                    }}
                   >
-                    <Eye className='w-4' />
+                    <Eye className="w-4 h-4" />
                   </Button>
                 )}
               </div>
             </div>
-            <div className='mt-2 text-gray-600'>Email: {member.email}</div>
-            <div className='text-gray-600'>
-              Cargo:{' '}
-              {`${member.role.charAt(0).toUpperCase()}${member.role
-                ?.substring(1)
-                .toLowerCase()}`}
+
+            <div className="mt-2 text-gray-600">Email: {member.email || "Não informado"}</div>
+
+            <div className="text-gray-600">
+              Cargo:{" "}
+              {member.role
+                ? `${member.role.charAt(0).toUpperCase()}${member.role.substring(1).toLowerCase()}`
+                : "Não definido"}
             </div>
           </div>
         ))}
@@ -162,7 +174,7 @@ const MembersWithImportExport = () => {
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default MembersWithImportExport
+export default MembersWithImportExport;
