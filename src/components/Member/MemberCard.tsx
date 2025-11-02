@@ -123,7 +123,7 @@ export const MemberCard = ({ member }: Props) => {
               <Button
                 variant="secondary"
                 size="icon"
-                className="absolute -top-8 -left-4 w-8 h-8 rounded-full hover:bg-gray-200 text-gray-500 bg-transparent"
+                className="absolute -top-4 md:-top-8 md:-left-4 -left-6 w-8 h-8 rounded-full hover:bg-gray-200 text-gray-500 bg-transparent"
                 onClick={handleModal}
               >
                 <Edit className="w-4 h-4" />
