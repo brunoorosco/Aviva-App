@@ -214,6 +214,7 @@ export default function VisitorsAnalytics() {
                       fill="hsl(var(--primary))"
                       dataKey="count"
                     >
+                      {/* @ts-ignore - Recharts typing issue */}
                       {(visitors?.data?.bySource || []).map((entry) => (
                         <Cell
                           key={`cell-${entry.source}`}
