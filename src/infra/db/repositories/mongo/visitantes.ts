@@ -1,5 +1,11 @@
 import { TEvent } from "@/domain/models/events";
-import { VisitantesModel } from "@/domain/models/visitantes";
+import {
+  TMonthlyVisitor,
+  TVisitorBySource,
+  TVisitorCountResponse,
+  TVisitorSource,
+  VisitantesModel,
+} from "@/domain/models/visitantes";
 import { MongoHelper } from "../../mongoHelper";
 
 export class VisitantesRepository {
@@ -65,6 +71,89 @@ export class VisitantesRepository {
     } catch (error) {
       console.error("Error creating event:", error);
       throw error;
+    }
+  }
+
+  async countVisitors(churchId: string): Promise<TVisitorCountResponse> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+
+      // 📊 Agrupa por mês
+      const monthly = await collection
+        .aggregate<TMonthlyVisitor>([
+          { $match: { churchId } },
+          {
+            $group: {
+              _id: {
+                year: { $year: "$visitedAt" },
+                month: { $month: "$visitedAt" },
+              },
+              totalItems: { $sum: 1 },
+            },
+          },
+          {
+            $addFields: {
+              monthYear: {
+                $concat: [
+                  { $toString: "$_id.year" },
+                  "-",
+                  {
+                    $cond: {
+                      if: { $lt: ["$_id.month", 10] },
+                      then: { $concat: ["0", { $toString: "$_id.month" }] },
+                      else: { $toString: "$_id.month" },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+          { $project: { _id: 0, monthYear: 1, totalItems: 1 } },
+          { $sort: { monthYear: 1 } },
+        ])
+        .toArray();
+
+      // 📈 Agrupa por origem (howHeard)
+      const bySource = await collection
+        .aggregate<TVisitorBySource>([
+          { $match: { churchId } },
+          {
+            $group: {
+              _id: {
+                $cond: [{ $ifNull: ["$howHeard", false] }, { $toLower: "$howHeard" }, "outros"],
+              },
+              count: { $sum: 1 },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              source: "$_id",
+              count: 1,
+            },
+          },
+        ])
+        .toArray();
+
+      // 🔄 Normaliza nomes das fontes conforme o tipo
+      const normalizedBySource: TVisitorBySource[] = [
+        "invited",
+        "instagram",
+        "facebook",
+        "youtube",
+        "outros",
+      ].map((src) => ({
+        source: src as TVisitorSource,
+        count: bySource.find((s) => s.source === src)?.count || 0,
+      }));
+
+      return {
+        monthly,
+        bySource: normalizedBySource,
+      };
+    } catch (err) {
+      console.error("❌ Erro em countVisitors:", err);
+      throw err;
     }
   }
 }

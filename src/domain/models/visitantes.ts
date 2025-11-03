@@ -8,3 +8,21 @@ export type VisitantesModel = {
   invitedBy?: string;
   region?: string;
 };
+
+
+export type TVisitorSource = "invited" | "instagram" | "facebook" | "youtube" | "outros";
+
+export type TMonthlyVisitor = {
+  monthYear: string;
+  totalItems: number;
+};
+
+export type TVisitorBySource = {
+  source: TVisitorSource;
+  count: number;
+};
+
+export type TVisitorCountResponse = {
+  monthly: TMonthlyVisitor[];
+  bySource: TVisitorBySource[];
+};

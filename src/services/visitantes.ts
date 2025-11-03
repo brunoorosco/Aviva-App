@@ -67,6 +67,12 @@ export const getVisitantesService = async (churchId: string, page: number, limit
 
   return result;
 };
+export const getVisitantesAnalyticsService = async (churchId: string) => {
+  const visitors = new VisitantesRepository();
+  const result = await visitors.countVisitors(churchId);
+
+  return result;
+};
 
 function excelDateToJSDate(serial: number): Date {
   const utcDays = Math.floor(serial - 25569); // 25569 = 1 jan 1970 - 1 jan 1900
