@@ -165,22 +165,22 @@ export default function VisitorsAnalytics() {
           </CardHeader>
           <CardContent>
             <div className="h-[400px] w-full">
-              {/* @ts-expect-error - Recharts typing issue with React versions */}
+              {/* @ts-ignore - Recharts typing issue with React versions */}
               <ResponsiveContainer width="100%" height="100%">
-                {/* @ts-expect-error - Recharts typing issue */}
+                {/* @ts-ignore - Recharts typing issue */}
                 <BarChart data={periodView === "monthly" ? formattedVisitors : annualVisitors}>
-                  {/* @ts-expect-error - Recharts typing issue */}
+                  {/* @ts-ignore - Recharts typing issue */}
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  {/* @ts-expect-error - Recharts typing issue */}
+                  {/* @ts-ignore - Recharts typing issue */}
                   <XAxis
                     dataKey={periodView === "monthly" ? "monthYear" : "year"}
                     stroke="hsl(var(--muted-foreground))"
                   />
-                  {/* @ts-expect-error - Recharts typing issue */}
+                  {/* @ts-ignore - Recharts typing issue */}
                   <YAxis stroke="hsl(var(--muted-foreground))" />
-                  {/* @ts-expect-error - Recharts typing issue */}
+                  {/* @ts-ignore - Recharts typing issue */}
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  {/* @ts-expect-error - Recharts typing issue */}
+                  {/* @ts-ignore - Recharts typing issue */}
                   <Bar dataKey="count" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -197,11 +197,11 @@ export default function VisitorsAnalytics() {
           <CardContent>
             <div className="grid items-center gap-8 md:grid-cols-2">
               <div className="h-[400px] w-full">
-                {/* @ts-expect-error - Recharts typing issue */}
+                {/* @ts-ignore - Recharts typing issue */}
                 <ResponsiveContainer width="100%" height="100%">
-                  {/* @ts-expect-error - Recharts typing issue */}
+                  {/* @ts-ignore - Recharts typing issue */}
                   <PieChart>
-                    {/* @ts-expect-error - Recharts typing issue */}
+                    {/* @ts-ignore - Recharts typing issue */}
                     <Pie
                       data={visitors?.data?.bySource || []}
                       cx="50%"
@@ -221,7 +221,7 @@ export default function VisitorsAnalytics() {
                         />
                       ))}
                     </Pie>
-                    {/* @ts-expect-error - Recharts typing issue */}
+                    {/* @ts-ignore - Recharts typing issue */}
                     <ChartTooltip
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
