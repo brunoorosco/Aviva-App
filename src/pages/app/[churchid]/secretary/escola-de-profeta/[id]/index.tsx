@@ -43,12 +43,12 @@ const ModuleView = () => {
   const course = courseData?.data
 
   const aprovados = useMemo(
-    () => course?.alunos.filter((a) => a.status === 'Aprovado').length ?? 0,
+    () => course?.alunos.filter((a) => a.status.toLowerCase() === 'aprovado').length ?? 0,
     [course]
   )
 
   const reprovados = useMemo(
-    () => course?.alunos.filter((a) => a.status === 'Reprovado').length ?? 0,
+    () => course?.alunos.filter((a) => a.status.toLowerCase() === 'reprovado').length ?? 0,
     [course]
   )
 

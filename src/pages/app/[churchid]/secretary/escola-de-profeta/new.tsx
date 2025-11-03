@@ -52,7 +52,7 @@ export default function CreateModulePage() {
       const aulaIndices = headers
         .map((h, i) => ({ h, i }))
         .filter(
-          (col) => col.h !== 'Nome' && col.h !== 'Status' && col.h !== 'Igreja'
+          (col) => col.h !== 'nome' && col.h !== 'status' && col.h !== 'Igreja'
         )
         .map((col) => col.i)
 
@@ -61,7 +61,7 @@ export default function CreateModulePage() {
         .map((row: any[]) => ({
           nome: row[0],
           presencas: aulaIndices.map((i) => row[i] === 'P'), // true se 'P'
-          status: row[headers.indexOf('Status')] || '',
+          status: row[headers.indexOf('status')] || '',
           igreja: row[headers.indexOf('Igreja')] || ''
         }))
 
