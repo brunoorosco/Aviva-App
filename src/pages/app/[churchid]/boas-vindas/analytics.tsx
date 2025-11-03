@@ -164,37 +164,21 @@ export default function VisitorsAnalytics() {
             </div>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="h-[400px] w-full">
-              {React.createElement(BarChart, {
-                data: periodView === "monthly" ? formattedVisitors : annualVisitors,
-                children: [
-                  React.createElement(CartesianGrid, {
-                    key: "grid",
-                    strokeDasharray: "3 3",
-                    stroke: "hsl(var(--border))",
-                  }),
-                  React.createElement(XAxis, {
-                    key: "xaxis",
-                    dataKey: periodView === "monthly" ? "monthYear" : "year",
-                    stroke: "hsl(var(--muted-foreground))",
-                  }),
-                  React.createElement(YAxis, {
-                    key: "yaxis",
-                    stroke: "hsl(var(--muted-foreground))",
-                  }),
-                  React.createElement(ChartTooltip, {
-                    key: "tooltip",
-                    content: React.createElement(ChartTooltipContent),
-                  }),
-                  React.createElement(Bar, {
-                    key: "bar",
-                    dataKey: "count",
-                    fill: "var(--color-count)",
-                    radius: [8, 8, 0, 0],
-                  }),
-                ],
-              })}
-            </ChartContainer>
+            <div className="h-[400px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                {/* @ts-expect-error - Recharts typing issue with React versions */}
+                <BarChart data={periodView === "monthly" ? formattedVisitors : annualVisitors}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis
+                    dataKey={periodView === "monthly" ? "monthYear" : "year"}
+                    stroke="hsl(var(--muted-foreground))"
+                  />
+                  <YAxis stroke="hsl(var(--muted-foreground))" />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="count" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
 
