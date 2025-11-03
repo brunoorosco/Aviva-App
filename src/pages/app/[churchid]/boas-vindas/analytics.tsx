@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, BarChart3, Calendar, TrendingUp } from "lucide-react";
@@ -15,20 +17,19 @@ import {
   Pie,
   PieChart,
   Cell,
-  Legend,
 } from "recharts";
-import {
-  mockAnnualVisitors,
-  mockMonthlyVisitors,
-  mockVisitorsBySource,
-} from "@/mocks/mockVisitors";
 import { useHttpGet } from "@/hooks/api";
 import { useSession } from "next-auth/react";
+import {
+  TVisitorBySource,
+  TVisitorCountResponse,
+  TVisitorSource,
+} from "@/domain/models/visitantes";
 
 export default function VisitorsAnalytics() {
   const [periodView, setPeriodView] = useState<"monthly" | "annual">("monthly");
   const { data: session } = useSession();
-  const churchId = session?.user.churchId;
+  const churchId = session?.user.churchId as string;
 
   const chartConfig = {
     count: {
@@ -37,32 +38,50 @@ export default function VisitorsAnalytics() {
     },
   };
 
-  const sourceColors = {
-    invinted: "hsl(var(--primary))",
+  const sourceColors: Record<TVisitorSource, string> = {
+    invited: "hsl(150, 70%, 50%)",
     instagram: "hsl(280, 70%, 50%)",
     facebook: "hsl(210, 70%, 50%)",
     youtube: "hsl(0, 70%, 50%)",
     outros: "hsl(var(--muted-foreground))",
   };
 
-  const {
-    data: visitors,
-    isLoading,
-    mutate,
-  } = useHttpGet(`/api/protected/churches/${churchId}/boas-vindas/analytics`);
+  const { data: visitors, isLoading } = useHttpGet<TVisitorCountResponse>(
+    `/api/protected/churches/${churchId}/boas-vindas/analytics`
+  );
 
+  // 🔹 Formata o retorno da API (mensal)
   const formattedVisitors = useMemo(() => {
-    if (!visitors?.data) return [];
-    return visitors.data.map((item: any) => ({
+    if (!visitors?.data?.monthly) return [];
+    return visitors.data.monthly.map((item) => ({
       monthYear: item.monthYear,
-      totalItems: item.totalItems,
+      count: item.totalItems,
+      year: item.monthYear.split("-")[0],
+      month: item.monthYear.split("-")[1],
     }));
   }, [visitors]);
 
   // 🔹 Total geral
-  const totalVisitors = formattedVisitors.reduce((sum: any, item: any) => sum + item.totalItems, 0);
+  const totalVisitors = formattedVisitors.reduce((sum, item) => sum + item.count, 0);
+
   // 🔹 Último mês
   const lastMonth = formattedVisitors.at(-1);
+
+  // 🔹 Agrupa por ano para exibição anual
+  const annualVisitors = useMemo(() => {
+    const byYear: Record<string, number> = {};
+    formattedVisitors.forEach((item) => {
+      byYear[item.year] = (byYear[item.year] || 0) + item.count;
+    });
+    return Object.entries(byYear).map(([year, count]) => ({ year, count }));
+  }, [formattedVisitors]);
+
+  // 🔹 Fonte principal (maior contagem)
+  const mainSource = useMemo(() => {
+    const sources = visitors?.data?.bySource;
+    if (!sources || sources.length === 0) return null;
+    return sources.reduce((prev, curr) => (curr.count > prev.count ? curr : prev));
+  }, [visitors]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -107,7 +126,7 @@ export default function VisitorsAnalytics() {
               <Calendar className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{lastMonth?.totalItems || 0}</div>
+              <div className="text-2xl font-bold">{lastMonth?.count || 0}</div>
               <p className="text-xs text-muted-foreground">{lastMonth?.monthYear || ""}</p>
             </CardContent>
           </Card>
@@ -118,12 +137,8 @@ export default function VisitorsAnalytics() {
               <BarChart3 className="w-4 h-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold capitalize">
-                {mockVisitorsBySource[0]?.source || ""}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {mockVisitorsBySource[0]?.count || 0} visitantes
-              </p>
+              <div className="text-2xl font-bold capitalize">{mainSource?.source || "—"}</div>
+              <p className="text-xs text-muted-foreground">{mainSource?.count || 0} visitantes</p>
             </CardContent>
           </Card>
         </div>
@@ -150,12 +165,10 @@ export default function VisitorsAnalytics() {
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[400px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={periodView === "monthly" ? mockMonthlyVisitors : mockAnnualVisitors}
-                >
+                <BarChart data={periodView === "monthly" ? formattedVisitors : annualVisitors}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis
-                    dataKey={periodView === "monthly" ? "month" : "year"}
+                    dataKey={periodView === "monthly" ? "monthYear" : "year"}
                     stroke="hsl(var(--muted-foreground))"
                   />
                   <YAxis stroke="hsl(var(--muted-foreground))" />
@@ -179,29 +192,33 @@ export default function VisitorsAnalytics() {
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={mockVisitorsBySource}
+                      data={visitors?.data?.bySource || []}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ source, percent }) => `${source}: ${(percent * 100).toFixed(0)}%`}
+                      label={({ source, percent }) =>
+                        `${source}: ${(percent || 0 * 100).toFixed(0)}%`
+                      }
                       outerRadius={120}
                       fill="hsl(var(--primary))"
                       dataKey="count"
                     >
-                      {mockVisitorsBySource.map((entry) => (
-                        <Cell key={`cell-${entry.source}`} fill={sourceColors[entry.source]} />
+                      {(visitors?.data?.bySource || []).map((entry) => (
+                        <Cell
+                          key={`cell-${entry.source}`}
+                          fill={sourceColors[entry.source] || "gray"}
+                        />
                       ))}
                     </Pie>
                     <ChartTooltip
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
+                          const { source, count } = payload[0].payload as TVisitorBySource;
                           return (
                             <div className="p-2 border rounded-lg shadow-sm bg-background">
                               <div className="grid grid-cols-2 gap-2">
-                                <span className="text-sm font-medium capitalize">
-                                  {payload[0].payload.source}:
-                                </span>
-                                <span className="text-sm font-bold">{payload[0].value}</span>
+                                <span className="text-sm font-medium capitalize">{source}:</span>
+                                <span className="text-sm font-bold">{count}</span>
                               </div>
                             </div>
                           );
@@ -214,19 +231,21 @@ export default function VisitorsAnalytics() {
               </div>
 
               <div className="space-y-4">
-                {mockVisitorsBySource.map((item) => (
+                {(visitors?.data?.bySource || []).map((item) => (
                   <div key={item.source} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div
                         className="w-4 h-4 rounded-full"
-                        style={{ backgroundColor: sourceColors[item.source] }}
+                        style={{
+                          backgroundColor: sourceColors[item.source] || "gray",
+                        }}
                       />
                       <span className="font-medium capitalize">{item.source}</span>
                     </div>
                     <div className="text-right">
                       <div className="font-bold">{item.count}</div>
                       <div className="text-xs text-muted-foreground">
-                        {((item.count / totalVisitors) * 100).toFixed(1)}%
+                        {totalVisitors > 0 ? ((item.count / totalVisitors) * 100).toFixed(1) : 0}%
                       </div>
                     </div>
                   </div>

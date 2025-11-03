@@ -1,5 +1,11 @@
 import { TEvent } from "@/domain/models/events";
-import { VisitantesModel } from "@/domain/models/visitantes";
+import {
+  TMonthlyVisitor,
+  TVisitorBySource,
+  TVisitorCountResponse,
+  TVisitorSource,
+  VisitantesModel,
+} from "@/domain/models/visitantes";
 import { MongoHelper } from "../../mongoHelper";
 
 export class VisitantesRepository {
@@ -68,12 +74,14 @@ export class VisitantesRepository {
     }
   }
 
-  async countVisitors(churchId: string) {
+  async countVisitors(churchId: string): Promise<TVisitorCountResponse> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
 
-      const resp = await collection
-        .aggregate([
+      // 📊 Agrupa por mês
+      const monthly = await collection
+        .aggregate<TMonthlyVisitor>([
+          { $match: { churchId } },
           {
             $group: {
               _id: {
@@ -100,19 +108,52 @@ export class VisitantesRepository {
               },
             },
           },
+          { $project: { _id: 0, monthYear: 1, totalItems: 1 } },
+          { $sort: { monthYear: 1 } },
+        ])
+        .toArray();
+
+      // 📈 Agrupa por origem (howHeard)
+      const bySource = await collection
+        .aggregate<TVisitorBySource>([
+          { $match: { churchId } },
           {
-            $project: { _id: 0, monthYear: 1, totalItems: 1 },
+            $group: {
+              _id: {
+                $cond: [{ $ifNull: ["$howHeard", false] }, { $toLower: "$howHeard" }, "outros"],
+              },
+              count: { $sum: 1 },
+            },
           },
           {
-            $sort: { monthYear: 1 },
+            $project: {
+              _id: 0,
+              source: "$_id",
+              count: 1,
+            },
           },
         ])
         .toArray();
 
-      console.log(JSON.stringify(resp));
-      return resp;
+      // 🔄 Normaliza nomes das fontes conforme o tipo
+      const normalizedBySource: TVisitorBySource[] = [
+        "invited",
+        "instagram",
+        "facebook",
+        "youtube",
+        "outros",
+      ].map((src) => ({
+        source: src as TVisitorSource,
+        count: bySource.find((s) => s.source === src)?.count || 0,
+      }));
+
+      return {
+        monthly,
+        bySource: normalizedBySource,
+      };
     } catch (err) {
-      console.error(err);
+      console.error("❌ Erro em countVisitors:", err);
+      throw err;
     }
   }
 }

@@ -16,6 +16,7 @@ import {
   HouseHeartIcon,
   House,
   MapPinHouse,
+  ChartColumn,
 } from "lucide-react";
 
 type TMenu = {
@@ -61,7 +62,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
         },
         {
           label: "Analytics",
-          icon: CrossIcon,
+          icon: ChartColumn,
           link: `${base}/boas-vindas/analytics`,
         },
       ],
