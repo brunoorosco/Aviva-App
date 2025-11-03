@@ -164,7 +164,7 @@ export default function VisitorsAnalytics() {
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[400px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+              {/* <ResponsiveContainer width="100%" height="100%"> */}
                 <BarChart data={periodView === "monthly" ? formattedVisitors : annualVisitors}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis
@@ -175,7 +175,7 @@ export default function VisitorsAnalytics() {
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Bar dataKey="count" fill="var(--color-count)" radius={[8, 8, 0, 0]} />
                 </BarChart>
-              </ResponsiveContainer>
+              {/* </ResponsiveContainer> */}
             </ChartContainer>
           </CardContent>
         </Card>
@@ -189,7 +189,7 @@ export default function VisitorsAnalytics() {
           <CardContent>
             <div className="grid items-center gap-8 md:grid-cols-2">
               <div className="h-[400px]">
-                <ResponsiveContainer width="100%" height="100%">
+                {/* <ResponsiveContainer width="100%" height="100%"> */}
                   <PieChart>
                     <Pie
                       data={visitors?.data?.bySource || []}
@@ -227,7 +227,7 @@ export default function VisitorsAnalytics() {
                       }}
                     />
                   </PieChart>
-                </ResponsiveContainer>
+                {/* </ResponsiveContainer> */}
               </div>
 
               <div className="space-y-4">
