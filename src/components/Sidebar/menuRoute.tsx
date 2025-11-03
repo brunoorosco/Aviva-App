@@ -47,7 +47,6 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Boas Vindas",
       icon: UserPlus,
-      link: `${base}/aceitou-jesus`,
       roles: ["secretaria", "boas-vindas"],
       children: [
         {
@@ -59,6 +58,11 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
           label: "Aceitou Jesus",
           icon: CrossIcon,
           link: `${base}/aceitou-jesus`,
+        },
+        {
+          label: "Analytics",
+          icon: CrossIcon,
+          link: `${base}/boas-vindas/analytics`,
         },
       ],
     },

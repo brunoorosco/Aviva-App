@@ -67,4 +67,52 @@ export class VisitantesRepository {
       throw error;
     }
   }
+
+  async countVisitors(churchId: string) {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+
+      const resp = await collection
+        .aggregate([
+          {
+            $group: {
+              _id: {
+                year: { $year: "$visitedAt" },
+                month: { $month: "$visitedAt" },
+              },
+              totalItems: { $sum: 1 },
+            },
+          },
+          {
+            $addFields: {
+              monthYear: {
+                $concat: [
+                  { $toString: "$_id.year" },
+                  "-",
+                  {
+                    $cond: {
+                      if: { $lt: ["$_id.month", 10] },
+                      then: { $concat: ["0", { $toString: "$_id.month" }] },
+                      else: { $toString: "$_id.month" },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+          {
+            $project: { _id: 0, monthYear: 1, totalItems: 1 },
+          },
+          {
+            $sort: { monthYear: 1 },
+          },
+        ])
+        .toArray();
+
+      console.log(JSON.stringify(resp));
+      return resp;
+    } catch (err) {
+      console.error(err);
+    }
+  }
 }
