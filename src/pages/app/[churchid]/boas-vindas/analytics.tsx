@@ -1,24 +1,22 @@
 "use client";
 
-import * as React from "react";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, BarChart3, Calendar, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Bar, Doughnut } from "react-chartjs-2";
 import {
-  Bar,
-  BarChart,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  Pie,
-  PieChart,
-  Cell,
-} from "recharts";
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+} from "chart.js";
 import { useHttpGet } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import {
@@ -27,31 +25,35 @@ import {
   TVisitorSource,
 } from "@/domain/models/visitantes";
 
+// Registrar componentes do Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
+
 export default function VisitorsAnalytics() {
   const [periodView, setPeriodView] = useState<"monthly" | "annual">("monthly");
   const { data: session } = useSession();
   const churchId = session?.user.churchId as string;
 
-  const chartConfig = {
-    count: {
-      label: "Visitantes",
-      color: "hsl(var(--primary))",
-    },
-  };
-
   const sourceColors: Record<TVisitorSource, string> = {
-    invited: "hsl(150, 70%, 50%)",
-    instagram: "hsl(280, 70%, 50%)",
-    facebook: "hsl(210, 70%, 50%)",
-    youtube: "hsl(0, 70%, 50%)",
-    outros: "hsl(var(--muted-foreground))",
+    invited: "rgb(52, 211, 153)",
+    instagram: "rgb(192, 132, 252)",
+    facebook: "rgb(96, 165, 250)",
+    youtube: "rgb(248, 113, 113)",
+    outros: "rgb(156, 163, 175)",
   };
 
   const { data: visitors, isLoading } = useHttpGet<TVisitorCountResponse>(
     `/api/protected/churches/${churchId}/boas-vindas/analytics`
   );
 
-  // 🔹 Formata o retorno da API (mensal)
+  // Formata o retorno da API (mensal)
   const formattedVisitors = useMemo(() => {
     if (!visitors?.data?.monthly) return [];
     return visitors.data.monthly.map((item) => ({
@@ -62,13 +64,13 @@ export default function VisitorsAnalytics() {
     }));
   }, [visitors]);
 
-  // 🔹 Total geral
+  // Total geral
   const totalVisitors = formattedVisitors.reduce((sum, item) => sum + item.count, 0);
 
-  // 🔹 Último mês
+  // Último mês
   const lastMonth = formattedVisitors.at(-1);
 
-  // 🔹 Agrupa por ano para exibição anual
+  // Agrupa por ano para exibição anual
   const annualVisitors = useMemo(() => {
     const byYear: Record<string, number> = {};
     formattedVisitors.forEach((item) => {
@@ -77,12 +79,108 @@ export default function VisitorsAnalytics() {
     return Object.entries(byYear).map(([year, count]) => ({ year, count }));
   }, [formattedVisitors]);
 
-  // 🔹 Fonte principal (maior contagem)
+  // Fonte principal (maior contagem)
   const mainSource = useMemo(() => {
     const sources = visitors?.data?.bySource;
     if (!sources || sources.length === 0) return null;
     return sources.reduce((prev, curr) => (curr.count > prev.count ? curr : prev));
   }, [visitors]);
+
+  // Configuração do gráfico de barras
+  const barChartData = {
+    labels: periodView === "monthly" 
+      ? formattedVisitors.map((v) => v.monthYear)
+      : annualVisitors.map((v) => v.year),
+    datasets: [
+      {
+        label: "Visitantes",
+        data: periodView === "monthly"
+          ? formattedVisitors.map((v) => v.count)
+          : annualVisitors.map((v) => v.count),
+        backgroundColor: "hsl(var(--primary))",
+        borderRadius: 8,
+      },
+    ],
+  };
+
+  const barChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        backgroundColor: "hsl(var(--background))",
+        titleColor: "hsl(var(--foreground))",
+        bodyColor: "hsl(var(--foreground))",
+        borderColor: "hsl(var(--border))",
+        borderWidth: 1,
+        padding: 12,
+        displayColors: false,
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          color: "hsl(var(--border))",
+          display: false,
+        },
+        ticks: {
+          color: "hsl(var(--muted-foreground))",
+        },
+      },
+      y: {
+        grid: {
+          color: "hsl(var(--border))",
+        },
+        ticks: {
+          color: "hsl(var(--muted-foreground))",
+        },
+      },
+    },
+  };
+
+  // Configuração do gráfico de pizza
+  const pieChartData = {
+    labels: (visitors?.data?.bySource || []).map((item) => item.source),
+    datasets: [
+      {
+        data: (visitors?.data?.bySource || []).map((item) => item.count),
+        backgroundColor: (visitors?.data?.bySource || []).map(
+          (item) => sourceColors[item.source] || "gray"
+        ),
+        borderWidth: 0,
+      },
+    ],
+  };
+
+  const pieChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        backgroundColor: "hsl(var(--background))",
+        titleColor: "hsl(var(--foreground))",
+        bodyColor: "hsl(var(--foreground))",
+        borderColor: "hsl(var(--border))",
+        borderWidth: 1,
+        padding: 12,
+        callbacks: {
+          label: function (context: any) {
+            const label = context.label || "";
+            const value = context.parsed || 0;
+            const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+            const percentage = ((value / total) * 100).toFixed(0);
+            return `${label}: ${value} (${percentage}%)`;
+          },
+        },
+      },
+    },
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -165,25 +263,7 @@ export default function VisitorsAnalytics() {
           </CardHeader>
           <CardContent>
             <div className="h-[400px] w-full">
-              {/* @ts-ignore - Recharts typing issue with React versions */}
-              <ResponsiveContainer width="100%" height="100%">
-                {/* @ts-ignore - Recharts typing issue */}
-                <BarChart data={periodView === "monthly" ? formattedVisitors : annualVisitors}>
-                  {/* @ts-ignore - Recharts typing issue */}
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  {/* @ts-ignore - Recharts typing issue */}
-                  <XAxis
-                    dataKey={periodView === "monthly" ? "monthYear" : "year"}
-                    stroke="hsl(var(--muted-foreground))"
-                  />
-                  {/* @ts-ignore - Recharts typing issue */}
-                  <YAxis stroke="hsl(var(--muted-foreground))" />
-                  {/* @ts-ignore - Recharts typing issue */}
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  {/* @ts-ignore - Recharts typing issue */}
-                  <Bar dataKey="count" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+              <Bar data={barChartData} options={barChartOptions} />
             </div>
           </CardContent>
         </Card>
@@ -197,50 +277,7 @@ export default function VisitorsAnalytics() {
           <CardContent>
             <div className="grid items-center gap-8 md:grid-cols-2">
               <div className="h-[400px] w-full">
-                {/* @ts-ignore - Recharts typing issue */}
-                <ResponsiveContainer width="100%" height="100%">
-                  {/* @ts-ignore - Recharts typing issue */}
-                  <PieChart>
-                    {/* @ts-ignore - Recharts typing issue */}
-                    <Pie
-                      data={visitors?.data?.bySource || []}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ source, percent }) =>
-                        `${source}: ${((percent || 0) * 100).toFixed(0)}%`
-                      }
-                      outerRadius={120}
-                      fill="hsl(var(--primary))"
-                      dataKey="count"
-                    >
-                      {/* @ts-ignore - Recharts typing issue */}
-                      {(visitors?.data?.bySource || []).map((entry) => (
-                        <Cell
-                          key={`cell-${entry.source}`}
-                          fill={sourceColors[entry.source] || "gray"}
-                        />
-                      ))}
-                    </Pie>
-                    {/* @ts-ignore - Recharts typing issue */}
-                    <ChartTooltip
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          const { source, count } = payload[0].payload as TVisitorBySource;
-                          return (
-                            <div className="p-2 border rounded-lg shadow-sm bg-background">
-                              <div className="grid grid-cols-2 gap-2">
-                                <span className="text-sm font-medium capitalize">{source}:</span>
-                                <span className="text-sm font-bold">{count}</span>
-                              </div>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
+                <Doughnut data={pieChartData} options={pieChartOptions} />
               </div>
 
               <div className="space-y-4">
