@@ -147,7 +147,7 @@ const ChartTooltipContent = React.forwardRef<
       if (labelFormatter) {
         return (
           <div className={cn("font-medium", labelClassName)}>
-            {labelFormatter(value, payload)}
+            {labelFormatter(value, payload) as unknown as React.ReactNode}
           </div>
         );
       }
@@ -244,7 +244,7 @@ const ChartLegend = RechartsPrimitive.Legend;
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> &
-  //@ts-ignore
+    //@ts-ignore
     Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
       hideIcon?: boolean;
       nameKey?: string;
@@ -263,29 +263,31 @@ const ChartLegendContent = React.forwardRef<
         className
       )}
     >
-      {//@ts-ignore
-      payload.map((item: any) => {
-        const key = `${nameKey || item.dataKey || "value"}`;
-        const itemConfig = getPayloadConfigFromPayload(config, item, key);
+      {
+        //@ts-ignore
+        payload.map((item: any) => {
+          const key = `${nameKey || item.dataKey || "value"}`;
+          const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
-        return (
-          <div
-            key={item.value}
-            className={cn(
-              "flex items-center gap-1.5",
-              "[&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
-            )}
-          >
-            {!hideIcon ? (
-              <div
-                className="h-2 w-2 shrink-0 rounded-[2px]"
-                style={{ backgroundColor: item.color }}
-              />
-            ) : null}
-            {itemConfig?.label}
-          </div>
-        );
-      })}
+          return (
+            <div
+              key={item.value}
+              className={cn(
+                "flex items-center gap-1.5",
+                "[&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
+              )}
+            >
+              {!hideIcon ? (
+                <div
+                  className="h-2 w-2 shrink-0 rounded-[2px]"
+                  style={{ backgroundColor: item.color }}
+                />
+              ) : null}
+              {itemConfig?.label}
+            </div>
+          );
+        })
+      }
     </div>
   );
 });
