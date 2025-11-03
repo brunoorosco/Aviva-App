@@ -26,15 +26,7 @@ import {
 } from "@/domain/models/visitantes";
 
 // Registrar componentes do Chart.js
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 export default function VisitorsAnalytics() {
   const [periodView, setPeriodView] = useState<"monthly" | "annual">("monthly");
@@ -88,16 +80,18 @@ export default function VisitorsAnalytics() {
 
   // Configuração do gráfico de barras
   const barChartData = {
-    labels: periodView === "monthly" 
-      ? formattedVisitors.map((v) => v.monthYear)
-      : annualVisitors.map((v) => v.year),
+    labels:
+      periodView === "monthly"
+        ? formattedVisitors.map((v) => v.monthYear)
+        : annualVisitors.map((v) => v.year),
     datasets: [
       {
         label: "Visitantes",
-        data: periodView === "monthly"
-          ? formattedVisitors.map((v) => v.count)
-          : annualVisitors.map((v) => v.count),
-        backgroundColor: "hsl(var(--primary))",
+        data:
+          periodView === "monthly"
+            ? formattedVisitors.map((v) => v.count)
+            : annualVisitors.map((v) => v.count),
+        backgroundColor: "rgb(00, 51, 204)",
         borderRadius: 8,
       },
     ],
@@ -111,10 +105,10 @@ export default function VisitorsAnalytics() {
         display: false,
       },
       tooltip: {
-        backgroundColor: "hsl(var(--background))",
-        titleColor: "hsl(var(--foreground))",
-        bodyColor: "hsl(var(--foreground))",
-        borderColor: "hsl(var(--border))",
+        backgroundColor: "hsl(100,50%,50%)", //balão de mensagem
+        titleColor: "hsl(275,90%,100%)", //color dotitulo do balão
+        bodyColor: "hsl(275,90%,100%)", //color do texto do balão
+        borderColor: "rgba(0,0,0,0.05)",
         borderWidth: 1,
         padding: 12,
         displayColors: false,
@@ -122,10 +116,7 @@ export default function VisitorsAnalytics() {
     },
     scales: {
       x: {
-        grid: {
-          color: "hsl(var(--border))",
-          display: false,
-        },
+        grid: { color: "rgba(0, 0, 0, 0.02)", display: false },
         ticks: {
           color: "hsl(var(--muted-foreground))",
         },
@@ -184,8 +175,9 @@ export default function VisitorsAnalytics() {
 
   return (
     <div className="min-h-screen bg-background">
+      <main className="container mx-auto px-4 py-4">
       <header className="border-b bg-card">
-        <div className="container px-4 py-4 mx-auto">
+        <div className="px-4 py-4 mx-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/app">
@@ -204,10 +196,8 @@ export default function VisitorsAnalytics() {
           </div>
         </div>
       </header>
-
-      <main className="container px-4 py-8 mx-auto">
         {/* Summary Cards */}
-        <div className="grid gap-4 mb-8 md:grid-cols-3">
+        <div className="grid gap-4 mb-8 md:grid-cols-3 grid-cols-1 mt-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
               <CardTitle className="text-sm font-medium">Total de Visitantes</CardTitle>
@@ -247,7 +237,7 @@ export default function VisitorsAnalytics() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Visitantes ao Longo do Tempo</CardTitle>
+                <CardTitle>Visitantes</CardTitle>
                 <CardDescription>Visualize os visitantes por período</CardDescription>
               </div>
               <Tabs
