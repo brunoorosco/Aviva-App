@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, BarChart3, Calendar, TrendingUp } from "lucide-react";
@@ -13,6 +14,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  ResponsiveContainer,
   Pie,
   PieChart,
   Cell,
@@ -163,16 +165,35 @@ export default function VisitorsAnalytics() {
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[400px] w-full">
-              <BarChart data={periodView === "monthly" ? formattedVisitors : annualVisitors}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey={periodView === "monthly" ? "monthYear" : "year"}
-                  stroke="hsl(var(--muted-foreground))"
-                />
-                <YAxis stroke="hsl(var(--muted-foreground))" />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="count" fill="var(--color-count)" radius={[8, 8, 0, 0]} />
-              </BarChart>
+              {React.createElement(BarChart, {
+                data: periodView === "monthly" ? formattedVisitors : annualVisitors,
+                children: [
+                  React.createElement(CartesianGrid, {
+                    key: "grid",
+                    strokeDasharray: "3 3",
+                    stroke: "hsl(var(--border))",
+                  }),
+                  React.createElement(XAxis, {
+                    key: "xaxis",
+                    dataKey: periodView === "monthly" ? "monthYear" : "year",
+                    stroke: "hsl(var(--muted-foreground))",
+                  }),
+                  React.createElement(YAxis, {
+                    key: "yaxis",
+                    stroke: "hsl(var(--muted-foreground))",
+                  }),
+                  React.createElement(ChartTooltip, {
+                    key: "tooltip",
+                    content: React.createElement(ChartTooltipContent),
+                  }),
+                  React.createElement(Bar, {
+                    key: "bar",
+                    dataKey: "count",
+                    fill: "var(--color-count)",
+                    radius: [8, 8, 0, 0],
+                  }),
+                ],
+              })}
             </ChartContainer>
           </CardContent>
         </Card>
@@ -186,43 +207,45 @@ export default function VisitorsAnalytics() {
           <CardContent>
             <div className="grid items-center gap-8 md:grid-cols-2">
               <div className="h-[400px] w-full">
-                <PieChart width={400} height={400}>
-                  <Pie
-                    data={visitors?.data?.bySource || []}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ source, percent }) =>
-                      `${source}: ${((percent || 0) * 100).toFixed(0)}%`
-                    }
-                    outerRadius={120}
-                    fill="hsl(var(--primary))"
-                    dataKey="count"
-                  >
-                    {(visitors?.data?.bySource || []).map((entry) => (
-                      <Cell
-                        key={`cell-${entry.source}`}
-                        fill={sourceColors[entry.source] || "gray"}
-                      />
-                    ))}
-                  </Pie>
-                  <ChartTooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const { source, count } = payload[0].payload as TVisitorBySource;
-                        return (
-                          <div className="p-2 border rounded-lg shadow-sm bg-background">
-                            <div className="grid grid-cols-2 gap-2">
-                              <span className="text-sm font-medium capitalize">{source}:</span>
-                              <span className="text-sm font-bold">{count}</span>
-                            </div>
-                          </div>
-                        );
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={visitors?.data?.bySource || []}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ source, percent }) =>
+                        `${source}: ${((percent || 0) * 100).toFixed(0)}%`
                       }
-                      return null;
-                    }}
-                  />
-                </PieChart>
+                      outerRadius={120}
+                      fill="hsl(var(--primary))"
+                      dataKey="count"
+                    >
+                      {(visitors?.data?.bySource || []).map((entry) => (
+                        <Cell
+                          key={`cell-${entry.source}`}
+                          fill={sourceColors[entry.source] || "gray"}
+                        />
+                      ))}
+                    </Pie>
+                    <ChartTooltip
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const { source, count } = payload[0].payload as TVisitorBySource;
+                          return (
+                            <div className="p-2 border rounded-lg shadow-sm bg-background">
+                              <div className="grid grid-cols-2 gap-2">
+                                <span className="text-sm font-medium capitalize">{source}:</span>
+                                <span className="text-sm font-bold">{count}</span>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
 
               <div className="space-y-4">
