@@ -39,7 +39,7 @@ const ProcessSteps = () => {
             {firstHalf.map((step, index) => (
               <div key={step.id} className="relative">
                 {/* Connecting line */}
-                {index < firstHalf.length - 1 && (
+                {index < firstHalf.length && (
                   <div className="absolute left-5 top-12 w-0.5 h-12 bg-primary" />
                 )}
 
