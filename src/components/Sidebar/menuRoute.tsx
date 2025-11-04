@@ -34,6 +34,12 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
       roles: ["lider", "supervisor", "pastor", "auxiliar"],
     },
     {
+      label: "Minha Rede",
+      icon: GroupIcon,
+      link: `${base}/minha-rede`,
+      roles: ["pastor", "supervisor", "lider"],
+    },
+    {
       label: "Redes",
       icon: GroupIcon,
       link: `${base}/cems`,

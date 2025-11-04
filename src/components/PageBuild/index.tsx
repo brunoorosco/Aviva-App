@@ -84,7 +84,7 @@ export default function ComingSoonPage() {
               </div>
               <div className="flex items-center gap-2">
                 <strong className="w-20">Contato</strong>
-                <a href="mailto:oi@seudominio.com" className="underline">brunoorosco@gamil.com</a>
+                <a href="mailto:oi@seudominio.com" className="underline">brunoorosco@gmail.com</a>
               </div>
             </div>
           </motion.div>

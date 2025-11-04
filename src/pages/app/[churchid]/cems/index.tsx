@@ -18,6 +18,7 @@ const Cem = () => {
   const { data: cems, mutate } = useHttpGet<CellsModel[]>(
     `/api/protected/churches/${session?.user.churchId}/cems`
   )
+  const isAdmin = session?.user.permission?.includes('membro')
 
   const handleDelete = async (id: string) => {
     Toast.showDelete(
@@ -47,7 +48,7 @@ const Cem = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
           {cems?.data.map((cem: CellsModel) => (
             <div key={cem._id} className="relative">
-              {/* Ícone de edição */}
+              {isAdmin && (
               <Link
                 href={`../${churchId}/cems/${cem._id}`}
                 onClick={(e) => e.stopPropagation()} // evita abrir membros
@@ -55,6 +56,7 @@ const Cem = () => {
               >
                 <Pencil className="w-4 h-4 text-gray-400" />
               </Link>
+              )}
 
               <Card
                 className="rounded-2xl shadow-md hover:shadow-lg transition cursor-pointer"
