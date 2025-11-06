@@ -111,67 +111,67 @@ export default function CellDashboard({ members }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="max-w-8xl mx-auto">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">Dashboard da Igreja</h1>
+    <div className="min-h-screen p-4 bg-gray-50 md:p-8">
+      <div className="mx-auto max-w-8xl">
+        <h1 className="mb-6 text-2xl font-bold text-gray-800 md:text-3xl">Estrutura das Redes</h1>
 
         {/* Cards de resumo geral */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-          <div className="bg-white p-4 md:p-6 rounded-lg shadow">
-            <h3 className="text-sm md:text-base font-medium text-gray-500 mb-2">
+        <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3 md:gap-6 md:mb-8">
+          <div className="p-4 bg-white rounded-lg shadow md:p-6">
+            <h3 className="mb-2 text-sm font-medium text-gray-500 md:text-base">
               Total de Membros
             </h3>
-            <p className="text-2xl md:text-4xl font-bold text-blue-600">{totalChurchMembers}</p>
+            <p className="text-2xl font-bold text-blue-600 md:text-4xl">{totalChurchMembers}</p>
           </div>
 
-          <div className="bg-white p-4 md:p-6 rounded-lg shadow">
-            <h3 className="text-sm md:text-base font-medium text-gray-500 mb-2">Membros Ativos</h3>
-            <p className="text-2xl md:text-4xl font-bold text-green-600">{totalChurchActive}</p>
+          <div className="p-4 bg-white rounded-lg shadow md:p-6">
+            <h3 className="mb-2 text-sm font-medium text-gray-500 md:text-base">Membros Ativos</h3>
+            <p className="text-2xl font-bold text-green-600 md:text-4xl">{totalChurchActive}</p>
           </div>
 
-          <div className="bg-white p-4 md:p-6 rounded-lg shadow">
-            <h3 className="text-sm md:text-base font-medium text-gray-500 mb-2">
+          <div className="p-4 bg-white rounded-lg shadow md:p-6">
+            <h3 className="mb-2 text-sm font-medium text-gray-500 md:text-base">
               Membros Inativos
             </h3>
-            <p className="text-2xl md:text-4xl font-bold text-red-600">{totalChurchInactive}</p>
+            <p className="text-2xl font-bold text-red-600 md:text-4xl">{totalChurchInactive}</p>
           </div>
         </div>
 
         {/* Cards de células */}
-        <h2 className="text-xl md:text-2xl font-bold text-gray-700 mb-4 md:mb-6">
+        <h2 className="mb-4 text-xl font-bold text-gray-700 md:text-2xl md:mb-6">
           Células da Igreja
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {cellsData.map((cell, cellIndex) => (
             <div
               key={cell.name}
-              className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full"
+              className="flex flex-col h-full overflow-hidden bg-white rounded-lg shadow-md"
             >
-              <div className="p-3 md:p-4 border-b border-gray-200">
-                <h3 className="text-lg md:text-xl font-semibold text-gray-800">{cell.name}</h3>
+              <div className="p-3 border-b border-gray-200 md:p-4">
+                <h3 className="text-lg font-semibold text-gray-800 md:text-xl">{cell.name}</h3>
               </div>
 
-              <div className="p-3 md:p-4 flex-grow">
+              <div className="flex-grow p-3 md:p-4">
                 {/* Estatísticas da célula */}
-                <div className="grid grid-cols-3 gap-2 md:gap-4 mb-3 md:mb-5">
+                <div className="grid grid-cols-3 gap-2 mb-3 md:gap-4 md:mb-5">
                   <div className="text-center">
-                    <p className="text-xs md:text-sm text-gray-500">Total</p>
-                    <p className="text-xl md:text-2xl font-bold">{cell.total}</p>
+                    <p className="text-xs text-gray-500 md:text-sm">Total</p>
+                    <p className="text-xl font-bold md:text-2xl">{cell.total}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs md:text-sm text-gray-500">Ativos</p>
-                    <p className="text-xl md:text-2xl font-bold text-green-600">{cell.active}</p>
+                    <p className="text-xs text-gray-500 md:text-sm">Ativos</p>
+                    <p className="text-xl font-bold text-green-600 md:text-2xl">{cell.active}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs md:text-sm text-gray-500">Inativos</p>
-                    <p className="text-xl md:text-2xl font-bold text-red-600">{cell.inactive}</p>
+                    <p className="text-xs text-gray-500 md:text-sm">Inativos</p>
+                    <p className="text-xl font-bold text-red-600 md:text-2xl">{cell.inactive}</p>
                   </div>
                 </div>
 
                 {/* Gráfico de cargos */}
                 <div className="h-52 md:h-48">
                   {cell.roles.length > 0 ? (
-                    <div className="h-full flex items-center justify-center">
+                    <div className="flex items-center justify-center h-full">
                       <PieChart
                         data={cell.roles.map((r, idx) => ({
                           title: r.name,
@@ -193,14 +193,14 @@ export default function CellDashboard({ members }: Props) {
                     </div>
                   ) : (
                     <div className="flex items-center justify-center h-full">
-                      <p className="text-center text-gray-500 text-sm">Sem dados de cargos</p>
+                      <p className="text-sm text-center text-gray-500">Sem dados de cargos</p>
                     </div>
                   )}
                 </div>
 
                 {/* Lista de cargos */}
                 <div className="mt-4">
-                  <h4 className="font-medium text-gray-700 mb-2 text-sm md:text-base">
+                  <h4 className="mb-2 text-sm font-medium text-gray-700 md:text-base">
                     Distribuição de Cargos:
                   </h4>
                   <div className="flex flex-wrap gap-2">
@@ -221,7 +221,7 @@ export default function CellDashboard({ members }: Props) {
 
         {/* Mensagem quando não há células */}
         {cellsData.length === 0 && (
-          <div className="bg-white p-6 rounded-lg shadow text-center mt-8">
+          <div className="p-6 mt-8 text-center bg-white rounded-lg shadow">
             <p className="text-gray-500">Nenhuma célula encontrada</p>
           </div>
         )}
