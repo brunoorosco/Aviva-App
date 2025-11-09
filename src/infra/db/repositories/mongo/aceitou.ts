@@ -9,16 +9,22 @@ export class AceitouRepository {
     this.collectionName = "aceitou";
   }
 
-  async getUseusAceitou(churchId: string) {
+  async getUseusAceitou(churchId: string, page: number = 1, limit: number = 10) {
     const collection = await MongoHelper.getCollection(this.collectionName);
+    const skip = (page - 1) * limit;
 
-    const data = await collection
-      .find({ churchId })
-      .collation({ locale: "pt", strength: 1 })
-      .sort({ data: -1 })
-      .toArray();
+    const [data, total] = await Promise.all([
+      collection
+        .find({ churchId })
+        .collation({ locale: "pt", strength: 1 })
+        .sort({ acceptedAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .toArray(),
+      collection.countDocuments(),
+    ]);
 
-    return data;
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async getUseusAceitouByCem(churchId: string, cemId: string) {

@@ -16,6 +16,7 @@ import { useHttpGet } from "@/hooks/api";
 import { AceitouModel } from "@/domain/models/aceitou";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
+import Pagination from "@/components/Pagination";
 
 export const AceitouJesusList = () => {
   const { data: session } = useSession();
@@ -23,24 +24,27 @@ export const AceitouJesusList = () => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const router = useRouter();
-  const path = router.asPath;
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   const {
     data: users,
     isLoading,
     mutate,
-  } = useHttpGet<AceitouModel[]>(`/api/protected/churches/${churchId}/aceitou`);
+  } = useHttpGet<{ data: AceitouModel[]; total: number; page: number; totalPages: number }>(
+    `/api/protected/churches/${churchId}/aceitou?page=${page}&limit=${limit}`
+  );
 
   // Memoiza o filtro para evitar recalcular toda hora
   const filteredRecords = useMemo(() => {
     if (!users?.data) return [];
-    return users.data.filter((r: AceitouModel) =>
+    return users.data?.data?.filter((r: AceitouModel) =>
       r.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [users?.data, search]);
 
   return (
-    <div className="p-4 w-full max-w-6xl mx-auto">
+    <div className="p-4 w-full max-w-6xl mx-auto mt-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
         <Label className="text-2xl">Lista Aceitou Jesus</Label>
         <div className="flex flex-row gap-2">
@@ -53,54 +57,106 @@ export const AceitouJesusList = () => {
           <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
         </div>
       </div>
+      {/* Conteúdo */}
+      {loading || isLoading ? (
+        <div className="text-center py-6 text-gray-500">Carregando...</div>
+      ) : (
+        //  ) : filteredRecords?.length === 0 ? (
+        //   <div className="text-center py-6 text-gray-500">Nenhum registro encontrado</div>
+        <>
+          {/* Versão mobile (cards) */}
+          <div className="flex flex-col gap-3 md:hidden">
+            {users?.data.data?.map((r) => (
+              <div key={r._id} className="border rounded-xl p-3 shadow-sm bg-white">
+                <div className="font-semibold text-lg">{r.name}</div>
+                <div className="flex justify-between pr-5">
+                  <div className="text-sm font-semibold text-gray-700">
+                    † {r.accepted ? "Aceitou" : "Reconciliou"}
+                  </div>
 
-      <div className="overflow-x-auto border rounded-md">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>WhatsApp</TableHead>
-              <TableHead>Rede / CEM</TableHead>
-              <TableHead>Data</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Batizado</TableHead>
-              <TableHead>Encontro</TableHead>
-              <TableHead>Descrição</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={9} className="text-center py-4">
-                  Carregando...
-                </TableCell>
-              </TableRow>
-            ) : filteredRecords.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={9} className="text-center py-4">
-                  Nenhum registro encontrado
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredRecords.map((r) => (
-                <TableRow key={r._id}>
-                  <TableCell>{r.name}</TableCell>
-                  <TableCell>{r.email || "-"}</TableCell>
-                  <TableCell>{r.phone || "-"}</TableCell>
-                  <TableCell>{r.rede?.name || "-"}</TableCell>
-                  <TableCell>
-                    {new Date(r.acceptedAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
-                  </TableCell>{" "}
-                  <TableCell>{r.accepted ? "Reconciliou" : "Aceitou"}</TableCell>
-                  <TableCell>{r.baptism ? "Sim" : "Não"}</TableCell>
-                  <TableCell>{r.numberEncontro || "-"}</TableCell>
+                  <div className="text-sm text-gray-700">
+                    <span className="font-medium">Batizado:</span> {r.baptism ? "Sim" : "Não"}
+                  </div>
+                </div>
+                {r.phone && (
+                  <div className="text-sm text-gray-700">
+                    📱 <span className="font-medium">WhatsApp:</span> {r.phone}
+                  </div>
+                )}
+
+                <div className="text-sm text-gray-700">
+                  📅 <span className="font-medium">Data do Apelo:</span>{" "}
+                  {new Date(r.acceptedAt).toLocaleDateString("pt-BR", {
+                    timeZone: "UTC",
+                  })}
+                  {r.rede && (
+                    <div className="text-sm font-medium text-gray-700">
+                      🙋 <span className="font-medium">Quem convidou: </span>
+                      {r.rede.name}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="hidden md:block overflow-x-auto border rounded-md">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>WhatsApp</TableHead>
+                  <TableHead>Rede / CEM</TableHead>
+                  <TableHead>Data</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Batizado</TableHead>
+                  <TableHead>Encontro</TableHead>
+                  <TableHead>Descrição</TableHead>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={9} className="text-center py-4">
+                      Carregando...
+                    </TableCell>
+                  </TableRow>
+                ) : filteredRecords.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={9} className="text-center py-4">
+                      Nenhum registro encontrado
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredRecords.map((r) => (
+                    <TableRow key={r._id}>
+                      <TableCell>{r.name}</TableCell>
+                      <TableCell>{r.email || "-"}</TableCell>
+                      <TableCell>{r.phone || "-"}</TableCell>
+                      <TableCell>{r.rede?.name || "-"}</TableCell>
+                      <TableCell>
+                        {new Date(r.acceptedAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
+                      </TableCell>{" "}
+                      <TableCell>{r.accepted ? "Reconciliou" : "Aceitou"}</TableCell>
+                      <TableCell>{r.baptism ? "Sim" : "Não"}</TableCell>
+                      <TableCell>{r.numberEncontro || "-"}</TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </>
+      )}
+      {users?.data.totalPages && (
+        <Pagination
+          currentPage={page}
+          pageSize={limit}
+          items={users.data.total}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   );
 };
