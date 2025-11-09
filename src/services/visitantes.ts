@@ -37,10 +37,9 @@ export const createVisitantesImportService = async (data: any, churchId: string)
 
   const visitantes = data.map((i: any) => {
     const howHeard = i.como_nos_conheceu === "convidado" ? "invited" : i.como_nos_conheceu || null;
-
     const visitante: any = {
       visitedAt: new Date(excelDateToJSDate(i.data_visita)),
-      name: i.nome?.trim(),
+      name: i.nome?.replace(/[0-9\/\?]/g, "").trim(),
       phone: i.telefone?.replace(/[^0-9]/g, "") || null,
       description: i.description?.trim() || null,
       region: i.regiao?.trim() || null,
