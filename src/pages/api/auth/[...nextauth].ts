@@ -15,7 +15,8 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Passsword", type: "password" },
       },
       async authorize(credentials): Promise<any> {
-        const userDb = await userMongoRepository.getByEmail(credentials?.email);
+        if (!credentials?.email) return null;
+        const userDb = await userMongoRepository.getByEmail(credentials.email);
         if (userDb) {
           const isValidPass = cripto.compare(credentials?.password || "", userDb.password);
           if (!isValidPass) return null;
