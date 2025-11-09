@@ -86,7 +86,7 @@ export default function VisitantesList() {
       <div className="flex items-left justify-between mb-4 gap-2">
         <div className="flex flex-col">
         <Label className="text-2xl font-semibold">Visitantes</Label>
-        <Label className="text-xs font-semibold">{`Total de Vsitantes - ${users?.data.total}`}</Label>
+        <Label className="text-xs font-semibold">{`Total de Visitantes - ${users?.data.total}`}</Label>
         </div>
 
 

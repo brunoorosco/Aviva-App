@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import {
   Table,
@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import Pagination from "@/components/Pagination";
 
 export const AceitouJesusList = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
   const churchId = session?.user.churchId as string;
   const [loading, setLoading] = useState(false);
@@ -45,8 +46,12 @@ export const AceitouJesusList = () => {
 
   return (
     <div className="p-4 w-full max-w-6xl mx-auto mt-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
-        <Label className="text-2xl">Lista Aceitou Jesus</Label>
+      <div className="flex items-left justify-between mb-4 gap-2">
+        <div className="flex flex-col">
+          <Label className="text-2xl">Lista Aceitou Jesus</Label>
+          <Label className="text-xs font-semibold">{`Total de Pessoas - ${users?.data.total}`}</Label>
+        </div>
+
         <div className="flex flex-row gap-2">
           <Input
             placeholder="Buscar por nome..."
