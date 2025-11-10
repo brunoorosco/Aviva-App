@@ -45,8 +45,8 @@ export const AceitouJesusList = () => {
   }, [users?.data, search]);
 
   return (
-    <div className="p-4 w-full max-w-6xl mx-auto mt-6">
-      <div className="flex items-left justify-between mb-4 gap-2">
+    <div className="w-full max-w-6xl p-4 mx-auto mt-6">
+      <div className="flex justify-between gap-2 mb-4 items-left">
         <div className="flex flex-col">
           <Label className="text-2xl">Lista Aceitou Jesus</Label>
           <Label className="text-xs font-semibold">{`Total de Pessoas - ${users?.data.total}`}</Label>
@@ -64,19 +64,19 @@ export const AceitouJesusList = () => {
       </div>
       {/* Conteúdo */}
       {loading || isLoading ? (
-        <div className="text-center py-6 text-gray-500">Carregando...</div>
+        <div className="py-6 text-center text-gray-500">Carregando...</div>
       ) : (
         //  ) : filteredRecords?.length === 0 ? (
-        //   <div className="text-center py-6 text-gray-500">Nenhum registro encontrado</div>
+        //   <div className="py-6 text-center text-gray-500">Nenhum registro encontrado</div>
         <>
           {/* Versão mobile (cards) */}
           <div className="flex flex-col gap-3 md:hidden">
             {users?.data.data?.map((r) => (
-              <div key={r._id} className="border rounded-xl p-3 shadow-sm bg-white">
-                <div className="font-semibold text-lg">{r.name}</div>
+              <div key={r._id} className="p-3 bg-white border shadow-sm rounded-xl">
+                <div className="text-lg font-semibold">{r.name}</div>
                 <div className="flex justify-between pr-5">
                   <div className="text-sm font-semibold text-gray-700">
-                    † {r.accepted ? "Aceitou" : "Reconciliou"}
+                    † {r.accepted ? "Reconciliou" : "Aceitou"}
                   </div>
 
                   <div className="text-sm text-gray-700">
@@ -105,7 +105,7 @@ export const AceitouJesusList = () => {
             ))}
           </div>
 
-          <div className="hidden md:block overflow-x-auto border rounded-md">
+          <div className="hidden overflow-x-auto border rounded-md md:block">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -123,13 +123,13 @@ export const AceitouJesusList = () => {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-4">
+                    <TableCell colSpan={9} className="py-4 text-center">
                       Carregando...
                     </TableCell>
                   </TableRow>
                 ) : filteredRecords.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-4">
+                    <TableCell colSpan={9} className="py-4 text-center">
                       Nenhum registro encontrado
                     </TableCell>
                   </TableRow>
