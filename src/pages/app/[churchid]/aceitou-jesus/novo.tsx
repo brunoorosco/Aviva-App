@@ -46,7 +46,7 @@ const AceitouJesus = () => {
       name: "",
       email: "",
       baptism: "false",
-      accepted: "false",
+      accepted: "true",
       hasEncontro: false,
       cem: "",
       description: "",
@@ -191,7 +191,7 @@ const AceitouJesus = () => {
         <Controller
           name="accepted"
           control={control}
-          defaultValue="false"
+          defaultValue="true"
           render={({ field }) => (
             <div className="flex flex-col gap-2">
               <Label>Tipo de decisão</Label>
@@ -201,11 +201,11 @@ const AceitouJesus = () => {
                 className="flex gap-10"
               >
                 <div className="flex items-center gap-3">
-                  <RadioGroupItem value="true" id="r1" />
+                  <RadioGroupItem value="false" id="r1" />
                   <Label htmlFor="r1">Reconciliou</Label>
                 </div>
                 <div className="flex items-center gap-3">
-                  <RadioGroupItem value="false" id="r2" />
+                  <RadioGroupItem value="true" id="r2" />
                   <Label htmlFor="r2">Aceitou</Label>
                 </div>
               </RadioGroup>
