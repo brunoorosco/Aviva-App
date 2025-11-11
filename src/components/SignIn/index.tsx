@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import ButtonSubmit from "../ButtonSubmit";
 import Image from "next/image";
 import { Input } from "../ui/input";
+import { Eye, EyeOff } from "lucide-react";
 
 type FormValues = {
   email: string;
@@ -21,6 +22,7 @@ const SignIn = () => {
   const { status, data: session } = useSession();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -73,16 +75,26 @@ const SignIn = () => {
               {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
-            <div>
+            <div className="relative">
               <Input
                 {...register("password", {
                   required: "Senha é obrigatória",
                   minLength: { value: 6, message: "Mínimo 6 caracteres" },
                 })}
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Senha"
-                className="text-base  bg-slate-300"
+                className="text-base bg-slate-300 pr-10"
               />
+
+              {/* Ícone de olho */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+
               {errors.password && (
                 <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
               )}
