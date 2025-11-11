@@ -76,7 +76,7 @@ export const AceitouJesusList = () => {
                 <div className="text-lg font-semibold">{r.name}</div>
                 <div className="flex justify-between pr-5">
                   <div className="text-sm font-semibold text-gray-700">
-                    † {r.accepted ? "Reconciliou" : "Aceitou"}
+                    † {r.accepted ? "Aceitou" : "Reconciliou"}
                   </div>
 
                   <div className="text-sm text-gray-700">
@@ -143,7 +143,7 @@ export const AceitouJesusList = () => {
                       <TableCell>
                         {new Date(r.acceptedAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
                       </TableCell>{" "}
-                      <TableCell>{r.accepted ? "Reconciliou" : "Aceitou"}</TableCell>
+                      <TableCell>{r.accepted ? "Aceitou" : "Reconciliou"}</TableCell>
                       <TableCell>{r.baptism ? "Sim" : "Não"}</TableCell>
                       <TableCell>{r.numberEncontro || "-"}</TableCell>
                     </TableRow>
