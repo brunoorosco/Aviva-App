@@ -91,9 +91,7 @@ export const AceitouJesusList = () => {
 
                 <div className="text-sm text-gray-700">
                   📅 <span className="font-medium">Data do Apelo:</span>{" "}
-                  {new Date(r.acceptedAt).toLocaleDateString("pt-BR", {
-                    timeZone: "UTC",
-                  })}
+                 {new Date(r.acceptedAt).toLocaleDateString("pt-BR")}
                   {r.rede && (
                     <div className="text-sm font-medium text-gray-700">
                       🙋 <span className="font-medium">Quem convidou: </span>
@@ -141,7 +139,7 @@ export const AceitouJesusList = () => {
                       <TableCell>{r.phone || "-"}</TableCell>
                       <TableCell>{r.rede?.name || "-"}</TableCell>
                       <TableCell>
-                        {new Date(r.acceptedAt).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
+                        {new Date(r.acceptedAt).toLocaleDateString("pt-BR")}
                       </TableCell>{" "}
                       <TableCell>{r.accepted ? "Aceitou" : "Reconciliou"}</TableCell>
                       <TableCell>{r.baptism ? "Sim" : "Não"}</TableCell>

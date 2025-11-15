@@ -85,10 +85,9 @@ export default function VisitantesList() {
       {/* Cabeçalho */}
       <div className="flex items-left justify-between mb-4 gap-2">
         <div className="flex flex-col">
-        <Label className="text-2xl font-semibold">Visitantes</Label>
-        <Label className="text-xs font-semibold">{`Total de Visitantes - ${users?.data.total}`}</Label>
+          <Label className="text-2xl font-semibold">Visitantes</Label>
+          <Label className="text-xs font-semibold">{`Total de Visitantes - ${users?.data.total}`}</Label>
         </div>
-
 
         <div className="flex flex-row gap-2">
           {/* <Input
@@ -121,9 +120,9 @@ export default function VisitantesList() {
       {/* Conteúdo */}
       {loading || isLoading ? (
         <div className="text-center py-6 text-gray-500">Carregando...</div>
-      //  ) : filteredRecords?.length === 0 ? (
-      //   <div className="text-center py-6 text-gray-500">Nenhum registro encontrado</div>
       ) : (
+        //  ) : filteredRecords?.length === 0 ? (
+        //   <div className="text-center py-6 text-gray-500">Nenhum registro encontrado</div>
         <>
           {/* Versão mobile (cards) */}
           <div className="flex flex-col gap-3 md:hidden">
@@ -154,9 +153,7 @@ export default function VisitantesList() {
                 )}
                 <div className="text-sm text-gray-700">
                   📅 <span className="font-medium">Data da visita:</span>{" "}
-                  {new Date(r.visitedAt).toLocaleDateString("pt-BR", {
-                    timeZone: "UTC",
-                  })}
+                  {new Date(r.visitedAt).toLocaleDateString("pt-BR")}
                 </div>
               </div>
             ))}
@@ -185,11 +182,7 @@ export default function VisitantesList() {
                       {r.howHeard === "invited" ? "Convidado" : r.howHeard || "-"}
                     </TableCell>
                     <TableCell>{r.invitedBy || "-"}</TableCell>
-                    <TableCell>
-                      {new Date(r.visitedAt).toLocaleDateString("pt-BR", {
-                        timeZone: "UTC",
-                      })}
-                    </TableCell>
+                    <TableCell>{new Date(r.visitedAt).toLocaleDateString("pt-BR")}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -206,5 +199,5 @@ export default function VisitantesList() {
         />
       )}
     </div>
-  )
+  );
 }

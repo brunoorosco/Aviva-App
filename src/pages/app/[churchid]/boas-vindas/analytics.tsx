@@ -176,26 +176,26 @@ export default function VisitorsAnalytics() {
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-4">
-      <header className="border-b bg-card">
-        <div className="px-4 py-4 mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/app">
-                <Button variant="ghost" size="icon">
-                  <ArrowLeft className="w-5 h-5" />
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">Análise de Visitantes</h1>
-                <p className="text-sm text-muted-foreground">
-                  Acompanhe os visitantes e suas origens
-                </p>
+        <header className="border-b bg-card">
+          <div className="px-4 py-4 mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Link href="/app">
+                  <Button variant="ghost" size="icon">
+                    <ArrowLeft className="w-5 h-5" />
+                  </Button>
+                </Link>
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground">Análise de Visitantes</h1>
+                  <p className="text-sm text-muted-foreground">
+                    Acompanhe os visitantes e suas origens
+                  </p>
+                </div>
               </div>
+              <BarChart3 className="w-8 h-8 text-primary" />
             </div>
-            <BarChart3 className="w-8 h-8 text-primary" />
           </div>
-        </div>
-      </header>
+        </header>
         {/* Summary Cards */}
         <div className="grid gap-4 mb-8 md:grid-cols-3 grid-cols-1 mt-4">
           <Card>
@@ -280,7 +280,9 @@ export default function VisitorsAnalytics() {
                           backgroundColor: sourceColors[item.source] || "gray",
                         }}
                       />
-                      <span className="font-medium capitalize">{item.source}</span>
+                      <span className="font-medium capitalize">
+                        {item.source === "invited" ? "Convidado" : item.source}
+                      </span>
                     </div>
                     <div className="text-right">
                       <div className="font-bold">{item.count}</div>
