@@ -9,7 +9,7 @@ import { ConsagracaoPayload, TempUserToAdd, TMinisterialLevel } from "@/domain/m
 import { useForm } from "react-hook-form";
 
 export function ConsagracaoAuxiliarTab({ churchId }: { churchId: string }) {
-      const { control } = useForm();
+  const { control } = useForm();
   const [auxiliaresTempList, setAuxiliaresTempList] = useState<TempUserToAdd[]>([]);
 
   const handleAddUser = (user: TempUserToAdd) => {
@@ -55,7 +55,7 @@ export function ConsagracaoAuxiliarTab({ churchId }: { churchId: string }) {
   return (
     <div className="space-y-6">
       <UserSelectForm
-        currentMinisterialLevel="Auxiliar"
+        currentMinisterialLevel="Membro"
         targetMinisterialLevel="Auxiliar"
         onAddUser={handleAddUser}
         onRemoveUser={handleRemoveUser}
@@ -64,12 +64,12 @@ export function ConsagracaoAuxiliarTab({ churchId }: { churchId: string }) {
       />
       <Button
         onClick={handleConsagrarAuxiliares}
-        className="mt-6 w-full md:w-auto"
+        className="w-full mt-6 md:w-auto"
         disabled={auxiliaresTempList.length === 0}
       >
         Consagrar Auxiliares
       </Button>
-      <p className="text-sm text-gray-500 mt-2">
+      <p className="mt-2 text-sm text-gray-500">
         Ao clicar, os usuários selecionados serão promovidos a Auxiliar.
       </p>
     </div>

@@ -8,14 +8,18 @@ import { InputLider } from "../Input/SelectLider";
 import { Button } from "../ui/button";
 import { ConsagracaoAuxiliarTab } from "./ConsagracaoAuxiliarTab";
 import { ConsagracaoLiderTab } from "./ConsagracaoLiderTab";
+import { ConsagracaoPastorTab } from "./ConsagracaoPastorTab";
+import { ConsagracaoSeparadoPastoradoTab } from "./ConsagracaoSeparadoPastoradoTab";
+import { ConsagracaoSeparadoSupervisorTab } from "./ConsagracaoSeparadoSupervidorTab";
+import { ConsagracaoSupervisorTab } from "./ConsagracaoSupervisorTab";
 
 export function ConsagracaoFormTabs() {
   const { data: session } = useSession();
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div className="p-6 bg-white rounded-lg shadow-sm">
       <Tabs defaultValue={ministerialLevels[0]} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mb-4">
+        <TabsList className="grid w-full grid-cols-2 mb-4 md:grid-cols-3 lg:grid-cols-6">
           {ministerialLevels.map((level) => (
             <TabsTrigger key={level} value={level}>
               {level.replace(/_/g, " ")}
@@ -31,25 +35,21 @@ export function ConsagracaoFormTabs() {
           <ConsagracaoLiderTab churchId={session?.user.churchId!} />
         </TabsContent>
 
-        {/* <TabsContent value="SEPARADO_PARA_SUPERVISAO">
-          <ConsagracaoSeparadoParaSupervisaoTab
-            churchId={session?.user.churchId!}
-          />
+        <TabsContent value="Separado a Supervisão">
+          <ConsagracaoSeparadoSupervisorTab churchId={session?.user.churchId!} />
         </TabsContent>
 
-        <TabsContent value="SUPERVISOR">
+        <TabsContent value="Supervisor">
           <ConsagracaoSupervisorTab churchId={session?.user.churchId!} />
         </TabsContent>
 
-        <TabsContent value="SEPARADO_PARA_PASTORADO">
-          <ConsagracaoSeparadoParaPastoradoTab
-            churchId={session?.user.churchId!}
-          />
+        <TabsContent value="Separado a Pastorado">
+          <ConsagracaoSeparadoPastoradoTab churchId={session?.user.churchId!} />
         </TabsContent>
 
-        <TabsContent value="PASTOR">
+        <TabsContent value="Pastor">
           <ConsagracaoPastorTab churchId={session?.user.churchId!} />
-        </TabsContent> */}
+        </TabsContent>
       </Tabs>
     </div>
   );

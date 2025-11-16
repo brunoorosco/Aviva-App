@@ -228,11 +228,24 @@ export class UsersMongoRepository {
   async getUsersByStatus(churchId: string, cargo: TMinisterialLevel) {
     const collection = await MongoHelper.getCollection(this.collectionName);
 
+    const roleFilter =
+      cargo.toLowerCase() === "membro"
+        ? { $regex: /^(membro|discípulo)$/i }
+        : { $regex: `^${cargo}$`, $options: "i" };
+
     return collection
       .find(
-        { churchId, active: true, role: { $regex: `^${cargo}$`, $options: "i" } },
-        { projection: { _id: 1, name: 1, role: 1, email: 1, "cem.name": 1 } }
+        {
+          churchId,
+          active: true,
+          role: roleFilter,
+          "cem.name": { $exists: true, $ne: null },
+        },
+        {
+          projection: { _id: 1, name: 1, role: 1, email: 1, "cem.name": 1 },
+        }
       )
+      .collation({ locale: "pt", strength: 1 })
       .sort({ name: 1 })
       .toArray();
   }

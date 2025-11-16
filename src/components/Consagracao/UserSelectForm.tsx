@@ -51,18 +51,27 @@ export function UserSelectForm({
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+  function isRoleValid(userRole: string, level: string) {
+    const r = userRole.toLowerCase();
+    const l = level.toLowerCase();
+
+    if (l === "membro") {
+      return r === "membro" || r === "discípulo";
+    }
+
+    return r === l;
+  }
+
   const { data, isLoading } = useHttpGet(
     `/api/protected/churches/${churchId}/users/cargo/${currentMinisterialLevel}`
   );
 
   const ALL_CHURCH_MEMBERS = (data?.data ?? []) as TInputConsagracao[];
-  console.log("All_CHURCH_MEMBERS :>> ", ALL_CHURCH_MEMBERS);
   const availableUsers = ALL_CHURCH_MEMBERS.filter(
     (user) =>
-      user.role === currentMinisterialLevel &&
+      isRoleValid(user.role, currentMinisterialLevel) &&
       !tempList.some((tempUser) => tempUser._id === user._id) && // Não permite adicionar quem já está na lista temporária
-      (user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()))
+      user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleAddUser = () => {
@@ -81,12 +90,12 @@ export function UserSelectForm({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col md:flex-row gap-4 items-end">
+      <div className="flex flex-col items-end gap-4 md:flex-row">
         <div className="flex-1 w-full">
           <Label htmlFor={`search-user-${currentMinisterialLevel}`}>Buscar Membro</Label>
           <Input
             id={`search-user-${currentMinisterialLevel}`}
-            placeholder="Nome ou Email"
+            placeholder="Nome"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -115,11 +124,11 @@ export function UserSelectForm({
           </Select>
         </div>
         <Button onClick={handleAddUser} disabled={!selectedUserId} className="w-full md:w-auto">
-          <PlusIcon className="mr-2 h-4 w-4" /> Adicionar à Lista
+          <PlusIcon className="w-4 h-4 mr-2" /> Adicionar à Lista
         </Button>
       </div>
 
-      <h4 className="text-lg font-semibold mt-6">
+      <h4 className="mt-6 text-lg font-semibold">
         Lista Temporária de {targetMinisterialLevel.replace(/_/g, " ")}
       </h4>
       {tempList.length === 0 ? (
@@ -152,7 +161,7 @@ export function UserSelectForm({
                     onClick={() => onRemoveUser(user._id)}
                     title="Remover da lista"
                   >
-                    <TrashIcon className="h-4 w-4 text-red-500" />
+                    <TrashIcon className="w-4 h-4 text-red-500" />
                   </Button>
                 </TableCell>
               </TableRow>

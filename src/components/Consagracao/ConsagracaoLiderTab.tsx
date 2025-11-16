@@ -55,8 +55,8 @@ export function ConsagracaoLiderTab({ churchId }: { churchId: string }) {
   return (
     <div className="space-y-6">
       <UserSelectForm
-        currentMinisterialLevel="Lider"
-        targetMinisterialLevel="Separado a Supervisão"
+        currentMinisterialLevel="Auxiliar"
+        targetMinisterialLevel="Lider"
         onAddUser={handleAddUser}
         onRemoveUser={handleRemoveUser}
         tempList={auxiliaresTempList}
@@ -64,12 +64,12 @@ export function ConsagracaoLiderTab({ churchId }: { churchId: string }) {
       />
       <Button
         onClick={handleConsagrarAuxiliares}
-        className="mt-6 w-full md:w-auto"
+        className="w-full mt-6 md:w-auto"
         disabled={auxiliaresTempList.length === 0}
       >
-        Consagrar Auxiliares
+        Consagrar para Líder
       </Button>
-      <p className="text-sm text-gray-500 mt-2">
+      <p className="mt-2 text-sm text-gray-500">
         Ao clicar, os usuários selecionados serão promovidos a Auxiliar.
       </p>
     </div>
