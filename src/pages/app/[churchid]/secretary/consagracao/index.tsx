@@ -18,7 +18,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { mockConsagracoes, mockMinisterialHistory, mockPeople } from "../../../../../mocks/mockMinisterial";
+import {
+  mockConsagracoes,
+  mockMinisterialHistory,
+  mockPeople,
+} from "../../../../../mocks/mockMinisterial";
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -35,6 +39,7 @@ import {
   TPerson,
 } from "@/domain/models/ministerial";
 import { Badge } from "@/components/ui/badge";
+import { ConsagracaoFormTabs } from "@/components/Consagracao/ConsagracaoFormTabs";
 
 const MinisterialHistory = () => {
   const navigate = useRouter();
@@ -271,7 +276,7 @@ const MinisterialHistory = () => {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h1 className="text-3xl font-bold">Histórico Ministerial</h1>
+              <h1 className="text-3xl font-bold">Consagração Ministerial</h1>
               <p className="text-muted-foreground">Gerencie a evolução ministerial dos membros</p>
             </div>
           </div>
@@ -322,188 +327,8 @@ const MinisterialHistory = () => {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Add New Consagracao */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Plus className="h-5 w-5" />
-                  Nova Consagração
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="w-full">
-                      <Users className="h-4 w-4 mr-2" />
-                      Adicionar Consagração
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>Adicionar Nova Consagração</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="cargo">Cargo Ministerial</Label>
-                        <Select
-                          value={selectedCargo}
-                          onValueChange={(value) => setSelectedCargo(value as TMinisterialLevel)}
-                        >
-                          <SelectTrigger id="cargo">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {ministerialLevels.map((level) => (
-                              <SelectItem key={level} value={level}>
-                                {level}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="date">Data da Consagração</Label>
-                        <Input
-                          id="date"
-                          type="date"
-                          value={format(selectedDate, "yyyy-MM-dd")}
-                          onChange={(e) => setSelectedDate(new Date(e.target.value))}
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="search">Buscar Pessoa</Label>
-                        <Input
-                          id="search"
-                          placeholder="Digite o nome..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        {searchQuery && filteredPeople.length > 0 && (
-                          <div className="mt-2 border rounded-md max-h-48 overflow-y-auto">
-                            {filteredPeople.map((person) => (
-                              <div
-                                key={person._id}
-                                className="p-3 hover:bg-muted cursor-pointer border-b last:border-b-0"
-                                onClick={() => handleAddPersonToList(person)}
-                              >
-                                <p className="font-medium">{person.name}</p>
-                                <p className="text-sm text-muted-foreground">{person.cell_name}</p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      {selectedUsers.length > 0 && (
-                        <div>
-                          <Label>Pessoas Selecionadas</Label>
-                          <div className="mt-2 space-y-2">
-                            {selectedUsers.map((user) => {
-                              const person = mockPeople.find((p) => p._id === user.user_id);
-                              return (
-                                <div
-                                  key={user.user_id}
-                                  className="flex items-center justify-between p-3 bg-muted rounded-lg"
-                                >
-                                  <div>
-                                    <p className="font-medium">{user.name}</p>
-                                    <p className="text-sm text-muted-foreground">
-                                      {person?.cell_name}
-                                    </p>
-                                  </div>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => handleRemovePersonFromList(user.user_id)}
-                                  >
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-
-                      <Button
-                        onClick={handleSaveConsagracao}
-                        className="w-full"
-                        disabled={selectedUsers.length === 0}
-                      >
-                        Salvar Consagração
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </CardContent>
-            </Card>
-
-            {/* Consagracoes List */}
-            {consagracoes.map((consagracao) => (
-              <Card key={consagracao._id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-xl">{consagracao.cargo}</CardTitle>
-                      <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                        <Calendar className="h-3 w-3" />
-                        {format(new Date(consagracao.consagracao_at), "dd 'de' MMMM 'de' yyyy", {
-                          locale: ptBR,
-                        })}
-                      </p>
-                    </div>
-                    <Badge variant="secondary">{consagracao.users.length} pessoas</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {consagracao.users.map((user) => {
-                      const person = mockPeople.find((p) => p._id === user.user_id);
-                      return (
-                        <div
-                          key={user.user_id}
-                          className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
-                        >
-                          <div>
-                            <p className="font-medium">{user.name}</p>
-                            <p className="text-sm text-muted-foreground">{person?.cell_name}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Sidebar - Summary */}
-          <div className="lg:col-span-1">
-            <Card className="sticky top-8">
-              <CardHeader>
-                <CardTitle>Resumo</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="bg-muted rounded-lg p-3">
-                    <p className="text-sm text-muted-foreground">Total de Consagrações</p>
-                    <p className="text-2xl font-bold">{consagracoes.length}</p>
-                  </div>
-                  <div className="bg-muted rounded-lg p-3">
-                    <p className="text-sm text-muted-foreground">Total de Pessoas</p>
-                    <p className="text-2xl font-bold">
-                      {consagracoes.reduce((acc, c) => acc + c.users.length, 0)}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        <div className="container mx-auto px-4">
+          <ConsagracaoFormTabs />
         </div>
       </div>
     </div>

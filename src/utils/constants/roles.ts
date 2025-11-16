@@ -2,7 +2,7 @@ export const roles = [
   'Membro',
   'Discípulo',
   'Auxiliar',
-  'Líder',
+  'Lider',
   'Supervisor',
   'Pastor',
   'Bispo'

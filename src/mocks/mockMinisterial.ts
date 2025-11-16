@@ -6,7 +6,7 @@ export const mockMinisterialHistory: TMinisterialHistory[] = [
     name: "João Silva",
     consagracao: [
       { data: "2021-03-20", type: "Auxiliar" },
-      { data: "2022-06-10", type: "Líder" },
+      { data: "2022-06-10", type: "Lider" },
       { data: "2023-09-05", type: "Separado a Supervisão" },
     ],
   },
@@ -15,7 +15,7 @@ export const mockMinisterialHistory: TMinisterialHistory[] = [
     name: "Maria Santos",
     consagracao: [
       { data: "2020-08-15", type: "Auxiliar" },
-      { data: "2022-01-20", type: "Líder" },
+      { data: "2022-01-20", type: "Lider" },
     ],
   },
 ];
@@ -33,7 +33,7 @@ export const mockConsagracoes: TConsagracao[] = [
   {
     _id: "2",
     consagracao_at: "2024-06-10",
-    cargo: "Líder",
+    cargo: "Lider",
     users: [{ user_id: "3", name: "Pedro Costa", cell_id: "cell1" }],
   },
 ];
