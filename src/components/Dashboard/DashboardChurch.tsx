@@ -32,10 +32,10 @@ export default function DashboardChurch() {
         setTimeout(() => {
           const mockData = {
             members: [
-              { id: '1', name: 'João Silva', cell: 'Vida Nova', isActive: true, role: 'Líder' },
+              { id: '1', name: 'João Silva', cell: 'Vida Nova', isActive: true, role: 'Lider' },
               { id: '2', name: 'Maria Souza', cell: 'Vida Nova', isActive: true, role: 'Membro' },
               { id: '3', name: 'Pedro Oliveira', cell: 'Familias', isActive: false, role: 'Membro' },
-              { id: '4', name: 'Ana Costa', cell: 'Jovens', isActive: true, role: 'Líder de Jovens' },
+              { id: '4', name: 'Ana Costa', cell: 'Jovens', isActive: true, role: 'Lider de Jovens' },
               { id: '5', name: 'Carlos Pereira', cell: 'Familias', isActive: true, role: 'Membro' },
               { id: '6', name: 'Paula Ferreira', cell: 'Liderança', isActive: true, role: 'Ancião' },
               { id: '7', name: 'Rafael Martins', cell: 'Jovens', isActive: true, role: 'Mentor' },
@@ -47,9 +47,9 @@ export default function DashboardChurch() {
               { name: 'Liderança', count: 1 },
             ],
             roles: [
-              { role: 'Líder', count: 1 },
+              { role: 'Lider', count: 1 },
               { role: 'Membro', count: 3 },
-              { role: 'Líder de Jovens', count: 1 },
+              { role: 'Lider de Jovens', count: 1 },
               { role: 'Ancião', count: 1 },
               { role: 'Mentor', count: 1 },
             ]

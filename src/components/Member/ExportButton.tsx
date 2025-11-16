@@ -19,7 +19,7 @@ const ExportButton = ({ members }: Props) => {
       numero: m.address?.number ?? '',
       cidade: m.address?.city ?? '',
       cargo: m.role ?? '',
-      permissao: m.permissions?.join(', ') ?? ''
+      permissao: m.permission?.join(', ') ?? ''
     }))
 
     const worksheet = XLSX.utils.json_to_sheet(exportData)

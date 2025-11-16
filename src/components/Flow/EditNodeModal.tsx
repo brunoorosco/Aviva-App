@@ -37,7 +37,7 @@ export function EditNodeModal({ open, onClose, onSave, initialData }: EditNodeMo
             onChange={e => setForm({ ...form, role: e.target.value })}
           >
             <option value="">Selecione...</option>
-            <option value="líder">Líder</option>
+            <option value="lider">Lider</option>
             <option value="auxiliar">Auxiliar</option>
             <option value="usuário">Usuário</option>
           </select>

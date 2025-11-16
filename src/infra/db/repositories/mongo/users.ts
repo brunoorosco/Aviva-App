@@ -1,3 +1,4 @@
+import { TMinisterialLevel } from "@/domain/models/ministerial";
 import { ObjectId } from "mongodb";
 import { MongoHelper } from "../../mongoHelper";
 export class UsersMongoRepository {
@@ -206,11 +207,11 @@ export class UsersMongoRepository {
   async updateByEmail({
     email,
     password,
-    permissions,
+    permission,
   }: {
     email: string;
     password: string;
-    permissions: string[];
+    permission: string[];
   }) {
     const collection = await MongoHelper.getCollection(this.collectionName);
     const resp = await collection.updateOne(
@@ -218,10 +219,21 @@ export class UsersMongoRepository {
       {
         $set: {
           password,
-          permission: permissions,
+          permission: permission,
         },
       }
     );
     return resp;
+  }
+  async getUsersByStatus(churchId: string, cargo: TMinisterialLevel) {
+    const collection = await MongoHelper.getCollection(this.collectionName);
+
+    return collection
+      .find(
+        { churchId, active: true, role: { $regex: `^${cargo}$`, $options: "i" } },
+        { projection: { _id: 1, name: 1, role: 1, email: 1, "cem.name": 1 } }
+      )
+      .sort({ name: 1 })
+      .toArray();
   }
 }

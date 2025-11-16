@@ -1,27 +1,32 @@
+import { User } from "./users";
+
 export type TMinisterialLevel =
+  | "Membro"
   | "Auxiliar"
-  | "Líder"
+  | "Lider"
   | "Separado a Supervisão"
   | "Supervisor"
   | "Separado a Pastorado"
-  | "Pastor";
+  | "Pastor"
+  | "Bispo";
 
 export type Permission =
   | "USER"
   | "ADMIN_CHURCH"
   | "SUPERADMIN"
-  | "SECRETARIA"
-  | "SUPERVISOR"
+  | "boas-vindas"
+  | "secretaria"
   | "ADMIN_CELL";
 
 export type Cargo =
-  | "MEMBRO"
-  | "DISCIPÚLO"
-  | "AUXILIAR"
-  | "LÍDER"
-  | "SUPERVISOR"
-  | "PASTOR"
-  | "BISPO";
+  | "Membro"
+  | "Auxiliar"
+  | "Lider"
+  | "Separado a Supervisão"
+  | "Supervisor"
+  | "Separado a Pastorado"
+  | "Pastor"
+  | "Bispo";
 
 export type TMinisterialRecord = {
   data: string; // YYYY-MM-DD
@@ -36,7 +41,7 @@ export type TMinisterialHistory = {
 
 export const ministerialLevels: TMinisterialLevel[] = [
   "Auxiliar",
-  "Líder",
+  "Lider",
   "Separado a Supervisão",
   "Supervisor",
   "Separado a Pastorado",
@@ -61,4 +66,21 @@ export type TPerson = {
   name: string;
   cell_id: string;
   cell_name: string;
+};
+
+// Para o propósito deste exemplo, um tipo para a lista temporária
+export type TempConsagracaoUser = Pick<User, "_id" | "name" | "email" | "role"> & {
+  nextRole: TMinisterialLevel;
+};
+
+export type TempUserToAdd = {
+  _id: string; // ID do usuário existente
+  name: string;
+  cem: string;
+  role: TMinisterialLevel; // Cargo atual
+};
+
+export type ConsagracaoPayload = {
+  userId: string;
+  targetRole: TMinisterialLevel;
 };

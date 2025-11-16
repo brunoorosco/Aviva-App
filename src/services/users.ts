@@ -1,3 +1,4 @@
+import { TMinisterialLevel } from "@/domain/models/ministerial";
 import bcrypt from "@/infra/cryptography/bcrypt";
 import CryptAdapter from "@/infra/cryptography/bcrypt";
 import { UsersMongoRepository } from "@/infra/db/repositories/mongo/users";
@@ -27,7 +28,7 @@ export const createUserByCem = async (params: TUser) => {
 
   const user = await userRepository.create({
     ...params,
-    permissions: ["user"],
+    permission: ["user"],
     zipcode,
     password: setPassword,
   });
@@ -50,7 +51,7 @@ export const createUser = async (params: TUser) => {
 
   const user = await userRepository.create({
     ...params,
-    permissions: ["user"],
+    permission: ["user"],
     zipcode,
     password: setPassword,
     cem: { _id: cem[0], name: cem[1] },
@@ -106,7 +107,7 @@ export const getUserByName = async (churchId: string, name: string) => {
 export const updatePermissionAndPasswordUser = async (data: any) => {
   const { emails, password, permission } = data;
   const userRepository = new UsersMongoRepository();
-  const cripto = new CryptAdapter()
+  const cripto = new CryptAdapter();
 
   if (!emails || !password || !permission) {
     return NextResponse.json({ message: "Campos obrigatórios." }, { status: 400 });
@@ -145,7 +146,7 @@ export const updatePermissionAndPasswordUser = async (data: any) => {
     await userRepository.updateByEmail({
       email,
       password: hashedPassword,
-      permissions,
+      permission: permissions,
     });
 
     results.push({ email, updated: true });
@@ -155,4 +156,11 @@ export const updatePermissionAndPasswordUser = async (data: any) => {
     message: "Usuários atualizados com sucesso!",
     results,
   });
+};
+
+export const getUsersByStatus = async (churchId: string, cargo: TMinisterialLevel) => {
+  const userRepository = new UsersMongoRepository();
+
+  const resp = await userRepository.getUsersByStatus(churchId, cargo);
+  return resp;
 };

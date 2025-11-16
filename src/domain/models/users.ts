@@ -14,7 +14,7 @@ export type User = {
   active: boolean
   birthDate: string
   address?: AddressModel
-  permissions: Permission[]
+  permission: Permission[]
   role: Cargo
   password: string
   createdAt: string
