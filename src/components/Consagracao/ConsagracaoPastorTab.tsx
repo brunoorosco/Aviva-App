@@ -1,11 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { UserSelectForm } from "./UserSelectForm";
 import Toast from "../Toast";
-import { ConsagracaoPayload, TempUserToAdd, TMinisterialLevel } from "@/domain/models/ministerial";
+import { TempUserToAdd, TMinisterialLevel } from "@/domain/models/ministerial";
+import { useHttpPut } from "@/hooks/api";
 
-export function ConsagracaoPastorTab({ churchId }: { churchId: string }) {
-  const [auxiliaresTempList, setAuxiliaresTempList] = useState<TempUserToAdd[]>([]);
+export function ConsagracaoPastorTab({
+  churchId,
+  consagracaoId,
+  initialUsers,
+}: {
+  churchId: string;
+  consagracaoId: string;
+  initialUsers: any;
+}) {
+ const [auxiliaresTempList, setAuxiliaresTempList] = useState<TempUserToAdd[]>(initialUsers ?? []);
+
+  useEffect(() => {
+    if (initialUsers) {
+      setAuxiliaresTempList(initialUsers);
+    }
+  }, [initialUsers]);
 
   const handleAddUser = (user: TempUserToAdd) => {
     setAuxiliaresTempList((prev) => [...prev, user]);
@@ -21,25 +36,25 @@ export function ConsagracaoPastorTab({ churchId }: { churchId: string }) {
       return;
     }
 
-    const payload: ConsagracaoPayload[] = auxiliaresTempList.map((user) => ({
-      userId: user._id,
-      targetRole: "Auxiliar" as TMinisterialLevel,
+    const payload = auxiliaresTempList.map((user) => ({
+      name: user.name,
+      rede: user.rede,
+      id: user._id,
+      role: "Pastor" as TMinisterialLevel,
     }));
 
     try {
-      const response = await fetch("/api/consagracao", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      const resp = useHttpPut({
+        url: `/api/protected/churches/${churchId}/consagracao/${consagracaoId}`,
+        data: payload,
       });
 
-      if (!response.ok) {
+      if (!resp) {
         throw new Error("Falha ao consagrar auxiliares.");
       }
 
-      const result = await response.json();
       Toast.showSuccess("Auxiliares consagrados com sucesso!");
-      console.log("Consagração de Auxiliares realizada:", result);
+      console.log("Consagração de Auxiliares realizada:", resp);
       setAuxiliaresTempList([]); // Limpa a lista após consagração
     } catch (error: any) {
       Toast.showError(`Erro ao consagrar auxiliares: ${error.message}`);
@@ -50,6 +65,7 @@ export function ConsagracaoPastorTab({ churchId }: { churchId: string }) {
   return (
     <div className="space-y-6">
       <UserSelectForm
+       initialUsers={initialUsers}
         currentMinisterialLevel="Separado a Pastorado"
         targetMinisterialLevel="Pastor"
         onAddUser={handleAddUser}

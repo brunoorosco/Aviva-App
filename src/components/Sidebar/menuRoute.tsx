@@ -131,7 +131,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
         {
           label: "Consagração",
           icon: Users,
-          link: `${base}/secretary/consagracao`,
+          link: `${base}/secretary/consagracoes`,
         },
       ],
     },

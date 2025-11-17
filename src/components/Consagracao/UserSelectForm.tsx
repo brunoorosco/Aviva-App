@@ -18,7 +18,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TempUserToAdd, TMinisterialLevel } from "@/domain/models/ministerial";
-import { User } from "@/domain/models/users";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { useHttpGet } from "@/hooks/api";
 import { getNextMinisterialLevel } from "@/utils/getNextMinisterialLevel";
@@ -30,12 +29,14 @@ interface UserSelectFormProps {
   onRemoveUser: (userId: string) => void;
   tempList: TempUserToAdd[]; // Lista atual de usuários temporários para esta aba
   churchId: string;
+  initialUsers: TempUserToAdd[];
 }
 
 type TInputConsagracao = {
   _id: string;
   name: string;
   role: TMinisterialLevel;
+  nextRole: TMinisterialLevel;
   email: string;
   cem: { name: string };
 };
@@ -47,6 +48,7 @@ export function UserSelectForm({
   onRemoveUser,
   tempList,
   churchId,
+  initialUsers,
 }: UserSelectFormProps) {
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -70,7 +72,8 @@ export function UserSelectForm({
   const availableUsers = ALL_CHURCH_MEMBERS.filter(
     (user) =>
       isRoleValid(user.role, currentMinisterialLevel) &&
-      !tempList.some((tempUser) => tempUser._id === user._id) && // Não permite adicionar quem já está na lista temporária
+      !tempList.some((temp) => temp._id === user._id) &&
+      !initialUsers.some((init) => init._id === user._id) &&
       user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -80,8 +83,9 @@ export function UserSelectForm({
       onAddUser({
         _id: userToAdd._id,
         name: userToAdd.name,
-        cem: userToAdd.cem.name,
+        rede: userToAdd.cem.name,
         role: userToAdd.role,
+        nextRole: getNextMinisterialLevel(userToAdd.role),
       });
       setSelectedUserId(""); // Limpa a seleção
       setSearchTerm(""); // Limpa o termo de busca
@@ -151,9 +155,9 @@ export function UserSelectForm({
             {tempList.map((user) => (
               <TableRow key={user._id}>
                 <TableCell className="font-medium capitalize">{user.name.toLowerCase()}</TableCell>
-                <TableCell className="capitalize">{user.cem.toLowerCase()}</TableCell>
+                <TableCell className="capitalize">{user.rede.toLowerCase()}</TableCell>
                 <TableCell className="text-center">{user.role.replace(/_/g, " ")}</TableCell>
-                <TableCell className="text-center">{getNextMinisterialLevel(user.role)}</TableCell>
+                <TableCell className="text-center">{user.nextRole}</TableCell>
                 <TableCell className="text-right">
                   <Button
                     variant="ghost"

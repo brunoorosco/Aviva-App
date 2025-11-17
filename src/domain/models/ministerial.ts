@@ -76,8 +76,9 @@ export type TempConsagracaoUser = Pick<User, "_id" | "name" | "email" | "role"> 
 export type TempUserToAdd = {
   _id: string; // ID do usuário existente
   name: string;
-  cem: string;
+  rede: string;
   role: TMinisterialLevel; // Cargo atual
+  nextRole: TMinisterialLevel; // proximo Cargo 
 };
 
 export type ConsagracaoPayload = {

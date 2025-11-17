@@ -270,9 +270,9 @@ const MinisterialHistory = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate.push("/")}>
+            <Button variant="ghost" size="icon" onClick={() => navigate.back()}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
@@ -327,7 +327,7 @@ const MinisterialHistory = () => {
           </Dialog>
         </div>
 
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto">
           <ConsagracaoFormTabs />
         </div>
       </div>
