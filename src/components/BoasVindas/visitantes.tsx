@@ -222,7 +222,7 @@ export default function VisitorsAnalytics() {
                 <Calendar className="w-4 h-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{visitors?.data.visitorsToday}</div>
+                <div className="text-2xl font-bold">{visitors?.data.visitorsToday  || 0}</div>
                 <p className="text-xs text-muted-foreground">{todayLabel}</p>
               </CardContent>
             </Card>
