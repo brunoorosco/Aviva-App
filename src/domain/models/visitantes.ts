@@ -9,7 +9,6 @@ export type VisitantesModel = {
   region?: string;
 };
 
-
 export type TVisitorSource = "invited" | "instagram" | "facebook" | "youtube" | "outros";
 
 export type TMonthlyVisitor = {
@@ -24,5 +23,6 @@ export type TVisitorBySource = {
 
 export type TVisitorCountResponse = {
   monthly: TMonthlyVisitor[];
+  visitorsToday: number;
   bySource: TVisitorBySource[];
 };

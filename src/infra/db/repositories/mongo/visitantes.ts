@@ -1,4 +1,3 @@
-import { TEvent } from "@/domain/models/events";
 import {
   TMonthlyVisitor,
   TVisitorBySource,
@@ -6,6 +5,7 @@ import {
   TVisitorSource,
   VisitantesModel,
 } from "@/domain/models/visitantes";
+import { endOfDay, startOfDay } from "date-fns";
 import { MongoHelper } from "../../mongoHelper";
 
 export class VisitantesRepository {
@@ -77,8 +77,6 @@ export class VisitantesRepository {
   async countVisitors(churchId: string): Promise<TVisitorCountResponse> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
-
-      // 📊 Agrupa por mês
       const monthly = await collection
         .aggregate<TMonthlyVisitor>([
           { $match: { churchId } },
@@ -113,6 +111,22 @@ export class VisitantesRepository {
         ])
         .toArray();
 
+      const now = new Date();
+      const localStart = startOfDay(now);
+      const localEnd = endOfDay(now);
+
+      // converte para UTC removendo o offset local
+      const start = new Date(localStart.getTime() - localStart.getTimezoneOffset() * 60000);
+      const end = new Date(localEnd.getTime() - localEnd.getTimezoneOffset() * 60000);
+
+      const count = await collection.countDocuments({
+        churchId,
+        visitedAt: {
+          $gte: start,
+          $lte: end,
+        },
+      });
+
       // 📈 Agrupa por origem (howHeard)
       const bySource = await collection
         .aggregate<TVisitorBySource>([
@@ -146,9 +160,9 @@ export class VisitantesRepository {
         source: src as TVisitorSource,
         count: bySource.find((s) => s.source === src)?.count || 0,
       }));
-
       return {
         monthly,
+        visitorsToday: count,
         bySource: normalizedBySource,
       };
     } catch (err) {
