@@ -79,6 +79,11 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
       roles: ["admin", "secretaria"],
       children: [
         {
+          label: "Apresentações",
+          icon: Users,
+          link: `${base}/secretary/apresentacao`,
+        },
+        {
           label: "Membros",
           icon: Users,
           link: `${base}/secretary/members`,
@@ -132,6 +137,11 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
           label: "Consagração",
           icon: Users,
           link: `${base}/secretary/consagracoes`,
+        },
+        {
+          label: "Fechamento Anual",
+          icon: ChartPieIcon,
+          link: `${base}/secretary/fechamento-anual`,
         },
       ],
     },
