@@ -65,6 +65,7 @@ function normalizarEncontristasPorIgreja(
     const obj = {
       nome: entrada.nome,
       idade: entrada.idade,
+      nasciemento: entrada.dataNascimento,
       telefone: entrada.telefone,
       endereco: entrada.endereco ? `${entrada.endereco} ${entrada.bairro}`.trim() : null,
       igreja: contemIgreja ? entrada.rede! : nomeDaIgreja,

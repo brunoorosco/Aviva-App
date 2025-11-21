@@ -42,6 +42,7 @@ const NovoEncontroComDeus = () => {
     control,
     name: 'encontristas'
   })
+  
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const { data: session } = useSession()
