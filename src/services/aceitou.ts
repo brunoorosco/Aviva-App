@@ -21,9 +21,19 @@ export const createAceitouService = async (data: any, churchId: string): Promise
   // Converte booleanos corretamente
   const hasEncontro = data.hasEncontro === true || data.hasEncontro === "true";
 
+  const processAcceptedDate = (dateString: string): Date => {
+    // dateString vem do input tipo date: "2025-11-21"
+    const [year, month, day] = dateString.split("-");
+
+    // Cria a data com meio-dia UTC para evitar problemas de fuso
+    const date = new Date(`${year}-${month}-${day}T12:00:00.000Z`);
+
+    return date;
+  };
+
   // Monta objeto dinamicamente
   const dataFormatted: any = {
-    acceptedAt: new Date(data.acceptedAt),
+    acceptedAt: processAcceptedDate(data.acceptedAt),
     name: data.name?.trim() as string,
     email: data.email?.trim() || null,
     phone: data.phone.replace(/[^0-9]/g, "") || null,
