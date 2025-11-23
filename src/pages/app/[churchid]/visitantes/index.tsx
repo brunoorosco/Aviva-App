@@ -48,6 +48,14 @@ export default function VisitantesList() {
     );
   }, [users?.data, search]);
 
+   const formatDate = (dateString: string | Date) => {
+    const date = new Date(dateString);
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    return `${day}/${month}/${year}`;
+  };
+
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -153,7 +161,7 @@ export default function VisitantesList() {
                 )}
                 <div className="text-sm text-gray-700">
                   📅 <span className="font-medium">Data da visita:</span>{" "}
-                  {new Date(r.visitedAt).toLocaleDateString("pt-BR")}
+                  {formatDate(r.visitedAt)}
                 </div>
               </div>
             ))}
@@ -182,7 +190,7 @@ export default function VisitantesList() {
                       {r.howHeard === "invited" ? "Convidado" : r.howHeard || "-"}
                     </TableCell>
                     <TableCell>{r.invitedBy || "-"}</TableCell>
-                    <TableCell>{new Date(r.visitedAt).toLocaleDateString("pt-BR")}</TableCell>
+                    <TableCell> {formatDate(r.visitedAt)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
