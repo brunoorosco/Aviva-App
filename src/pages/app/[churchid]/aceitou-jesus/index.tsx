@@ -17,6 +17,7 @@ import { AceitouModel } from "@/domain/models/aceitou";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 import Pagination from "@/components/Pagination";
+import { formatDate } from "@/utils/formatedDate";
 
 export const AceitouJesusList = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -49,9 +50,11 @@ export const AceitouJesusList = () => {
       <div className="flex justify-between gap-2 mb-4 items-left">
         <div className="flex flex-col">
           <Label className="text-2xl">Lista Aceitou Jesus</Label>
-          <Label className="text-xs font-semibold">{`Total de Pessoas - ${users?.data.total}`}</Label>
+          <Label className="text-xs font-semibold">{`Total de Pessoas - ${
+            users?.data.total || 0
+          }`}</Label>
         </div>
-
+        {/* 
         <div className="flex flex-row gap-2">
           <Input
             placeholder="Buscar por nome..."
@@ -60,7 +63,7 @@ export const AceitouJesusList = () => {
             className="max-w-xs"
           />
           <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
-        </div>
+        </div> */}
       </div>
       {/* Conteúdo */}
       {loading || isLoading ? (
@@ -90,8 +93,7 @@ export const AceitouJesusList = () => {
                 )}
 
                 <div className="text-sm text-gray-700">
-                  📅 <span className="font-medium">Data do Apelo:</span>{" "}
-                 {new Date(r.acceptedAt).toLocaleDateString("pt-BR")}
+                  📅 <span className="font-medium">Data do Apelo:</span> {formatDate(r.acceptedAt)}
                   {r.rede && (
                     <div className="text-sm font-medium text-gray-700">
                       🙋 <span className="font-medium">Quem convidou: </span>
@@ -138,9 +140,7 @@ export const AceitouJesusList = () => {
                       <TableCell>{r.email || "-"}</TableCell>
                       <TableCell>{r.phone || "-"}</TableCell>
                       <TableCell>{r.rede?.name || "-"}</TableCell>
-                      <TableCell>
-                        {new Date(r.acceptedAt).toLocaleDateString("pt-BR")}
-                      </TableCell>{" "}
+                      <TableCell>{formatDate(r.acceptedAt)}</TableCell>{" "}
                       <TableCell>{r.accepted ? "Aceitou" : "Reconciliou"}</TableCell>
                       <TableCell>{r.baptism ? "Sim" : "Não"}</TableCell>
                       <TableCell>{r.numberEncontro || "-"}</TableCell>

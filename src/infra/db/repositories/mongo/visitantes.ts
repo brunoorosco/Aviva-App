@@ -23,11 +23,11 @@ export class VisitantesRepository {
       collection
         .find({ churchId })
         .collation({ locale: "pt", strength: 1 })
-        .sort({ visitedAt: -1 })
+        .sort({ _id: -1, visitedAt: -1 })
         .skip(skip)
         .limit(limit)
         .toArray(),
-      collection.countDocuments(),
+      collection.countDocuments({ churchId }),
     ]);
     return { data, total, page, totalPages: Math.ceil(total / limit) };
   }

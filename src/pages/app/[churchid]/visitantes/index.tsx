@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import * as XLSX from "xlsx";
 import Toast from "@/components/Toast";
 import Pagination from "@/components/Pagination";
+import { formatDate } from "@/utils/formatedDate";
 
 export default function VisitantesList() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -57,14 +58,6 @@ export default function VisitantesList() {
       other: TVisitor.other,
     };
     return mapping[value] || value || "-";
-  };
-
-  const formatDate = (dateString: string | Date) => {
-    const date = new Date(dateString);
-    const year = date.getUTCFullYear();
-    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-    const day = String(date.getUTCDate()).padStart(2, "0");
-    return `${day}/${month}/${year}`;
   };
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
