@@ -26,3 +26,11 @@ export type TVisitorCountResponse = {
   visitorsToday: number;
   bySource: TVisitorBySource[];
 };
+
+export enum TVisitor {
+  invited = "Convidado",
+  instagram = "Instagram",
+  facebook = "Facebook",
+  youtube = "Youtube",
+  other = "Outros",
+}

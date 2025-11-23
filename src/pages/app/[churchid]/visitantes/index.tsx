@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { VisitantesModel } from "@/domain/models/visitantes";
+import { TVisitor, VisitantesModel } from "@/domain/models/visitantes";
 import {
   Table,
   TableBody,
@@ -48,11 +48,22 @@ export default function VisitantesList() {
     );
   }, [users?.data, search]);
 
-   const formatDate = (dateString: string | Date) => {
+  const getHowHeardLabel = (value: string) => {
+    const mapping: Record<string, string> = {
+      invited: TVisitor.invited,
+      instagram: TVisitor.instagram,
+      facebook: TVisitor.facebook,
+      youtube: TVisitor.youtube,
+      other: TVisitor.other,
+    };
+    return mapping[value] || value || "-";
+  };
+
+  const formatDate = (dateString: string | Date) => {
     const date = new Date(dateString);
     const year = date.getUTCFullYear();
-    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(date.getUTCDate()).padStart(2, '0');
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
     return `${day}/${month}/${year}`;
   };
 
@@ -94,7 +105,9 @@ export default function VisitantesList() {
       <div className="flex items-left justify-between mb-4 gap-2">
         <div className="flex flex-col">
           <Label className="text-2xl font-semibold">Visitantes</Label>
-          <Label className="text-xs font-semibold">{`Total de Visitantes - ${users?.data.total}`}</Label>
+          <Label className="text-xs font-semibold">{`Total de Visitantes - ${
+            users?.data.total || 0
+          }`}</Label>
         </div>
 
         <div className="flex flex-row gap-2">
@@ -151,7 +164,7 @@ export default function VisitantesList() {
                 {r.howHeard && (
                   <div className="text-sm text-gray-700">
                     💬 <span className="font-medium">Como nos conheceu:</span>{" "}
-                    {r.howHeard === "invited" ? "Convidado" : r.howHeard || "-"}
+                    {getHowHeardLabel(r.howHeard)}
                   </div>
                 )}
                 {r.invitedBy && (
@@ -160,8 +173,7 @@ export default function VisitantesList() {
                   </div>
                 )}
                 <div className="text-sm text-gray-700">
-                  📅 <span className="font-medium">Data da visita:</span>{" "}
-                  {formatDate(r.visitedAt)}
+                  📅 <span className="font-medium">Data da visita:</span> {formatDate(r.visitedAt)}
                 </div>
               </div>
             ))}
@@ -186,9 +198,7 @@ export default function VisitantesList() {
                     <TableCell>{r.name}</TableCell>
                     <TableCell>{r.phone || "-"}</TableCell>
                     <TableCell>{r.region || "-"}</TableCell>
-                    <TableCell>
-                      {r.howHeard === "invited" ? "Convidado" : r.howHeard || "-"}
-                    </TableCell>
+                    <TableCell>{getHowHeardLabel(r.howHeard as string)}</TableCell>
                     <TableCell>{r.invitedBy || "-"}</TableCell>
                     <TableCell> {formatDate(r.visitedAt)}</TableCell>
                   </TableRow>
