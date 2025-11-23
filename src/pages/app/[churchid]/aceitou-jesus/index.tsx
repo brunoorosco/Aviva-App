@@ -54,16 +54,16 @@ export const AceitouJesusList = () => {
             users?.data.total || 0
           }`}</Label>
         </div>
-        {/* 
+        
         <div className="flex flex-row gap-2">
-          <Input
+          {/* <Input
             placeholder="Buscar por nome..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-xs"
-          />
+          /> */}
           <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
-        </div> */}
+        </div> 
       </div>
       {/* Conteúdo */}
       {loading || isLoading ? (
