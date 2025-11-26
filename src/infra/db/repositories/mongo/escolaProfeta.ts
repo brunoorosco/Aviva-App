@@ -24,7 +24,7 @@ export class EscolaProfetaRepository {
   async getEscolaProfeta(
     churchId: string,
     page: number = 1,
-    limit: number = 10
+    limit: number = 20
   ): Promise<{
     data: any[]
     total: number
