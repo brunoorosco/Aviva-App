@@ -220,6 +220,7 @@ export class UsersMongoRepository {
         $set: {
           password,
           permission: permission,
+          updatedAt: new Date(),
         },
       }
     );

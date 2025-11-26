@@ -31,6 +31,7 @@ export const createUserByCem = async (params: TUser) => {
     permission: ["user"],
     zipcode,
     password: setPassword,
+    createdAt: new Date()
   });
   return user;
 };
@@ -55,6 +56,7 @@ export const createUser = async (params: TUser) => {
     zipcode,
     password: setPassword,
     cem: { _id: cem[0], name: cem[1] },
+    createdAt: new Date()
   });
   return user;
 };
