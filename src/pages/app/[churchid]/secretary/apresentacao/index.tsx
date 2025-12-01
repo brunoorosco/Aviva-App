@@ -25,6 +25,32 @@ import { mockAliancas, mockNovosMembros, mockCriancas } from "@/mocks/mockaprese
 import { TAlianca, TNovoMembro, TCrianca } from "@/domain/models/apresentacao";
 import { Plus, Users, Baby, Heart, Printer } from "lucide-react";
 import jsPDF from "jspdf";
+import { SelectCem } from "@/components/Select/SelectCem";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { useSession } from "next-auth/react";
+
+// Tipos para os formulários
+type AliancaFormData = {
+  nomeHomem: string;
+  nomeMulher: string;
+  dataApresentacao: string;
+};
+
+type MembroFormData = {
+  nome: string;
+  rede: string;
+  cemId?: string;
+  dataApresentacao: string;
+};
+
+type CriancaFormData = {
+  nomeCrianca: string;
+  nomePai: string;
+  nomeMae: string;
+  dataApresentacao: string;
+};
+
+type FormData = AliancaFormData & MembroFormData & CriancaFormData;
 
 const ApresentacaoPage = () => {
   const [aliancas, setAliancas] = useState<TAlianca[]>(mockAliancas);
@@ -37,25 +63,37 @@ const ApresentacaoPage = () => {
   const [activeTab, setActiveTab] = useState<"novosmembros" | "aliancas" | "criancas">(
     "novosmembros"
   );
+  const { data: session } = useSession();
 
-  const [formData, setFormData] = useState({
-    nomeHomem: "",
-    nomeMulher: "",
-    nome: "",
-    rede: "",
-    nomeCrianca: "",
-    nomePai: "",
-    nomeMae: "",
-    dataApresentacao: new Date().toISOString().split("T")[0],
-  });
-
-  const handleOpenDialog = (category: "alianca" | "membro" | "crianca") => {
-    setCurrentCategory(category);
-    setFormData({
+  // Hook form setup
+  const {
+    control,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({
+    defaultValues: {
       nomeHomem: "",
       nomeMulher: "",
       nome: "",
       rede: "",
+      cemId: "",
+      nomeCrianca: "",
+      nomePai: "",
+      nomeMae: "",
+      dataApresentacao: new Date().toISOString().split("T")[0],
+    },
+  });
+
+  const handleOpenDialog = (category: "alianca" | "membro" | "crianca") => {
+    setCurrentCategory(category);
+    reset({
+      nomeHomem: "",
+      nomeMulher: "",
+      nome: "",
+      rede: "",
+      cemId: "",
       nomeCrianca: "",
       nomePai: "",
       nomeMae: "",
@@ -64,32 +102,32 @@ const ApresentacaoPage = () => {
     setOpenDialog(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit: SubmitHandler<FormData> = (data) => {
     if (currentCategory === "alianca") {
       const newAlianca: TAlianca = {
         _id: Date.now().toString(),
-        nomeHomem: formData.nomeHomem,
-        nomeMulher: formData.nomeMulher,
-        dataApresentacao: formData.dataApresentacao,
+        nomeHomem: data.nomeHomem,
+        nomeMulher: data.nomeMulher,
+        rede: data.rede,
+        dataApresentacao: data.dataApresentacao,
       };
       setAliancas([...aliancas, newAlianca]);
     } else if (currentCategory === "membro") {
       const newMembro: TNovoMembro = {
         _id: Date.now().toString(),
-        nome: formData.nome,
-        rede: formData.rede,
-        dataApresentacao: formData.dataApresentacao,
+        nome: data.nome,
+        rede: data.rede || data.cemId || "", // Use cemId se rede estiver vazia
+        dataApresentacao: data.dataApresentacao,
       };
       setNovosMembros([...novosMembros, newMembro]);
     } else {
       const newCrianca: TCrianca = {
         _id: Date.now().toString(),
-        nomeCrianca: formData.nomeCrianca,
-        nomePai: formData.nomePai,
-        nomeMae: formData.nomeMae,
-        dataApresentacao: formData.dataApresentacao,
+        nomeCrianca: data.nomeCrianca,
+        nomePai: data.nomePai,
+        nomeMae: data.nomeMae,
+        rede: data.rede,
+        dataApresentacao: data.dataApresentacao,
       };
       setCriancas([...criancas, newCrianca]);
     }
@@ -104,7 +142,7 @@ const ApresentacaoPage = () => {
     doc.setFontSize(20);
     doc.setFont("helvetica", "bold");
     doc.text("Avivamento em Cristo", 105, 20, { align: "center" });
-    doc.addImage("/logo-preto.png", "png");
+    doc.addImage("/logo-preto.png");
 
     doc.setFontSize(16);
     doc.text("Apresentações", 105, 35, { align: "center" });
@@ -309,7 +347,7 @@ const ApresentacaoPage = () => {
                         {novosMembros.map((membro) => (
                           <TableRow key={membro._id}>
                             <TableCell className="font-medium">{membro.nome}</TableCell>
-                            <TableCell>{membro.rede}</TableCell>
+                            <TableCell>{membro.rede.split('-')[1]}</TableCell>
                             <TableCell>
                               {new Date(membro.dataApresentacao).toLocaleDateString("pt-BR")}
                             </TableCell>
@@ -364,6 +402,7 @@ const ApresentacaoPage = () => {
                         <TableRow>
                           <TableHead>Nome do Homem</TableHead>
                           <TableHead>Nome da Mulher</TableHead>
+                          <TableHead>Rede</TableHead>
                           <TableHead>Data Apresentação</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -372,6 +411,7 @@ const ApresentacaoPage = () => {
                           <TableRow key={alianca._id}>
                             <TableCell className="font-medium">{alianca.nomeHomem}</TableCell>
                             <TableCell>{alianca.nomeMulher}</TableCell>
+                            <TableCell>{alianca.rede?.split('-')[1]}</TableCell>
                             <TableCell>
                               {new Date(alianca.dataApresentacao).toLocaleDateString("pt-BR")}
                             </TableCell>
@@ -427,6 +467,7 @@ const ApresentacaoPage = () => {
                           <TableHead>Nome da Criança</TableHead>
                           <TableHead>Nome do Pai</TableHead>
                           <TableHead>Nome da Mãe</TableHead>
+                          <TableHead>Rede</TableHead>
                           <TableHead>Data Apresentação</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -436,6 +477,7 @@ const ApresentacaoPage = () => {
                             <TableCell className="font-medium">{crianca.nomeCrianca}</TableCell>
                             <TableCell>{crianca.nomePai}</TableCell>
                             <TableCell>{crianca.nomeMae}</TableCell>
+                            <TableCell>{crianca.rede?.split('-')[1]}</TableCell>
                             <TableCell>
                               {new Date(crianca.dataApresentacao).toLocaleDateString("pt-BR")}
                             </TableCell>
@@ -475,32 +517,40 @@ const ApresentacaoPage = () => {
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="max-h-[70vh]">
-              <form onSubmit={handleSubmit} className="pr-4 space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="pr-4 space-y-4">
                 {currentCategory === "alianca" && (
                   <>
                     <div className="space-y-2">
                       <Label htmlFor="nomeHomem" className="text-sm">
                         Nome do Homem
                       </Label>
-                      <Input
-                        id="nomeHomem"
-                        value={formData.nomeHomem}
-                        onChange={(e) => setFormData({ ...formData, nomeHomem: e.target.value })}
-                        required
-                        className="text-base" // Evita zoom no iOS
+                      <Controller
+                        name="nomeHomem"
+                        control={control}
+                        rules={{ required: "Nome do homem é obrigatório" }}
+                        render={({ field }) => (
+                          <Input {...field} id="nomeHomem" className="text-base" />
+                        )}
                       />
+                      {errors.nomeHomem && (
+                        <p className="text-sm text-red-600">{errors.nomeHomem.message}</p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="nomeMulher" className="text-sm">
                         Nome da Mulher
                       </Label>
-                      <Input
-                        id="nomeMulher"
-                        value={formData.nomeMulher}
-                        onChange={(e) => setFormData({ ...formData, nomeMulher: e.target.value })}
-                        required
-                        className="text-base"
+                      <Controller
+                        name="nomeMulher"
+                        control={control}
+                        rules={{ required: "Nome da mulher é obrigatório" }}
+                        render={({ field }) => (
+                          <Input {...field} id="nomeMulher" className="text-base" />
+                        )}
                       />
+                      {errors.nomeMulher && (
+                        <p className="text-sm text-red-600">{errors.nomeMulher.message}</p>
+                      )}
                     </div>
                   </>
                 )}
@@ -511,25 +561,13 @@ const ApresentacaoPage = () => {
                       <Label htmlFor="nome" className="text-sm">
                         Nome do Membro
                       </Label>
-                      <Input
-                        id="nome"
-                        value={formData.nome}
-                        onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                        required
-                        className="text-base"
+                      <Controller
+                        name="nome"
+                        control={control}
+                        rules={{ required: "Nome é obrigatório" }}
+                        render={({ field }) => <Input {...field} id="nome" className="text-base" />}
                       />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="rede" className="text-sm">
-                        Rede
-                      </Label>
-                      <Input
-                        id="rede"
-                        value={formData.rede}
-                        onChange={(e) => setFormData({ ...formData, rede: e.target.value })}
-                        required
-                        className="text-base"
-                      />
+                      {errors.nome && <p className="text-sm text-red-600">{errors.nome.message}</p>}
                     </div>
                   </>
                 )}
@@ -540,53 +578,78 @@ const ApresentacaoPage = () => {
                       <Label htmlFor="nomeCrianca" className="text-sm">
                         Nome da Criança
                       </Label>
-                      <Input
-                        id="nomeCrianca"
-                        value={formData.nomeCrianca}
-                        onChange={(e) => setFormData({ ...formData, nomeCrianca: e.target.value })}
-                        required
-                        className="text-base"
+                      <Controller
+                        name="nomeCrianca"
+                        control={control}
+                        rules={{ required: "Nome da criança é obrigatório" }}
+                        render={({ field }) => (
+                          <Input {...field} id="nomeCrianca" className="text-base" />
+                        )}
                       />
+                      {errors.nomeCrianca && (
+                        <p className="text-sm text-red-600">{errors.nomeCrianca.message}</p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="nomePai" className="text-sm">
                         Nome do Pai
                       </Label>
-                      <Input
-                        id="nomePai"
-                        value={formData.nomePai}
-                        onChange={(e) => setFormData({ ...formData, nomePai: e.target.value })}
-                        required
-                        className="text-base"
+                      <Controller
+                        name="nomePai"
+                        control={control}
+                        rules={{ required: "Nome do pai é obrigatório" }}
+                        render={({ field }) => (
+                          <Input {...field} id="nomePai" className="text-base" />
+                        )}
                       />
+                      {errors.nomePai && (
+                        <p className="text-sm text-red-600">{errors.nomePai.message}</p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="nomeMae" className="text-sm">
                         Nome da Mãe
                       </Label>
-                      <Input
-                        id="nomeMae"
-                        value={formData.nomeMae}
-                        onChange={(e) => setFormData({ ...formData, nomeMae: e.target.value })}
-                        required
-                        className="text-base"
+                      <Controller
+                        name="nomeMae"
+                        control={control}
+                        rules={{ required: "Nome da mãe é obrigatório" }}
+                        render={({ field }) => (
+                          <Input {...field} id="nomeMae" className="text-base" />
+                        )}
                       />
+                      {errors.nomeMae && (
+                        <p className="text-sm text-red-600">{errors.nomeMae.message}</p>
+                      )}
                     </div>
                   </>
                 )}
-
                 <div className="space-y-2">
+                  <SelectCem
+                    name="rede"
+                    control={control}
+                    churchId={session?.user.churchId as string}
+                    title="Rede"
+                    errors={errors}
+                    isRequired={true}
+                  />
+                </div>
+
+                <div className="space-y-2 mt-2">
                   <Label htmlFor="dataApresentacao" className="text-sm">
                     Data de Apresentação
                   </Label>
-                  <Input
-                    id="dataApresentacao"
-                    type="date"
-                    value={formData.dataApresentacao}
-                    onChange={(e) => setFormData({ ...formData, dataApresentacao: e.target.value })}
-                    required
-                    className="text-base"
+                  <Controller
+                    name="dataApresentacao"
+                    control={control}
+                    rules={{ required: "Data é obrigatória" }}
+                    render={({ field }) => (
+                      <Input {...field} id="dataApresentacao" type="date" className="text-base" />
+                    )}
                   />
+                  {errors.dataApresentacao && (
+                    <p className="text-sm text-red-600">{errors.dataApresentacao.message}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col justify-end gap-2 pt-4 sm:flex-row">
@@ -595,11 +658,12 @@ const ApresentacaoPage = () => {
                     variant="outline"
                     onClick={() => setOpenDialog(false)}
                     className="w-full sm:w-auto"
+                    disabled={isSubmitting}
                   >
                     Cancelar
                   </Button>
-                  <Button type="submit" className="w-full sm:w-auto">
-                    Adicionar
+                  <Button type="submit" className="w-full sm:w-auto" disabled={isSubmitting}>
+                    {isSubmitting ? "Adicionando..." : "Adicionar"}
                   </Button>
                 </div>
               </form>

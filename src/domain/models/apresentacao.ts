@@ -2,6 +2,7 @@ export type TAlianca = {
   _id: string;
   nomeHomem: string;
   nomeMulher: string;
+  rede: string;
   dataApresentacao: string;
 };
 
@@ -17,5 +18,6 @@ export type TCrianca = {
   nomeCrianca: string;
   nomePai: string;
   nomeMae: string;
+  rede: string;
   dataApresentacao: string;
 };
