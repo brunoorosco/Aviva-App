@@ -234,7 +234,7 @@ export class UsersMongoRepository {
         ? { $regex: /^(membro|discípulo)$/i }
         : { $regex: `^${cargo}$`, $options: "i" };
 
-    return collection
+    const resp = await collection
       .find(
         {
           churchId,
@@ -249,5 +249,7 @@ export class UsersMongoRepository {
       .collation({ locale: "pt", strength: 1 })
       .sort({ name: 1 })
       .toArray();
+
+    return resp;
   }
 }

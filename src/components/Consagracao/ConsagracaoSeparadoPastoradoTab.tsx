@@ -43,6 +43,7 @@ export function ConsagracaoSeparadoPastoradoTab({
       rede: user.rede,
       id: user._id,
       role: "Separado a Pastorado" as TMinisterialLevel,
+      nextRole: "Pastor" as TMinisterialLevel,
     }));
 
     try {

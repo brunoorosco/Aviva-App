@@ -9,7 +9,7 @@ export function getNextMinisterialLevel(currentLevel: TMinisterialLevel): TMinis
   if (currentIndex < ministerialLevels.length - 1) {
     return ministerialLevels[currentIndex + 1];
   }
-  // Se já for o último cargo, retorna o próprio cargo ou um tratamento específico
+  console.log("currentLever :>> ", currentLevel);
   return currentLevel; // Ou talvez 'BISPO' se você não quiser que progridam mais
 }
 

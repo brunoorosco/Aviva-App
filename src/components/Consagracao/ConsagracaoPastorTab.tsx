@@ -14,7 +14,7 @@ export function ConsagracaoPastorTab({
   consagracaoId: string;
   initialUsers: any;
 }) {
- const [auxiliaresTempList, setAuxiliaresTempList] = useState<TempUserToAdd[]>(initialUsers ?? []);
+  const [auxiliaresTempList, setAuxiliaresTempList] = useState<TempUserToAdd[]>(initialUsers ?? []);
 
   useEffect(() => {
     if (initialUsers) {
@@ -40,7 +40,8 @@ export function ConsagracaoPastorTab({
       name: user.name,
       rede: user.rede,
       id: user._id,
-      role: "Pastor" as TMinisterialLevel,
+      role: "Separado a Pastorado" as TMinisterialLevel,
+      nextRole: "Pastor" as TMinisterialLevel,
     }));
 
     try {
@@ -65,7 +66,7 @@ export function ConsagracaoPastorTab({
   return (
     <div className="space-y-6">
       <UserSelectForm
-       initialUsers={initialUsers}
+        initialUsers={initialUsers}
         currentMinisterialLevel="Separado a Pastorado"
         targetMinisterialLevel="Pastor"
         onAddUser={handleAddUser}

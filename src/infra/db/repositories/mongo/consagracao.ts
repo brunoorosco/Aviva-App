@@ -146,7 +146,7 @@ export class ConsagracaoRepository {
     const collection = await MongoHelper.getCollection(this.collectionName);
 
     const normalizedRole = nextRole;
-
+    console.log("normalizedRole :>> ", nextRole);
     const updatePath = `consagracao.$.users.${normalizedRole}`;
 
     // 1 — Atualizar substituindo toda a lista desse nextRole

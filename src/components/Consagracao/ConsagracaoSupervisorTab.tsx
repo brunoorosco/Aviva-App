@@ -39,8 +39,11 @@ export function ConsagracaoSupervisorTab({
       name: user.name,
       rede: user.rede,
       id: user._id,
-      role: "Supervisor" as TMinisterialLevel,
+      role: "Separado a Supervisão" as TMinisterialLevel,
+      nextRole: "Supervisor" as TMinisterialLevel,
     }));
+
+    console.log("ConsagracaoSupervisorTab.tsx:44", payload);
 
     try {
       const response = useHttpPut({
@@ -63,7 +66,7 @@ export function ConsagracaoSupervisorTab({
   return (
     <div className="space-y-6">
       <UserSelectForm
-       initialUsers={initialUsers}
+        initialUsers={initialUsers}
         currentMinisterialLevel="Separado a Supervisão"
         targetMinisterialLevel="Supervisor"
         onAddUser={handleAddUser}
