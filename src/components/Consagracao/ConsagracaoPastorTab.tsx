@@ -27,7 +27,7 @@ export function ConsagracaoPastorTab({
   };
 
   const handleRemoveUser = (userId: string) => {
-    setAuxiliaresTempList((prev) => prev.filter((user) => user._id !== userId));
+    setAuxiliaresTempList((prev) => prev.filter((user) => user.id !== userId));
   };
 
   const handleConsagrarAuxiliares = async () => {
@@ -39,7 +39,7 @@ export function ConsagracaoPastorTab({
     const payload = auxiliaresTempList.map((user) => ({
       name: user.name,
       rede: user.rede,
-      id: user._id,
+      id: user.id,
       role: "Separado a Pastorado" as TMinisterialLevel,
       nextRole: "Pastor" as TMinisterialLevel,
     }));
@@ -55,8 +55,6 @@ export function ConsagracaoPastorTab({
       }
 
       Toast.showSuccess("Auxiliares consagrados com sucesso!");
-      console.log("Consagração de Auxiliares realizada:", resp);
-      setAuxiliaresTempList([]); // Limpa a lista após consagração
     } catch (error: any) {
       Toast.showError(`Erro ao consagrar auxiliares: ${error.message}`);
       console.error("Erro ao consagrar auxiliares:", error);

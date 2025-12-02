@@ -29,7 +29,7 @@ export function ConsagracaoSeparadoSupervisorTab({
   };
 
   const handleRemoveUser = (userId: string) => {
-    setAuxiliaresTempList((prev) => prev.filter((user) => user._id !== userId));
+    setAuxiliaresTempList((prev) => prev.filter((user) => user.id !== userId));
   };
 
   const handleConsagrarAuxiliares = async () => {
@@ -41,7 +41,7 @@ export function ConsagracaoSeparadoSupervisorTab({
     const payload = auxiliaresTempList.map((user) => ({
       name: user.name,
       rede: user.rede,
-      id: user._id,
+      id: user.id,
       nextRole: "Separado a Supervisão" as TMinisterialLevel,
       role: "Lider",
     }));
@@ -57,7 +57,6 @@ export function ConsagracaoSeparadoSupervisorTab({
       }
 
       Toast.showSuccess("Auxiliares consagrados com sucesso!");
-      setAuxiliaresTempList([]); // Limpa a lista após consagração
     } catch (error: any) {
       Toast.showError(`Erro ao registrar: ${error.message}`);
       console.error("Erro ao registrar separação supervisores:", error);
