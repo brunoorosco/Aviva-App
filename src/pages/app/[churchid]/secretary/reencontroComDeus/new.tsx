@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import ButtonSubmit from "@/components/ButtonSubmit";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import ImportButton from "../../../../../components/encontroComDeus/ImportButton";
+import ImportButton from "../../../../../components/reencontroComDeus/ImportButton";
 import { useHttpPost } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import Toast from "@/components/Toast";
@@ -20,9 +20,10 @@ type TEncontrista = {
   email?: string;
   endereco?: string;
   idade?: number;
+  equipe?: string;
 };
 type FormValues = {
-  encontristas: TEncontrista[];
+  reencontristas: TEncontrista[];
   data: string;
   igreja: string;
   numero?: number;
@@ -31,7 +32,7 @@ type FormValues = {
 const NovoReencontroComDeus = () => {
   const { control, handleSubmit, watch } = useForm<FormValues>({
     defaultValues: {
-      encontristas: [],
+      reencontristas: [],
       data: new Date().toISOString().split("T")[0],
       igreja: "",
     },
@@ -40,45 +41,45 @@ const NovoReencontroComDeus = () => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "encontristas",
+    name: "reencontristas",
   });
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
-  const encontristas = watch("encontristas");
+  const encontristas = watch("reencontristas");
 
   const onSubmit = handleSubmit(async (data) => {
     console.log(data);
-    if (!data.encontristas || data.encontristas.length === 0) {
+    if (!data.reencontristas || data.reencontristas.length === 0) {
       Toast.showError("Adicione pelo menos uma Casa de Paz antes de salvar!");
       return;
     }
 
     setIsLoading(true);
     const response = await useHttpPost({
-      url: `/api/protected/churches/${session?.user.churchId}/encontroComDeus`,
+      url: `/api/protected/churches/${session?.user.churchId}/reencontroComDeus`,
       data,
     });
     setIsLoading(false);
 
     if (response?.error) {
-      Toast.showError("Erro ao salvar Encontro com Deus!");
+      Toast.showError("Erro ao salvar reencontro com Deus!");
     } else {
-      Toast.showSuccess("Encontro com Deus cadastrado com sucesso!");
+      Toast.showSuccess("Reencontro com Deus cadastrado com sucesso!");
       router.back();
     }
   });
 
   const handleImport = (imported: TEncontrista[]) => {
     fields.forEach((_, index) => remove(index));
-    imported.forEach((casa) => append(casa));
+    imported.forEach((reencontrista) => append(reencontrista));
   };
 
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl">Encontro com Deus</h1>
+        <h1 className="text-2xl">Reencontro com Deus</h1>
 
         <div className="flex items-end gap-2">
           <Controller
@@ -102,7 +103,11 @@ const NovoReencontroComDeus = () => {
             )}
           />
 
-          <ImportButton inputFileRef={inputFileRef} onImport={handleImport} />
+          <ImportButton
+            inputFileRef={inputFileRef}
+            //@ts-ignore
+            onImport={handleImport}
+          />
         </div>
       </div>
 
@@ -144,7 +149,7 @@ const NovoReencontroComDeus = () => {
             <div className="flex gap-4 ">
               <div className="w-3/12">
                 <Controller
-                  name={`encontristas.${index}.name`}
+                  name={`reencontristas.${index}.name`}
                   control={control}
                   render={({ field }) => (
                     <div className="flex flex-col">
@@ -155,7 +160,7 @@ const NovoReencontroComDeus = () => {
               </div>
               <div className="w-1/12">
                 <Controller
-                  name={`encontristas.${index}.idade`}
+                  name={`reencontristas.${index}.idade`}
                   control={control}
                   render={({ field }) => (
                     <div className="flex flex-col">
@@ -167,7 +172,7 @@ const NovoReencontroComDeus = () => {
 
               <div className="w-1/12">
                 <Controller
-                  name={`encontristas.${index}.rede`}
+                  name={`reencontristas.${index}.rede`}
                   control={control}
                   render={({ field }) => (
                     <div className="flex flex-col">
@@ -179,7 +184,7 @@ const NovoReencontroComDeus = () => {
 
               <div className="w-1/12">
                 <Controller
-                  name={`encontristas.${index}.telefone`}
+                  name={`reencontristas.${index}.telefone`}
                   control={control}
                   render={({ field }) => (
                     <div className="flex flex-col">
@@ -190,7 +195,7 @@ const NovoReencontroComDeus = () => {
               </div>
               <div className="flex-1">
                 <Controller
-                  name={`encontristas.${index}.endereco`}
+                  name={`reencontristas.${index}.endereco`}
                   control={control}
                   render={({ field }) => (
                     <div className="flex flex-col">

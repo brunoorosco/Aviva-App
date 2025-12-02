@@ -1,10 +1,24 @@
-import { FaPlus } from 'react-icons/fa'
+import { Plus } from 'lucide-react'
 
 const ButtonNew = () => {
   return (
-    <button className='flex bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-sm '>
-      <FaPlus size={20} className='mr-2 my-auto' />
-      <p className=''>Novo</p>
+    <button className="
+      inline-flex items-center justify-center
+      px-4 py-2 
+      text-sm font-medium text-white
+      bg-green-600 hover:bg-green-700 
+      dark:bg-green-700 dark:hover:bg-green-800
+      border border-transparent
+      rounded-lg shadow-sm
+      transition-all duration-200 ease-in-out
+      hover:shadow-md active:scale-95
+      focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
+      dark:focus:ring-offset-gray-800
+      disabled:opacity-50 disabled:cursor-not-allowed
+      w-full sm:w-auto
+    ">
+      <Plus className="w-4 h-4 mr-2 flex-shrink-0" />
+      <span className="whitespace-nowrap">Novo</span>
     </button>
   )
 }

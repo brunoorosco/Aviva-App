@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import { Plus, FileSpreadsheet, Upload } from 'lucide-react'
 import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
 import ExportButton from '../ExportButton'
 
@@ -12,7 +13,7 @@ type Props<T> = {
   sheetName?: string
   filename?: string
   title?: string
-  ImportComponent: React.ReactNode // <- Aqui aceitamos o botão como componente
+  ImportComponent: React.ReactNode
 }
 
 const Header = <T,>({
@@ -27,27 +28,70 @@ const Header = <T,>({
   ImportComponent
 }: Props<T>) => {
   return (
-    <div className="flex justify-between px-3 pt-5 mt-2 bg-white rounded-t-lg dark:bg-dark-secondary">
-      <div>
-        <div className="flex items-center gap-2">
-          <h2 className="text-2xl font-bold">{title}</h2>
+    <header className="
+      bg-white dark:bg-gray-800 
+      border-b border-gray-200 dark:border-gray-700
+      px-4 py-5 sm:px-6
+      rounded-t-lg
+    ">
+      {/* Mobile Layout */}
+      <div className="flex flex-col gap-4 sm:hidden">
+        {/* Título e contador */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+              {title}
+            </h1>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                {total} {total === 1 ? 'item' : 'itens'}
+              </span>
+            </div>
+          </div>
         </div>
-        <p className="mt-2 text-gray-400">{total}</p>
+
+        {/* Botões */}
+        <div className="flex flex-wrap gap-2">
+          <ExportButton
+            items={data}
+            mapExport={mapExport}
+            sheetName={sheetName}
+            filename={filename}
+          />
+          {ImportComponent}
+          <Link href={`${pathname}/new`} className="flex-1 min-w-0">
+            <ButtonNew />
+          </Link>
+        </div>
       </div>
 
-      <div className="flex gap-2 h-10">
-        <ExportButton
-          items={data}
-          mapExport={mapExport}
-          sheetName={sheetName}
-          filename={filename}
-        />
-        {ImportComponent}
-        <Link href={`${pathname}/new`}>
-          <ButtonNew />
-        </Link>
+      {/* Desktop Layout */}
+      <div className="hidden sm:flex sm:items-center sm:justify-between">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {title}
+          </h1>
+          <div className="flex items-center gap-3 mt-2">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+              {total} {total === 1 ? 'item' : 'itens'}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <ExportButton
+            items={data}
+            mapExport={mapExport}
+            sheetName={sheetName}
+            filename={filename}
+          />
+          {ImportComponent}
+          <Link href={`${pathname}/new`}>
+            <ButtonNew />
+          </Link>
+        </div>
       </div>
-    </div>
+    </header>
   )
 }
 
