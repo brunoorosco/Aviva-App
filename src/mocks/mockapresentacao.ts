@@ -6,12 +6,14 @@ export const mockAliancas: TAlianca[] = [
     nomeHomem: "Carlos Silva",
     nomeMulher: "Juliana Silva",
     dataApresentacao: "2024-01-15",
+    rede: "Simeão",
   },
   {
     _id: "2",
     nomeHomem: "Roberto Santos",
     nomeMulher: "Mariana Santos",
     dataApresentacao: "2024-02-20",
+    rede: "Simeão",
   },
 ];
 
@@ -43,6 +45,7 @@ export const mockCriancas: TCrianca[] = [
     nomePai: "Paulo Costa",
     nomeMae: "Fernanda Costa",
     dataApresentacao: "2024-02-05",
+    rede: "Simeão",
   },
   {
     _id: "2",
@@ -50,5 +53,6 @@ export const mockCriancas: TCrianca[] = [
     nomePai: "Marcos Souza",
     nomeMae: "Patricia Souza",
     dataApresentacao: "2024-03-20",
+    rede: "Simeão",
   },
 ];
