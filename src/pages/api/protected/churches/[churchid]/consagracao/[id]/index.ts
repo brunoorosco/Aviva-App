@@ -7,7 +7,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const consagracaoId = (req.query?.id as string) || "";
 
     if (req.method == "PUT") {
-      console.log(req.body)
       const consagracao = await addConsagratedService(churchId, consagracaoId, req.body);
       res.status(200).json(consagracao);
     } else if (req.method == "GET") {
