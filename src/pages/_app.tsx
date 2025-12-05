@@ -37,7 +37,6 @@ const LAYOUT_CONFIG = {
 
 // Rotas que não precisam de autenticação
 const PUBLIC_ROUTES = [
-  "/",
   "/login",
   "/register",
   "/forgot-password",

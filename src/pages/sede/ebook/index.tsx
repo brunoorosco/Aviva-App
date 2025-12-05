@@ -1,37 +1,33 @@
 import { useEffect } from "react";
-import Router from "next/router";
 
-export default function EbookDownloadPage() {
+export default function EbookDownload() {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const link = document.createElement("a");
-      link.href = "/ebook_conferencia.pdf"; // PDF na pasta public
-      link.download = "ebook.pdf";
+    // Força o download do PDF
+    const link = document.createElement("a");
+    link.href = "/ebook_conferencia.pdf"; // Arquivo dentro de /public
+    link.download = "ebook_conferencia.pdf";
+    link.click();
 
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      // Fecha a página após 2s
-      setTimeout(() => {
-        window.close();
-      }, 2000);
-    }, 500);
-
-    return () => clearTimeout(timer);
+    // Aguarda o download iniciar
+    setTimeout(() => {
+      // Habilita permitir fechamento mesmo sem ter sido aberta por clique
+      window.open('', '_self');
+      window.close();
+    }, 1500);
   }, []);
 
   return (
     <div
       style={{
         display: "flex",
+        width: "100vw",
         height: "100vh",
         justifyContent: "center",
         alignItems: "center",
-        fontFamily: "sans-serif",
+        fontSize: 18,
       }}
     >
-      Seu download está sendo iniciado...
+      Preparando download do e-book...
     </div>
   );
 }
