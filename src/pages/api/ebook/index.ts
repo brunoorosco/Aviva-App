@@ -8,6 +8,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const fileBuffer = fs.readFileSync(filePath);
 
   res.setHeader("Content-Type", "application/pdf");
-  res.setHeader("Content-Disposition", 'attachment; filename="ebook.pdf"');
+  res.setHeader("Content-Disposition", 'attachment; filename="ebook_conferencia.pdf"');
   res.send(fileBuffer);
 }
