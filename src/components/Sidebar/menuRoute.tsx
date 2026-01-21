@@ -17,6 +17,7 @@ import {
   House,
   MapPinHouse,
   ChartColumn,
+  Footprints,
 } from "lucide-react";
 
 type TMenu = {
@@ -53,7 +54,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     // },
     {
       label: "TMAC",
-      icon: UserPlus,
+      icon: Footprints,
       roles: ["secretaria", "admin"],
       children: [
         {
