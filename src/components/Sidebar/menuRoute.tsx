@@ -18,6 +18,7 @@ import {
   MapPinHouse,
   ChartColumn,
   Footprints,
+  University,
 } from "lucide-react";
 
 type TMenu = {
@@ -91,6 +92,11 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
           label: "Reencontro com Deus",
           icon: MapPinHouse,
           link: `${base}/secretary/reencontroComDeus`,
+        },
+        {
+          label: "Treinamento de Líderes",
+          icon: University,
+          link: `${base}/secretary/treinamento-lideres`,
         },
       ],
     },
