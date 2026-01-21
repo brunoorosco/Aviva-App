@@ -12,9 +12,9 @@ export default function BoasVindasAnalytics() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="container mx-auto px-4 py-4">
+      <main className="container px-2 py-2 mx-auto">
         <header className="border-b bg-card">
-          <div className="px-4 py-4 mx-auto">
+          <div className="px-2 py-2 mx-auto">
             {/* Top Section (back button + label + icon) */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -31,7 +31,7 @@ export default function BoasVindasAnalytics() {
 
               <BarChart3 className="w-8 h-8 text-primary" />
             </div>
-            <div className="mt-4 flex gap-1 items-end">
+            <div className="flex items-end gap-1 mt-4">
               {/* TAB: Visitantes */}
               <button
                 onClick={() => setActiveTab("visitantes")}
@@ -39,7 +39,7 @@ export default function BoasVindasAnalytics() {
                   "px-5 py-2 rounded-t-xl w-full text-sm font-medium border border-b-0 transition-all",
                   activeTab === "visitantes"
                     ? "bg-background shadow-sm text-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/70"
+                    : "bg-muted text-muted-foreground hover:bg-muted/70",
                 )}
               >
                 Visitantes
@@ -52,7 +52,7 @@ export default function BoasVindasAnalytics() {
                   "px-5 py-2 rounded-t-xl text-sm w-full font-medium border border-b-0 transition-all",
                   activeTab === "apelo"
                     ? "bg-background shadow-sm text-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/70"
+                    : "bg-muted text-muted-foreground hover:bg-muted/70",
                 )}
               >
                 Aceitou Jesus
