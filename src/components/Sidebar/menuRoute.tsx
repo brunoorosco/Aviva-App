@@ -36,7 +36,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     },
     {
       label: "Minha Rede",
-      icon: GroupIcon,
+      icon: FaPeopleRoof,
       link: `${base}/minha-rede`,
       roles: ["pastor", "supervisor", "lider"],
     },
