@@ -26,7 +26,7 @@ export function ConsagracaoSupervisorTab({
   };
 
   const handleRemoveUser = (userId: string) => {
-    setAuxiliaresTempList((prev) => prev.filter((user) => user._id !== userId));
+    setAuxiliaresTempList((prev) => prev.filter((user) => user.id !== userId));
   };
 
   const handleConsagrarAuxiliares = async () => {
@@ -38,8 +38,9 @@ export function ConsagracaoSupervisorTab({
     const payload = auxiliaresTempList.map((user) => ({
       name: user.name,
       rede: user.rede,
-      id: user._id,
-      role: "Supervisor" as TMinisterialLevel,
+      id: user.id,
+      role: "Separado a Supervisão" as TMinisterialLevel,
+      nextRole: "Supervisor" as TMinisterialLevel,
     }));
 
     try {
@@ -52,8 +53,7 @@ export function ConsagracaoSupervisorTab({
         throw new Error("Falha ao consagrar auxiliares.");
       }
 
-      Toast.showSuccess("Supervisors consagrados com sucesso!");
-      setAuxiliaresTempList([]); // Limpa a lista após consagração
+      Toast.showSuccess("Supervisores consagrados com sucesso!");
     } catch (error: any) {
       Toast.showError(`Erro ao consagrar auxiliares: ${error.message}`);
       console.error("Erro ao consagrar auxiliares:", error);
@@ -63,7 +63,7 @@ export function ConsagracaoSupervisorTab({
   return (
     <div className="space-y-6">
       <UserSelectForm
-       initialUsers={initialUsers}
+        initialUsers={initialUsers}
         currentMinisterialLevel="Separado a Supervisão"
         targetMinisterialLevel="Supervisor"
         onAddUser={handleAddUser}

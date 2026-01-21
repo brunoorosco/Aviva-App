@@ -26,6 +26,7 @@ export const addConsagratedService = async (
   if (!consagracaoId || !churchId) {
     throw new Error("Informação Faltando");
   }
+
   const nextRole = users[0].nextRole
   return consagracaoRepository.addCargo(churchId, consagracaoId, nextRole , users);
 };

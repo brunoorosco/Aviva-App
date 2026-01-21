@@ -1,62 +1,121 @@
-import Link from 'next/link'
-import { Edit, EyeIcon } from 'lucide-react'
-import { TReencontroComDeus } from '@/domain/models/encontroComDeus'
+import Link from "next/link";
+import { Edit, EyeIcon, Calendar, Users } from "lucide-react";
+import { TReencontroComDeus } from "@/domain/models/encontroComDeus";
 
 type Props = {
-  reencontro: TReencontroComDeus
-  onEdit: () => void
-  basePath: string
-}
+  reencontro: TReencontroComDeus;
+  onEdit: () => void;
+  basePath: string;
+};
 
 const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
-  // const [disabled, setDisabled] = useState(false)
-  // const toggleDisabled = () => setDisabled((prev) => !prev)
-
   const formatDate = (dateValue: any) => {
-    if (!dateValue) return ''
-    const date = typeof dateValue === 'string' ? new Date(dateValue) : dateValue
-    if (!(date instanceof Date) || isNaN(date.getTime())) return ''
+    if (!dateValue) return "Data não definida";
+    const date = typeof dateValue === "string" ? new Date(dateValue) : dateValue;
+    if (!(date instanceof Date) || isNaN(date.getTime())) return "Data inválida";
 
-    return date.toLocaleDateString('pt-BR', { timeZone: 'UTC' })
-  }
+    return date.toLocaleDateString("pt-BR", {
+      timeZone: "UTC",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const reencontristasCount = reencontro?.reencontristas?.length ?? 0;
 
   return (
-    <Link href={`${basePath}/${reencontro._id}`}>
-      <li className='bg-white dark:bg-gray-800 px-3 py-2 rounded-md shadow mb-1'>
-        <div className='flex items-start gap-4'>
-          <div className='grid grid-cols-4 gap-x-2 gap-y-1 flex-1'>
-            <div className='col-span-2 row-start-1'>
-              <p
-                className={`text-sm font-medium uppercase truncate leading-tight ${
-                  reencontro.data
-                    ? 'text-gray-900 dark:text-gray-100'
-                    : 'text-gray-400'
-                }`}
+    <div className="group relative">
+      <Link href={`${basePath}/${reencontro._id}`}>
+        <article
+          className="
+          bg-white dark:bg-gray-800 
+          border border-gray-200 dark:border-gray-700
+          rounded-lg shadow-sm hover:shadow-md 
+          transition-all duration-200 ease-in-out
+          p-4 mb-3
+          hover:border-blue-300 dark:hover:border-blue-600
+          active:scale-[0.98]
+        "
+        >
+          {/* Header com data */}
+          <header className="mb-3">
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <Calendar className="w-4 h-4 flex-shrink-0" />
+              <time className="text-sm font-medium">{formatDate(reencontro.data)}</time>
+            </div>
+          </header>
+
+          {/* Conteúdo principal */}
+          <div className="space-y-3">
+            {/* Stats */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">Reencontristas:</span>
+                  <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                    {reencontristasCount}
+                  </span>
+                </div>
+              </div>
+
+              {/* Badge de status (opcional) */}
+              <div
+                className="
+                px-2 py-1 
+                bg-green-100 dark:bg-green-900/30 
+                text-green-700 dark:text-green-300
+                text-xs font-medium rounded-full
+                border border-green-200 dark:border-green-700
+              "
               >
-                {formatDate(reencontro.data)}
-                <p className='text-xs font-normal'>
-                  Reencontristas:{' '}
-                  <label className='font-semibold'>
-                    {reencontro?.reencontristas
-                      ? reencontro?.reencontristas.length
-                      : 0}
-                  </label>
-                </p>
-              </p>
+                <div className="flex gap-2">
+                  <span className="text-sm">Reencontro Nº:</span>
+                  <time className="text-sm font-medium">{reencontro.numero}</time>
+                </div>
+              </div>
             </div>
 
-            {/* <div className='flex items-center justify-end gap-3 col-start-4 row-span-2'>
-              <Edit
-                className='cursor-pointer hover:text-blue-600'
-                size={16}
-                onClick={onEdit}
-              />
-            </div> */}
+            {/* Footer com ação */}
+            <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+              <span className="text-xs text-gray-400 dark:text-gray-500">
+                Clique para visualizar detalhes
+              </span>
+              <EyeIcon className="w-4 h-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+            </div>
           </div>
-        </div>
-      </li>
-    </Link>
-  )
-}
+        </article>
+      </Link>
 
-export default ReencontroComDeusItem
+      {/* Botão de editar flutuante (opcional) */}
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onEdit();
+        }}
+        className="
+          absolute top-3 right-3
+          w-8 h-8 
+          bg-white dark:bg-gray-700 
+          border border-gray-200 dark:border-gray-600
+          rounded-full 
+          shadow-sm hover:shadow-md
+          flex items-center justify-center
+          opacity-0 group-hover:opacity-100
+          transition-all duration-200
+          hover:bg-blue-50 dark:hover:bg-blue-900/30
+          hover:border-blue-300 dark:hover:border-blue-600
+          active:scale-95
+          z-10
+        "
+        aria-label="Editar reencontro"
+      >
+        <Edit className="w-4 h-4 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400" />
+      </button>
+    </div>
+  );
+};
+
+export default ReencontroComDeusItem;

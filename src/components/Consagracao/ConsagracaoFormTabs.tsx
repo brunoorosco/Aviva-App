@@ -3,7 +3,7 @@ import { ministerialLevels } from "@/domain/models/ministerial";
 import { useHttpGet } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { ConsagracaoAuxiliarTab } from "./ConsagracaoAuxiliarTab";
 import { ConsagracaoLiderTab } from "./ConsagracaoLiderTab";
@@ -12,7 +12,7 @@ import { ConsagracaoSeparadoPastoradoTab } from "./ConsagracaoSeparadoPastoradoT
 import { ConsagracaoSeparadoSupervisorTab } from "./ConsagracaoSeparadoSupervidorTab";
 import { ConsagracaoSupervisorTab } from "./ConsagracaoSupervisorTab";
 
-export function ConsagracaoFormTabs() {
+export function ConsagracaoFormTabs({ onDataChange }: any) {
   const { data: session } = useSession();
   const route = useRouter();
   const { id } = route.query;
@@ -27,6 +27,12 @@ export function ConsagracaoFormTabs() {
   //@ts-ignore
   const users = data?.data?.consagracao?.[0]?.users ?? [];
   console.log(users);
+
+  useEffect(() => {
+    if (onDataChange && users) {
+      onDataChange(users);
+    }
+  }, [users, onDataChange]);
 
   const normalize = (text: string) =>
     text

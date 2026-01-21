@@ -26,14 +26,14 @@ export function ConsagracaoAuxiliarTab({
   }, [initialUsers]);
   const handleAddUser = (user: TempUserToAdd) => {
     setAuxiliaresTempList((prev) => {
-      const exists = prev.some((u) => u._id === user._id);
+      const exists = prev.some((u) => u.id === user.id);
       if (exists) return prev;
       return [...prev, user];
     });
   };
 
   const handleRemoveUser = (userId: string) => {
-    setAuxiliaresTempList((prev) => prev.filter((user) => user._id !== userId));
+    setAuxiliaresTempList((prev) => prev.filter((user) => user.id !== userId));
   };
 
   const handleConsagrarAuxiliares = async () => {
@@ -45,7 +45,7 @@ export function ConsagracaoAuxiliarTab({
     const payload = auxiliaresTempList.map((user) => ({
       name: user.name,
       rede: user.rede,
-      id: user._id,
+      id: user.id,
       role: user.role,
       nextRole: "Auxiliar" as TMinisterialLevel,
     }));
@@ -61,7 +61,6 @@ export function ConsagracaoAuxiliarTab({
       }
 
       Toast.showSuccess("Auxiliares consagrados com sucesso!");
-      setAuxiliaresTempList([]); // Limpa a lista após consagração
     } catch (error: any) {
       Toast.showError(`Erro ao consagrar auxiliares: ${error.message}`);
       console.error("Erro ao consagrar auxiliares:", error);

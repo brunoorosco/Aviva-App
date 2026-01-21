@@ -29,7 +29,7 @@ const EncontroComDeusHeader = ({ pathname, inputFileRef, encontro }: Props) => {
       mapExport={mapReencontroToExport}
       sheetName='reencontro_com_Deus'
       filename='reencontro_com_Deus.xlsx'
-      ImportComponent={<ImportButton inputFileRef={inputFileRef} />}
+      ImportComponent={""}
     />
   )
 }

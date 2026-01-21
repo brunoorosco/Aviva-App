@@ -35,7 +35,7 @@ const ReencontroComDeusList = () => {
 
   return (
     <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg dark:text-dark-primary'>
-      {showEditModal && selectedEncontro && (
+      {/* {showEditModal && selectedEncontro && (
         <EditMemberModal
           member={selectedEncontro}
           onClose={() => {
@@ -44,11 +44,11 @@ const ReencontroComDeusList = () => {
           }}
           onUpdated={refreshMembers}
         />
-      )}
+      )} */}
 
       <div className='shadow-sm'>
         <ReencontroComDeusHeader
-          pathname={''}
+          pathname={router.asPath}
           inputFileRef={inputFileRef}
           encontro={reencontros?.data.data || []}
         />

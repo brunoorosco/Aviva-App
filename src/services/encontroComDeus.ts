@@ -30,7 +30,6 @@ export const createEncontroComDeusService = async (data: any): Promise<any> => {
     data: new Date(),
     encontristas: dataNormalizada
   }
-  console.log(novoEncontro)
   const saved = await encontroRepository.create(novoEncontro)
   return saved
 }

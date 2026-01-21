@@ -1,62 +1,102 @@
-import { TPeople } from '@/domain/models/encontroComDeus'
-import { ChurChMongoRepository } from '../infra/db/repositories/mongo/churchs'
-import { ReencontroComDeusRepository } from '../infra/db/repositories/mongo/reencontroComDeus'
+import { TPeople } from "@/domain/models/encontroComDeus";
+import { ChurChMongoRepository } from "../infra/db/repositories/mongo/churchs";
+import { ReencontroComDeusRepository } from "../infra/db/repositories/mongo/reencontroComDeus";
 
 export const getReencontroComDeusService = async (churchId: string) => {
-  const encontroRepository = new ReencontroComDeusRepository()
-  const result = await encontroRepository.getReencontroComDeus(churchId)
+  const encontroRepository = new ReencontroComDeusRepository();
+  const result = await encontroRepository.getReencontroComDeus(churchId);
 
-  return result
-}
-export const getReencontroComDeusByIdService = async (
-  churchId: string,
-  encontroId: string
-) => {
-  const encontroRepository = new ReencontroComDeusRepository()
-  const result = await encontroRepository.getReencontroComDeusById(encontroId)
+  return result;
+};
+export const getReencontroComDeusByIdService = async (churchId: string, encontroId: string) => {
+  const encontroRepository = new ReencontroComDeusRepository();
+  const result = await encontroRepository.getReencontroComDeusById(encontroId);
 
-  return result
-}
+  return result;
+};
 
-export const createReencontroComDeusService = async (
-  data: any
-): Promise<any> => {
-  const encontroRepository = new ReencontroComDeusRepository()
-  const churchRepository = new ChurChMongoRepository()
-  const churchs = await churchRepository.getChurch()
-  const dataNormalizada = normalizarReencontristasPorIgreja(
-    data,
-    'Avivamento Sede'
-  )
+export const createReencontroComDeusService = async (data: any): Promise<any> => {
+  const encontroRepository = new ReencontroComDeusRepository();
+  const churchRepository = new ChurChMongoRepository();
+  const churchs = await churchRepository.getChurch();
+  const dataNormalizada = normalizarEncontristasPorIgreja(data, "Avivamento Sede");
   const reencontro = {
     data: new Date(),
-    encontristas: data
+    encontristas: data,
+  };
+  const saved = await encontroRepository.create(reencontro);
+  return saved;
+};
+
+export const createReencontroComDeusImportedService = async (
+  data: (string | TPeople)[]
+): Promise<any> => {
+  const encontroRepository = new ReencontroComDeusRepository();
+  // Removido: churchs não utilizado
+  const reencontristas = normalizarEncontristasPorIgreja(data, "Avivamento Sede");
+
+  const novoReencontro = {
+    data: new Date(),
+    reencontristas,
+  };
+  console.log(JSON.stringify(novoReencontro,null,2));
+  return encontroRepository.create(novoReencontro);
+};
+
+function limparObjeto<T extends Record<string, any>>(obj: T): Partial<T> {
+  const novo: Partial<T> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined && value !== "" && value !== null) {
+      // @ts-expect-error atribuição dinâmica
+      novo[key] = value;
+    }
   }
-  const saved = await encontroRepository.create(reencontro)
-  return saved
+  return novo;
 }
 
-function normalizarReencontristasPorIgreja(
+const normalizar = (s?: string) =>
+  (s ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+function normalizarEncontristasPorIgreja(
   entradas: (string | TPeople)[],
   nomeDaIgreja: string
 ): TPeople[] {
+  const termos = ["igreja", "avivamento"];
+
   return entradas.map((entrada) => {
-    if (typeof entrada === 'string') {
-      const contemIgreja = entrada.toLowerCase().includes('igreja')
+    if (typeof entrada === "string") {
+      const eNorm = normalizar(entrada);
+      const contemIgreja = termos.some((t) => eNorm.includes(t));
 
-      return {
-        nome: '',
+      const out = {
+        // nome vazio será removido por limparObjeto
+        nome: undefined,
         igreja: contemIgreja ? entrada : nomeDaIgreja,
-        ...(contemIgreja ? {} : { rede: entrada })
-      }
+        rede: contemIgreja ? undefined : entrada,
+      };
+      //@ts-ignore
+      return limparObjeto(out) as TPeople;
     }
 
-    const contemIgreja = entrada.rede?.toLowerCase().includes('igreja')
+    const redeNorm = normalizar(entrada.rede);
+    const contemIgreja = termos.some((t) => redeNorm.includes(t));
 
-    return {
-      nome: entrada.nome,
-      igreja: contemIgreja ? entrada.rede! : nomeDaIgreja,
-      ...(contemIgreja ? {} : { rede: entrada.rede })
-    }
-  })
+    const endereco = [entrada.endereco, entrada.bairro].filter(Boolean).join(" ") || undefined;
+
+    const out = {
+      nome: entrada.nome.trim(),
+      idade: entrada.idade,
+      dataNascimento: entrada.dataNascimento,
+      telefone: entrada.telefone,
+      endereco,
+      equipe: entrada.equipe?.trim(),
+      igreja: contemIgreja ? (entrada.rede as string) : nomeDaIgreja,
+      rede: contemIgreja ? undefined : entrada.rede,
+    };
+
+    return limparObjeto(out) as TPeople;
+  });
 }

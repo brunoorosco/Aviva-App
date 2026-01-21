@@ -29,19 +29,19 @@ export function ConsagracaoSeparadoSupervisorTab({
   };
 
   const handleRemoveUser = (userId: string) => {
-    setAuxiliaresTempList((prev) => prev.filter((user) => user._id !== userId));
+    setAuxiliaresTempList((prev) => prev.filter((user) => user.id !== userId));
   };
 
   const handleConsagrarAuxiliares = async () => {
     if (auxiliaresTempList.length === 0) {
-      Toast.showError("Nenhum auxiliar selecionado para consagrar.");
+      Toast.showError("Nenhum lider separado a supervisão.");
       return;
     }
 
     const payload = auxiliaresTempList.map((user) => ({
       name: user.name,
       rede: user.rede,
-      id: user._id,
+      id: user.id,
       nextRole: "Separado a Supervisão" as TMinisterialLevel,
       role: "Lider",
     }));
@@ -57,17 +57,16 @@ export function ConsagracaoSeparadoSupervisorTab({
       }
 
       Toast.showSuccess("Auxiliares consagrados com sucesso!");
-      setAuxiliaresTempList([]); // Limpa a lista após consagração
     } catch (error: any) {
-      Toast.showError(`Erro ao consagrar auxiliares: ${error.message}`);
-      console.error("Erro ao consagrar auxiliares:", error);
+      Toast.showError(`Erro ao registrar: ${error.message}`);
+      console.error("Erro ao registrar separação supervisores:", error);
     }
   };
 
   return (
     <div className="space-y-6">
       <UserSelectForm
-         initialUsers={initialUsers}
+        initialUsers={initialUsers}
         currentMinisterialLevel="Lider"
         targetMinisterialLevel="Separado a Supervisão"
         onAddUser={handleAddUser}
