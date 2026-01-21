@@ -45,11 +45,53 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
       link: `${base}/cems`,
       roles: ["pastor", "supervisor"],
     },
+    // {
+    //   label: "Membros",
+    //   icon: FaPeopleRoof,
+    //   link: `${base}/cems/${cemId}/members`,
+    //   roles: ["pastor", "supervisor"],
+    // },
     {
-      label: "Membros",
-      icon: FaPeopleRoof,
-      link: `${base}/cems/${cemId}/members`,
-      roles: ["pastor", "supervisor"],
+      label: "TMAC",
+      icon: UserPlus,
+      roles: ["secretaria", "admin"],
+      children: [
+        {
+          label: "Discipulado",
+          icon: BookOpenCheckIcon,
+          link: `${base}/secretary/discipulado`,
+        },
+        {
+          label: "Escola de Profeta",
+          icon: GraduationCapIcon,
+          link: `${base}/secretary/escola-de-profeta`,
+        },
+        {
+          label: "Casas de Paz",
+          icon: HouseHeartIcon,
+          link: `${base}/casasdepaz`,
+        },
+        {
+          label: "Visitas de Paz",
+          icon: HouseHeartIcon,
+          link: `${base}/visitasdepaz`,
+        },
+        {
+          label: "Encontro com Deus",
+          icon: MapPinHouse,
+          link: `${base}/secretary/encontroComDeus`,
+        },
+        {
+          label: "Encontro Seja Livre",
+          icon: MapPinHouse,
+          link: `${base}/secretary/sejaLivre`,
+        },
+        {
+          label: "Reencontro com Deus",
+          icon: MapPinHouse,
+          link: `${base}/secretary/reencontroComDeus`,
+        },
+      ],
     },
     {
       label: "Boas Vindas",
@@ -94,41 +136,6 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
           link: `${base}/secretary/batismos`,
         },
         {
-          label: "Discipulado",
-          icon: BookOpenCheckIcon,
-          link: `${base}/secretary/discipulado`,
-        },
-        {
-          label: "Escola de Profeta",
-          icon: GraduationCapIcon,
-          link: `${base}/secretary/escola-de-profeta`,
-        },
-        {
-          label: "Casas de Paz",
-          icon: HouseHeartIcon,
-          link: `${base}/casasdepaz`,
-        },
-        {
-          label: "Visitas de Paz",
-          icon: HouseHeartIcon,
-          link: `${base}/visitasdepaz`,
-        },
-        {
-          label: "Encontro com Deus",
-          icon: MapPinHouse,
-          link: `${base}/secretary/encontroComDeus`,
-        },
-        {
-          label: "Encontro Seja Livre",
-          icon: MapPinHouse,
-          link: `${base}/secretary/sejaLivre`,
-        },
-        {
-          label: "Reencontro com Deus",
-          icon: MapPinHouse,
-          link: `${base}/secretary/reencontroComDeus`,
-        },
-        {
           label: "Ministérios",
           icon: BicepsFlexed,
           link: `${base}/secretary/ministerio`,
@@ -146,18 +153,18 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
       ],
     },
 
-    {
-      label: "Flow",
-      icon: WorkflowIcon,
-      roles: ["admin", "secretaria"],
-      link: `${base}/flow`,
-    },
-    {
-      label: "Metricas",
-      roles: ["admin", "secretaria"],
-      icon: ChartPieIcon,
-      link: `${base}/dashboard`,
-    },
+    // {
+    //   label: "Flow",
+    //   icon: WorkflowIcon,
+    //   roles: ["admin", "secretaria"],
+    //   link: `${base}/flow`,
+    // },
+    // {
+    //   label: "Metricas",
+    //   roles: ["admin", "secretaria"],
+    //   icon: ChartPieIcon,
+    //   link: `${base}/dashboard`,
+    // },
     {
       label: "Agendas",
       icon: Calendar1Icon,
