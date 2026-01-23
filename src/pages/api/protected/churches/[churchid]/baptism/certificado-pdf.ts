@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { generatePdf } from 'html-pdf-node-ts'
+import { generatePdf } from 'html-pdf-node'
 import { htmlPdf } from '@/utils/html/template'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -7,16 +7,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const nomeBatizando = (req.query?.nome as string) || ''
     const dataBatismo = (req.query?.data as string) || ''
 
-    const options: any = {
-      type: 'pdf',
-      format: 'a5',
+    const options = {
+      format: 'A5',
       landscape: true,
       printBackground: true
     }
 
     const file = { content: htmlPdf(nomeBatizando, dataBatismo) }
-    const pdfFile = await generatePdf(file, options)
-    const pdfBuffer = Buffer.from(pdfFile.buffer)
+
+    const pdfBuffer = (await generatePdf(file, options)) as Buffer
 
     res.writeHead(200, {
       'Content-Type': 'application/pdf',
@@ -27,6 +26,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.end(pdfBuffer)
   } catch (error) {
+    console.error(error)
     res.status(500).json({ error: 'failed to generate PDF' })
   }
 }
