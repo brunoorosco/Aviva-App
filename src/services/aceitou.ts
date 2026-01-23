@@ -18,31 +18,42 @@ export const createAceitouService = async (data: any, churchId: string): Promise
     };
   }
 
-  // Converte booleanos corretamente
   const hasEncontro = data.hasEncontro === true || data.hasEncontro === "true";
 
-  const processAcceptedDate = (dateString: string): Date => {
-    // dateString vem do input tipo date: "2025-11-21"
+  /**
+   * Processa a data do apelo:
+   * - Se for a mesma data de hoje (Brasília) → usa o horário atual real
+   * - Se for data diferente → usa meio-dia UTC para evitar problemas de fuso
+   */
+  const processAcceptedDate = (dateString: string | null | undefined): Date => {
+    const now = new Date();
+
+    // Data de hoje no fuso de Brasília (YYYY-MM-DD)
+    const todayBrasilia = now.toLocaleDateString("en-CA", {
+      timeZone: "America/Sao_Paulo",
+    }); // formato "2025-01-15"
+
+    // Se não informou data ou é a data de hoje → usa horário atual
+    if (!dateString || dateString === todayBrasilia) {
+      return now;
+    }
+
+    // Se é data diferente → usa meio-dia UTC para não ter problema de fuso
     const [year, month, day] = dateString.split("-");
-
-    // Cria a data com meio-dia UTC para evitar problemas de fuso
-    const date = new Date(`${year}-${month}-${day}T12:00:00.000Z`);
-
-    return date;
+    return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 12, 0, 0));
   };
 
-  // Monta objeto dinamicamente
   const dataFormatted: any = {
     acceptedAt: processAcceptedDate(data.acceptedAt),
     name: data.name?.trim() as string,
     email: data.email?.trim() || null,
-    phone: data.phone.replace(/[^0-9]/g, "") || null,
+    phone: data.phone?.replace(/[^0-9]/g, "") || null,
     rede,
     accepted: data.accepted === true || data.accepted === "true",
     baptism: data.baptism === true || data.baptism === "true",
     description: data.description?.trim() || null,
     hasEncontro,
-    ...(hasEncontro && { numberEncontro: data.numberEncontro?.trim() || null }), // só adiciona se hasEncontro for true
+    ...(hasEncontro && { numberEncontro: data.numberEncontro?.trim() || null }),
   };
 
   const saved = await aceitouRepository.create(dataFormatted, churchId);

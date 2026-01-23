@@ -17,7 +17,7 @@ export class AceitouRepository {
       collection
         .find({ churchId })
         .collation({ locale: "pt", strength: 1 })
-        .sort({ _id: -1, visitedAt: -1 })
+        .sort({ acceptedAt: -1, _id: -1 })
         .skip(skip)
         .limit(limit)
         .toArray(),
