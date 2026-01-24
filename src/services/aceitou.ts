@@ -65,3 +65,29 @@ export const importAceitouService = async (data: any, churchId: string): Promise
   const saved = await aceitouRepository.create(data, churchId);
   return saved;
 };
+
+export const reportAceitouService = async (churchId: string, redeId?:string) => {
+  const apelo = new AceitouRepository();
+  const result = await apelo.getAnalytics(churchId, redeId);
+const stats = result[0].stats[0] || { 
+      total: 0, countAcceptedTrue: 0, countAcceptedFalse: 0, 
+      countBaptized: 0, countHasEncontro: 0, countPendingBaptism: 0 
+    };
+    
+    const rawTimeline = result[0].timeline || [];
+
+    return {
+      total: stats.total,
+      newDecisions: stats.countAcceptedTrue,    // Aceitou Jesus
+      reconciliations: stats.countAcceptedFalse, // Reconciliou
+      baptized: stats.countBaptized,
+      hasEncontro: stats.countHasEncontro,
+      pendingBaptism: stats.countPendingBaptism,
+      timeline: {
+        labels: rawTimeline.map((t: any) => `${String(t._id.month).padStart(2, '0')}/${t._id.year}`),
+        acceptedData: rawTimeline.map((t: any) => t.accepted),
+        reconciledData: rawTimeline.map((t: any) => t.reconciled)
+      }
+    };
+
+};

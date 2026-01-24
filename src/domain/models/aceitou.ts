@@ -14,3 +14,14 @@ export type AceitouModel = {
     _id: string;
   };
 };
+
+export type TApeloCountResponse = {
+  monthly: TMonthlyApelo[];
+  apeloToday: number;
+
+};
+
+export type TMonthlyApelo = {
+  monthYear: string;
+  totalItems: number;
+};

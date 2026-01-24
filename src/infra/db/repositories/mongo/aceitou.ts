@@ -1,6 +1,7 @@
 import { AceitouModel } from "@/domain/models/aceitou";
 import { TEvent } from "@/domain/models/events";
 import { MongoHelper } from "../../mongoHelper";
+import { ObjectId } from "mongodb";
 
 export class AceitouRepository {
   private collectionName: string;
@@ -70,5 +71,53 @@ export class AceitouRepository {
       console.error("Error creating event:", error);
       throw error;
     }
+  }
+  async getAnalytics(churchId: string, redeId?: string) {
+    const collection = await MongoHelper.getCollection(this.collectionName);
+    const match: any = { churchId: (churchId) };
+    
+    // Filtro opcional por Rede/Célula
+    if (redeId && redeId !== "all") {
+      match["rede._id"] = redeId;
+    }
+
+   return await collection.aggregate([
+      { $match: match },
+      {
+        $facet: {
+          // Totais baseados na lógica informada
+          "stats": [
+            {
+              $group: {
+                _id: null,
+                total: { $sum: 1 },
+                // true -> aceitou jesus
+                countAcceptedTrue: { $sum: { $cond: [{ $eq: ["$accepted", true] }, 1, 0] } },
+                // false -> reconciliou
+                countAcceptedFalse: { $sum: { $cond: [{ $eq: ["$accepted", false] }, 1, 0] } },
+                countBaptized: { $sum: { $cond: [{ $eq: ["$baptism", true] }, 1, 0] } },
+                countHasEncontro: { $sum: { $cond: [{ $eq: ["$hasEncontro", true] }, 1, 0] } },
+                // Pendentes de batismo (todos os que não são batizados)
+                countPendingBaptism: { $sum: { $cond: [{ $eq: ["$baptism", false] }, 1, 0] } }
+              }
+            }
+          ],
+          // Agrupamento temporal para os gráficos
+          "timeline": [
+            {
+              $group: {
+                _id: {
+                  year: { $year: "$createdAt" },
+                  month: { $month: "$createdAt" }
+                },
+                accepted: { $sum: { $cond: [{ $eq: ["$accepted", true] }, 1, 0] } },
+                reconciled: { $sum: { $cond: [{ $eq: ["$accepted", false] }, 1, 0] } }
+              }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1 } }
+          ]
+        }
+      }
+    ]).toArray();
   }
 }

@@ -6,6 +6,7 @@ import { ArrowLeft, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import VisitorsAnalytics from "@/components/BoasVindas/visitantes";
+import ChurchAnalytics from "@/components/BoasVindas/apelo";
 
 export default function BoasVindasAnalytics() {
   const [activeTab, setActiveTab] = useState<"visitantes" | "apelo">("visitantes");
@@ -63,16 +64,11 @@ export default function BoasVindasAnalytics() {
             </div>
           </div>
         </header>
-        <div className="mt-6">
+        <div className="">
           {activeTab === "visitantes" && <VisitorsAnalytics />}
 
-          {activeTab === "apelo" && (
-            <div>
-              {/* Conteúdo da aba apelo */}
-              <p className="text-muted-foreground">Em Construção</p>
-            </div>
-          )}
-        </div>
+          {activeTab === "apelo" && <ChurchAnalytics/>}
+                  </div>
       </main>
     </div>
   );
