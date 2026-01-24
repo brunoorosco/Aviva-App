@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { menuItems } from "./menuRoute";
+import { useRouter } from "next/navigation";
 
 export function AppSidebar() {
   const { data: session } = useSession();
@@ -33,6 +34,7 @@ export function AppSidebar() {
   const roles = [...new Set([role, ...permission])];
 
   const items = menuItems({ churchId, cemId });
+  const router = useRouter()
 
   const isAdmin = roles.includes("admin");
   const filteredItems = items
@@ -125,8 +127,8 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
-                <DropdownMenuItem>
-                  <span>Account</span>
+                <DropdownMenuItem onClick={()=> router.push(`/app/${churchId}/users/settings`)}>
+                  <span>Conta</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => signOut()}>
                   <BiLogOut /> Sair
