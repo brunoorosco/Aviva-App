@@ -10,6 +10,8 @@ import EditMemberModal from "@/components/Member/EditMemberModal";
 import MembersHeader from "@/components/Member/MembersHeader";
 import { Button } from "@/components/ui/button";
 import { Edit, Eye, Trash2 } from "lucide-react";
+import { PermissionGuard } from "@/components/PermissionGuard";
+import { ROLES } from "@/lib/permissions";
 
 const MembersWithImportExport = () => {
   const router = useRouter();
@@ -38,7 +40,7 @@ const MembersWithImportExport = () => {
   }>(
     `/api/protected/churches/${churchid}/users?page=${page}&limit=${limit}${
       debouncedSearch ? `&name=${debouncedSearch}` : ""
-    }`
+    }`,
   );
 
   const handleDesactive = async (id: string) => {
@@ -112,45 +114,46 @@ const MembersWithImportExport = () => {
           >
             <div className="flex justify-between items-center">
               <h2 className="font-semibold text-lg">{(member.name || "Sem nome").toUpperCase()}</h2>
-
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEdit(member);
-                  }}
-                >
-                  <Edit className="w-4 h-4" />
-                </Button>
-
-                {member.active ? (
+              <PermissionGuard roles={[ROLES.ADMIN, ROLES.SECRETARIA]}>
+                <div className="flex items-center gap-1">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-red-600 hover:text-red-700"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDesactive(member._id);
+                      handleEdit(member);
                     }}
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Edit className="w-4 h-4" />
                   </Button>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-green-600 hover:text-green-700"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleActive(member._id);
-                    }}
-                  >
-                    <Eye className="w-4 h-4" />
-                  </Button>
-                )}
-              </div>
+
+                  {member.active ? (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-600 hover:text-red-700"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDesactive(member._id);
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-green-600 hover:text-green-700"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleActive(member._id);
+                      }}
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+              </PermissionGuard>
             </div>
 
             <div className="mt-2 text-gray-600">Email: {member.email || "Não informado"}</div>

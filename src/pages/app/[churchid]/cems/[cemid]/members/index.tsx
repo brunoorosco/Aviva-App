@@ -8,6 +8,9 @@ import MembersHeader from "@/components/Member/MembersHeader";
 import MemberItem from "@/components/Member/MemberItem";
 import { Button } from "@/components/ui/button";
 import { Edit, Eye, Trash2 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { ROLES } from "@/lib/permissions";
+import { usePermissions } from "@/hooks/usePermissions";
 
 const MembersWithImportExport = () => {
   const router = useRouter();
@@ -17,10 +20,21 @@ const MembersWithImportExport = () => {
   const [search, setSearch] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-
+  const { data: session } = useSession();
+  const { hasPermission } = usePermissions();
   const [page, setPage] = useState(1);
   const limit = 10;
+  // Verificar se pode editar
+  const userCemName = session?.user?.cem?.name;
+  const canEditGlobal = hasPermission([ROLES.ADMIN, ROLES.SECRETARIA]);
+
+  const canEditMembers = (member: any) => {
+    // Admin e secretaria podem editar qualquer casa
+    if (canEditGlobal) return true;
+
+    // Usuários podem editar apenas casas da sua própria rede
+    return member.cem.name === userCemName;
+  };
 
   const { data: members, mutate: refreshMembers } = useHttpGet<{
     data: User[];
@@ -33,7 +47,7 @@ const MembersWithImportExport = () => {
     // `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}`
     `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}${
       search ? `&name=${search}` : ""
-    }`
+    }`,
   );
 
   const handleDesactive = async (id: string) => {
@@ -113,7 +127,7 @@ const MembersWithImportExport = () => {
             <div className="flex justify-between items-center">
               <h2 className="font-semibold text-lg">{(member.name || "Sem nome").toUpperCase()}</h2>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1" hidden={canEditMembers(member)}>
                 <Button
                   variant="ghost"
                   size="icon"
