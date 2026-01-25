@@ -10,15 +10,16 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Suspense } from "react";
 import { Pencil } from "lucide-react";
+import { usePermissions } from "@/hooks/usePermission";
 
 const Cem = () => {
   const router = useRouter();
   const churchId = router.query?.churchid;
   const { data: session } = useSession();
+  const { isAdmin } = usePermissions();
   const { data: cems, mutate } = useHttpGet<CellsModel[]>(
     `/api/protected/churches/${session?.user.churchId}/cems`,
   );
-  const isAdmin = session?.user.permission?.includes("admin");
   const userCem = session?.user.cem._id;
 
   const handleDelete = async (id: string) => {
