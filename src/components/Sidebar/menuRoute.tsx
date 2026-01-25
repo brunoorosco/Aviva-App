@@ -19,6 +19,7 @@ import {
   ChartColumn,
   Footprints,
   University,
+  Settings,
 } from "lucide-react";
 
 type TMenu = {
@@ -56,7 +57,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "TMAC",
       icon: Footprints,
-      roles: ["secretaria", "admin"],
+      roles: ["secretaria", "admin","pastor"],
       children: [
         {
           label: "Discipulado",
@@ -103,7 +104,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Boas Vindas",
       icon: UserPlus,
-      roles: ["secretaria", "boas-vindas"],
+      roles: ["secretaria", "boas-vindas","pastor"],
       children: [
         {
           label: "Visitantes",
@@ -125,7 +126,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Secretária",
       icon: BookUserIcon,
-      roles: ["admin", "secretaria"],
+      roles: ["admin", "secretaria","pastor"],
       children: [
         {
           label: "Apresentações",
@@ -175,7 +176,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Agendas",
       icon: Calendar1Icon,
-      roles: ["admin", "secretaria"],
+      roles: ["admin", "secretaria","pastor"],
       children: [
         {
           label: "Anual",
@@ -191,7 +192,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     },
     {
       label: "Administrador",
-      icon: Calendar1Icon,
+      icon: Settings,
       roles: ["admin"],
       children: [
         {
