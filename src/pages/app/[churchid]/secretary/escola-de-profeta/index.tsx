@@ -36,7 +36,7 @@ export default function ModulesPage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-4 py-2">
           <h1 className="text-3xl font-bold text-foreground">Cursos Avivamento</h1>
           <p className="mt-2 text-muted-foreground">
             Gerencie módulos e acompanhe o desempenho dos alunos
