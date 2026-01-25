@@ -189,7 +189,7 @@ export default function ChurchAnalytics() {
           <CardContent className="space-y-4">
             <div className="group flex items-center justify-between p-4 bg-white border rounded-xl hover:border-emerald-500 transition-all cursor-pointer">
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-700">Consolidar Novos</span>
+                <span className="text-sm font-bold text-slate-700">Consolidar Novas Vidas</span>
                 <span className="text-[10px] text-slate-400">Total de {stats.newBelievers} almas</span>
               </div>
               <TrendingUp className="w-5 h-5 text-emerald-500" />

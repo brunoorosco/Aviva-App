@@ -189,5 +189,17 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
         },
       ],
     },
+    {
+      label: "Administrador",
+      icon: Calendar1Icon,
+      roles: ["admin"],
+      children: [
+        {
+          label: "Usuários",
+          link: `${base}/admin`,
+          icon: Calendar1Icon,
+        },
+      ],
+    },
   ];
 };
