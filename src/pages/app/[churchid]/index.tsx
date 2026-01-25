@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import StepProgressBar from "@/components/StepProgressBar";
 
 const IndexApp = () => {
   const router = useRouter();
@@ -31,10 +30,7 @@ const IndexApp = () => {
             className="w-full h-64 object-cover rounded-lg shadow"
           />
         </div> */}
-
-        <h2 className="font-semibold text-2xl my-6 text-center">
-          T.M.A.C. - Treinamento Ministerial Avivamento em Cristo
-        </h2>
+        <img src="/logo-preto.png" width="60%" className="mx-auto my-16" />
       </div>
 
       {/* Metade de baixo */}

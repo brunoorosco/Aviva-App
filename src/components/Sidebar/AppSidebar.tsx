@@ -54,7 +54,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center">
-          <img src="/logo-preto.png" width="80%" className="mx-auto" />
+          <img src="/logo-preto.png" width="50%" className="mx-auto" />
         </div>
       </SidebarHeader>
 
