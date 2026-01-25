@@ -21,32 +21,41 @@ import {
   University,
   Settings,
 } from "lucide-react";
+import { Role, ROLES } from "@/lib/permissions";
 
 type TMenu = {
   churchId: string;
   cemId: string;
 };
 
-export const menuItems = ({ churchId, cemId }: TMenu) => {
+export type MenuItem = {
+  label: string;
+  icon: any;
+  link?: string;
+  roles?: Role[];
+  children?: Omit<MenuItem, "children">[];
+};
+
+export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
   const base = `/app/${churchId}`;
   return [
     {
       label: "Home",
       icon: House,
       link: `${base}/`,
-      roles: ["lider", "supervisor", "pastor", "auxiliar"],
+      roles: [ROLES.LIDER, ROLES.SUPERVISOR, ROLES.PASTOR, ROLES.AUXILIAR],
     },
     {
       label: "Minha Rede",
       icon: FaPeopleRoof,
       link: `${base}/minha-rede`,
-      roles: ["pastor", "supervisor", "lider"],
+      roles: [ROLES.PASTOR, ROLES.SUPERVISOR, ROLES.LIDER],
     },
     {
       label: "Redes",
       icon: GroupIcon,
       link: `${base}/cems`,
-      roles: ["pastor", "supervisor"],
+      roles: [ROLES.PASTOR, ROLES.SUPERVISOR, ROLES.LIDER],
     },
     // {
     //   label: "Membros",
@@ -57,7 +66,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "TMAC",
       icon: Footprints,
-      roles: ["secretaria", "admin","pastor"],
+      roles: [ROLES.SECRETARIA, ROLES.ADMIN, ROLES.PASTOR, ROLES.LIDER],
       children: [
         {
           label: "Discipulado",
@@ -104,7 +113,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Boas Vindas",
       icon: UserPlus,
-      roles: ["secretaria", "boas-vindas","pastor"],
+      roles: [ROLES.SECRETARIA, ROLES.BOAS_VINDAS, ROLES.PASTOR, ROLES.LIDER],
       children: [
         {
           label: "Visitantes",
@@ -126,7 +135,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Secretária",
       icon: BookUserIcon,
-      roles: ["admin", "secretaria","pastor"],
+      roles: [ROLES.SECRETARIA, ROLES.PASTOR, ROLES.LIDER],
       children: [
         {
           label: "Apresentações",
@@ -176,7 +185,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Agendas",
       icon: Calendar1Icon,
-      roles: ["admin", "secretaria","pastor"],
+      roles: [ROLES.SECRETARIA, ROLES.PASTOR, ROLES.LIDER, ROLES.SUPERVISOR],
       children: [
         {
           label: "Anual",
@@ -193,7 +202,7 @@ export const menuItems = ({ churchId, cemId }: TMenu) => {
     {
       label: "Administrador",
       icon: Settings,
-      roles: ["admin"],
+      roles: [ROLES.ADMIN],
       children: [
         {
           label: "Usuários",

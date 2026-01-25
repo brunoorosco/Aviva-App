@@ -22,40 +22,33 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { menuItems } from "./menuRoute";
+import { MenuItem, menuItems } from "./menuRoute";
 import { useRouter } from "next/navigation";
+import { usePermissions } from "@/hooks/usePermission";
 
 export function AppSidebar() {
   const { data: session } = useSession();
+  const { hasPermission, isAdmin } = usePermissions();
+  const router = useRouter();
   const churchId = session?.user.churchId as string;
   const cemId = session?.user.cem?._id as string;
-  const permission = (session?.user?.permission ?? []) as string[];
-  const role = session?.user?.role ?? "";
-  const roles = [...new Set([role, ...permission])];
 
   const items = menuItems({ churchId, cemId });
-  const router = useRouter()
 
-  const isAdmin = roles.includes("admin");
-  const filteredItems = items
-    .filter((item) => {
-      const itemRoles = item.roles;
-      if (isAdmin) return true;
-      if (itemRoles === undefined) return true; // público
-      if (Array.isArray(itemRoles) && itemRoles.length === 0) return false; // reservado p/ admin
-      return itemRoles.some((r: string) => roles.includes(r));
-    })
-    .map((item) => ({
-      ...item,
-      children: item.children?.filter((sub) => {
-        //@ts-ignore
-        const subRoles = sub.roles ?? sub.role;
+  const filterMenuItems = (items: MenuItem[]): MenuItem[] => {
+    return items
+      .filter((item) => {
+        if (!item.roles) return true; // público
         if (isAdmin) return true;
-        if (subRoles === undefined) return true;
-        if (Array.isArray(subRoles) && subRoles.length === 0) return false;
-        return subRoles.some((r: string) => roles.includes(r));
-      }),
-    }));
+        return hasPermission(item.roles);
+      })
+      .map((item) => ({
+        ...item,
+        children: item.children ? filterMenuItems(item.children) : undefined,
+      }));
+  };
+
+  const filteredItems = filterMenuItems(items);
 
   return (
     <Sidebar>
@@ -109,7 +102,7 @@ export function AppSidebar() {
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                )
+                ),
               )}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -127,7 +120,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
-                <DropdownMenuItem onClick={()=> router.push(`/app/${churchId}/users/settings`)}>
+                <DropdownMenuItem onClick={() => router.push(`/app/${churchId}/users/settings`)}>
                   <span>Conta</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => signOut()}>
