@@ -140,7 +140,7 @@ export const AceitouJesusList = () => {
                       <TableCell>{r.email || "-"}</TableCell>
                       <TableCell>{r.phone || "-"}</TableCell>
                       <TableCell>{r.rede?.name || "-"}</TableCell>
-                      <TableCell>{formatDate(r.acceptedAt)}</TableCell>{" "}
+                      <TableCell>{formatDate(r.createdAt)}</TableCell>{" "}
                       <TableCell>{r.accepted ? "Aceitou" : "Reconciliou"}</TableCell>
                       <TableCell>{r.baptism ? "Sim" : "Não"}</TableCell>
                       <TableCell>{r.numberEncontro || "-"}</TableCell>
