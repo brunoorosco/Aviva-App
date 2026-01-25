@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, Mail, Lock, ArrowLeft, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -27,6 +28,7 @@ const LoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    
     const res = await signIn("credentials", {
       redirect: false,
       email,
@@ -34,9 +36,10 @@ const LoginPage = () => {
     });
 
     setIsLoading(false);
+    
     if (res?.error) {
-      setError("Email ou senha inválidos");
-    } else {
+      setError("Email ou senha inválidos. Por favor, verifique suas credenciais.");
+    } else if (res?.ok) {
       router.replace("/app");
     }
   };
@@ -80,7 +83,7 @@ const LoginPage = () => {
               <Image
                 src={logoLlaranja}
                 alt="Logo"
-                width={150} // Ajuste conforme necessário
+                width={150}
                 height={70}
                 className="object-contain"
               />
@@ -96,6 +99,21 @@ const LoginPage = () => {
             </h1>
             <p style={{ color: "hsl(0 0% 65%)" }}>Entre com suas credenciais para acessar</p>
           </div>
+
+          {/* Error Alert */}
+          {error && (
+            <Alert 
+              className="mb-6 border-red-500/50 bg-red-500/10 animate-shake"
+              style={{
+                animation: "shake 0.5s ease-in-out"
+              }}
+            >
+              <AlertCircle className="h-4 w-4 text-red-500" />
+              <AlertDescription className="text-red-400 ml-2">
+                {error}
+              </AlertDescription>
+            </Alert>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -118,11 +136,16 @@ const LoginPage = () => {
                   type="email"
                   placeholder="seu@email.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-11 h-12"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setError(""); // Limpa erro ao digitar
+                  }}
+                  className={`pl-11 h-12 transition-all ${
+                    error ? "border-red-500/50 focus:border-red-500" : ""
+                  }`}
                   style={{
                     backgroundColor: "hsl(0 0% 4% / 0.5)",
-                    border: "1px solid hsl(0 0% 18% / 0.5)",
+                    border: error ? "1px solid hsl(0 100% 50% / 0.5)" : "1px solid hsl(0 0% 18% / 0.5)",
                     color: "hsl(0 0% 98%)",
                   }}
                   required
@@ -149,11 +172,16 @@ const LoginPage = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-11 pr-11 h-12"
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError(""); // Limpa erro ao digitar
+                  }}
+                  className={`pl-11 pr-11 h-12 transition-all ${
+                    error ? "border-red-500/50 focus:border-red-500" : ""
+                  }`}
                   style={{
                     backgroundColor: "hsl(0 0% 4% / 0.5)",
-                    border: "1px solid hsl(0 0% 18% / 0.5)",
+                    border: error ? "1px solid hsl(0 100% 50% / 0.5)" : "1px solid hsl(0 0% 18% / 0.5)",
                     color: "hsl(0 0% 98%)",
                   }}
                   required
@@ -188,7 +216,7 @@ const LoginPage = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 text-base font-semibold transition-all duration-300 hover:scale-[1.02] disabled:opacity-70"
+              className="w-full h-12 text-base font-semibold transition-all duration-300 hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed"
               style={{
                 backgroundColor: "hsl(24 95% 53%)",
                 color: "hsl(0 0% 100%)",
@@ -215,6 +243,14 @@ const LoginPage = () => {
           </p> */}
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+          20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+      `}</style>
     </div>
   );
 };
