@@ -63,11 +63,9 @@ function useLayoutSelector(pathname: string): LayoutComponent {
   }, [pathname]);
 }
 
-
 // Hook para verificar se a rota é pública
 function useIsPublicRoute(pathname: string): boolean {
   return useMemo(() => {
-
     // 1. Se está na lista de rotas públicas explícitas
     if (PUBLIC_ROUTES.includes(pathname)) return true;
 
@@ -113,7 +111,13 @@ function MyApp({
         <title>Aviva-App - Plataforma de Gestão</title>
         <meta name="description" content="Plataforma completa para gestão do seu negócio" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+
+        <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <meta name="apple-mobile-web-app-title" content="Avivamento" />
+        <link rel="manifest" href="/site.webmanifest" />
 
         {/* Open Graph */}
         <meta property="og:title" content="Aviva-App" />
