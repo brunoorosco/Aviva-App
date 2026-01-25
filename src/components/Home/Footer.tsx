@@ -1,5 +1,7 @@
 import { MapPin, Phone, Church, MessageCircle } from "lucide-react";
 import NameSaas from "./nameSaas";
+import Image from "next/image";
+import logoLlaranja from '@/public/logo-laranja.png'
 
 const Footer = () => {
   return (
@@ -9,17 +11,13 @@ const Footer = () => {
           {/* Logo & Description */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                <svg 
-                  viewBox="0 0 40 40" 
-                  className="w-6 h-6 text-orange-500"
-                  fill="currentColor"
-                >
-                  <path d="M20 5C20 5 25 12 25 18C25 22 23 25 20 28C17 25 15 22 15 18C15 12 20 5 20 5Z" />
-                  <ellipse cx="20" cy="32" rx="12" ry="4" fill="none" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              </div>
-            <NameSaas/>
+              <Image
+            src={logoLlaranja} 
+            alt="Logo" 
+            width={100} // Ajuste conforme necessário
+            height={70} 
+            className="object-contain"
+          />
             </div>
             <p className="text-muted-foreground text-sm">
               Transformando a gestão da sua igreja com tecnologia e inovação.
