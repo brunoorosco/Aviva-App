@@ -5,7 +5,7 @@ const mediaItems = [
     type: "youtube",
     title: "Culto de Celebração",
     thumbnail: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80",
-    url: "#",
+    url: "https://www.youtube.com/@AvivamentoemCristoTV/streams",
   },
   {
     type: "youtube", 
@@ -21,7 +21,7 @@ const mediaItems = [
   },
   {
     type: "facebook",
-    title: "Lives e Eventos",
+    title: "Fotos do Culto",
     thumbnail: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=600&q=80",
     url: "#",
   },
@@ -91,19 +91,19 @@ const MediaSection = () => {
         {/* Social Links */}
         <div className="flex justify-center gap-4 mt-12">
           <a
-            href="#"
+            href="https://www.youtube.com/@AvivamentoemCristoTV"
             className="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center text-muted-foreground hover:bg-orange-500 hover:text-primary-foreground transition-all duration-300"
           >
             <Youtube className="w-5 h-5" />
           </a>
           <a
-            href="#"
+            href="https://www.instagram.com/avivamento.sede"
             className="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center text-muted-foreground hover:bg-orange-500 hover:text-primary-foreground transition-all duration-300"
           >
             <Instagram className="w-5 h-5" />
           </a>
           <a
-            href="#"
+            href="https://www.facebook.com/avivamentoemcristosede"
             className="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center text-muted-foreground hover:bg-orange-500 hover:text-primary-foreground transition-all duration-300"
           >
             <Facebook className="w-5 h-5" />
