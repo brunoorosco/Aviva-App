@@ -38,13 +38,13 @@ export default function ModulesPage() {
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-2">
           <h1 className="text-3xl font-bold text-foreground">Cursos Avivamento</h1>
-          <p className="mt-2 text-muted-foreground">
+          <p className="text-muted-foreground">
             Gerencie módulos e acompanhe o desempenho dos alunos
           </p>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-4">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-foreground">Módulos Disponíveis</h2>
           <PermissionGuard roles={[ROLES.ADMIN]}>
