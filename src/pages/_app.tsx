@@ -90,7 +90,7 @@ function MyApp({
   const Layout = useLayoutSelector(pathname);
   const isPublicRoute = useIsPublicRoute(pathname);
 
-  console.log("PATHNAME ATUAL:", pathname, "isPublicRoute:", isPublicRoute);
+  // console.log("PATHNAME ATUAL:", pathname, "isPublicRoute:", isPublicRoute);
   // Loading state para navegação
   useEffect(() => {
     const handleStart = () => setIsLoading(true);

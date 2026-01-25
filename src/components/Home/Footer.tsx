@@ -1,7 +1,7 @@
 import { MapPin, Phone, Church, MessageCircle } from "lucide-react";
 import NameSaas from "./nameSaas";
 import Image from "next/image";
-import logoLlaranja from '@/public/logo-laranja.png'
+import logoLlaranja from "@/public/logo-laranja.png";
 
 const Footer = () => {
   return (
@@ -12,12 +12,12 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <Image
-            src={logoLlaranja} 
-            alt="Logo" 
-            width={100} // Ajuste conforme necessário
-            height={70} 
-            className="object-contain"
-          />
+                src={logoLlaranja}
+                alt="Logo"
+                width={100} // Ajuste conforme necessário
+                height={70}
+                className="object-contain"
+              />
             </div>
             <p className="text-muted-foreground text-sm">
               Transformando a gestão da sua igreja com tecnologia e inovação.
@@ -31,14 +31,30 @@ const Footer = () => {
               Nossas Igrejas
             </h4>
             <ul className="space-y-2 text-muted-foreground text-sm">
-              <li className="hover:text-orange-500 transition-colors cursor-pointer">Avivamento Sede</li>
-              <li className="hover:text-orange-500 transition-colors cursor-pointer">Avivamento Guarulhos</li>
-              <li className="hover:text-orange-500 transition-colors cursor-pointer">Avivamento Sapopemba</li>
-              <li className="hover:text-orange-500 transition-colors cursor-pointer">Avivamento Itaqua 1</li>
-              <li className="hover:text-orange-500 transition-colors cursor-pointer">Avivamento Itu</li>
-              <li className="hover:text-orange-500 transition-colors cursor-pointer">Avivamento Suzano</li>
-              <li className="hover:text-orange-500 transition-colors cursor-pointer">Avivamento Itaqua 2</li>
-              <li className="hover:text-orange-500 transition-colors cursor-pointer">Avivamento Curitiba</li>
+              <li className="hover:text-orange-500 transition-colors cursor-pointer">
+                Avivamento Sede
+              </li>
+              <li className="hover:text-orange-500 transition-colors cursor-pointer">
+                Avivamento Guarulhos
+              </li>
+              <li className="hover:text-orange-500 transition-colors cursor-pointer">
+                Avivamento Sapopemba
+              </li>
+              <li className="hover:text-orange-500 transition-colors cursor-pointer">
+                Avivamento Itaqua 1
+              </li>
+              <li className="hover:text-orange-500 transition-colors cursor-pointer">
+                Avivamento Itu
+              </li>
+              <li className="hover:text-orange-500 transition-colors cursor-pointer">
+                Avivamento Suzano
+              </li>
+              <li className="hover:text-orange-500 transition-colors cursor-pointer">
+                Avivamento Itaqua 2
+              </li>
+              <li className="hover:text-orange-500 transition-colors cursor-pointer">
+                Avivamento Curitiba
+              </li>
             </ul>
             <p className="text-orange-500 font-semibold mt-3 text-sm">+ 5 igrejas conectadas</p>
           </div>
@@ -89,9 +105,15 @@ const Footer = () => {
             © 2026 Orostec. Todos os direitos reservados.
           </p>
           <div className="flex gap-6 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-primary transition-colors">Termos de Uso</a>
-            <a href="#" className="hover:text-primary transition-colors">Privacidade</a>
-            <a href="#" className="hover:text-primary transition-colors">Suporte</a>
+            <a href="#" className="hover:text-primary transition-colors">
+              Termos de Uso
+            </a>
+            <a href="#" className="hover:text-primary transition-colors">
+              Privacidade
+            </a>
+            <a href="#" className="hover:text-primary transition-colors">
+              Suporte
+            </a>
           </div>
         </div>
       </div>
