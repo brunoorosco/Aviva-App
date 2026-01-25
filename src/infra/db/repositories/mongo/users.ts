@@ -10,7 +10,10 @@ export class UsersMongoRepository {
   async getByEmail(email: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
-      const user = await collection.findOne({ email });
+
+      const user = await collection.findOne({
+        email: { $regex: new RegExp(`^${email}$`, "i") },
+      });
 
       return user;
     } catch (error) {
@@ -47,7 +50,7 @@ export class UsersMongoRepository {
     cemId: string,
     name?: string,
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<{
     data: any[];
     total: number;
@@ -112,7 +115,7 @@ export class UsersMongoRepository {
       const collection = await MongoHelper.getCollection(this.collectionName);
       const result = collection.updateOne(
         { _id: new ObjectId(userId) },
-        { $set: { active: data ? true : false, updatedAt: new Date() } }
+        { $set: { active: data ? true : false, updatedAt: new Date() } },
       );
       return result;
     } catch (error) {
@@ -131,7 +134,7 @@ export class UsersMongoRepository {
             ...data, // Espalha as propriedades para atualizar campos individualmente
             updatedAt: new Date(),
           },
-        }
+        },
       );
       return result;
     } catch (error) {
@@ -150,7 +153,7 @@ export class UsersMongoRepository {
               name: 1,
               _id: 1,
             },
-          }
+          },
         )
         .toArray();
       return result;
@@ -164,7 +167,7 @@ export class UsersMongoRepository {
     churchId: string,
     page: number = 1,
     limit: number = 10,
-    name?: string // 🔹 parâmetro opcional
+    name?: string, // 🔹 parâmetro opcional
   ): Promise<{
     data: any[];
     total: number;
@@ -222,7 +225,7 @@ export class UsersMongoRepository {
           permission: permission,
           updatedAt: new Date(),
         },
-      }
+      },
     );
     return resp;
   }
@@ -244,7 +247,7 @@ export class UsersMongoRepository {
         },
         {
           projection: { _id: 1, name: 1, role: 1, email: 1, "cem.name": 1 },
-        }
+        },
       )
       .collation({ locale: "pt", strength: 1 })
       .sort({ name: 1 })
