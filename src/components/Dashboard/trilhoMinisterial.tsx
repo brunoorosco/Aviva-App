@@ -9,8 +9,8 @@ const ProcessSteps = () => {
   const { data: session } = useSession();
   const churchId = session?.user.churchId as string;
   const cemId = session?.user.cem._id as string;
-  const firstHalf = stepsProcess({ churchId, cemId }).slice(0, 5);
-  const secondHalf = stepsProcess({ churchId, cemId }).slice(5, 10);
+  const firstHalf = stepsProcess({ churchId, cemId }).slice(0, 6);
+  const secondHalf = stepsProcess({ churchId, cemId }).slice(6, 12);
 
   return (
     <div className="min-h-screen bg-background">

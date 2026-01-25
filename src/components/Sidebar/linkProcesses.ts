@@ -83,8 +83,15 @@ export const stepsProcess = ({
   },
   {
     id: "step-10",
-    name: "Escola de Profeta",
+    name: "Treinamento de Líderes",
     order: 10,
+    link: `/app/${churchId}/secretary/escola-de-profeta`,
+    completed: true,
+  },
+  {
+    id: "step-11",
+    name: "Escola de Profeta",
+    order: 11,
     link: `/app/${churchId}/secretary/escola-de-profeta`,
     completed: true,
   },
