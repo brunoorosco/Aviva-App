@@ -92,7 +92,7 @@ const LoginPage = () => {
                 fontFamily: "Montserrat, sans-serif",
               }}
             >
-              Bem-vindo de volta
+              Bem-vindo
             </h1>
             <p style={{ color: "hsl(0 0% 65%)" }}>Entre com suas credenciais para acessar</p>
           </div>
