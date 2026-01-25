@@ -9,7 +9,6 @@ import { useHttpPost } from "@/hooks/api";
 import Toast from "@/components/Toast";
 import { Masks } from "@/utils/masks";
 import ButtonSubmit from "@/components/ButtonSubmit";
-import { SelectSupervisorCem } from "@/components/Select/SelectSupervisoresCem";
 import { Textarea } from "@/components/ui/textarea";
 
 type FormValues = {

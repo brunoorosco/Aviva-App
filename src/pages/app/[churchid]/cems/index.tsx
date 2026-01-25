@@ -16,7 +16,7 @@ const Cem = () => {
   const churchId = router.query?.churchid;
   const { data: session } = useSession();
   const { data: cems, mutate } = useHttpGet<CellsModel[]>(
-    `/api/protected/churches/${session?.user.churchId}/cems`
+    `/api/protected/churches/${session?.user.churchId}/cems`,
   );
   const isAdmin = session?.user.permission?.includes("admin");
   const userCem = session?.user.cem._id;
@@ -27,7 +27,8 @@ const Cem = () => {
   };
 
   const goToMembers = (cemId: string) => {
-    if (isAdmin || cemId === userCem) router.push(`/app/${churchId}/cems/${cemId}/members`);
+    // if (isAdmin || cemId === userCem) router.push(`/app/${churchId}/cems/${cemId}/members`);
+    router.push(`/app/${churchId}/cems/${cemId}/members`);
   };
 
   return (
@@ -38,9 +39,11 @@ const Cem = () => {
           <div>
             <p className="text-2xl font-bold">Nossas Redes</p>
           </div>
-          <Link href={`../${churchId}/cems/new`}>
-            <ButtonNew />
-          </Link>
+          {isAdmin && (
+            <Link href={`../${churchId}/cems/new`}>
+              <ButtonNew />
+            </Link>
+          )}
         </div>
 
         {/* Grid de Cards */}
@@ -58,17 +61,19 @@ const Cem = () => {
               )}
 
               <Card
-                className={`rounded-2xl shadow-md hover:shadow-lg transition ${
-                  (cem._id === userCem || isAdmin) ? "cursor-pointer" : "cursor-not-allowed"
-                }`}
+                className={`rounded-2xl shadow-md hover:shadow-lg transition cursor-pointer
+                   ${cem._id === userCem || isAdmin ? "text-black" : "text-gray-500"}
+                  `}
                 onClick={() => goToMembers(cem._id)}
               >
                 <CardHeader className="flex flex-col items-center">
                   <CardTitle className="-mb-2 text-lg">{cem.name}</CardTitle>
                   <span className="text-sm line-clamp-1">{cem.description}</span>
                 </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-gray-600 mb-2 text-xl font-semibold">
+                <CardContent className={`text-center`}>
+                  <p
+                    className={`text-gray-600 mb-2 text-xl font-semibold ${cem._id === userCem || isAdmin ? "text-black" : "text-gray-500"}`}
+                  >
                     {cem.membersActive || 0} <span className="text-base font-normal">membros</span>
                   </p>
                 </CardContent>
