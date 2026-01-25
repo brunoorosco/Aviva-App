@@ -24,7 +24,7 @@ import {
 } from "../ui/dropdown-menu";
 import { MenuItem, menuItems } from "./menuRoute";
 import { useRouter } from "next/navigation";
-import { usePermissions } from "@/hooks/usePermission";
+import { usePermissions } from "@/hooks/usePermissions";
 
 export function AppSidebar() {
   const { data: session } = useSession();

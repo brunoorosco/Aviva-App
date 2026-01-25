@@ -1,5 +1,5 @@
 // components/PermissionGuard.tsx
-import { usePermissions } from "@/hooks/usePermission";
+import { usePermissions } from "@/hooks/usePermissions";
 import { type Role } from "@/lib/permissions";
 
 type PermissionGuardProps = {
