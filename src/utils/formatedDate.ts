@@ -1,16 +1,7 @@
-export const formatDate = (
-  value: string | Date | null | undefined,
-  showTime: boolean = false
-): string => {
-  if (!value) return "-";
-
-  const date = new Date(value);
-  if (isNaN(date.getTime())) return "-";
-
-  // Sempre formata no fuso de Brasília
-  if (showTime) {
-    return date.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
-  }
-
-  return date.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
+export const formatDate = (dateString: string | Date) => {
+  const date = new Date(dateString);
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${day}/${month}/${year}`;
 };
