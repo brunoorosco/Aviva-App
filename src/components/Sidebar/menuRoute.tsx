@@ -66,7 +66,7 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
     {
       label: "TMAC",
       icon: Footprints,
-      roles: [ROLES.SECRETARIA, ROLES.ADMIN, ROLES.PASTOR, ROLES.LIDER],
+      roles: [ROLES.SECRETARIA, ROLES.ADMIN, ROLES.PASTOR, ROLES.LIDER, ROLES.SUPERVISOR],
       children: [
         {
           label: "Discipulado",
@@ -113,7 +113,7 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
     {
       label: "Boas Vindas",
       icon: UserPlus,
-      roles: [ROLES.SECRETARIA, ROLES.BOAS_VINDAS, ROLES.PASTOR, ROLES.LIDER],
+      roles: [ROLES.SECRETARIA, ROLES.BOAS_VINDAS, ROLES.PASTOR, ROLES.LIDER,ROLES.SUPERVISOR],
       children: [
         {
           label: "Visitantes",
@@ -135,7 +135,7 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
     {
       label: "Secretária",
       icon: BookUserIcon,
-      roles: [ROLES.SECRETARIA, ROLES.PASTOR, ROLES.LIDER],
+      roles: [ROLES.SECRETARIA, ROLES.PASTOR, ROLES.LIDER, ROLES.SUPERVISOR],
       children: [
         {
           label: "Apresentações",

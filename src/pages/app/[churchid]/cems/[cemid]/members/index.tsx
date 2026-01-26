@@ -127,10 +127,11 @@ const MembersWithImportExport = () => {
             <div className="flex justify-between items-center">
               <h2 className="font-semibold text-lg">{(member.name || "Sem nome").toUpperCase()}</h2>
 
-              <div className="flex items-center gap-1" hidden={canEditMembers(member)}>
+              <div className={`flex items-center gap-1`} >
                 <Button
                   variant="ghost"
                   size="icon"
+                  className={`${!canEditMembers(member) ? 'hidden': ''}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleEdit(member);
@@ -143,7 +144,7 @@ const MembersWithImportExport = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-red-600 hover:text-red-700"
+                    className={`text-red-600 hover:text-red-700 ${!canEditMembers(member) ? 'hidden': ''}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDesactive(member._id);
@@ -155,7 +156,7 @@ const MembersWithImportExport = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-green-600 hover:text-green-700"
+                    className={`text-green-600 hover:text-green-700`}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleActive(member._id);
