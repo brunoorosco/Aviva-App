@@ -1,8 +1,10 @@
 import { TMinisterialLevel } from "@/domain/models/ministerial";
-import bcrypt from "@/infra/cryptography/bcrypt";
+import { User } from "@/domain/models/users";
 import CryptAdapter from "@/infra/cryptography/bcrypt";
 import { UsersMongoRepository } from "@/infra/db/repositories/mongo/users";
 import { NextResponse } from "next/server";
+import crypto from "crypto";
+import { AddressModel } from "@/domain/models/address";
 
 type TUser = {
   name: string;
@@ -31,7 +33,7 @@ export const createUserByCem = async (params: TUser) => {
     permission: ["user"],
     zipcode,
     password: setPassword,
-    createdAt: new Date()
+    createdAt: new Date(),
   });
   return user;
 };
@@ -56,7 +58,7 @@ export const createUser = async (params: TUser) => {
     zipcode,
     password: setPassword,
     cem: { _id: cem[0], name: cem[1] },
-    createdAt: new Date()
+    createdAt: new Date(),
   });
   return user;
 };
@@ -92,7 +94,7 @@ export const getUsersByChurch = async (
   churchId: string,
   pageNumber: number,
   limitNumber: number,
-  name?: string
+  name?: string,
 ) => {
   const userRepository = new UsersMongoRepository();
   const users = await userRepository.getUsersByChurchId(churchId, pageNumber, limitNumber, name);
@@ -165,4 +167,98 @@ export const getUsersByStatus = async (churchId: string, cargo: TMinisterialLeve
 
   const resp = await userRepository.getUsersByStatus(churchId, cargo);
   return resp;
+};
+
+export const getUserSettings = async (userId: string): Promise<Partial<User>> => {
+  const userRepository = new UsersMongoRepository();
+  const user = await userRepository.geUserById(userId);
+
+  if (!user) {
+    throw new Error("Usuário não encontrado");
+  }
+  // Retorna apenas os dados necessários (sem senha)
+  return {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    address: user.address ?? user.street,
+    image: user.imageProfile,
+    cem: user.cem,
+    role: user.role,
+  };
+};
+
+export const updateUserSettings = async (
+  userId: string,
+  data: {
+    name?: string;
+    phone?: string;
+    address?: string;
+    image?: string;
+    currentPassword?: string;
+    newPassword?: string;
+  },
+): Promise<Partial<User>> => {
+  const userRepository = new UsersMongoRepository();
+  const cryptAdapter = new CryptAdapter();
+
+  const user = await userRepository.geUserById(userId);
+
+  if (!user) {
+    throw new Error("Usuário não encontrado");
+  }
+
+  // Validar senha atual se estiver tentando mudar a senha
+  if (data.currentPassword && data.newPassword) {
+    const isPasswordValid = cryptAdapter.compare(data.currentPassword, user.password);
+
+    if (!isPasswordValid) {
+      throw new Error("Senha atual incorreta");
+    }
+
+    // Hash da nova senha usando CryptAdapter
+    data.newPassword = cryptAdapter.hashPassword(data.newPassword);
+  }
+
+  const updateData: Partial<User> = {};
+
+  if (data.name) {
+    updateData.name = data.name;
+  }
+
+  if (data.phone) {
+    updateData.phone = data.phone;
+  }
+
+  if (data.address) {
+    // Se address é string, converter para AddressModel
+    if (typeof data.address === "string") {
+      updateData.address = {
+        street: data.address,
+        // Adicione outros campos conforme necessário
+      } as AddressModel;
+    } else {
+      updateData.address = data.address;
+    }
+  }
+
+  if (data.image) {
+    updateData.image = data.image;
+  }
+
+  if (data.newPassword) {
+    updateData.password = data.newPassword;
+  }
+
+  const updatedUser = await userRepository.updateSettings(userId, updateData);
+
+  return {
+    _id: updatedUser._id,
+    name: updatedUser.name,
+    email: updatedUser.email,
+    phone: updatedUser.phone,
+    address: updatedUser.address,
+    image: updatedUser.image,
+  };
 };

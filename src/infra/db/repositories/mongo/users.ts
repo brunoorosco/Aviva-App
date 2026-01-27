@@ -1,6 +1,7 @@
 import { TMinisterialLevel } from "@/domain/models/ministerial";
 import { ObjectId } from "mongodb";
 import { MongoHelper } from "../../mongoHelper";
+import { User } from "@/domain/models/users";
 export class UsersMongoRepository {
   private collectionName: string;
   constructor() {
@@ -254,5 +255,27 @@ export class UsersMongoRepository {
       .toArray();
 
     return resp;
+  }
+
+  async updateSettings(userId: string, data: Partial<User>): Promise<User> {
+    const collection = await MongoHelper.getCollection(this.collectionName);
+
+    const result = await collection.findOneAndUpdate(
+      { _id: new ObjectId(userId) },
+      {
+        $set: {
+          ...data,
+          updatedAt: new Date().toISOString(),
+        },
+      },
+      { returnDocument: "after" },
+    );
+
+    if (!result) {
+      throw new Error("Erro ao atualizar usuário");
+    }
+
+    //@ts-ignore
+    return result as User;
   }
 }
