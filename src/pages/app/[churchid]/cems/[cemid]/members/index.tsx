@@ -28,12 +28,21 @@ const MembersWithImportExport = () => {
   const userCemName = session?.user?.cem?.name;
   const canEditGlobal = hasPermission([ROLES.ADMIN, ROLES.SECRETARIA]);
 
+  // 1. Adicione um console.log para debugar
   const canEditMembers = (member: any) => {
+    console.log("Verificando permissões:", {
+      canEditGlobal,
+      userCemName,
+      memberCemName: member?.cem?.name,
+      member,
+    });
+
     // Admin e secretaria podem editar qualquer casa
     if (canEditGlobal) return true;
 
     // Usuários podem editar apenas casas da sua própria rede
-    return member.cem.name === userCemName;
+    // Verifique se member.cem existe antes de acessar .name
+    return member?.cem?.name === userCemName;
   };
 
   const { data: members, mutate: refreshMembers } = useHttpGet<{
@@ -99,7 +108,7 @@ const MembersWithImportExport = () => {
         totalAtivo={members?.data.totalAtivos}
         totalInativo={members?.data.totalInativos}
       />
-
+      {/* se desktop */}
       <div className="hidden sm:block shadow-sm">
         <ul className="w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary">
           <Suspense fallback={<p>Carregando membros...</p>}>
@@ -117,6 +126,7 @@ const MembersWithImportExport = () => {
           </Suspense>
         </ul>
       </div>
+      {/* se mobile */}
       <div className="sm:hidden flex flex-col gap-4">
         {members?.data?.data.map((member) => (
           <div
@@ -127,44 +137,47 @@ const MembersWithImportExport = () => {
             <div className="flex justify-between items-center">
               <h2 className="font-semibold text-lg">{(member.name || "Sem nome").toUpperCase()}</h2>
 
-              <div className={`flex items-center gap-1`} >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`${!canEditMembers(member) ? 'hidden': ''}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEdit(member);
-                  }}
-                >
-                  <Edit className="w-4 h-4" />
-                </Button>
-
-                {member.active ? (
+              <div className={`flex items-center gap-1`}>
+                {canEditMembers(member) && (
                   <Button
                     variant="ghost"
                     size="icon"
-                    className={`text-red-600 hover:text-red-700 ${!canEditMembers(member) ? 'hidden': ''}`}
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDesactive(member._id);
+                      handleEdit(member);
                     }}
                   >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`text-green-600 hover:text-green-700`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleActive(member._id);
-                    }}
-                  >
-                    <Eye className="w-4 h-4" />
+                    <Edit className="w-4 h-4" />
                   </Button>
                 )}
+
+                {member.active
+                  ? canEditMembers(member) && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-600 hover:text-red-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDesactive(member._id);
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )
+                  : canEditMembers(member) && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-green-600 hover:text-green-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleActive(member._id);
+                        }}
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    )}
               </div>
             </div>
 
