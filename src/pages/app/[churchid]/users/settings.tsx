@@ -65,7 +65,7 @@ export default function AccountSettings() {
     email: string;
     phone?: string;
     address?: string;
-    imageProfile?: string;
+    image?: string;
   }>(`/api/protected/churches/${session?.user.churchId}/users/${session?.user.id}/settings`);
 
   const form = useForm<z.infer<typeof profileSchema>>({
@@ -93,9 +93,9 @@ export default function AccountSettings() {
         newPassword: "",
         confirmPassword: "",
       });
-
-      if (userData.data.imageProfile) {
-        setAvatarPreview(userData.data.imageProfile);
+console.log(userData.data)
+      if (userData.data.image) {
+        setAvatarPreview(userData.data.image);
       }
     }
   }, [userData, form]);
@@ -123,7 +123,7 @@ export default function AccountSettings() {
         {
           method: "PATCH",
           body: formData,
-        }
+        },
       );
 
       if (!response.ok) {
@@ -183,9 +183,7 @@ export default function AccountSettings() {
       <div className="max-w-4xl mx-auto pt-4 sm:pt-10">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-            Configurações de Conta
-          </h2>
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Configurações de Conta</h2>
           <p className="text-sm sm:text-base text-muted-foreground mt-1">
             Gerencie suas informações pessoais e segurança.
           </p>
@@ -222,12 +220,8 @@ export default function AccountSettings() {
                     </label>
                   </div>
                   <div className="text-center sm:text-left space-y-1">
-                    <h4 className="text-sm font-medium text-muted-foreground">
-                      Foto de Perfil
-                    </h4>
-                    <p className="text-xs text-muted-foreground">
-                      JPG, GIF ou PNG. Máximo de 2MB.
-                    </p>
+                    <h4 className="text-sm font-medium text-muted-foreground">Foto de Perfil</h4>
+                    <p className="text-xs text-muted-foreground">JPG, GIF ou PNG. Máximo de 2MB.</p>
                   </div>
                 </div>
 
@@ -240,11 +234,7 @@ export default function AccountSettings() {
                       <FormItem>
                         <FormLabel className="text-sm">Nome Completo</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="Ex: Ruan Davi" 
-                            {...field} 
-                            className="h-10 sm:h-11"
-                          />
+                          <Input placeholder="Ex: Ruan Davi" {...field} className="h-10 sm:h-11" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -257,12 +247,7 @@ export default function AccountSettings() {
                       <FormItem>
                         <FormLabel className="text-sm">E-mail</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="email" 
-                            {...field} 
-                            disabled 
-                            className="h-10 sm:h-11"
-                          />
+                          <Input type="email" {...field} disabled className="h-10 sm:h-11" />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -275,9 +260,9 @@ export default function AccountSettings() {
                       <FormItem>
                         <FormLabel className="text-sm">Telefone</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="(11) 99999-9999" 
-                            {...field} 
+                          <Input
+                            placeholder="(11) 99999-9999"
+                            {...field}
                             className="h-10 sm:h-11"
                           />
                         </FormControl>
@@ -292,9 +277,9 @@ export default function AccountSettings() {
                       <FormItem>
                         <FormLabel className="text-sm">Endereço</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="Rua, Número, Bairro" 
-                            {...field} 
+                          <Input
+                            placeholder="Rua, Número, Bairro"
+                            {...field}
                             className="h-10 sm:h-11"
                           />
                         </FormControl>
@@ -437,11 +422,7 @@ export default function AccountSettings() {
               >
                 Cancelar
               </Button>
-              <Button 
-                type="submit" 
-                disabled={isLoading}
-                className="w-full sm:w-auto h-10 sm:h-11"
-              >
+              <Button type="submit" disabled={isLoading} className="w-full sm:w-auto h-10 sm:h-11">
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

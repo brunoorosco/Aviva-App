@@ -182,8 +182,8 @@ export const getUserSettings = async (userId: string): Promise<Partial<User>> =>
     name: user.name,
     email: user.email,
     phone: user.phone,
-    address: user.address ?? user.street,
-    image: user.imageProfile,
+    address: user.street,
+    image: user.image,
     cem: user.cem,
     role: user.role,
   };
