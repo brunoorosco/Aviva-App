@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         name: fields.fullName?.[0],
         phone: fields.phone?.[0],
         address: fields.address?.[0],
-        ...(imageUrl && { imageProfile: imageUrl }),
+        ...(imageUrl && { image: imageUrl }),
         ...(fields.currentPassword?.[0] &&
           fields.newPassword?.[0] && {
             currentPassword: fields.currentPassword[0],
