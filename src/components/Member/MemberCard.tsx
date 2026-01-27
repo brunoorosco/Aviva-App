@@ -37,6 +37,9 @@ import {
   TMinisterialRecord,
 } from "@/domain/models/ministerial";
 import { capitalizeWords } from "@/utils/capitalizaFirst";
+import { usePermissions } from "@/hooks/usePermissions";
+import { useSession } from "next-auth/react";
+import { ROLES } from "@/lib/permissions";
 
 const getInitials = (name: string) =>
   name
@@ -58,7 +61,7 @@ export const MemberCard = ({ member }: Props) => {
     { key: "discipulado", label: "Discipulado", icon: BookOpen },
     { key: "cae", label: "C.A.E", icon: Users },
   ];
-
+  const { hasPermission } = usePermissions();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedPersonId, setSelectedPersonId] = useState<string>("");
   const [newPersonName, setNewPersonName] = useState("");
@@ -66,7 +69,19 @@ export const MemberCard = ({ member }: Props) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
+  const { data: session } = useSession();
+  const userCemName = session?.user?.cem?.name;
+  const canEditGlobal = hasPermission([ROLES.ADMIN, ROLES.SECRETARIA]);
 
+  // 1. Adicione um console.log para debugar
+  const canEditMembers = (cemName: string) => {
+    // Admin e secretaria podem editar qualquer casa
+    if (canEditGlobal) return true;
+
+    // Usuários podem editar apenas casas da sua própria rede
+    // Verifique se member.cem existe antes de acessar .name
+    return cemName.toLowerCase() === userCemName?.toLocaleLowerCase();
+  };
   const handleAddRecord = () => {
     if (!selectedPersonId) return;
 
@@ -93,7 +108,7 @@ export const MemberCard = ({ member }: Props) => {
   };
 
   function handleModal() {
-    setShowEditModal(true)
+    setShowEditModal(true);
   }
 
   return (
@@ -120,14 +135,16 @@ export const MemberCard = ({ member }: Props) => {
                   {getInitials(member.name)}
                 </AvatarFallback>
               </Avatar>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute -top-4 md:-top-8 md:-left-4 -left-6 w-8 h-8 rounded-full hover:bg-gray-200 text-gray-500 bg-transparent"
-                onClick={handleModal}
-              >
-                <Edit className="w-4 h-4" />
-              </Button>
+              <div hidden={!canEditMembers(member.cem.name)}>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="absolute -top-4 md:-top-8 md:-left-4 -left-6 w-8 h-8 rounded-full hover:bg-gray-200 text-gray-500 bg-transparent"
+                  onClick={handleModal}
+                >
+                  <Edit className="w-4 h-4" />
+                </Button>
+              </div>
               <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-soft">
                 <UserIcon className="w-4 h-4 text-white" />
               </div>
@@ -227,7 +244,11 @@ export const MemberCard = ({ member }: Props) => {
                                 </div>
                                 <StatusBadge
                                   status={module.status.toUpperCase() === "APROVADO"}
-                                  label={module.status.toUpperCase() === "APROVADO" ? "Aprovado" : "Reprovado"}
+                                  label={
+                                    module.status.toUpperCase() === "APROVADO"
+                                      ? "Aprovado"
+                                      : "Reprovado"
+                                  }
                                   variant="module"
                                 />
                               </div>

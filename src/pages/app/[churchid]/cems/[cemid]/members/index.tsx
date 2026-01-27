@@ -30,13 +30,6 @@ const MembersWithImportExport = () => {
 
   // 1. Adicione um console.log para debugar
   const canEditMembers = (member: any) => {
-    console.log("Verificando permissões:", {
-      canEditGlobal,
-      userCemName,
-      memberCemName: member?.cem?.name,
-      member,
-    });
-
     // Admin e secretaria podem editar qualquer casa
     if (canEditGlobal) return true;
 
