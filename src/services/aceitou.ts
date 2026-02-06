@@ -22,25 +22,19 @@ export const createAceitouService = async (data: any, churchId: string): Promise
 
   /**
    * Processa a data do apelo:
-   * - Se for a mesma data de hoje (Brasília) → usa o horário atual real
-   * - Se for data diferente → usa meio-dia UTC para evitar problemas de fuso
+   * Sempre define para meio-dia UTC da data selecionada para evitar problemas de fuso horário.
+   * O frontend envia YYYY-MM-DD.
    */
   const processAcceptedDate = (dateString: string | null | undefined): Date => {
-    const now = new Date();
-
-    // Data de hoje no fuso de Brasília (YYYY-MM-DD)
-    const todayBrasilia = now.toLocaleDateString("en-CA", {
-      timeZone: "America/Sao_Paulo",
-    }); // formato "2025-01-15"
-
-    // Se não informou data ou é a data de hoje → usa horário atual
-    if (!dateString || dateString === todayBrasilia) {
-      return now;
+    // Se não informou data, usa o momento atual (fallback), mas idealmente deve vir do front
+    if (!dateString) {
+      return new Date();
     }
 
-    // Se é data diferente → usa meio-dia UTC para não ter problema de fuso
+    // Cria a data sempre ao meio-dia UTC para garantir consistência independente do fuso do servidor ou usuário
     const [year, month, day] = dateString.split("-");
-    return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 12, 0, 0));
+    const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 12, 0, 0));
+    return date;
   };
 
   const dataFormatted: any = {
@@ -66,28 +60,28 @@ export const importAceitouService = async (data: any, churchId: string): Promise
   return saved;
 };
 
-export const reportAceitouService = async (churchId: string, redeId?:string) => {
+export const reportAceitouService = async (churchId: string, redeId?: string) => {
   const apelo = new AceitouRepository();
   const result = await apelo.getAnalytics(churchId, redeId);
-const stats = result[0].stats[0] || { 
-      total: 0, countAcceptedTrue: 0, countAcceptedFalse: 0, 
-      countBaptized: 0, countHasEncontro: 0, countPendingBaptism: 0 
-    };
-    
-    const rawTimeline = result[0].timeline || [];
+  const stats = result[0].stats[0] || {
+    total: 0, countAcceptedTrue: 0, countAcceptedFalse: 0,
+    countBaptized: 0, countHasEncontro: 0, countPendingBaptism: 0
+  };
 
-    return {
-      total: stats.total,
-      newDecisions: stats.countAcceptedTrue,    // Aceitou Jesus
-      reconciliations: stats.countAcceptedFalse, // Reconciliou
-      baptized: stats.countBaptized,
-      hasEncontro: stats.countHasEncontro,
-      pendingBaptism: stats.countPendingBaptism,
-      timeline: {
-        labels: rawTimeline.map((t: any) => `${String(t._id.month).padStart(2, '0')}/${t._id.year}`),
-        acceptedData: rawTimeline.map((t: any) => t.accepted),
-        reconciledData: rawTimeline.map((t: any) => t.reconciled)
-      }
-    };
+  const rawTimeline = result[0].timeline || [];
+
+  return {
+    total: stats.total,
+    newDecisions: stats.countAcceptedTrue,    // Aceitou Jesus
+    reconciliations: stats.countAcceptedFalse, // Reconciliou
+    baptized: stats.countBaptized,
+    hasEncontro: stats.countHasEncontro,
+    pendingBaptism: stats.countPendingBaptism,
+    timeline: {
+      labels: rawTimeline.map((t: any) => `${String(t._id.month).padStart(2, '0')}/${t._id.year}`),
+      acceptedData: rawTimeline.map((t: any) => t.accepted),
+      reconciledData: rawTimeline.map((t: any) => t.reconciled)
+    }
+  };
 
 };

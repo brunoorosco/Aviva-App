@@ -13,9 +13,17 @@ export const createVisitantesService = async (data: any, churchId: string): Prom
     };
   }
 
+  // Processa a data da visita para meio-dia UTC
+  const processVisitedDate = (dateString: string): Date => {
+    if (!dateString) return new Date();
+    const [year, month, day] = dateString.split("-");
+    const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 12, 0, 0));
+    return date;
+  };
+
   // Monta o objeto final
   const dataFormatted: any = {
-    visitedAt: new Date(data.visitedAt),
+    visitedAt: processVisitedDate(data.visitedAt),
     name: data.name?.trim(),
     phone: data.phone?.replace(/[^0-9]/g, "") || null,
     description: data.description?.trim() || null,

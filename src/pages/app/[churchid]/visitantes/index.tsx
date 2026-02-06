@@ -3,7 +3,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { TVisitor, VisitantesModel } from "@/domain/models/visitantes";
 import {
@@ -15,11 +14,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useHttpGet, useHttpPost } from "@/hooks/api";
-import { Input } from "@/components/ui/input";
 import * as XLSX from "xlsx";
 import Toast from "@/components/Toast";
 import Pagination from "@/components/Pagination";
 import { formatDate } from "@/utils/formatedDate";
+import { PageHeader } from "@/components/PageHeader";
 
 export default function VisitantesList() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -94,53 +93,39 @@ export default function VisitantesList() {
 
   return (
     <div className="p-4 mt-6 w-full max-w-6xl mx-auto">
-      {/* Cabeçalho */}
-      <div className="flex items-left justify-between mb-4 gap-2">
-        <div className="flex flex-col">
-          <Label className="text-2xl font-semibold">Visitantes</Label>
-          <Label className="text-xs font-semibold">{`Total de Visitantes - ${
-            users?.data.total || 0
-          }`}</Label>
-        </div>
+      <PageHeader
+        title="Visitantes"
+        totalLabel="Total de Visitantes"
+        totalCount={users?.data.total || 0}
+        loading={isLoading || loading}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".xlsx,.xls,.csv"
+          className="hidden"
+          onChange={handleImport}
+        />
 
-        <div className="flex flex-row gap-2">
-          {/* <Input
-            placeholder="Buscar por nome..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="max-w-xs"
-          /> */}
+        <Button
+          type="button"
+          className="bg-green-500 text-white"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          Importar
+        </Button>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".xlsx,.xls,.csv"
-            className="hidden"
-            onChange={handleImport}
-          />
-
-          <Button
-            type="button"
-            className="bg-green-500 text-white"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            Importar
-          </Button>
-
-          <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
-        </div>
-      </div>
+        <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
+      </PageHeader>
 
       {/* Conteúdo */}
       {loading || isLoading ? (
         <div className="text-center py-6 text-gray-500">Carregando...</div>
       ) : (
-        //  ) : filteredRecords?.length === 0 ? (
-        //   <div className="text-center py-6 text-gray-500">Nenhum registro encontrado</div>
         <>
           {/* Versão mobile (cards) */}
           <div className="flex flex-col gap-3 md:hidden">
-            {users?.data.data?.map((r) => (
+            {filteredRecords?.map((r) => (
               <div key={r._id} className="border rounded-xl p-3 shadow-sm bg-white">
                 <div className="font-semibold text-lg">{r.name}</div>
 
@@ -186,7 +171,7 @@ export default function VisitantesList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users?.data.data?.map((r) => (
+                {filteredRecords?.map((r) => (
                   <TableRow key={r._id}>
                     <TableCell>{r.name}</TableCell>
                     <TableCell>{r.phone || "-"}</TableCell>

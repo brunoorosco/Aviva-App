@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
 import {
   Table,
@@ -10,17 +10,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useHttpGet } from "@/hooks/api";
 import { AceitouModel } from "@/domain/models/aceitou";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 import Pagination from "@/components/Pagination";
 import { formatDate } from "@/utils/formatedDate";
+import { PageHeader } from "@/components/PageHeader";
 
 export const AceitouJesusList = () => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
   const churchId = session?.user.churchId as string;
   const [loading, setLoading] = useState(false);
@@ -47,34 +45,23 @@ export const AceitouJesusList = () => {
 
   return (
     <div className="w-full max-w-6xl p-4 mx-auto mt-6">
-      <div className="flex justify-between gap-2 mb-4 items-left">
-        <div className="flex flex-col">
-          <Label className="text-2xl">Lista Aceitou Jesus</Label>
-          <Label className="text-xs font-semibold">{`Total de Pessoas - ${
-            users?.data.total || 0
-          }`}</Label>
-        </div>
-        
-        <div className="flex flex-row gap-2">
-          {/* <Input
-            placeholder="Buscar por nome..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="max-w-xs"
-          /> */}
-          <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
-        </div> 
-      </div>
+      <PageHeader
+        title="Lista Aceitou Jesus"
+        totalLabel="Total de Pessoas"
+        totalCount={users?.data.total || 0}
+        loading={isLoading || loading}
+      >
+        <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
+      </PageHeader>
+
       {/* Conteúdo */}
       {loading || isLoading ? (
         <div className="py-6 text-center text-gray-500">Carregando...</div>
       ) : (
-        //  ) : filteredRecords?.length === 0 ? (
-        //   <div className="py-6 text-center text-gray-500">Nenhum registro encontrado</div>
         <>
           {/* Versão mobile (cards) */}
           <div className="flex flex-col gap-3 md:hidden">
-            {users?.data.data?.map((r) => (
+            {filteredRecords?.map((r) => (
               <div key={r._id} className="p-3 bg-white border shadow-sm rounded-xl">
                 <div className="text-lg font-semibold">{r.name}</div>
                 <div className="flex justify-between pr-5">
@@ -121,13 +108,7 @@ export const AceitouJesusList = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={9} className="py-4 text-center">
-                      Carregando...
-                    </TableCell>
-                  </TableRow>
-                ) : filteredRecords.length === 0 ? (
+                {filteredRecords.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={9} className="py-4 text-center">
                       Nenhum registro encontrado

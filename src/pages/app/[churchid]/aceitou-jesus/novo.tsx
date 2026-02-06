@@ -33,7 +33,10 @@ const AceitouJesus = () => {
   const churchId = session?.user.churchId as string;
   const router = useRouter()
 
-  const dataRetroISO = new Date().toISOString().split("T")[0];
+  // Data de hoje no fuso de Brasília (YYYY-MM-DD) para o input type="date"
+  const dataRetroISO = new Date().toLocaleDateString("en-CA", {
+    timeZone: "America/Sao_Paulo",
+  });
 
   const {
     control,
@@ -254,7 +257,7 @@ const AceitouJesus = () => {
 
         {/* Botão */}
         <div className="flex w-full mt-4 gap-4">
-           <Button type="button" className="w-full " variant="outline" onClick={()=> router.back() }>
+          <Button type="button" className="w-full " variant="outline" onClick={() => router.back()}>
             Voltar
           </Button>
           <Button type="submit" className="w-full" disabled={isLoading}>
