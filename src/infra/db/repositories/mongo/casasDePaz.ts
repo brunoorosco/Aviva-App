@@ -52,7 +52,7 @@ export class CasasDePazRepository {
   }
 
   async createCasaDePaz(
-   casas:any
+    casas: any
   ): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
@@ -104,5 +104,49 @@ export class CasasDePazRepository {
       }
     )
     return { success: true }
+  }
+  async getAnalytics(year: string, churchId: string) {
+    const startOfYear = new Date(`${year}-01-01T00:00:00.000Z`)
+    const endOfYear = new Date(`${year}-12-31T23:59:59.999Z`)
+    const collection = await MongoHelper.getCollection(this.collectionName)
+
+    const result = await collection
+      .aggregate([
+        {
+          $addFields: {
+            dateObj: { $toDate: '$data_inicial' } // Converte string "YYYY-MM-DD" para Date
+          }
+        },
+        {
+          $match: {
+            churchId, // Ensure filtering by churchId if field exists (params names vary)
+            dateObj: { $gte: startOfYear, $lte: endOfYear }
+          }
+        },
+        {
+          $addFields: {
+            totalCasas: { $size: { $ifNull: ["$casas", []] } }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              month: { $month: "$dateObj" },
+              year: { $year: "$dateObj" }
+            },
+            totalCasas: { $sum: "$totalCasas" },
+            batches: { $push: { data: "$data_inicial", count: "$totalCasas" } }
+          }
+        },
+        { $sort: { "_id.month": 1 } }
+      ])
+      .toArray()
+
+    return result.map(r => ({
+      month: r._id.month,
+      year: r._id.year,
+      total: r.totalCasas,
+      details: r.batches
+    }));
   }
 }

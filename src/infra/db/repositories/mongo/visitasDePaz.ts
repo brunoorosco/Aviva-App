@@ -103,4 +103,44 @@ export class VisitasDePazRepository {
     )
     return { success: true }
   }
+  async getAnalytics(year: string, churchId: string) {
+    const startOfYear = new Date(`${year}-01-01T00:00:00.000Z`)
+    const endOfYear = new Date(`${year}-12-31T23:59:59.999Z`)
+    const collection = await MongoHelper.getCollection(this.collectionName)
+
+    const result = await collection
+      .aggregate([
+        {
+          $addFields: {
+            dateObj: { $toDate: '$data_inicial' }
+          }
+        },
+        {
+          $match: {
+            churchId,
+            dateObj: { $gte: startOfYear, $lte: endOfYear }
+          }
+        },
+        {
+          $addFields: {
+            totalVisitas: { $size: { $ifNull: ["$casas", []] } }
+          }
+        },
+        {
+          $group: {
+            _id: "$data_inicial", // Group by exact date string
+            totalVisitas: { $sum: "$totalVisitas" },
+            batches: { $push: { id: "$_id", count: "$totalVisitas" } }
+          }
+        },
+        { $sort: { "_id": 1 } }
+      ])
+      .toArray()
+
+    return result.map(r => ({
+      date: r._id,
+      total: r.totalVisitas,
+      details: r.batches
+    }));
+  }
 }
