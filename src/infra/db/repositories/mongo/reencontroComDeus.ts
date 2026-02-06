@@ -59,4 +59,77 @@ export class ReencontroComDeusRepository {
       throw error
     }
   }
+  async fechamentoAnual(ano: string) {
+    const startOfYear = new Date(`${ano}-01-01T00:00:00.000Z`)
+    const endOfYear = new Date(`${ano}-12-31T23:59:59.999Z`)
+    const collection = await MongoHelper.getCollection(this.collectionName)
+
+    const resp = await collection
+      .aggregate([
+        {
+          $match: {
+            data: { $gte: startOfYear, $lte: endOfYear }
+          }
+        },
+        {
+          $addFields: {
+            numeroCorrigido: { $ifNull: ['$numero', '$numro'] },
+            totalParticipantes: { $size: { $ifNull: ['$reencontristas', []] } }
+          }
+        },
+        {
+          $unwind: {
+            path: '$reencontristas',
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $facet: {
+            resumoEncontros: [
+              {
+                $group: {
+                  _id: '$_id',
+                  numero: { $first: '$numeroCorrigido' },
+                  data: { $first: '$data' },
+                  totalParticipantes: { $first: '$totalParticipantes' },
+                  encontristas: { $push: '$reencontristas' }
+                }
+              },
+              { $sort: { data: 1 } }
+            ],
+            porRede: [
+              {
+                $group: {
+                  _id: { $ifNull: ['$reencontristas.rede', 'Sem Rede'] },
+                  total: { $sum: 1 }
+                }
+              },
+              { $sort: { total: -1 } }
+            ],
+            porIgrejaOrigem: [
+              {
+                $group: {
+                  _id: { $ifNull: ['$reencontristas.igreja', 'Não Informado'] },
+                  total: { $sum: 1 }
+                }
+              },
+              { $sort: { total: -1 } }
+            ]
+          }
+        },
+        {
+          $project: {
+            encontros: '$resumoEncontros',
+            totaisPorRede: '$porRede',
+            totaisPorIgreja: '$porIgrejaOrigem',
+            totalAnual: {
+              $sum: '$resumoEncontros.totalParticipantes'
+            }
+          }
+        }
+      ])
+      .toArray()
+
+    return resp
+  }
 }
