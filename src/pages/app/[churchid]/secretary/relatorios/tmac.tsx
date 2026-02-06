@@ -13,7 +13,7 @@ import {
     ChartData,
 } from "chart.js";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
-import { Calendar, Users, Church, Network, Star, Loader2, ArrowLeft, Home, UserCheck, BookOpen } from "lucide-react";
+import { Calendar, Users, Church, Network, Star, Loader2, ArrowLeft, Home, UserCheck, BookOpen, Menu } from "lucide-react";
 import { useHttpGet } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -371,13 +371,13 @@ export default function TmacReport() {
             </header>
 
             <Tabs defaultValue="encontro" className="w-full">
-                <TabsList className="flex w-full mb-8 bg-white p-1 border overflow-x-auto">
-                    <TabsTrigger value="encontro"><Calendar className="w-4 h-4 mr-2" /> Encontros</TabsTrigger>
-                    <TabsTrigger value="reencontro"><Calendar className="w-4 h-4 mr-2" /> Reencontro</TabsTrigger>
-                    <TabsTrigger value="sejalivre"><Calendar className="w-4 h-4 mr-2" /> Seja Livre</TabsTrigger>
-                    <TabsTrigger value="escola"><BookOpen className="w-4 h-4 mr-2" /> Escola Profeta</TabsTrigger>
-                    <TabsTrigger value="casas"><Home className="w-4 h-4 mr-2" /> Casas de Paz</TabsTrigger>
-                    <TabsTrigger value="visitas"><UserCheck className="w-4 h-4 mr-2" /> Visitas</TabsTrigger>
+                <TabsList className="flex w-full justify-start h-auto mb-8 bg-white p-1 border overflow-x-auto">
+                    <TabsTrigger value="encontro" className="flex-shrink-0"><Calendar className="w-4 h-4 mr-2" /> Encontros</TabsTrigger>
+                    <TabsTrigger value="reencontro" className="flex-shrink-0"><Calendar className="w-4 h-4 mr-2" /> Reencontro</TabsTrigger>
+                    <TabsTrigger value="sejalivre" className="flex-shrink-0"><Calendar className="w-4 h-4 mr-2" /> Seja Livre</TabsTrigger>
+                    <TabsTrigger value="escola" className="flex-shrink-0"><BookOpen className="w-4 h-4 mr-2" /> Escola Profeta</TabsTrigger>
+                    <TabsTrigger value="casas" className="flex-shrink-0"><Home className="w-4 h-4 mr-2" /> Casas de Paz</TabsTrigger>
+                    <TabsTrigger value="visitas" className="flex-shrink-0"><UserCheck className="w-4 h-4 mr-2" /> Visitas</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="encontro">
