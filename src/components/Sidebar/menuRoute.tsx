@@ -108,12 +108,17 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
           icon: University,
           link: `${base}/secretary/treinamento-lideres`,
         },
+        {
+          label: "Relatórios",
+          icon: ChartColumn,
+          link: `${base}/secretary/relatorios/tmac`,
+        },
       ],
     },
     {
       label: "Boas Vindas",
       icon: UserPlus,
-      roles: [ROLES.SECRETARIA, ROLES.BOAS_VINDAS, ROLES.PASTOR, ROLES.LIDER,ROLES.SUPERVISOR],
+      roles: [ROLES.SECRETARIA, ROLES.BOAS_VINDAS, ROLES.PASTOR, ROLES.LIDER, ROLES.SUPERVISOR],
       children: [
         {
           label: "Visitantes",
