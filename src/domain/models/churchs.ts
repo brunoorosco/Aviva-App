@@ -2,11 +2,13 @@ import { ObjectId } from "mongodb";
 import { AddressModel } from "./address";
 import { CellsModel } from "./cells";
 import { TMinisterialLevel } from "./ministerial";
+import { TApresentacao } from "./apresentacao";
 
 export type ChurchModel = {
   _id: ObjectId;
   name: string;
   consagracao: ConsagracaoHistory[];
+  apresentacao: TApresentacao[];
   cells: CellsModel[];
 } & AddressModel;
 

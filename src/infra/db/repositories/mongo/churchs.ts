@@ -34,7 +34,7 @@ export class ChurChMongoRepository {
       throw error
     }
   }
-   // Salvar ou atualizar o organograma (flow) dentro da igreja
+  // Salvar ou atualizar o organograma (flow) dentro da igreja
   async saveFlow(churchId: string, flowData: any): Promise<any> {
     const collection = await MongoHelper.getCollection(this.collectionName)
     const result = await collection.updateOne(
@@ -53,5 +53,50 @@ export class ChurChMongoRepository {
       { projection: { organograma: 1 } }
     )
     return church?.organograma || null
+  }
+  async addApresentacao(churchId: string, apresentacao: any): Promise<any> {
+    const collection = await MongoHelper.getCollection(this.collectionName)
+    const result = await collection.updateOne(
+      { _id: new ObjectId(churchId) },
+      { $push: { apresentacao: { _id: new ObjectId(), ...apresentacao } } }
+    )
+    return result
+  }
+  async getApresentacoes(churchId: string): Promise<any[]> {
+    const collection = await MongoHelper.getCollection(this.collectionName)
+    const church = await collection.findOne(
+      { _id: new ObjectId(churchId) },
+      { projection: { apresentacao: { $sortArray: { input: '$apresentacao', sortBy: { dataApresentacao: -1 } } } } }
+    )
+    return church?.apresentacao || []
+  }
+
+  async getApresentacaoById(churchId: string, apresentacaoId: string): Promise<any> {
+    const collection = await MongoHelper.getCollection(this.collectionName)
+    const church = await collection.findOne(
+      { _id: new ObjectId(churchId), 'apresentacao._id': new ObjectId(apresentacaoId) },
+      { projection: { 'apresentacao.$': 1 } }
+    )
+    return church?.apresentacao?.[0] || null
+  }
+
+  async updateApresentacao(churchId: string, apresentacao: any): Promise<any> {
+    const collection = await MongoHelper.getCollection(this.collectionName)
+    const { _id, ...dataToUpdate } = apresentacao
+
+    // Construct dynamic set object
+    const setQuery = Object.keys(dataToUpdate).reduce((acc: any, key) => {
+      acc[`apresentacao.$.${key}`] = dataToUpdate[key];
+      return acc;
+    }, {});
+
+    const result = await collection.updateOne(
+      {
+        _id: new ObjectId(churchId),
+        'apresentacao._id': new ObjectId(_id)
+      },
+      { $set: setQuery }
+    )
+    return result
   }
 }

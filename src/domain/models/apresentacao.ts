@@ -1,23 +1,31 @@
-export type TAlianca = {
+
+type TBaseApresentacao = {
   _id: string;
+  rede: string;
+  dataApresentacao: string;
+  horario: 'manha' | 'noite';
+};
+
+export type TAlianca = TBaseApresentacao & {
+  tipo: "alianca";
   nomeHomem: string;
   nomeMulher: string;
-  rede: string;
-  dataApresentacao: string;
 };
 
-export type TNovoMembro = {
-  _id: string;
+export type TNovoMembro = TBaseApresentacao & {
+  tipo: "novoMembro";
   nome: string;
-  rede: string;
-  dataApresentacao: string;
+  igreja_anterior?: string;
 };
 
-export type TCrianca = {
-  _id: string;
+export type TCrianca = TBaseApresentacao & {
+  tipo: "crianca";
   nomeCrianca: string;
   nomePai: string;
   nomeMae: string;
-  rede: string;
-  dataApresentacao: string;
 };
+
+export type TApresentacao =
+  | TAlianca
+  | TNovoMembro
+  | TCrianca;
