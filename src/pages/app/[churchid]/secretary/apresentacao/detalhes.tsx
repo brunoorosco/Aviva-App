@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -10,11 +10,13 @@ import { Plus, Edit, Loader2, ArrowLeft, Calendar, User, Printer } from 'lucide-
 import { Card, CardContent } from '@/components/ui/card';
 import { TApresentacao } from '@/domain/models/apresentacao';
 import { Badge } from '@/components/ui/badge';
+import { useReactToPrint } from 'react-to-print';
 
 export default function DetalhesApresentacao() {
     const { data: session } = useSession();
     const router = useRouter();
     const churchId = session?.user?.churchId;
+    const printRef = useRef<HTMLDivElement>(null);
 
     const { date } = router.query;
 
@@ -58,9 +60,10 @@ export default function DetalhesApresentacao() {
         return rede;
     };
 
-    const handlePrint = () => {
-        window.print();
-    };
+    const handlePrint = useReactToPrint({
+        contentRef: printRef,
+        documentTitle: `Apresentacoes_${date}`,
+    });
 
     if (isLoading) {
         return (
@@ -76,152 +79,117 @@ export default function DetalhesApresentacao() {
         <>
             {/* Print-only styles */}
             <style jsx global>{`
+                @media screen {
+                    .print-content { display: none; }
+                }
                 @media print {
                     .no-print { display: none !important; }
-                    .print-only { display: block !important; }
+                    .print-content { display: block !important; }
                     body { background: white !important; }
                     
                     /* Hide all navigation and layout elements */
                     header, nav, aside, footer { display: none !important; }
                     [role="navigation"], [role="banner"], [role="complementary"] { display: none !important; }
                     .sidebar, .navbar, .menu, .nav, .header { display: none !important; }
-                    
-                    .print-header { 
-                        margin-bottom: 2rem;
-                        border-bottom: 2px solid #000;
-                        padding-bottom: 1rem;
-                        text-align: center;
-                    }
-                    .print-logo {
-                        max-width: 100px;
-                        max-height: 75px;
-                        margin: 0 auto 1rem;
-                        display: block;
-                    }
-                    .print-block {
-                        margin-bottom: 1.5rem;
-                        page-break-inside: avoid;
-                    }
-                    .print-section-title {
-                        font-size: 1.25rem;
-                        font-weight: bold;
-                        margin-bottom: 1rem;
-                        border-bottom: 1px solid #666;
-                        padding-bottom: 0.5rem;
-                    }
-                    .print-type-group {
-                        margin-bottom: 1.5rem;
-                    }
-                    .print-type-title {
-                        font-size: 1rem;
-                        font-weight: 600;
-                        margin-bottom: 0.4rem;
-                        text-transform: uppercase;
-                    }
-                    .print-item {
-                        padding: 0.5rem 0;
-                        border-bottom: 1px dashed #ccc;
-                    }
-                }
-                .print-only {
-                    display: none;
                 }
             `}</style>
 
-            {/* Print-only content */}
-            <div className="print-only p-8">
-                <div className="print-header">
-                    <img src="/logo-preto.png" alt="Logo" className="print-logo" />
-                    <h1 className="text-xl font-bold">APRESENTAÇÕES</h1>
-                    <p className="text-normal">{dateFormatted}</p>
+            {/* Print content - will be captured by react-to-print */}
+            <div ref={printRef} className="print-content">
+                <div style={{ padding: '2rem', backgroundColor: 'white' }}>
+                    <div style={{ marginBottom: '2rem', borderBottom: '2px solid #000', paddingBottom: '1rem', textAlign: 'center' }}>
+                        <img src="/logo-preto.png" alt="Logo" style={{ maxWidth: '100px', maxHeight: '75px', margin: '0 auto 1rem', display: 'block' }} />
+                        <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>APRESENTAÇÕES</h1>
+                        <p style={{ fontSize: '1rem' }}>{dateFormatted}</p>
+                    </div>
+
+                    {/* Morning Block */}
+                    {printData.manha.length > 0 && (
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', borderBottom: '1px solid #666', paddingBottom: '0.5rem' }}>MANHÃ</h3>
+
+                            {/* New Members */}
+                            {printData.manha.filter(i => i.tipo === 'novoMembro').length > 0 && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Novos Membros</h4>
+                                    {printData.manha.filter(i => i.tipo === 'novoMembro').map((item, idx) => (
+                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                            • {item.nome} - {getCleanRedeName(item.rede)}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Children */}
+                            {printData.manha.filter(i => i.tipo === 'crianca').length > 0 && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Crianças</h4>
+                                    {printData.manha.filter(i => i.tipo === 'crianca').map((item, idx) => (
+                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                            • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {getCleanRedeName(item.rede)}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Covenants */}
+                            {printData.manha.filter(i => i.tipo === 'alianca').length > 0 && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Alianças</h4>
+                                    {printData.manha.filter(i => i.tipo === 'alianca').map((item, idx) => (
+                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                            • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Night Block */}
+                    {printData.noite.length > 0 && (
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', borderBottom: '1px solid #666', paddingBottom: '0.5rem' }}>NOITE</h3>
+
+                            {/* New Members */}
+                            {printData.noite.filter(i => i.tipo === 'novoMembro').length > 0 && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Novos Membros</h4>
+                                    {printData.noite.filter(i => i.tipo === 'novoMembro').map((item, idx) => (
+                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                            • {item.nome} - {getCleanRedeName(item.rede)}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Children */}
+                            {printData.noite.filter(i => i.tipo === 'crianca').length > 0 && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Crianças</h4>
+                                    {printData.noite.filter(i => i.tipo === 'crianca').map((item, idx) => (
+                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                            • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {getCleanRedeName(item.rede)}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Covenants */}
+                            {printData.noite.filter(i => i.tipo === 'alianca').length > 0 && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Alianças</h4>
+                                    {printData.noite.filter(i => i.tipo === 'alianca').map((item, idx) => (
+                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                            • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
-
-                {/* Morning Block */}
-                {printData.manha.length > 0 && (
-                    <div className="print-block">
-                        <h3 className="print-section-title">MANHÃ</h3>
-
-                        {/* New Members */}
-                        {printData.manha.filter(i => i.tipo === 'novoMembro').length > 0 && (
-                            <div className="print-type-group">
-                                <h4 className="print-type-title">Novos Membros</h4>
-                                {printData.manha.filter(i => i.tipo === 'novoMembro').map((item, idx) => (
-                                    <div key={idx} className="print-item">
-                                        • {item.nome} - {getCleanRedeName(item.rede)}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Children */}
-                        {printData.manha.filter(i => i.tipo === 'crianca').length > 0 && (
-                            <div className="print-type-group">
-                                <h4 className="print-type-title">Crianças</h4>
-                                {printData.manha.filter(i => i.tipo === 'crianca').map((item, idx) => (
-                                    <div key={idx} className="print-item">
-                                        • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {getCleanRedeName(item.rede)}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Covenants */}
-                        {printData.manha.filter(i => i.tipo === 'alianca').length > 0 && (
-                            <div className="print-type-group">
-                                <h4 className="print-type-title">Alianças</h4>
-                                {printData.manha.filter(i => i.tipo === 'alianca').map((item, idx) => (
-                                    <div key={idx} className="print-item">
-                                        • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* Night Block */}
-                {printData.noite.length > 0 && (
-                    <div className="print-block">
-                        <h3 className="print-section-title">NOITE</h3>
-
-                        {/* New Members */}
-                        {printData.noite.filter(i => i.tipo === 'novoMembro').length > 0 && (
-                            <div className="print-type-group">
-                                <h4 className="print-type-title">Novos Membros</h4>
-                                {printData.noite.filter(i => i.tipo === 'novoMembro').map((item, idx) => (
-                                    <div key={idx} className="print-item">
-                                        • {item.nome} - {getCleanRedeName(item.rede)}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Children */}
-                        {printData.noite.filter(i => i.tipo === 'crianca').length > 0 && (
-                            <div className="print-type-group">
-                                <h4 className="print-type-title">Crianças</h4>
-                                {printData.noite.filter(i => i.tipo === 'crianca').map((item, idx) => (
-                                    <div key={idx} className="print-item">
-                                        • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {getCleanRedeName(item.rede)}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Covenants */}
-                        {printData.noite.filter(i => i.tipo === 'alianca').length > 0 && (
-                            <div className="print-type-group">
-                                <h4 className="print-type-title">Alianças</h4>
-                                {printData.noite.filter(i => i.tipo === 'alianca').map((item, idx) => (
-                                    <div key={idx} className="print-item">
-                                        • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                )}
-            </div >
+            </div>
 
             {/* Screen view */}
             < div className="min-h-screen bg-slate-50 p-4 md:p-8 no-print" >
