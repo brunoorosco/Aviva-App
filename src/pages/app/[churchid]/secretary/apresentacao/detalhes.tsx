@@ -239,7 +239,7 @@ export default function DetalhesApresentacao() {
                                                 {item.tipo === 'novoMembro' ? 'Novo Membro' : item.tipo}
                                             </Badge>
                                             <span className="text-sm text-slate-400">|</span>
-                                            <span className="text-sm text-slate-500 font-medium">{item.rede || 'nome da rede'}</span>
+                                            <span className="text-sm text-slate-500 font-medium">{item.rede.split('-')[1] || 'nome da rede'}</span>
                                             <span className="text-sm text-slate-400">|</span>
                                             <span className="text-sm text-slate-500 font-medium">{item.horario}</span>
                                         </div>
