@@ -48,6 +48,16 @@ export default function DetalhesApresentacao() {
         };
     }, [filteredList]);
 
+    // Helper to extract clean network name from "id-nomeRede" format
+    const getCleanRedeName = (rede: string) => {
+        if (!rede) return '';
+        // If format is "id-nomeRede", split and get the name part
+        if (rede.includes('-')) {
+            return rede.split('-').slice(1).join('-');
+        }
+        return rede;
+    };
+
     const handlePrint = () => {
         window.print();
     };
@@ -70,13 +80,26 @@ export default function DetalhesApresentacao() {
                     .no-print { display: none !important; }
                     .print-only { display: block !important; }
                     body { background: white !important; }
+                    
+                    /* Hide all navigation and layout elements */
+                    header, nav, aside, footer { display: none !important; }
+                    [role="navigation"], [role="banner"], [role="complementary"] { display: none !important; }
+                    .sidebar, .navbar, .menu, .nav, .header { display: none !important; }
+                    
                     .print-header { 
                         margin-bottom: 2rem;
                         border-bottom: 2px solid #000;
                         padding-bottom: 1rem;
+                        text-align: center;
+                    }
+                    .print-logo {
+                        max-width: 100px;
+                        max-height: 75px;
+                        margin: 0 auto 1rem;
+                        display: block;
                     }
                     .print-block {
-                        margin-bottom: 2rem;
+                        margin-bottom: 1.5rem;
                         page-break-inside: avoid;
                     }
                     .print-section-title {
@@ -92,7 +115,7 @@ export default function DetalhesApresentacao() {
                     .print-type-title {
                         font-size: 1rem;
                         font-weight: 600;
-                        margin-bottom: 0.5rem;
+                        margin-bottom: 0.4rem;
                         text-transform: uppercase;
                     }
                     .print-item {
@@ -108,24 +131,23 @@ export default function DetalhesApresentacao() {
             {/* Print-only content */}
             <div className="print-only p-8">
                 <div className="print-header">
-                    <h1 className="text-2xl font-bold">APRESENTAÇÕES</h1>
-                    <p className="text-lg">{dateFormatted}</p>
-                    <p className="text-sm text-gray-600">Igreja</p>
+                    <img src="/logo-preto.png" alt="Logo" className="print-logo" />
+                    <h1 className="text-xl font-bold">APRESENTAÇÕES</h1>
+                    <p className="text-normal">{dateFormatted}</p>
                 </div>
 
                 {/* Morning Block */}
                 {printData.manha.length > 0 && (
                     <div className="print-block">
-                        <h2 className="print-section-title">MANHÃ</h2>
+                        <h3 className="print-section-title">MANHÃ</h3>
 
                         {/* New Members */}
                         {printData.manha.filter(i => i.tipo === 'novoMembro').length > 0 && (
                             <div className="print-type-group">
-                                <h3 className="print-type-title">Novos Membros</h3>
+                                <h4 className="print-type-title">Novos Membros</h4>
                                 {printData.manha.filter(i => i.tipo === 'novoMembro').map((item, idx) => (
                                     <div key={idx} className="print-item">
-                                        • {item.nome} - {item.rede}
-                                        {item.igreja_anterior && ` (De: ${item.igreja_anterior})`}
+                                        • {item.nome} - {getCleanRedeName(item.rede)}
                                     </div>
                                 ))}
                             </div>
@@ -134,10 +156,10 @@ export default function DetalhesApresentacao() {
                         {/* Children */}
                         {printData.manha.filter(i => i.tipo === 'crianca').length > 0 && (
                             <div className="print-type-group">
-                                <h3 className="print-type-title">Crianças</h3>
+                                <h4 className="print-type-title">Crianças</h4>
                                 {printData.manha.filter(i => i.tipo === 'crianca').map((item, idx) => (
                                     <div key={idx} className="print-item">
-                                        • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {item.rede}
+                                        • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {getCleanRedeName(item.rede)}
                                     </div>
                                 ))}
                             </div>
@@ -146,10 +168,10 @@ export default function DetalhesApresentacao() {
                         {/* Covenants */}
                         {printData.manha.filter(i => i.tipo === 'alianca').length > 0 && (
                             <div className="print-type-group">
-                                <h3 className="print-type-title">Alianças</h3>
+                                <h4 className="print-type-title">Alianças</h4>
                                 {printData.manha.filter(i => i.tipo === 'alianca').map((item, idx) => (
                                     <div key={idx} className="print-item">
-                                        • {item.nomeHomem} & {item.nomeMulher} - {item.rede}
+                                        • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
                                     </div>
                                 ))}
                             </div>
@@ -160,16 +182,15 @@ export default function DetalhesApresentacao() {
                 {/* Night Block */}
                 {printData.noite.length > 0 && (
                     <div className="print-block">
-                        <h2 className="print-section-title">NOITE</h2>
+                        <h3 className="print-section-title">NOITE</h3>
 
                         {/* New Members */}
                         {printData.noite.filter(i => i.tipo === 'novoMembro').length > 0 && (
                             <div className="print-type-group">
-                                <h3 className="print-type-title">Novos Membros</h3>
+                                <h4 className="print-type-title">Novos Membros</h4>
                                 {printData.noite.filter(i => i.tipo === 'novoMembro').map((item, idx) => (
                                     <div key={idx} className="print-item">
-                                        • {item.nome} - {item.rede}
-                                        {item.igreja_anterior && ` (De: ${item.igreja_anterior})`}
+                                        • {item.nome} - {getCleanRedeName(item.rede)}
                                     </div>
                                 ))}
                             </div>
@@ -178,10 +199,10 @@ export default function DetalhesApresentacao() {
                         {/* Children */}
                         {printData.noite.filter(i => i.tipo === 'crianca').length > 0 && (
                             <div className="print-type-group">
-                                <h3 className="print-type-title">Crianças</h3>
+                                <h4 className="print-type-title">Crianças</h4>
                                 {printData.noite.filter(i => i.tipo === 'crianca').map((item, idx) => (
                                     <div key={idx} className="print-item">
-                                        • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {item.rede}
+                                        • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {getCleanRedeName(item.rede)}
                                     </div>
                                 ))}
                             </div>
@@ -190,20 +211,20 @@ export default function DetalhesApresentacao() {
                         {/* Covenants */}
                         {printData.noite.filter(i => i.tipo === 'alianca').length > 0 && (
                             <div className="print-type-group">
-                                <h3 className="print-type-title">Alianças</h3>
+                                <h4 className="print-type-title">Alianças</h4>
                                 {printData.noite.filter(i => i.tipo === 'alianca').map((item, idx) => (
                                     <div key={idx} className="print-item">
-                                        • {item.nomeHomem} & {item.nomeMulher} - {item.rede}
+                                        • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
                                     </div>
                                 ))}
                             </div>
                         )}
                     </div>
                 )}
-            </div>
+            </div >
 
             {/* Screen view */}
-            <div className="min-h-screen bg-slate-50 p-4 md:p-8 no-print">
+            < div className="min-h-screen bg-slate-50 p-4 md:p-8 no-print" >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div className="flex items-center gap-4">
                         <Link href={`/app/${churchId}/secretary/apresentacao`}>
@@ -280,7 +301,7 @@ export default function DetalhesApresentacao() {
                         ))
                     )}
                 </div>
-            </div>
+            </div >
         </>
     );
 }
