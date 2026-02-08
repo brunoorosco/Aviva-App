@@ -9,7 +9,6 @@ export function getNextMinisterialLevel(currentLevel: TMinisterialLevel): TMinis
   if (currentIndex < ministerialLevels.length - 1) {
     return ministerialLevels[currentIndex + 1];
   }
-  console.log("currentLever :>> ", currentLevel);
   return currentLevel; // Ou talvez 'BISPO' se você não quiser que progridam mais
 }
 

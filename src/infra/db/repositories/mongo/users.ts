@@ -86,7 +86,6 @@ export class UsersMongoRepository {
         collection.countDocuments({ active: false, ...filter }),
         collection.countDocuments({ active: true, ...filter }),
       ]);
-console.log(data)
       return {
         data,
         total,

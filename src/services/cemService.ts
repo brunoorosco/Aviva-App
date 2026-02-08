@@ -41,7 +41,6 @@ const getCemService = async (churchid: string) => {
 const getCemByIdService = async (churchid: string, cemId: string) => {
   const cemRepository = new CellsMongoRepository();
   const result = await cemRepository.getCellsById(churchid, cemId);
-  console.log("cemService.ts:32", result);
   return result;
 };
 

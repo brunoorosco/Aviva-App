@@ -47,7 +47,6 @@ export const createBatismoImportedService = async (
   churchId: string
 ): Promise<any> => {
   const batismoRepository = new BatismoMongoRepository()
-  console.log(data, churchId)
 
   const batizandos = data.map((p: any) => ({
     nome: p.nome,

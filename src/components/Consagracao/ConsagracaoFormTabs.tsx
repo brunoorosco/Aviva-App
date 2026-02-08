@@ -26,7 +26,6 @@ export function ConsagracaoFormTabs({ onDataChange }: any) {
 
   //@ts-ignore
   const users = data?.data?.consagracao?.[0]?.users ?? [];
-  console.log(users);
 
   useEffect(() => {
     if (onDataChange && users) {

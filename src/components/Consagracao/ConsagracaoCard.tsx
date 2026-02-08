@@ -17,7 +17,6 @@ interface ConsagracaoCardProps {
 }
 
 export function ConsagracaoCard({ consagracao }: ConsagracaoCardProps) {
-  console.log(consagracao);
   const router = useRouter();
   return (
     <Card className="w-full max-w-sm sm:max-w-md mx-auto shadow-md hover:shadow-lg transition-shadow duration-200">

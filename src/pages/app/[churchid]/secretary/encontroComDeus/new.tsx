@@ -49,7 +49,6 @@ const NovoEncontroComDeus = () => {
   const encontristas = watch('encontristas')
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data)
     if (!data.encontristas || data.encontristas.length === 0) {
       Toast.showError('Adicione pelo menos uma Casa de Paz antes de salvar!')
       return

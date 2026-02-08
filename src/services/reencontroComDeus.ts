@@ -39,7 +39,6 @@ export const createReencontroComDeusImportedService = async (
     data: new Date(),
     reencontristas,
   };
-  console.log(JSON.stringify(novoReencontro,null,2));
   return encontroRepository.create(novoReencontro);
 };
 

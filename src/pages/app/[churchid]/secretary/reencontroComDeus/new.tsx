@@ -50,7 +50,6 @@ const NovoReencontroComDeus = () => {
   const encontristas = watch("reencontristas");
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
     if (!data.reencontristas || data.reencontristas.length === 0) {
       Toast.showError("Adicione pelo menos uma Casa de Paz antes de salvar!");
       return;

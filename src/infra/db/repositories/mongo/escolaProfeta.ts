@@ -76,7 +76,6 @@ export class EscolaProfetaRepository {
         { $set: { [`alunos.$[aluno].presencas.${data.dia}`]: data.presenca } },
         { arrayFilters: [{ 'aluno._id': alunoId }] }
       )
-      console.log(result)
       return result
     } catch (error) {
       console.error('Error updating presence:', error)
