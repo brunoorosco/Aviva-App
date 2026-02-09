@@ -56,14 +56,14 @@ const NewMember = () => {
   })
 
   return (
-    <div className='flex flex-col items-center p-4 md:p-6 lg:p-8'>
+    <div className='min-h-screen flex flex-col items-center p-4 md:p-6 lg:p-8 pb-20 md:pb-8 overflow-y-auto'>
       <div className='w-full max-w-2xl text-center'>
         <h1 className='text-2xl md:text-3xl text-gray-600 dark:text-dark-primary'>
           Cadastro de Membros
         </h1>
       </div>
 
-      <form onSubmit={onSubmit} className='w-full max-w-2xl mt-6 flex flex-col gap-4'>
+      <form onSubmit={onSubmit} className='w-full max-w-2xl mt-6 flex flex-col gap-4 pb-6'>
         {/* Nome */}
         <Controller
           name='name'
@@ -169,7 +169,9 @@ const NewMember = () => {
         <SelectProfile name='profileId' control={control} errors={false} options={roles} title='Cargo Eclesiástico' />
 
         {/* Botão */}
-        <ButtonSubmit text='Salvar' type='submit' disabled={isLoading} />
+        <div className='mt-2'>
+          <ButtonSubmit text='Salvar' type='submit' disabled={isLoading} />
+        </div>
       </form>
     </div>
   )
