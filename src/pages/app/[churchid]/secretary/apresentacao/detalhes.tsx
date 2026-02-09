@@ -113,7 +113,7 @@ export default function DetalhesApresentacao() {
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Novos Membros</h4>
                                     {printData.manha.filter(i => i.tipo === 'novoMembro').map((item, idx) => (
-                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                        <div key={idx} style={{ padding: '0.3rem 0', borderBottom: '1px dashed #ccc' }}>
                                             • {item.nome} - {getCleanRedeName(item.rede)}
                                         </div>
                                     ))}
@@ -125,7 +125,7 @@ export default function DetalhesApresentacao() {
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Crianças</h4>
                                     {printData.manha.filter(i => i.tipo === 'crianca').map((item, idx) => (
-                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                        <div key={idx} style={{ padding: '0.3rem 0', borderBottom: '1px dashed #ccc' }}>
                                             • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {getCleanRedeName(item.rede)}
                                         </div>
                                     ))}
@@ -137,7 +137,7 @@ export default function DetalhesApresentacao() {
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Alianças</h4>
                                     {printData.manha.filter(i => i.tipo === 'alianca').map((item, idx) => (
-                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                        <div key={idx} style={{ padding: '0.3rem 0', borderBottom: '1px dashed #ccc' }}>
                                             • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
                                         </div>
                                     ))}
@@ -153,10 +153,10 @@ export default function DetalhesApresentacao() {
 
                             {/* New Members */}
                             {printData.noite.filter(i => i.tipo === 'novoMembro').length > 0 && (
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Novos Membros</h4>
+                                <div style={{ marginBottom: '1.0rem' }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.3rem', textTransform: 'uppercase' }}>Novos Membros</h4>
                                     {printData.noite.filter(i => i.tipo === 'novoMembro').map((item, idx) => (
-                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                        <div key={idx} style={{ padding: '0.3rem 0', borderBottom: '1px dashed #ccc' }}>
                                             • {item.nome} - {getCleanRedeName(item.rede)}
                                         </div>
                                     ))}
@@ -168,7 +168,7 @@ export default function DetalhesApresentacao() {
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Crianças</h4>
                                     {printData.noite.filter(i => i.tipo === 'crianca').map((item, idx) => (
-                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                        <div key={idx} style={{ padding: '0.3rem 0', borderBottom: '1px dashed #ccc' }}>
                                             • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {getCleanRedeName(item.rede)}
                                         </div>
                                     ))}
@@ -180,7 +180,7 @@ export default function DetalhesApresentacao() {
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Alianças</h4>
                                     {printData.noite.filter(i => i.tipo === 'alianca').map((item, idx) => (
-                                        <div key={idx} style={{ padding: '0.5rem 0', borderBottom: '1px dashed #ccc' }}>
+                                        <div key={idx} style={{ padding: '0.3rem 0', borderBottom: '1px dashed #ccc' }}>
                                             • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
                                         </div>
                                     ))}
