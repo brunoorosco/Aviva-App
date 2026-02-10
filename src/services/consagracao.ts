@@ -90,11 +90,11 @@ export const addConsagratedUsersService = async (
       console.log(`     ${user.role} → ${user.nextRole}`);
 
       try {
-        // await userRepository.addConsagracao({
-        //   id: user.id,
-        //   ministerialLevel: user.nextRole,
-        //   data: consagracaoDate, // ✅ Usa a data da consagração
-        // });
+        await userRepository.addConsagracao({
+          id: user.id,
+          ministerialLevel: user.nextRole,
+          data: consagracaoDate, // ✅ Usa a data da consagração
+        });
 
         console.log(`  ✅ ${user.name} - Sucesso`);
         resultados.sucesso.push(user.id);
@@ -123,11 +123,11 @@ export const addConsagratedUsersService = async (
 
     for (const { user } of errosParaRetry) {
       try {
-        // await userRepository.addConsagracao({
-        //   id: user.id,
-        //   ministerialLevel: user.nextRole,
-        //   data: consagracaoDate, // ✅ Usa a data da consagração
-        // });
+        await userRepository.addConsagracao({
+          id: user.id,
+          ministerialLevel: user.nextRole,
+          data: consagracaoDate, // ✅ Usa a data da consagração
+        });
 
         console.log(`  ✅ ${user.name} - Sucesso no retry`);
         resultados.sucesso.push(user.id);
