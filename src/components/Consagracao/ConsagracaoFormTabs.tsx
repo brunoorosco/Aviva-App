@@ -21,17 +21,25 @@ export function ConsagracaoFormTabs({ onDataChange }: any) {
   const { data } = useHttpGet(
     session?.user.churchId && consagrationId
       ? `/api/protected/churches/${session.user.churchId}/consagracao/${consagrationId}`
-      : null
+      : null,
   );
 
   //@ts-ignore
-  const users = data?.data?.consagracao?.[0]?.users ?? [];
+  const consagracao = data?.data?.consagracao?.[0];
+  const users = consagracao?.users ?? [];
+  const date = consagracao?.date; // Data da consagração
+  const concluedAt = consagracao?.concluedAt; // Data de conclusão
 
   useEffect(() => {
     if (onDataChange && users) {
-      onDataChange(users);
+      // ✅ Passa users, date e concluedAt para o parent
+      onDataChange({
+        users,
+        date,
+        concluedAt,
+      });
     }
-  }, [users, onDataChange]);
+  }, [users, date, concluedAt, onDataChange]);
 
   const normalize = (text: string) =>
     text

@@ -20,7 +20,7 @@ export class ConsagracaoRepository {
           projection: {
             "consagracao.$": 1,
           },
-        }
+        },
       );
       return consagracao;
     } catch (error) {
@@ -122,7 +122,7 @@ export class ConsagracaoRepository {
         $push: {
           consagracao: newConsagracao,
         },
-      }
+      },
     );
 
     return {
@@ -141,7 +141,7 @@ export class ConsagracaoRepository {
       rede: string;
       role: TMinisterialLevel;
       nextRole: TMinisterialLevel;
-    }[]
+    }[],
   ) {
     const collection = await MongoHelper.getCollection(this.collectionName);
 
@@ -157,7 +157,37 @@ export class ConsagracaoRepository {
         $set: {
           [updatePath]: users, // sobrescreve completamente a lista desse cargo
         },
-      }
+      },
     );
+  }
+  async updateConsagracaoConclusao(
+    churchId: string,
+    consagracaoId: string,
+    concluedAt = new Date(),
+  ): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+
+      const result = await collection.updateOne(
+        {
+          _id: new ObjectId(churchId),
+          "consagracao._id": new ObjectId(consagracaoId),
+        },
+        {
+          $set: {
+            "consagracao.$.concluedAt": concluedAt,
+          },
+        },
+      );
+
+      if (result.matchedCount === 0) {
+        throw new Error("Consagração não encontrada");
+      }
+
+      return result;
+    } catch (error) {
+      console.error("Error updating consagracao conclusao:", error);
+      throw error;
+    }
   }
 }

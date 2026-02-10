@@ -1,4 +1,4 @@
-import { addConsagratedService, getConsagracaoByIdService } from "@/services/consagracao";
+import { addConsagratedService, addConsagratedUsersService, getConsagracaoByIdService } from "@/services/consagracao";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -9,6 +9,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method == "PUT") {
       const consagracao = await addConsagratedService(churchId, consagracaoId, req.body);
       res.status(200).json(consagracao);
+    } else if (req.method == "POST") {
+      const users = await addConsagratedUsersService(churchId, consagracaoId, req.body);
+      res.send(users);
     } else if (req.method == "GET") {
       const casas = await getConsagracaoByIdService(churchId, consagracaoId);
       res.send(casas);

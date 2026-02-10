@@ -15,6 +15,7 @@ export type ChurchModel = {
 export type ConsagracaoHistory = {
   _id: string;
   date: Date;
+  concluedAt: Date
   totalConsagrated: number;
   rolesConsagrated: {
     count: number;

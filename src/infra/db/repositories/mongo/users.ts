@@ -229,6 +229,7 @@ export class UsersMongoRepository {
     );
     return resp;
   }
+
   async getUsersByStatus(churchId: string, cargo: TMinisterialLevel) {
     const collection = await MongoHelper.getCollection(this.collectionName);
 
@@ -268,6 +269,41 @@ export class UsersMongoRepository {
         },
       },
       { returnDocument: "after" },
+    );
+
+    if (!result) {
+      throw new Error("Erro ao atualizar usuário");
+    }
+
+    //@ts-ignore
+    return result as User;
+  }
+
+  async addConsagracao({
+    id,
+    ministerialLevel,
+    data,
+  }: {
+    id: string;
+    ministerialLevel: string;
+    data: string;
+  }) {
+    const collection = await MongoHelper.getCollection(this.collectionName);
+
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $push: {
+          consagracao: {
+            ministerialLevel,
+            data,
+          },
+        } as any, // ou use UpdateFilter<UserDocument>
+        $set: {
+          role: ministerialLevel,
+          updatedAt: new Date(),
+        } as any,
+      },
     );
 
     if (!result) {
