@@ -16,7 +16,7 @@ export function EditNodeModal({ open, onClose, onSave, initialData }: EditNodeMo
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-      <div className="bg-white rounded p-4 w-96">
+      <div className="bg-card text-card-foreground rounded p-4 w-96">
         <h2 className="text-lg font-semibold mb-2">Editar Nó</h2>
 
         <label className="block mb-2">

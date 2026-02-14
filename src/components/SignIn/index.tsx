@@ -6,6 +6,7 @@ import ButtonSubmit from "../ButtonSubmit";
 import Image from "next/image";
 import { Input } from "../ui/input";
 import { Eye, EyeOff } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
 
 type FormValues = {
   email: string;
@@ -20,6 +21,7 @@ const SignIn = () => {
   } = useForm<FormValues>();
   const router = useRouter();
   const { status, data: session } = useSession();
+  const { isDark } = useTheme();
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -51,7 +53,7 @@ const SignIn = () => {
     <div className="flex items-center justify-center min-h-screen px-4 bg-[#393E46]">
       <div className="w-full max-w-md bg-[#434a53] rounded-2xl p-6 shadow-xl">
         <div className="flex flex-col items-center">
-          <Image src="/logo-preto.png" alt="Logo" width={260} height={200} className="mb-12" />
+          <Image src={isDark ? "/logo-branco.png" : "/logo-preto.png"} alt="Logo" width={260} height={200} className="mb-12" />
 
           {/* Login Social Google */}
           {/* <button

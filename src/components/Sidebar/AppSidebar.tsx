@@ -12,7 +12,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { ChevronRight, ChevronUp, User2 } from "lucide-react";
+import { ChevronRight, ChevronUp, User2, Moon, Sun } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { BiLogOut } from "react-icons/bi";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
@@ -20,15 +20,19 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { MenuItem, menuItems } from "./menuRoute";
 import { useRouter } from "next/navigation";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useTheme } from "@/hooks/useTheme";
+
 
 export function AppSidebar() {
   const { data: session } = useSession();
   const { hasPermission, isAdmin } = usePermissions();
+  const { theme, toggleTheme, isDark } = useTheme();
   const router = useRouter();
   const churchId = session?.user.churchId as string;
   const cemId = session?.user.cem?._id as string;
@@ -54,7 +58,12 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center">
-          <img src="/logo-preto.png" width="50%" className="mx-auto" />
+          <img 
+            src={isDark ? "/logo-laranja.png" : "/logo-preto.png"} 
+            width="50%" 
+            className="mx-auto transition-opacity duration-200" 
+            alt="Logo"
+          />
         </div>
       </SidebarHeader>
 
@@ -121,10 +130,27 @@ export function AppSidebar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
                 <DropdownMenuItem onClick={() => router.push(`/app/${churchId}/users/settings`)}>
+                  <User2 className="mr-2 h-4 w-4" />
                   <span>Conta</span>
                 </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={toggleTheme}>
+                  {isDark ? (
+                    <>
+                      <Sun className="mr-2 h-4 w-4" />
+                      <span>Tema Claro</span>
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="mr-2 h-4 w-4" />
+                      <span>Tema Escuro</span>
+                    </>
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()}>
-                  <BiLogOut /> Sair
+                  <BiLogOut className="mr-2 h-4 w-4" /> 
+                  <span>Sair</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

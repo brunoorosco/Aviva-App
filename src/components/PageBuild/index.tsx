@@ -98,7 +98,7 @@ export default function ComingSoonPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="w-full max-w-md"
           >
-            <div className="bg-white border rounded-2xl shadow-sm p-6">
+            <div className="bg-card text-card-foreground border rounded-2xl shadow-sm p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900">Progresso do projeto</h3>

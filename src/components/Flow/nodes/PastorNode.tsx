@@ -8,7 +8,7 @@ export function PastorNode({ id, data }: any) {
       onDoubleClick={() => data.onEdit(id)} // <-- dispara modal
       className="rounded bg-lime-400 px-4 py-2 shadow cursor-pointer"
     >
-      <span className="font-bold text-black">{data.label}</span>
+      <span className="font-bold text-foreground">{data.label}</span>
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
     </div>

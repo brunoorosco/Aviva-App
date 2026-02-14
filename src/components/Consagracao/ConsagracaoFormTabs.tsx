@@ -59,7 +59,7 @@ export function ConsagracaoFormTabs({ onDataChange }: any) {
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-sm">
+    <div className="p-4 bg-card text-card-foreground rounded-lg shadow-sm">
       <Tabs defaultValue={ministerialLevels[0]} className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-4 md:grid-cols-3 lg:grid-cols-6">
           {ministerialLevels.map((level) => (

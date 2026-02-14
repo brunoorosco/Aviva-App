@@ -2,10 +2,10 @@ import { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useHttpGet } from '@/hooks/api'
 import Pagination from '@/components/Pagination'
-import EditMemberModal from '@/components/Member/EditMemberModal'
 import EncontroComDeusHeader from '@/components/encontroComDeus/EncontroComDeusHeader'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
 import EncontroComDeusItem from '@/components/encontroComDeus/EncontroComDeusItem'
+import { EditEncontroModal } from '@/components/encontroComDeus/EditEncontroModal'
 
 const EncontroComDeusList = () => {
   const router = useRouter()
@@ -21,7 +21,7 @@ const EncontroComDeusList = () => {
 
   if (!isReady || !churchid) return null
 
-  const { data: encontros, mutate: refreshMembers } = useHttpGet<{
+  const { data: encontros, mutate: refreshEncontros } = useHttpGet<{
     data: TEncontroComDeus[]
     total: number
     page: number
@@ -38,13 +38,11 @@ const EncontroComDeusList = () => {
   return (
     <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg dark:text-dark-primary'>
       {showEditModal && selectedEncontro && (
-        <EditMemberModal
-          member={selectedEncontro}
-          onClose={() => {
-            setShowEditModal(false)
-            setSelectedEncontro(null)
-          }}
-          onUpdated={refreshMembers}
+        <EditEncontroModal 
+          encontro={selectedEncontro}
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          onSuccess={() => refreshEncontros()} // Atualiza a lista após editar
         />
       )}
 

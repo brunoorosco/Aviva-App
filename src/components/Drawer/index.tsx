@@ -5,6 +5,7 @@ import { BiLogOut } from 'react-icons/bi'
 import { IoCloseSharp } from 'react-icons/io5'
 import LinkMenu from '../Sidebar/LinkMenu'
 import { menuItems } from '../Sidebar/menuRoute'
+import { useTheme } from '@/hooks/useTheme'
 
 export interface IDrawer {
   toggleSidebar: () => void
@@ -14,6 +15,7 @@ export interface IDrawer {
 
 const Drawer: React.FC<IDrawer> = ({ toggleSidebar, isOpen, closeSidebar }) => {
   const { data: session } = useSession()
+  const { isDark } = useTheme()
   const churchId = session?.user.churchId as string
   const cemId = session?.user.cem._id as string
   const menu = menuItems({ churchId, cemId })
@@ -35,9 +37,10 @@ const Drawer: React.FC<IDrawer> = ({ toggleSidebar, isOpen, closeSidebar }) => {
           <div className='flex items-center gap-4 pl-1'>
             <div className='block'>
               <img
-                src='/logo-preto.png'
+                src={isDark ? '/logo-branco.png' : '/logo-preto.png'}
                 width='70%'
                 className='mx-auto my-16'
+                alt='Logo'
               />
             </div>
           </div>

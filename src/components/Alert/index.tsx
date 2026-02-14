@@ -36,7 +36,7 @@ const Alert: FC<Props> = ({ type = 'Notification', title, children }) => {
     }
     case 'Info': {
       return (
-        <div className='flex w-full mx-auto mb-3 overflow-hidden bg-white rounded shadow-md ring-1 ring-blue-300 dark:bg-gray-800'>
+        <div className='flex w-full mx-auto mb-3 overflow-hidden bg-card text-card-foreground rounded shadow-md ring-1 ring-blue-300'>
           <div className='flex items-center justify-center w-12 bg-blue-500'>
             <svg
               className='text-white fill-current w-7 h-7'
@@ -63,7 +63,7 @@ const Alert: FC<Props> = ({ type = 'Notification', title, children }) => {
     }
     case 'Success': {
       return (
-        <div className='flex w-full mx-auto mb-3 overflow-hidden bg-white rounded shadow-md ring-1 ring-emerald-300 dark:bg-gray-800'>
+        <div className='flex w-full mx-auto mb-3 overflow-hidden bg-card text-card-foreground rounded shadow-md ring-1 ring-emerald-300'>
           <div className='flex items-center justify-center w-12 bg-emerald-500'>
             <svg
               className='text-white fill-current w-7 h-7'
@@ -90,7 +90,7 @@ const Alert: FC<Props> = ({ type = 'Notification', title, children }) => {
     }
     case 'Warning': {
       return (
-        <div className='flex w-full mx-auto mb-3 overflow-hidden bg-white rounded shadow-md ring-1 ring-yellow-300 dark:bg-gray-800'>
+        <div className='flex w-full mx-auto mb-3 overflow-hidden bg-card text-card-foreground rounded shadow-md ring-1 ring-yellow-300'>
           <div className='flex items-center justify-center w-12 bg-yellow-400'>
             <svg
               className='text-white fill-current w-7 h-7'
@@ -117,8 +117,8 @@ const Alert: FC<Props> = ({ type = 'Notification', title, children }) => {
     }
     default: {
       return (
-        <div className='flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded shadow-md ring-1 ring-gray-300 dark:bg-gray-800'>
-          <div className='w-2 bg-gray-800 dark:bg-gray-900'></div>
+        <div className='flex w-full max-w-sm mx-auto overflow-hidden bg-card text-card-foreground rounded shadow-md ring-1 ring-gray-300'>
+          <div className='w-2 bg-muted'></div>
           <div className='px-2 py-3 -mx-3'>
             <div className='mx-3'>
               {title && (

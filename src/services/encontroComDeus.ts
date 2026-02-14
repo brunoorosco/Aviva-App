@@ -1,65 +1,77 @@
-import { TPeople } from '@/domain/models/encontroComDeus'
-import { ChurChMongoRepository } from '../infra/db/repositories/mongo/churchs'
-import { EncontroComDeusRepository } from '../infra/db/repositories/mongo/encontroComDeus'
+import { TPeople } from "@/domain/models/encontroComDeus";
+import { ChurChMongoRepository } from "../infra/db/repositories/mongo/churchs";
+import { EncontroComDeusRepository } from "../infra/db/repositories/mongo/encontroComDeus";
 
 export const getEncontroComDeusService = async (churchId: string) => {
-  const encontroRepository = new EncontroComDeusRepository()
-  const result = await encontroRepository.getEncontroComDeus(churchId)
+  const encontroRepository = new EncontroComDeusRepository();
+  const result = await encontroRepository.getEncontroComDeus(churchId);
 
-  return result
-}
-export const getEncontroComDeusByIdService = async (
-  churchId: string,
-  encontroId: string
-) => {
-  const encontroRepository = new EncontroComDeusRepository()
-  const result = await encontroRepository.getEncontroComDeusById(encontroId)
+  return result;
+};
+export const getEncontroComDeusByIdService = async (churchId: string, encontroId: string) => {
+  const encontroRepository = new EncontroComDeusRepository();
+  const result = await encontroRepository.getEncontroComDeusById(encontroId);
 
-  return result
-}
+  return result;
+};
 
 export const createEncontroComDeusService = async (data: any): Promise<any> => {
-  const encontroRepository = new EncontroComDeusRepository()
-  const churchRepository = new ChurChMongoRepository()
-  const churchs = await churchRepository.getChurch()
-  const dataNormalizada = normalizarEncontristasPorIgreja(
-    data,
-    'Avivamento Sede'
-  )
+  const encontroRepository = new EncontroComDeusRepository();
+  const churchRepository = new ChurChMongoRepository();
+  const churchs = await churchRepository.getChurch();
+
+  console.log(data);
+  const dataNormalizada = normalizarEncontristasPorIgreja(data.encontristas, "Avivamento Sede");
+  const novoEncontro = {
+    data: new Date(data.data),
+    encontristas: data.encontristas,
+    numero: data.numero,
+  };
+  const saved = await encontroRepository.create(novoEncontro);
+  return saved;
+};
+
+export const importEncontroComDeusService = async (data: any): Promise<any> => {
+  const encontroRepository = new EncontroComDeusRepository();
+  const churchRepository = new ChurChMongoRepository();
+  const churchs = await churchRepository.getChurch();
+
+  console.log(data);
+  const dataNormalizada = normalizarEncontristasPorIgreja(data, "Avivamento Sede");
   const novoEncontro = {
     data: new Date(),
-    encontristas: dataNormalizada
-  }
-  const saved = await encontroRepository.create(novoEncontro)
-  return saved
-}
+    encontristas: dataNormalizada,
+  };
+  const saved = await encontroRepository.create(novoEncontro);
+  return saved;
+};
 
 function limparObjeto<T extends Record<string, any>>(obj: T): Partial<T> {
-  const novo: Partial<T> = {}
+  const novo: Partial<T> = {};
   for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
-    if (value !== undefined && value !== '' && value !== null) {
-      novo[key] = value
+    if (value !== undefined && value !== "" && value !== null) {
+      novo[key] = value;
     }
   }
-  return novo
+  return novo;
 }
 
 function normalizarEncontristasPorIgreja(
   entradas: (string | TPeople)[],
-  nomeDaIgreja: string
+  nomeDaIgreja: string,
 ): TPeople[] {
   return entradas.map((entrada) => {
-    if (typeof entrada === 'string') {
-      const contemIgreja = entrada.toLowerCase().includes('igreja')
+    if (typeof entrada === "string") {
+      const contemIgreja = entrada.toLowerCase().includes("igreja");
 
       return {
-        nome: '',
+        nome: "",
         igreja: contemIgreja ? entrada : nomeDaIgreja,
-        ...(contemIgreja ? {} : { rede: entrada })
-      }
+        ...(contemIgreja ? {} : { rede: entrada }),
+      };
     }
 
-    const contemIgreja = entrada.rede?.toLowerCase().includes('igreja')
+    const contemIgreja = entrada.rede?.toLowerCase().includes("igreja");
 
     const obj = {
       nome: entrada.nome,
@@ -68,9 +80,9 @@ function normalizarEncontristasPorIgreja(
       telefone: entrada.telefone,
       endereco: entrada.endereco ? `${entrada.endereco} ${entrada.bairro}`.trim() : null,
       igreja: contemIgreja ? entrada.rede! : nomeDaIgreja,
-      ...(contemIgreja ? {} : { rede: entrada.rede })
-    }
+      ...(contemIgreja ? {} : { rede: entrada.rede }),
+    };
 
-    return limparObjeto(obj) as TPeople
-  })
+    return limparObjeto(obj) as TPeople;
+  });
 }

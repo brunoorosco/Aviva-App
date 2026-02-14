@@ -24,7 +24,7 @@ const BatismoItem = ({ batismos, onEdit, basePath }: Props) => {
 
   return (
     <Link href={`${basePath}/${batismos._id}`}>
-      <li className='bg-white dark:bg-gray-800 px-3 py-2 rounded-md shadow mb-1 flex gap-3 container'>
+      <li className='bg-card text-card-foreground px-3 py-2 rounded-md shadow mb-1 flex gap-3 container'>
         <div className='flex items-start gap-4 w-1/3'>
           {/* Grid de informações */}
           <div className='grid grid-cols-4 gap-x-2 gap-y-1 flex-1'>
