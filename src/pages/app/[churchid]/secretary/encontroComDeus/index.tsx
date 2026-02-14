@@ -2,11 +2,10 @@ import { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useHttpGet } from '@/hooks/api'
 import Pagination from '@/components/Pagination'
-import EditMemberModal from '@/components/Member/EditMemberModal'
 import EncontroComDeusHeader from '@/components/encontroComDeus/EncontroComDeusHeader'
 import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
 import EncontroComDeusItem from '@/components/encontroComDeus/EncontroComDeusItem'
-import { EditEncontroModal } from '@/components/encontroComDeus/EditEncontroModa'
+import { EditEncontroModal } from '@/components/encontroComDeus/EditEncontroModal'
 
 const EncontroComDeusList = () => {
   const router = useRouter()

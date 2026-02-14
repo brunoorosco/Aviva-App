@@ -117,20 +117,20 @@ export default function CellDashboard({ members }: Props) {
 
         {/* Cards de resumo geral */}
         <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3 md:gap-6 md:mb-8">
-          <div className="p-4 bg-white rounded-lg shadow md:p-6">
-            <h3 className="mb-2 text-sm font-medium text-gray-500 md:text-base">
+          <div className="p-4 bg-card text-card-foreground rounded-lg shadow md:p-6">
+            <h3 className="mb-2 text-sm font-medium text-muted-foreground md:text-base">
               Total de Membros
             </h3>
             <p className="text-2xl font-bold text-blue-600 md:text-4xl">{totalChurchMembers}</p>
           </div>
 
-          <div className="p-4 bg-white rounded-lg shadow md:p-6">
-            <h3 className="mb-2 text-sm font-medium text-gray-500 md:text-base">Membros Ativos</h3>
+          <div className="p-4 bg-card text-card-foreground rounded-lg shadow md:p-6">
+            <h3 className="mb-2 text-sm font-medium text-muted-foreground md:text-base">Membros Ativos</h3>
             <p className="text-2xl font-bold text-green-600 md:text-4xl">{totalChurchActive}</p>
           </div>
 
-          <div className="p-4 bg-white rounded-lg shadow md:p-6">
-            <h3 className="mb-2 text-sm font-medium text-gray-500 md:text-base">
+          <div className="p-4 bg-card text-card-foreground rounded-lg shadow md:p-6">
+            <h3 className="mb-2 text-sm font-medium text-muted-foreground md:text-base">
               Membros Inativos
             </h3>
             <p className="text-2xl font-bold text-red-600 md:text-4xl">{totalChurchInactive}</p>
@@ -145,7 +145,7 @@ export default function CellDashboard({ members }: Props) {
           {cellsData.map((cell, cellIndex) => (
             <div
               key={cell.name}
-              className="flex flex-col h-full overflow-hidden bg-white rounded-lg shadow-md"
+              className="flex flex-col h-full overflow-hidden bg-card text-card-foreground rounded-lg shadow-md"
             >
               <div className="p-3 border-b border-gray-200 md:p-4">
                 <h3 className="text-lg font-semibold text-gray-800 md:text-xl">{cell.name}</h3>
@@ -221,7 +221,7 @@ export default function CellDashboard({ members }: Props) {
 
         {/* Mensagem quando não há células */}
         {cellsData.length === 0 && (
-          <div className="p-6 mt-8 text-center bg-white rounded-lg shadow">
+          <div className="p-6 mt-8 text-center bg-card text-card-foreground rounded-lg shadow">
             <p className="text-gray-500">Nenhuma célula encontrada</p>
           </div>
         )}

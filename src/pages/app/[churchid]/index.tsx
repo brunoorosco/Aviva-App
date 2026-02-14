@@ -22,7 +22,7 @@ const IndexApp = () => {
   return (
     <div className="flex flex-col h-screen">
       {/* Metade de cima */}
-      <div className="flex flex-col justify-center items-center h-1/2 bg-gray-50 px-4 sm:px-8">
+      <div className="flex flex-col justify-center items-center h-1/2 bg-background px-4 sm:px-8">
         {/* <div className="w-full max-w-6xl">
           <img
             src="/path-to-image.jpg"

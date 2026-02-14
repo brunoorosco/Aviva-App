@@ -32,9 +32,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
       setTelefone(encontrista.telefone || "");
       setEmail(encontrista.email || "");
       setEndereco(encontrista.endereco || "");
-      setEndereco(encontrista.endereco || "");
-      setEndereco(encontrista.endereco || "");
-      setIsento(encontrista.isento);
+      setIsento(encontrista.isento || false);
     } else {
       setName("");
       setTelefone("");

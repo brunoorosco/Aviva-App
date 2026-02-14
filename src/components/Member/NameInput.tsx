@@ -58,7 +58,7 @@ function NameInput({ control, churchId }: Props) {
 
       {/* Dropdown */}
       {showDropdown && members && (
-        <ul className='absolute z-10 bg-white border border-gray-200 w-full mt-1 rounded-lg shadow-lg max-h-48 overflow-auto'>
+        <ul className='absolute z-10 bg-popover text-popover-foreground border border-border w-full mt-1 rounded-lg shadow-lg max-h-48 overflow-auto'>
           {members?.map((member) => (
             <li
               key={member?._id}

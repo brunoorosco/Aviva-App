@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { Edit, EyeIcon, Calendar, Users } from "lucide-react";
+import { Edit, EyeIcon, Calendar, Users, FileText } from "lucide-react";
 import { TEncontroComDeus } from "@/domain/models/encontroComDeus";
+import { Button } from "../ui/button";
+import { useRouter } from "next/router";
 
 type Props = {
   encontro: TEncontroComDeus;
@@ -9,6 +11,8 @@ type Props = {
 };
 
 const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
+  const router = useRouter();
+
   const formatDate = (dateValue: any) => {
     if (!dateValue) return "Data não definida";
     const date = typeof dateValue === "string" ? new Date(dateValue) : dateValue;
@@ -20,6 +24,21 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
       month: "2-digit",
       year: "numeric",
     });
+  };
+
+  // Verifica se o encontro é futuro (data superior à data atual)
+  const isEncontroFuturo = () => {
+    if (!encontro.data) return false;
+    const dataEncontro = typeof encontro.data === "string" ? new Date(encontro.data) : encontro.data;
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0); // Zera as horas para comparar apenas a data
+    return dataEncontro >= hoje;
+  };
+
+  const handleFichaInscricao = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`${basePath}/inscricao/novo?encontroId=${encontro._id}`);
   };
 
   const reencontristasCount = encontro?.encontristas?.length ?? 0;
@@ -39,10 +58,34 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
         "
         >
           {/* Header com data */}
-          <header className="mb-3">
+          <header className="mb-3 flex justify-between items-center">
             <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <Calendar className="w-4 h-4 flex-shrink-0" />
               <time className="text-sm font-medium">{formatDate(encontro.data)}</time>
+              
+              {/* Botão de editar ao lado da data */}
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onEdit();
+                }}
+                className="
+                  w-7 h-7 
+                  bg-white dark:bg-gray-700 
+                  border border-gray-200 dark:border-gray-600
+                  rounded-full 
+                  shadow-sm hover:shadow-md
+                  flex items-center justify-center
+                  transition-all duration-200
+                  hover:bg-blue-50 dark:hover:bg-blue-900/30
+                  hover:border-blue-300 dark:hover:border-blue-600
+                  active:scale-95
+                "
+                aria-label="Editar Encontro"
+              >
+                <Edit className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400" />
+              </button>
             </div>
           </header>
 
@@ -77,43 +120,40 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
               </div>
             </div>
 
-            {/* Footer com ação */}
+            {/* Footer com ação e botão de Ficha de Inscrição */}
             <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
               <span className="text-xs text-gray-400 dark:text-gray-500">
                 Clique para visualizar detalhes
               </span>
-              <EyeIcon className="w-4 h-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              
+              <div className="flex items-center gap-2">
+                {/* Botão de Ficha de Inscrição - sempre visível para encontros futuros */}
+                {isEncontroFuturo() && (
+                  <button
+                    onClick={handleFichaInscricao}
+                    className="
+                      px-3 py-1.5
+                      bg-green-600 hover:bg-green-700
+                      text-white text-xs font-medium
+                      rounded-md shadow-sm hover:shadow-md
+                      flex items-center gap-1.5
+                      transition-all duration-200
+                      active:scale-95
+                    "
+                    aria-label="Ficha de Inscrição"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Ficha de Inscrição</span>
+                  </button>
+                )}
+                
+                <EyeIcon className="w-4 h-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              </div>
             </div>
           </div>
         </article>
       </Link>
 
-      {/* Botão de editar flutuante (opcional) */}
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onEdit();
-        }}
-        className="
-          absolute top-3 right-3
-          w-8 h-8 
-          bg-white dark:bg-gray-700 
-          border border-gray-200 dark:border-gray-600
-          rounded-full 
-          shadow-sm hover:shadow-md
-          flex items-center justify-center
-          opacity-0 group-hover:opacity-100
-          transition-all duration-200
-          hover:bg-blue-50 dark:hover:bg-blue-900/30
-          hover:border-blue-300 dark:hover:border-blue-600
-          active:scale-95
-          z-10
-        "
-        aria-label="Editar Encontro"
-      >
-        <Edit className="w-4 h-4 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400" />
-      </button>
     </div>
   );
 };

@@ -242,7 +242,7 @@ const Header = <T extends CasaDePazModel,>({
               <Button
                 variant='outline'
                 size='default'
-                className='border-2 hover:bg-gray-50 hover:text-black dark:hover:bg-gray-800 w-full sm:w-auto'
+                className='border-2 hover:bg-muted hover:text-foreground w-full sm:w-auto'
                 onClick={() => {
                   // Aqui você pode adicionar a lógica de exportação
                   console.log('Exportar dados')

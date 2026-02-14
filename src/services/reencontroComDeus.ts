@@ -91,7 +91,6 @@ function normalizarEncontristasPorIgreja(
       dataNascimento: entrada.dataNascimento,
       telefone: entrada.telefone,
       endereco,
-      equipe: entrada.equipe?.trim(),
       igreja: contemIgreja ? (entrada.rede as string) : nomeDaIgreja,
       rede: contemIgreja ? undefined : entrada.rede,
     };

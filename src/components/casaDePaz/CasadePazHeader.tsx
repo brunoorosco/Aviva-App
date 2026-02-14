@@ -181,7 +181,7 @@ const Header = <T extends CasaDePazModel,>({
             {/* Botão Novo */}
             <Link href={`${pathname}/new`} className='w-full sm:w-auto'>
               <Button 
-                className='bg-blue-600 hover:bg-blue-700 text-white w-full h-full'
+                className='text-white w-full h-full'
                 size='default'
               >
                 <Plus className='mr-2 h-4 w-4' />

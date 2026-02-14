@@ -81,7 +81,7 @@ export default function ChurchAnalytics() {
   return (
     <div className="min-h-screen bg-slate-50/50 p-4 md:p-8 space-y-6">
       
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-xl shadow-sm border">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card text-card-foreground p-4 rounded-xl shadow-sm border">
         <div>
           <h1 className="text-xl font-bold flex items-center gap-2 text-slate-800">
             <LayoutDashboard className="text-blue-600 w-5 h-5" /> 

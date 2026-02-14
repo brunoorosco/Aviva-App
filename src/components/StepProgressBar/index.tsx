@@ -22,7 +22,7 @@ export default function StepProgressBar({ steps }: StepProgressBarProps) {
         {steps.map((step, index) => (
           <div key={index} className="relative flex flex-col w-20 items-center">
             {/* Ícone do passo */}
-            <div className="z-10 bg-white rounded-full p-1 cursor-pointer">
+            <div className="z-10 bg-card rounded-full p-1 cursor-pointer">
               {step.ok ? (
                 <CheckCircle2 className="text-green-500 w-10 h-10" />
               ) : (

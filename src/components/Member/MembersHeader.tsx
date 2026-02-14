@@ -33,7 +33,7 @@ const MembersHeader = ({
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className='px-3 pt-5 mt-2 w-full bg-white rounded-t-lg dark:bg-dark-secondary'>
+    <div className='px-3 pt-5 mt-2 w-full bg-card text-card-foreground rounded-t-lg'>
       {/* Topo: Título + Botões */}
       <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-2'>
         <div className='flex items-center gap-2'>

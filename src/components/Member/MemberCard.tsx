@@ -217,7 +217,7 @@ export const MemberCard = ({ member }: Props) => {
                 <GraduationCap className="w-5 h-5 text-blue-600" />
                 Escola de Profeta
                 {member.escolaProfeta && (
-                  <Badge className="ml-2 bg-palette-success text-black">Participante</Badge>
+                  <Badge className="ml-2 bg-palette-success text-foreground">Participante</Badge>
                 )}
               </CardTitle>
             </CardHeader>

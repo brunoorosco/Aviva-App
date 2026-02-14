@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, CreditCard, FileImage, Upload, X } from "lucide-react";
-import { Pagamento } from "@/domain/models/finance";
+import { Pagamento } from "@/domain/models/encontroComDeus";
 
 
 interface Props {
   pagamentos: Pagamento[];
-  onAdd: (p: Omit<Pagamento, "id" | "data">) => void;
+  onAdd: (p: Omit<Pagamento, "_id" | "data">) => void;
   onRemove: (id: string) => void;
 }
 
@@ -117,7 +117,7 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove }: Props) {
 
         <div className="space-y-2 max-h-64 overflow-y-auto">
           {pagamentos.map((p) => (
-            <div key={p.id} className="flex items-center gap-3 rounded-lg border border-border/50 bg-secondary/30 px-3 py-2">
+            <div key={p._id} className="flex items-center gap-3 rounded-lg border border-border/50 bg-secondary/30 px-3 py-2">
               <span className="text-xs font-medium uppercase rounded-full px-2 py-0.5 bg-primary/10 text-primary">
                 {tipoLabels[p.tipo]}
               </span>
@@ -130,7 +130,7 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove }: Props) {
                   <FileImage className="h-4 w-4" />
                 </a>
               )}
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => onRemove(p.id)}>
+              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => onRemove(p._id)}>
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>

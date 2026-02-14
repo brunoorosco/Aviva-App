@@ -78,8 +78,8 @@ export default function GroupFinance() {
   };
 
   // Pagamentos
-  const addPagamento = (p: Omit<Pagamento, "id" | "data">) => {
-    setPagamentos((prev) => [...prev, { ...p, id: nextId(), data: new Date().toISOString() }]);
+  const addPagamento = (p: Omit<Pagamento, "_id" | "data">) => {
+    setPagamentos((prev) => [...prev, { ...p, _id: nextId(), data: new Date().toISOString() }]);
   };
   const removePagamento = (id: string) => {
     setPagamentos((prev) => prev.filter((p) => p._id !== id));

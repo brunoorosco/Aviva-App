@@ -163,7 +163,7 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
 
   return (
     <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-900 p-6 rounded-md w-full max-w-2xl shadow-lg">
+      <div className="bg-card text-card-foreground p-6 rounded-md w-full max-w-2xl shadow-lg">
         <h2 className="text-xl font-bold mb-6 text-center text-gray-700 dark:text-white">
           {isEdit ? "Editar Membro" : "Criar Membro"}
         </h2>

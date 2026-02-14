@@ -53,7 +53,7 @@ const Header = <T,>({
   title = 'Itens'
 }: TProps<T>) => {
   return (
-    <div className='flex justify-between px-3 pt-5 mt-2 bg-white rounded-t-lg dark:bg-dark-secondary'>
+    <div className='flex justify-between px-3 pt-5 mt-2 bg-card text-card-foreground rounded-t-lg'>
       <div>
         <div className='flex items-center gap-2'>
           <h2 className='text-2xl font-bold'>{title}</h2>

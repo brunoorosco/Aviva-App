@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BarChart3 } from "lucide-react";
-import { StatusFinanceiro, Encontrista, EquipeMembro, Pagamento } from "@/domain/models/finance";
+import { StatusFinanceiro, TPeople, TEquipe, Pagamento } from "@/domain/models/encontroComDeus";
 
 interface Props {
-  encontristas: Encontrista[];
-  equipeMembers: EquipeMembro[];
+  encontristas: TPeople[];
+  equipeMembers: TEquipe[];
   pagamentos: Pagamento[];
   totalPago: number;
 }

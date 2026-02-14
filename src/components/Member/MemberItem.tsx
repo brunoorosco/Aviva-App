@@ -44,14 +44,14 @@ const MemberItem = ({
   const hasEditPermission = canEditMembers();
 
   return (
-    <li className="bg-white dark:bg-gray-800 px-3 py-2 rounded-md shadow mb-1">
+    <li className="bg-card text-card-foreground px-3 py-2 rounded-md shadow mb-1">
       <div className="flex items-start gap-4">
         {/* Avatar fora do grid */}
         <div className="w-10 flex items-center justify-center rounded-full bg-app-bg text-white text-base">
           {/* <Avatar name={member.name} /> */}
           <Avatar className="">
             <AvatarImage src={member.image} alt={member.name} />
-            <AvatarFallback className="text-black">{getInitialsName(member.name)}</AvatarFallback>
+            <AvatarFallback className="text-foreground bg-muted">{getInitialsName(member.name)}</AvatarFallback>
           </Avatar>
         </div>
 

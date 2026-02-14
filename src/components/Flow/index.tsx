@@ -165,7 +165,7 @@ export default function ChurchFlowPage({ churchId }: { churchId: string }) {
 
 function Toolbar({ onAddSupervisor }: { onAddSupervisor: () => void }) {
   return (
-    <div className='absolute top-2 left-2 bg-white shadow rounded p-2 z-10 flex gap-2'>
+    <div className='absolute top-2 left-2 bg-card text-card-foreground shadow rounded p-2 z-10 flex gap-2'>
       <button
         className='px-3 py-1 bg-blue-600 text-white rounded'
         onClick={onAddSupervisor}
