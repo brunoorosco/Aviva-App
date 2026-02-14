@@ -110,7 +110,7 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
           active:scale-95
           z-10
         "
-        aria-label="Editar reencontro"
+        aria-label="Editar Encontro"
       >
         <Edit className="w-4 h-4 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400" />
       </button>
