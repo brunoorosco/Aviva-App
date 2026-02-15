@@ -9,11 +9,13 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import logoLlaranja from "@/public/logo-laranja.png";
 import BiometricLogin from "@/components/WebAuthn/BiometricLogin";
+import BiometricSetupPrompt from "@/components/WebAuthn/BiometricSetupPrompt";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showBiometricPrompt, setShowBiometricPrompt] = useState(false);
   const router = useRouter();
   const { status, data: session } = useSession();
   const [error, setError] = useState("");
@@ -41,6 +43,22 @@ const LoginPage = () => {
     if (res?.error) {
       setError("Email ou senha inválidos. Por favor, verifique suas credenciais.");
     } else if (res?.ok) {
+      // Login bem-sucedido - verificar se tem biometria cadastrada
+      try {
+        const credentialsResponse = await fetch("/api/webauthn/credentials");
+        if (credentialsResponse.ok) {
+          const { credentials } = await credentialsResponse.json();
+          
+          // Se não tem credenciais, mostrar prompt para configurar
+          if (!credentials || credentials.length === 0) {
+            setShowBiometricPrompt(true);
+            return;
+          }
+        }
+      } catch (err) {
+        console.log("Erro ao verificar credenciais WebAuthn:", err);
+      }
+      
       router.replace("/app");
     }
   };
@@ -118,6 +136,19 @@ const LoginPage = () => {
 
           {/* Biometric Login */}
           <BiometricLogin onSuccess={() => router.replace("/app")} />
+
+          {/* Biometric Setup Prompt */}
+          <BiometricSetupPrompt
+            open={showBiometricPrompt}
+            onClose={() => {
+              setShowBiometricPrompt(false);
+              router.replace("/app");
+            }}
+            onSuccess={() => {
+              setShowBiometricPrompt(false);
+              router.replace("/app");
+            }}
+          />
 
           {/* Divider */}
           <div className="relative my-6">

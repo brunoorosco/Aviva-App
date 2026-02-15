@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo WebAuthn - Avivamento em Cristo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .logo {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+        .biometric-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+        }
+        .biometric-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .biometric-btn:active {
+            transform: translateY(0);
+        }
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: #999;
+            font-size: 14px;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #ddd;
+        }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .password-btn {
+            width: 100%;
+            padding: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .password-btn:hover {
+            background: #5568d3;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .fingerprint-icon {
+            font-size: 24px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .modal-text {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .modal-btn.primary {
+            background: #667eea;
+            color: white;
+        }
+        .modal-btn.primary:hover {
+            background: #5568d3;
+        }
+        .modal-btn.secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+        .modal-btn.secondary:hover {
+            background: #d0d0d0;
+        }
+        .device-list {
+            margin-top: 30px;
+            display: none;
+        }
+        .device-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .device-info {
+            flex: 1;
+        }
+        .device-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .device-date {
+            font-size: 12px;
+            color: #666;
+        }
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .remove-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🔷 Avivamento em Cristo</div>
+        
+        <button class="biometric-btn" id="biometricBtn">
+            <span class="fingerprint-icon">👆</span>
+            Entrar com Biometria
+        </button>
+        
+        <div class="divider">Ou entre com senha</div>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <label>📧 Email</label>
+                <input type="email" placeholder="seu@email.com" required>
+            </div>
+            
+            <div class="input-group">
+                <label>🔒 Senha</label>
+                <input type="password" placeholder="••••••••" required>
+            </div>
+            
+            <button type="submit" class="password-btn">Entrar</button>
+        </form>
+        
+        <div class="status" id="status"></div>
+        
+        <div class="device-list" id="deviceList">
+            <h3 style="margin-bottom: 15px;">Dispositivos Cadastrados</h3>
+            <!-- Dispositivos aparecerão aqui -->
+        </div>
+    </div>
+    
+    <!-- Modal de Configuração -->
+    <div class="modal" id="setupModal">
+        <div class="modal-content">
+            <div class="modal-icon">✨</div>
+            <div class="modal-title">Ativar Login Rápido</div>
+            <div class="modal-text">
+                Configure seu dispositivo para fazer login de forma rápida e segura usando sua digital ou Face ID.
+                <br><br>
+                <strong>Benefícios:</strong><br>
+                • Login em 2 segundos<br>
+                • Mais seguro que senhas<br>
+                • Sem risco de esquecer
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="closeSetupModal()">Agora não</button>
+                <button class="modal-btn primary" onclick="setupBiometric()">Configurar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Autenticação -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-icon">🔄</div>
+            <div class="modal-title">Autenticando...</div>
+            <div class="modal-text">
+                Confirme sua identidade usando biometria
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let hasCredential = false;
+        const devices = [];
+        
+        // Verificar suporte a WebAuthn
+        const isWebAuthnSupported = () => {
+            return window.PublicKeyCredential !== undefined;
+        };
+        
+        // Atualizar UI
+        function updateUI() {
+            const btn = document.getElementById('biometricBtn');
+            const status = document.getElementById('status');
+            
+            if (!isWebAuthnSupported()) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>❌</span> Navegador não suporta biometria';
+                btn.style.background = '#ccc';
+                showStatus('info', 'Seu navegador não suporta autenticação biométrica. Use HTTPS ou navegador compatível.');
+                return;
+            }
+            
+            if (!hasCredential) {
+                btn.innerHTML = '<span class="fingerprint-icon">👆</span> Configurar Biometria Primeiro';
+            }
+        }
+        
+        // Mostrar status
+        function showStatus(type, message) {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+            status.style.display = 'block';
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Login com senha
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            showStatus('success', '✅ Login realizado com sucesso!');
+            
+            if (!hasCredential) {
+                setTimeout(() => {
+                    document.getElementById('setupModal').classList.add('active');
+                }, 1000);
+            } else {
+                showDevices();
+            }
+        });
+        
+        // Botão biométrico
+        document.getElementById('biometricBtn').addEventListener('click', () => {
+            if (!hasCredential) {
+                showStatus('info', 'ℹ️ Você precisa configurar a biometria primeiro. Faça login com senha.');
+                return;
+            }
+            
+            // Simular autenticação
+            const authModal = document.getElementById('authModal');
+            authModal.classList.add('active');
+            
+            setTimeout(() => {
+                authModal.classList.remove('active');
+                showStatus('success', '✅ Login biométrico realizado! Bem-vindo de volta! ⚡');
+                showDevices();
+            }, 2000);
+        });
+        
+        // Fechar modal
+        function closeSetupModal() {
+            document.getElementById('setupModal').classList.remove('active');
+        }
+        
+        // Configurar biometria
+        function setupBiometric() {
+            closeSetupModal();
+            showStatus('info', '📱 Solicitando permissão ao navegador...');
+            
+            // Simular configuração
+            setTimeout(() => {
+                const deviceName = getDeviceName();
+                devices.push({
+                    name: deviceName,
+                    date: new Date().toLocaleString('pt-BR'),
+                    lastUsed: 'Agora'
+                });
+                
+                hasCredential = true;
+                updateUI();
+                showStatus('success', `✅ Biometria configurada com sucesso! Dispositivo: ${deviceName}`);
+                showDevices();
+            }, 2000);
+        }
+        
+        // Detectar dispositivo
+        function getDeviceName() {
+            const ua = navigator.userAgent;
+            if (/iPhone/.test(ua)) return '📱 iPhone';
+            if (/iPad/.test(ua)) return '📱 iPad';
+            if (/Android/.test(ua)) return '📱 Android';
+            if (/Mac/.test(ua)) return '💻 MacBook';
+            if (/Windows/.test(ua)) return '💻 Windows PC';
+            return '💻 Dispositivo Desconhecido';
+        }
+        
+        // Mostrar dispositivos
+        function showDevices() {
+            const list = document.getElementById('deviceList');
+            if (devices.length === 0) {
+                list.style.display = 'none';
+                return;
+            }
+            
+            list.style.display = 'block';
+            let html = '<h3 style="margin-bottom: 15px;">📱 Dispositivos Cadastrados</h3>';
+            
+            devices.forEach((device, index) => {
+                html += `
+                    <div class="device-item">
+                        <div class="device-info">
+                            <div class="device-name">${device.name}</div>
+                            <div class="device-date">Adicionado: ${device.date}</div>
+                            <div class="device-date">Último uso: ${device.lastUsed}</div>
+                        </div>
+                        <button class="remove-btn" onclick="removeDevice(${index})">🗑️ Remover</button>
+                    </div>
+                `;
+            });
+            
+            list.innerHTML = html;
+        }
+        
+        // Remover dispositivo
+        function removeDevice(index) {
+            if (confirm('Tem certeza que deseja remover este dispositivo?')) {
+                devices.splice(index, 1);
+                if (devices.length === 0) {
+                    hasCredential = false;
+                    updateUI();
+                }
+                showDevices();
+                showStatus('success', '🗑️ Dispositivo removido com sucesso!');
+            }
+        }
+        
+        // Inicializar
+        updateUI();
+    </script>
+</body>
+</html>
