@@ -74,7 +74,11 @@ export function ResumoFinanceiro({ encontristas, equipeMembers, pagamentos, tota
         </div>
 
         {/* Total pago */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="rounded-lg border border-border/50 bg-secondary/20 p-4 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total à Pagar</p>
+            <p className="text-xl font-bold mt-1 text-red-600" >{formatCurrency(totalPago)}</p>
+          </div>
           <div className="rounded-lg border border-border/50 bg-secondary/20 p-4 text-center">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total Pago</p>
             <p className="text-xl font-bold mt-1" style={{ color: "hsl(142, 71%, 45%)" }}>{formatCurrency(totalPago)}</p>

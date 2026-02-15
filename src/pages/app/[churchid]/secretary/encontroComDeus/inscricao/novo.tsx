@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
-// import { Encontrista, EquipeMembro, Pagamento } from "@/types/finance";
 import { EncontristasSection } from "@/components/finance/EncontristasSection";
 import { EquipeSection } from "@/components/finance/EquipeSection";
 import { PagamentosSection } from "@/components/finance/PagamentosSection";
