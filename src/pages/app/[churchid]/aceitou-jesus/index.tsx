@@ -62,27 +62,27 @@ export const AceitouJesusList = () => {
           {/* Versão mobile (cards) */}
           <div className="flex flex-col gap-3 md:hidden">
             {filteredRecords?.map((r) => (
-              <div key={r._id} className="p-3 bg-white border shadow-sm rounded-xl">
-                <div className="text-lg font-semibold">{r.name}</div>
+              <div key={r._id} className="p-3 bg-white dark:bg-gray-800 border shadow-sm rounded-xl">
+                <div className="text-lg font-semibold dark:text-gray-200">{r.name}</div>
                 <div className="flex justify-between pr-5">
-                  <div className="text-sm font-semibold text-gray-700">
+                  <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                     † {r.accepted ? "Aceitou" : "Reconciliou"}
                   </div>
 
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-gray-700 dark:text-gray-300">
                     <span className="font-medium">Batizado:</span> {r.baptism ? "Sim" : "Não"}
                   </div>
                 </div>
                 {r.phone && (
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-gray-700 dark:text-gray-300">
                     📱 <span className="font-medium">WhatsApp:</span> {r.phone}
                   </div>
                 )}
 
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-gray-700 dark:text-gray-300">
                   📅 <span className="font-medium">Data do Apelo:</span> {formatDate(r.acceptedAt)}
                   {r.rede && (
-                    <div className="text-sm font-medium text-gray-700">
+                    <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       🙋 <span className="font-medium">Quem convidou: </span>
                       {r.rede.name}
                     </div>
@@ -121,7 +121,7 @@ export const AceitouJesusList = () => {
                       <TableCell>{r.email || "-"}</TableCell>
                       <TableCell>{r.phone || "-"}</TableCell>
                       <TableCell>{r.rede?.name || "-"}</TableCell>
-                      <TableCell>{formatDate(r.createdAt)}</TableCell>{" "}
+                      <TableCell>{formatDate(r.acceptedAt)}</TableCell>{" "}
                       <TableCell>{r.accepted ? "Aceitou" : "Reconciliou"}</TableCell>
                       <TableCell>{r.baptism ? "Sim" : "Não"}</TableCell>
                       <TableCell>{r.numberEncontro || "-"}</TableCell>

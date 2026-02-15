@@ -36,7 +36,7 @@ const Cem = () => {
   const canViewCem = (cemId: string) => isAdmin || isUserCem(cemId);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen ">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl">
         <Suspense
           fallback={
@@ -50,7 +50,7 @@ const Cem = () => {
         >
           {/* Cabeçalho */}
           <div className="mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-gray-900 rounded-2xl shadow-sm p-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
                   <Network className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -60,11 +60,12 @@ const Cem = () => {
                     Nossas Redes
                   </h1>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    {cems?.data?.length || 0} {cems?.data?.length === 1 ? 'rede' : 'redes'} cadastradas
+                    {cems?.data?.length || 0} {cems?.data?.length === 1 ? "rede" : "redes"}{" "}
+                    cadastradas
                   </p>
                 </div>
               </div>
-              
+
               {isAdmin && (
                 <Link href={`../${churchId}/cems/new`} className="w-full sm:w-auto">
                   <ButtonNew />
@@ -75,9 +76,9 @@ const Cem = () => {
 
           {/* Grid de Cards */}
           {!cems?.data || cems.data.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-12 text-center">
+            <div className="bg-white dark:bg-dark-secondary rounded-2xl shadow-sm p-12 text-center">
               <div className="flex flex-col items-center gap-4">
-                <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-full">
+                <div className="p-4 bg-gray-100 dark:bg-gray-900 rounded-full">
                   <Network className="w-12 h-12 text-gray-400" />
                 </div>
                 <div>
@@ -85,7 +86,7 @@ const Cem = () => {
                     Nenhuma rede cadastrada
                   </h3>
                   <p className="text-gray-500 dark:text-gray-400">
-                    {isAdmin 
+                    {isAdmin
                       ? "Clique no botão acima para criar a primeira rede"
                       : "Aguarde até que uma rede seja criada"}
                   </p>
@@ -93,11 +94,11 @@ const Cem = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 dark:bg-black/40 bg-gray-50">
               {cems.data.map((cem: CellsModel) => {
                 const isActive = canViewCem(cem._id);
                 const isCurrentUserCem = isUserCem(cem._id);
-                
+
                 return (
                   <div key={cem._id} className="group relative">
                     {/* Botão de Edição */}
@@ -105,7 +106,7 @@ const Cem = () => {
                       <Link
                         href={`../${churchId}/cems/${cem._id}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="absolute top-3 right-3 z-10 p-2 bg-white dark:bg-gray-800 
+                        className="absolute top-3 right-3 z-10 p-2 bg-white dark:bg-gray-900 
                                  rounded-full shadow-md opacity-0 group-hover:opacity-100 
                                  transition-opacity duration-200 hover:bg-gray-100 
                                  dark:hover:bg-gray-700"
@@ -120,20 +121,21 @@ const Cem = () => {
                         relative overflow-hidden rounded-2xl shadow-md 
                         hover:shadow-xl transition-all duration-300 cursor-pointer
                         border-2 h-full
-                        ${isCurrentUserCem 
-                          ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/20 dark:to-gray-800' 
-                          : isActive 
-                            ? 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300' 
-                            : 'border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50'
+                        ${
+                          isCurrentUserCem
+                            ? "dark:border-orange-500 border-blue-500 from-blue-50"
+                            : isActive
+                              ? "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300"
+                              : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50"
                         }
-                        ${isActive ? 'hover:-translate-y-1' : ''}
+                        ${isActive ? "hover:-translate-y-1" : ""}
                       `}
                       onClick={() => goToMembers(cem._id)}
                     >
                       {/* Badge Minha Rede */}
                       {isCurrentUserCem && (
                         <div className="absolute top-3 left-3">
-                          <Badge className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-2 py-1">
+                          <Badge className="bg-blue-500 hover:bg-blue-600 dark:bg-orange-500 text-white text-xs px-2 py-1">
                             Minha Rede
                           </Badge>
                         </div>
@@ -142,44 +144,56 @@ const Cem = () => {
                       <CardHeader className="pt-12 pb-4">
                         <div className="flex flex-col items-center text-center space-y-2">
                           {/* Ícone da Rede */}
-                          <div className={`
+                          <div
+                            className={`
                             p-3 rounded-full mb-2
-                            ${isCurrentUserCem 
-                              ? 'bg-blue-100 dark:bg-blue-900/40' 
-                              : 'bg-gray-100 dark:bg-gray-700'
+                            ${
+                              isCurrentUserCem
+                                ? "bg-blue-100 dark:bg-blue-900/40"
+                                : "bg-gray-100 dark:bg-gray-700"
                             }
-                          `}>
-                            <Network className={`
+                          `}
+                          >
+                            <Network
+                              className={`
                               w-6 h-6
-                              ${isCurrentUserCem 
-                                ? 'text-blue-600 dark:text-blue-400' 
-                                : isActive 
-                                  ? 'text-gray-700 dark:text-gray-300' 
-                                  : 'text-gray-400'
+                              ${
+                                isCurrentUserCem
+                                  ? "text-blue-600 dark:text-orange-600 "
+                                  : isActive
+                                    ? "text-gray-700 dark:text-gray-300"
+                                    : "text-gray-400"
                               }
-                            `} />
+                            `}
+                            />
                           </div>
 
                           {/* Nome da Rede */}
-                          <CardTitle className={`
+                          <CardTitle
+                            className={`
                             text-lg sm:text-xl font-bold
-                            ${isActive 
-                              ? 'text-gray-900 dark:text-white' 
-                              : 'text-gray-400 dark:text-gray-600'
+                            ${
+                              isActive
+                                ? "text-gray-900 dark:text-white"
+                                : "text-gray-400 dark:text-gray-600"
                             }
-                          `}>
+                          `}
+                          >
                             {cem.name}
                           </CardTitle>
 
                           {/* Descrição */}
                           {cem.description && (
-                            <p className={`
+                            <p
+                              className={`
                               text-xs sm:text-sm line-clamp-2 px-2
-                              ${isActive 
-                                ? 'text-gray-600 dark:text-gray-400' 
-                                : 'text-gray-400 dark:text-gray-600'
+                              ${
+                                isActive
+                                  ? "text-gray-600 dark:text-gray-400"
+                                  : "text-gray-400 dark:text-gray-600"
                               }
-                            `}>
+                            `}
+                            >
                               {cem.description}
                             </p>
                           )}
@@ -188,42 +202,50 @@ const Cem = () => {
 
                       <CardContent className="pt-0 pb-6">
                         {/* Contador de Membros */}
-                        <div className={`
+                        <div
+                          className={`
                           flex items-center justify-center gap-2 p-4 rounded-xl
-                          ${isCurrentUserCem 
-                            ? 'bg-blue-100 dark:bg-blue-900/30' 
-                            : 'bg-gray-100 dark:bg-gray-700/50'
+                          ${
+                            isCurrentUserCem
+                              ? "bg-blue-100 dark:bg-blue-900/30"
+                              : "bg-gray-100 dark:bg-gray-700/50"
                           }
-                        `}>
-                          <Users className={`
+                        `}
+                        >
+                          <Users
+                            className={`
                             w-5 h-5
-                            ${isCurrentUserCem 
-                              ? 'text-blue-600 dark:text-blue-400' 
-                              : isActive 
-                                ? 'text-gray-700 dark:text-gray-300' 
-                                : 'text-gray-400'
+                            ${
+                              isCurrentUserCem
+                                ? "text-blue-600 dark:text-orange-500"
+                                : isActive
+                                  ? "text-gray-700 dark:text-gray-300"
+                                  : "text-gray-400"
                             }
-                          `} />
+                          `}
+                          />
                           <div className="flex items-baseline gap-1">
-                            <span className={`
+                            <span
+                              className={`
                               text-2xl font-bold
-                              ${isCurrentUserCem 
-                                ? 'text-blue-600 dark:text-blue-400' 
-                                : isActive 
-                                  ? 'text-gray-900 dark:text-white' 
-                                  : 'text-gray-400'
+                              ${
+                                isCurrentUserCem
+                                  ? "text-blue-600 dark:text-orange-500"
+                                  : isActive
+                                    ? "text-gray-900 dark:text-white"
+                                    : "text-gray-400"
                               }
-                            `}>
+                            `}
+                            >
                               {cem.membersActive || 0}
                             </span>
-                            <span className={`
+                            <span
+                              className={`
                               text-sm font-normal
-                              ${isActive 
-                                ? 'text-gray-600 dark:text-gray-400' 
-                                : 'text-gray-400'
-                              }
-                            `}>
-                              {cem.membersActive === 1 ? 'membro' : 'membros'}
+                              ${isActive ? "text-gray-600 dark:text-gray-400" : "text-gray-400"}
+                            `}
+                            >
+                              {cem.membersActive === 1 ? "membro" : "membros"}
                             </span>
                           </div>
                         </div>
@@ -231,8 +253,10 @@ const Cem = () => {
 
                       {/* Indicador visual de hover */}
                       {isActive && (
-                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 
-                                      opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div
+                          className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 
+                                      opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        />
                       )}
                     </Card>
                   </div>
