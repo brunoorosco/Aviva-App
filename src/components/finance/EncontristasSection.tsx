@@ -27,7 +27,6 @@ export function EncontristasSection({
   onAdd,
   onEdit,
   onRemove,
-  onLinkEquipe,
 }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<TPeople | null>(null);

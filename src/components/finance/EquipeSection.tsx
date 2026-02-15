@@ -7,6 +7,7 @@ import { TEquipe } from "@/domain/models/encontroComDeus";
 import { User } from "@/domain/models/users";
 import { SelectMembrosRede } from "../Select/SelectMembrosRede";
 import { useSession } from "next-auth/react";
+import { capitalizeWords } from "@/utils/capitalizaFirst";
 
 interface Props {
   equipeMembers: TEquipe[];
@@ -72,9 +73,9 @@ export function EquipeSection({ equipeMembers, onAdd, onRemove, onToggleIsento }
                 title="Isento de pagamento"
               />
               <span
-                className={`flex-1 text-sm font-medium ${m.isento ? "line-through text-muted-foreground" : ""}`}
+                className={`flex-1 text-sm font-medium ${m.isento ? " text-muted-foreground" : ""}`}
               >
-                {m.name}
+                {capitalizeWords(m.name)}
                 {m.isento && <span className="ml-2 text-xs text-muted-foreground">(Isento)</span>}
               </span>
               <Button

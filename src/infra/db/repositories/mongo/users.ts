@@ -100,6 +100,33 @@ export class UsersMongoRepository {
     }
   }
 
+  async getUsersByCellIdEquipe(cemId: string): Promise<{ _id: string; name: string }[]> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+
+      const filter = {
+        "cem._id": cemId,
+        active: true,
+        role: { $ne: "bispo" },
+      };
+
+      const users = await collection
+        .find<{ _id: any; name: string }>(filter)
+        .project({ _id: 1, name: 1 })
+        .collation({ locale: "pt", strength: 1 })
+        .sort({ active: -1, name: 1 })
+        .toArray();
+
+      return users.map((user) => ({
+        _id: user._id.toString(),
+        name: user.name,
+      }));
+    } catch (error) {
+      console.error("Error get users by cell:", error);
+      throw error;
+    }
+  }
+
   async getUsersByChurch(churchId: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
