@@ -262,3 +262,10 @@ export const updateUserSettings = async (
     image: updatedUser.image,
   };
 };
+
+export const usersByCemEquipe = async (cemid: string) => {
+  const userRepository = new UsersMongoRepository();
+
+  const user = await userRepository.getUsersByCellIdEquipe(cemid);
+  return user;
+};

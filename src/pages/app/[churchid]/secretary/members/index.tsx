@@ -87,7 +87,7 @@ const MembersWithImportExport = () => {
 
       {/* Desktop/List view */}
       <div className="hidden sm:block shadow-sm">
-        <ul className="w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary">
+        <ul className="w-full p-4 bg-card divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-primary">
           <Suspense fallback={<p>Carregando membros...</p>}>
             {members?.data?.data.map((member) => (
               <MemberItem
@@ -105,11 +105,11 @@ const MembersWithImportExport = () => {
       </div>
 
       {/* Mobile/Card view */}
-      <div className="sm:hidden flex flex-col gap-4">
+      <div className="sm:hidden flex flex-col gap-4 ">
         {members?.data?.data.map((member) => (
           <div
             key={member._id}
-            className="p-4 bg-white rounded-lg shadow-md dark:bg-dark-secondary cursor-pointer transition hover:shadow-lg"
+            className="p-4 bg-card rounded-lg shadow-md dark:bg-dark-secondary cursor-pointer transition hover:shadow-lg"
             onClick={() => router.push(`/${asPath}/${member._id}`)}
           >
             <div className="flex justify-between items-center">

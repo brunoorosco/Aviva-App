@@ -9,6 +9,7 @@ import {
 import { useHttpGet } from "@/hooks/api";
 import Loading from "./loading";
 import { useEffect } from "react";
+import { capitalizeWords } from "@/utils/capitalizaFirst";
 
 type DropdownProps = {
   title: string;
@@ -30,7 +31,7 @@ export function SelectMembrosRede({
   error,
 }: DropdownProps) {
   const { data, isLoading } = useHttpGet<any[]>(
-    `/api/protected/churches/${churchId}/cems/${cemId}`,
+    `/api/protected/churches/${churchId}/cems/${cemId}/equipe`,
   );
   const items = data?.data ?? [];
 
@@ -42,7 +43,7 @@ export function SelectMembrosRede({
   }, [items, isLoading, onDataLoaded]);
 
   return (
-    <div className="flex flex-col w-full my-2">
+    <div className="flex flex-col w-full">
       <Select onValueChange={onChange} value={value}>
         <SelectTrigger className="w-full bg-gray-200 dark:bg-zinc-700 dark:text-gray-100">
           <SelectValue placeholder={title} />
@@ -52,7 +53,7 @@ export function SelectMembrosRede({
           {!isLoading &&
             items.map((item: any) => (
               <SelectItem key={item._id} value={item._id}>
-                {item.name}
+                {capitalizeWords(item.name)}
               </SelectItem>
             ))}
         </SelectContent>

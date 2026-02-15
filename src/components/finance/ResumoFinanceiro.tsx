@@ -10,6 +10,9 @@ interface Props {
   totalPago: number;
 }
 
+const VALOR_ENCONTRISTA = 200;
+const VALOR_EQUIPE = 100;
+
 function formatCurrency(value: number) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
@@ -22,10 +25,10 @@ function getStatus(saldo: number, totalPago: number): StatusFinanceiro {
 }
 
 const statusConfig: Record<StatusFinanceiro, { label: string; color: string; bg: string }> = {
-  quitado:  { label: "Quitado",  color: "hsl(142, 71%, 45%)", bg: "hsl(142, 71%, 45%, 0.15)" },
-  parcial:  { label: "Parcial",  color: "hsl(45, 93%, 47%)",  bg: "hsl(45, 93%, 47%, 0.15)" },
-  pendente: { label: "Pendente", color: "hsl(0, 84%, 60%)",   bg: "hsl(0, 84%, 60%, 0.15)" },
-  excedente:{ label: "Excedente",color: "hsl(217, 91%, 60%)", bg: "hsl(217, 91%, 60%, 0.15)" },
+  quitado: { label: "Quitado", color: "hsl(142, 71%, 45%)", bg: "hsl(142, 71%, 45%, 0.15)" },
+  parcial: { label: "Parcial", color: "hsl(45, 93%, 47%)", bg: "hsl(45, 93%, 47%, 0.15)" },
+  pendente: { label: "Pendente", color: "hsl(0, 84%, 60%)", bg: "hsl(0, 84%, 60%, 0.15)" },
+  excedente: { label: "Excedente", color: "hsl(217, 91%, 60%)", bg: "hsl(217, 91%, 60%, 0.15)" },
 };
 
 const tipoLabels: Record<string, string> = { pix: "Pix", cartao: "Cartão", dinheiro: "Dinheiro" };
@@ -33,16 +36,23 @@ const tipoLabels: Record<string, string> = { pix: "Pix", cartao: "Cartão", dinh
 export function ResumoFinanceiro({ encontristas, equipeMembers, pagamentos, totalPago }: Props) {
   const qtdEncontristas = encontristas.length;
   const qtdEquipe = equipeMembers.length;
-  const qtdIsentosEncontristas = encontristas.filter(e => e.isento).length;
-  const qtdIsentosEquipe = equipeMembers.filter(m => m.isento).length;
+  const qtdIsentosEncontristas = encontristas.filter((e) => e.isento).length;
+  const qtdIsentosEquipe = equipeMembers.filter((m) => m.isento).length;
   const totalParticipantes = qtdEncontristas + qtdEquipe;
   const totalIsento = qtdIsentosEncontristas + qtdIsentosEquipe;
 
+  const totalAPagar =
+    (qtdEncontristas - qtdIsentosEncontristas) * VALOR_ENCONTRISTA +
+    (qtdEquipe - qtdIsentosEquipe) * VALOR_EQUIPE;
+
   // Pagamentos por tipo
-  const pagamentosPorTipo = pagamentos.reduce((acc, p) => {
-    acc[p.tipo] = (acc[p.tipo] || 0) + p.valor;
-    return acc;
-  }, {} as Record<string, number>);
+  const pagamentosPorTipo = pagamentos.reduce(
+    (acc, p) => {
+      acc[p.tipo] = (acc[p.tipo] || 0) + p.valor;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const saldo = totalPago > 0 ? 0 : 0; // Without fixed values, saldo is based on payments only
   const status = totalPago > 0 ? "quitado" : "pendente";
@@ -74,13 +84,23 @@ export function ResumoFinanceiro({ encontristas, equipeMembers, pagamentos, tota
         </div>
 
         {/* Total pago */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="rounded-lg border border-border/50 bg-secondary/20 p-4 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total Pago</p>
-            <p className="text-xl font-bold mt-1" style={{ color: "hsl(142, 71%, 45%)" }}>{formatCurrency(totalPago)}</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              Total à Pagar
+            </p>
+            <p className="text-xl font-bold mt-1 text-red-600">{formatCurrency(totalAPagar)}</p>
           </div>
           <div className="rounded-lg border border-border/50 bg-secondary/20 p-4 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Qtd Pagamentos</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total Pago</p>
+            <p className="text-xl font-bold mt-1" style={{ color: "hsl(142, 71%, 45%)" }}>
+              {formatCurrency(totalPago)}
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/50 bg-secondary/20 p-4 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+              Qtd Pagamentos
+            </p>
             <p className="text-xl font-bold mt-1">{pagamentos.length}</p>
           </div>
         </div>
@@ -88,11 +108,18 @@ export function ResumoFinanceiro({ encontristas, equipeMembers, pagamentos, tota
         {/* Formas de pagamento */}
         {Object.keys(pagamentosPorTipo).length > 0 && (
           <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Formas de Pagamento</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">
+              Formas de Pagamento
+            </p>
             <div className="grid grid-cols-3 gap-3">
               {Object.entries(pagamentosPorTipo).map(([tipo, valor]) => (
-                <div key={tipo} className="rounded-lg border border-border/50 bg-secondary/20 p-3 text-center">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{tipoLabels[tipo] || tipo}</p>
+                <div
+                  key={tipo}
+                  className="rounded-lg border border-border/50 bg-secondary/20 p-3 text-center"
+                >
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                    {tipoLabels[tipo] || tipo}
+                  </p>
                   <p className="text-sm font-semibold mt-0.5">{formatCurrency(valor)}</p>
                 </div>
               ))}

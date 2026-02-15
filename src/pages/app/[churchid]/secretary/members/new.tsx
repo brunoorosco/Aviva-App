@@ -12,7 +12,7 @@ import { SelectProfile } from "@/components/Select/SelectProfile";
 import { roles } from "@/utils/constants/roles";
 import ButtonSubmit from "@/components/ButtonSubmit";
 import { SelectCem } from "@/components/Select/SelectCem";
-import NameInput from "../../../../../components/Member/NameInput";
+import NameInput from "@/components/Member/NameInput";
 
 type FormValues = {
   name: string;
