@@ -126,31 +126,31 @@ export default function VisitantesList() {
           {/* Versão mobile (cards) */}
           <div className="flex flex-col gap-3 md:hidden">
             {filteredRecords?.map((r) => (
-              <div key={r._id} className="border rounded-xl p-3 shadow-sm bg-white">
+              <div key={r._id} className="border rounded-xl p-3 shadow-sm bg-white dark:bg-dark-secondary">
                 <div className="font-semibold text-lg">{r.name}</div>
 
                 {r.phone && (
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-gray-700 dark:text-gray-300">
                     📱 <span className="font-medium">WhatsApp:</span> {r.phone}
                   </div>
                 )}
                 {r.region && (
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-gray-700 dark:text-gray-300">
                     📍 <span className="font-medium">Região:</span> {r.region}
                   </div>
                 )}
                 {r.howHeard && (
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-gray-700 dark:text-gray-300">
                     💬 <span className="font-medium">Como nos conheceu:</span>{" "}
                     {getHowHeardLabel(r.howHeard)}
                   </div>
                 )}
                 {r.invitedBy && (
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-gray-700 dark:text-gray-300">
                     🙋 <span className="font-medium">Quem convidou:</span> {r.invitedBy}
                   </div>
                 )}
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-gray-700 dark:text-gray-300">
                   📅 <span className="font-medium">Data da visita:</span> {formatDate(r.visitedAt)}
                 </div>
               </div>

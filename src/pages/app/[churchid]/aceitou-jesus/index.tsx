@@ -62,7 +62,7 @@ export const AceitouJesusList = () => {
           {/* Versão mobile (cards) */}
           <div className="flex flex-col gap-3 md:hidden">
             {filteredRecords?.map((r) => (
-              <div key={r._id} className="p-3 bg-white dark:bg-gray-800 border shadow-sm rounded-xl">
+              <div key={r._id} className="p-3 bg-white dark:bg-dark-secondary border shadow-sm rounded-xl">
                 <div className="text-lg font-semibold dark:text-gray-200">{r.name}</div>
                 <div className="flex justify-between pr-5">
                   <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
