@@ -9,7 +9,8 @@ const cripto = new CryptAdapter();
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credencials",
+      id: "credentials",
+      name: "Email e Senha",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Passsword", type: "password" },
@@ -22,6 +23,29 @@ export const authOptions: NextAuthOptions = {
           if (!isValidPass) return null;
         }
         return userDb;
+      },
+    }),
+    CredentialsProvider({
+      id: "webauthn",
+      name: "Biometria",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        webauthn: { label: "WebAuthn", type: "text" },
+      },
+      async authorize(credentials): Promise<any> {
+        // WebAuthn verification is handled in the API route
+        // This just validates that the user exists and returns it
+        if (!credentials?.email || !credentials?.webauthn) return null;
+        
+        const userDb = await userMongoRepository.getByEmail(credentials.email);
+        if (!userDb) return null;
+        
+        // The webauthn field contains "verified" if authentication was successful
+        if (credentials.webauthn === "verified") {
+          return userDb;
+        }
+        
+        return null;
       },
     }),
   ],

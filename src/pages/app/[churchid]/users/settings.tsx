@@ -7,6 +7,7 @@ import * as z from "zod";
 import { Camera, Loader2, Save, ShieldCheck, Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import BiometricManager from "@/components/WebAuthn/BiometricManager";
 import {
   Form,
   FormControl,
@@ -291,7 +292,23 @@ console.log(userData.data)
               </CardContent>
             </Card>
 
-            {/* Seção de Segurança */}
+            {/* Seção de Segurança - Biometria */}
+            <Card className="border-0 sm:border shadow-sm">
+              <CardHeader className="px-4 sm:px-6 pb-3 sm:pb-6">
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                  <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                  Autenticação Biométrica
+                </CardTitle>
+                <CardDescription className="text-xs sm:text-sm">
+                  Use biometria ou FaceID para acessar rapidamente sua conta.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="px-4 sm:px-6">
+                <BiometricManager />
+              </CardContent>
+            </Card>
+
+            {/* Seção de Segurança - Senha */}
             <Card className="border-0 sm:border shadow-sm">
               <CardHeader className="px-4 sm:px-6 pb-3 sm:pb-6">
                 <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">

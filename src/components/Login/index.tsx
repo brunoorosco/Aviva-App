@@ -8,6 +8,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import logoLlaranja from "@/public/logo-laranja.png";
+import BiometricLogin from "@/components/WebAuthn/BiometricLogin";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -114,6 +115,24 @@ const LoginPage = () => {
               </AlertDescription>
             </Alert>
           )}
+
+          {/* Biometric Login */}
+          <BiometricLogin onSuccess={() => router.replace("/app")} />
+
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t" style={{ borderColor: "hsl(0 0% 18% / 0.5)" }} />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span
+                className="px-2"
+                style={{ backgroundColor: "hsl(0 0% 7% / 0.6)", color: "hsl(0 0% 65%)" }}
+              >
+                Ou entre com senha
+              </span>
+            </div>
+          </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">

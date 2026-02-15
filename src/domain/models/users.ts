@@ -26,7 +26,22 @@ export type User = {
   escolaProfeta?: boolean;
   historicoEscolaProfeta?: Historico[];
   consagracao?: Consagracao[];
+  webAuthnCredentials?: WebAuthnCredential[];
 };
+
+export type WebAuthnCredential = {
+  credentialID: string;
+  credentialPublicKey: string;
+  counter: number;
+  credentialDeviceType: "singleDevice" | "multiDevice";
+  credentialBackedUp: boolean;
+  transports?: AuthenticatorTransport[];
+  deviceName?: string;
+  createdAt: string;
+  lastUsedAt?: string;
+};
+
+export type AuthenticatorTransport = "ble" | "internal" | "nfc" | "usb" | "hybrid";
 
 type Historico = {
   curso_id: string;
