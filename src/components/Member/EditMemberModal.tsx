@@ -288,11 +288,11 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
           </div>
 
           {/* Botões */}
-          <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
+          <div className="flex flex-row justify-end gap-2 mt-4">
             <Button variant="outline" type="button" onClick={onClose} className="w-full sm:w-40">
               <X className="w-4 h-4 mr-2" /> Cancelar
             </Button>
-            <Button type="submit" disabled={isLoading} className="w-full sm:w-40">
+            <Button type="submit" disabled={isLoading} className="w-full sm:w-40 bg-primary">
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Salvando...
