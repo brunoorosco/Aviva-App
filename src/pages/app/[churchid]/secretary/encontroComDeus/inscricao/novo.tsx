@@ -88,16 +88,21 @@ export default function GroupFinance() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate.back()}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
+      <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4 justify-between">
+          <div className="flex">
+            <Button variant="ghost" size="icon" onClick={() => navigate.back()}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-xl font-bold font-[Montserrat]">Inscrição Encontro com Deus</h1>
+              <p className="text-xs text-muted-foreground">
+                Gerenciamento de encontristas e equipe
+              </p>
+            </div>
+          </div>
           <div>
-            <h1 className="text-xl font-bold font-[Montserrat]">Inscrição Encontro com Deus</h1>
-            <p className="text-xs text-muted-foreground">
-              Gerenciamento de encontristas e equipe
-            </p>
+            <Button>Salvar</Button>
           </div>
         </div>
       </div>
