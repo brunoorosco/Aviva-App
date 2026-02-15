@@ -87,7 +87,7 @@ export default function GroupFinance() {
   const totalPago = useMemo(() => pagamentos.reduce((sum, p) => sum + p.valor, 0), [pagamentos]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-100 dark:bg-background">
       <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4 justify-between">
           <div className="flex">
