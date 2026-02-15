@@ -87,7 +87,7 @@ const MembersWithImportExport = () => {
 
       {/* Desktop/List view */}
       <div className="hidden sm:block shadow-sm">
-        <ul className="w-full p-4 bg-card divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-primary">
+        <ul className="w-full p-4 bg-card divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secundary">
           <Suspense fallback={<p>Carregando membros...</p>}>
             {members?.data?.data.map((member) => (
               <MemberItem
@@ -156,9 +156,9 @@ const MembersWithImportExport = () => {
               </PermissionGuard>
             </div>
 
-            <div className="mt-2 text-gray-600">Email: {member.email || "Não informado"}</div>
+            <div className="mt-2 text-gray-600 dark:text-gray-300">Email: {member.email || "Não informado"}</div>
 
-            <div className="text-gray-600">
+            <div className="text-gray-600 dark:text-gray-300">
               Cargo:{" "}
               {member.role
                 ? `${member.role.charAt(0).toUpperCase()}${member.role.substring(1).toLowerCase()}`

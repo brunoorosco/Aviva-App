@@ -69,11 +69,11 @@ const MemberItem = ({
           </div>
 
           {/* Rede */}
-          <div className="col-start-3 row-start-1 text-sm text-gray-600 dark:text-gray-400 uppercase truncate leading-tight">
+          <div className="col-start-3 row-start-1 text-sm text-gray-600 dark:text-gray-300 uppercase truncate leading-tight">
             {member.cem?.name || "Sem rede"}
           </div>
           {viewCargo && (
-            <div className="col-start-3 row-start-2 text-sm text-gray-600 dark:text-gray-400 uppercase truncate leading-tight">
+            <div className="col-start-3 row-start-2 text-sm text-gray-600 dark:text-gray-300 uppercase truncate leading-tight">
               {member.role || "Membro"}
             </div>
           )}
@@ -131,7 +131,7 @@ const MemberItem = ({
           </div>
 
           {/* Email */}
-          <div className="col-span-2 row-start-2 text-sm text-gray-500 dark:text-gray-400 lowercase truncate leading-tight">
+          <div className="col-span-2 row-start-2 text-sm text-gray-500 dark:text-gray-300 lowercase truncate leading-tight">
             {member.email}
           </div>
         </div>
