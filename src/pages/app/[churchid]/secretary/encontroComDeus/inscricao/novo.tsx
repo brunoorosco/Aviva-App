@@ -86,6 +86,12 @@ export default function GroupFinance() {
 
   const totalPago = useMemo(() => pagamentos.reduce((sum, p) => sum + p.valor, 0), [pagamentos]);
 
+  const handleSave = () => {
+    console.log('encontristasD :>> ', encontristas);
+    console.log('equipe :>> ', equipeMembers);
+    console.log('pagamD :>> ', pagamentos);
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-background">
       <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
@@ -102,7 +108,7 @@ export default function GroupFinance() {
             </div>
           </div>
           <div>
-            <Button>Salvar</Button>
+            <Button onClick={e=>handleSave()}>Salvar</Button>
           </div>
         </div>
       </div>

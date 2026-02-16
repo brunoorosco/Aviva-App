@@ -25,6 +25,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
   const [email, setEmail] = useState("");
   const [endereco, setEndereco] = useState("");
   const [isento, setIsento] = useState(false);
+  const [nascimento, setNascimento] = useState("");
 
   useEffect(() => {
     if (encontrista) {
@@ -33,12 +34,15 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
       setEmail(encontrista.email || "");
       setEndereco(encontrista.endereco || "");
       setIsento(encontrista.isento || false);
+      setIsento(encontrista.isento || false);
+      setNascimento(encontrista.dataNascimento || "");
     } else {
       setName("");
       setTelefone("");
       setEmail("");
       setEndereco("");
       setIsento(false);
+      setNascimento("");
     }
   }, [encontrista, open]);
 
@@ -49,6 +53,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
       telefone: telefone.trim(),
       email: email.trim(),
       endereco: endereco.trim(),
+      dataNascimento: nascimento,
       isento,
     });
     onClose();
@@ -70,14 +75,25 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="enc-tel">Telefone</Label>
-            <Input
-              id="enc-tel"
-              placeholder="(00) 00000-0000"
-              value={telefone}
-              onChange={(e) => setTelefone(e.target.value)}
-            />
+          <div className="flex gap-2">
+            <div className="space-y-1.5 w-full">
+              <Label htmlFor="enc-tel">Telefone</Label>
+              <Input
+                id="enc-tel"
+                placeholder="(00) 00000-0000"
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5 w-full">
+              <Label htmlFor="enc-end">Data de Nascimento</Label>
+              <Input
+                id="enc-nascimento"
+                value={endereco}
+                type="date"
+                onChange={(e) => setEndereco(e.target.value)}
+              />
+            </div>
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="enc-email">E-mail</Label>
@@ -98,6 +114,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
               onChange={(e) => setEndereco(e.target.value)}
             />
           </div>
+
           <div className="flex items-center gap-2">
             <Checkbox
               id="enc-isento"

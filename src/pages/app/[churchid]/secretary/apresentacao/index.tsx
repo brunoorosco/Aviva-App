@@ -49,14 +49,14 @@ export default function ListaApresentacao() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-background   p-4 md:p-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Apresentações</h1>
-          <p className="text-slate-500">Eventos de apresentação agendados</p>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-gray-100">Apresentações</h1>
+          <p className="text-slate-500 dark:text-gray-300">Eventos de apresentação agendados</p>
         </div>
         <Link href={`/app/${churchId}/secretary/apresentacao/novo`}>
-          <Button>
+          <Button className='bg-blue-500 dark:bg-orange-500'>
             <Plus className="w-4 h-4 mr-2" />
             Novo Evento
           </Button>
@@ -65,7 +65,7 @@ export default function ListaApresentacao() {
 
       <div className="grid gap-6">
         {groupedEvents.length === 0 ? (
-          <div className="text-center p-8 text-slate-500 bg-white rounded-lg border border-dashed">
+          <div className="text-center p-8 text-slate-500 bg-white dark:bg-dark-secondary rounded-lg border border-dashed">
             Nenhum evento cadastrado.
           </div>
         ) : (
@@ -77,44 +77,44 @@ export default function ListaApresentacao() {
             return (
               <Card key={`${group.date}`} className="hover:border-blue-300 transition-colors cursor-pointer group">
                 <Link href={`/app/${churchId}/secretary/apresentacao/detalhes?date=${group.date}`}>
-                  <CardHeader className="flex flex-row items-center justify-between pb-2 bg-slate-50/50">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2 bg-slate-50/50 dark:bg-dark-secondary">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-white rounded-lg border shadow-sm text-center min-w-[50px]">
-                        <span className="block text-xs uppercase text-slate-400 font-bold">
+                      <div className="p-2 bg-white dark:bg-orange-500 rounded-lg border shadow-sm text-center min-w-[50px]">
+                        <span className="block text-xs uppercase text-slate-400 dark:text-white font-bold">
                           {new Date(group.date + 'T12:00:00').toLocaleDateString('pt-BR', { month: 'short' })}
                         </span>
-                        <span className="block text-xl font-bold text-slate-800">
+                        <span className="block text-xl font-bold text-slate-800 dark:text-gray-100">
                           {new Date(group.date + 'T12:00:00').getDate()}
                         </span>
                       </div>
                       <div>
-                        <span className="text-sm text-slate-500">
+                        <span className="text-sm text-slate-500 dark:text-gray-100">
                           {new Date(group.date + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric' })}
                         </span>
                       </div>
                     </div>
-                    <Button variant="ghost" className="text-blue-600 group-hover:bg-blue-50">
+                    <Button variant="ghost" className="text-blue-600 group-hover:bg-blue-50 dark:text-orange-500 dark:group-hover:bg-orange-50">
                       Gerenciar
                     </Button>
                   </CardHeader>
                   <CardContent className="pt-4">
                     <div className="flex gap-4 text-sm">
-                      <div className="flex flex-col items-center p-2 bg-slate-100 rounded-md w-24">
-                        <span className="font-bold text-lg text-slate-700">{group.items.length}</span>
-                        <span className="text-xs text-slate-500">Total</span>
+                      <div className="flex flex-col items-center p-2 bg-slate-100 dark:bg-orange-500 rounded-md w-24">
+                        <span className="font-bold text-lg text-slate-700 dark:text-gray-50">{group.items.length}</span>
+                        <span className="text-xs text-slate-500 dark:text-gray-100">Total</span>
                       </div>
                       <div className="flex-1 grid grid-cols-3 gap-2">
                         <div className="flex flex-col justify-center px-3 border-l">
                           <span className="text-xs text-slate-400 uppercase">Alianças</span>
-                          <span className="font-semibold text-slate-700">{aliancas}</span>
+                          <span className="font-semibold text-slate-700 dark:text-gray-100">{aliancas}</span>
                         </div>
                         <div className="flex flex-col justify-center px-3 border-l">
                           <span className="text-xs text-slate-400 uppercase">Novos</span>
-                          <span className="font-semibold text-slate-700">{membros}</span>
+                          <span className="font-semibold text-slate-700 dark:text-gray-100">{membros}</span>
                         </div>
                         <div className="flex flex-col justify-center px-3 border-l">
                           <span className="text-xs text-slate-400 uppercase">Crianças</span>
-                          <span className="font-semibold text-slate-700">{criancas}</span>
+                          <span className="font-semibold text-slate-700 dark:text-gray-100">{criancas}</span>
                         </div>
                       </div>
                     </div>

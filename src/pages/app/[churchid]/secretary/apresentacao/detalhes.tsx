@@ -192,7 +192,7 @@ export default function DetalhesApresentacao() {
             </div>
 
             {/* Screen view */}
-            < div className="min-h-screen bg-slate-50 p-4 md:p-8 no-print" >
+            < div className="min-h-screen bg-slate-50 dark:bg-dark-secondary p-4 md:p-8 no-print" >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div className="flex items-center gap-4">
                         <Link href={`/app/${churchId}/secretary/apresentacao`}>
@@ -201,10 +201,10 @@ export default function DetalhesApresentacao() {
                             </Button>
                         </Link>
                         <div>
-                            <h1 className="text-2xl font-bold text-slate-800 capitalize">
+                            <h1 className="text-2xl font-bold text-slate-800 dark:text-gray-100 capitalize">
                                 Apresentação
                             </h1>
-                            <p className="text-slate-500 flex items-center gap-2">
+                            <p className="text-slate-500 flex items-center gap-2 dark:text-gray-300">
                                 <Calendar className="w-4 h-4" />
                                 {dateFormatted}
                             </p>
@@ -212,11 +212,11 @@ export default function DetalhesApresentacao() {
                     </div>
                     <div className="flex gap-2">
                         <Button variant="outline" onClick={handlePrint}>
-                            <Printer className="w-4 h-4 mr-2" />
+                            <Printer className="w-4 h-4 mr-2 " />
                             Imprimir
                         </Button>
                         <Link href={`/app/${churchId}/secretary/apresentacao/novo?date=${date}`}>
-                            <Button>
+                            <Button className='bg-blue-500 dark:bg-orange-500'>
                                 <Plus className="w-4 h-4 mr-2" />
                                 Adicionar Pessoa
                             </Button>
@@ -231,35 +231,35 @@ export default function DetalhesApresentacao() {
                         </div>
                     ) : (
                         filteredList.map((item) => (
-                            <Card key={item._id} className="hover:bg-slate-50 transition-colors">
+                            <Card key={item._id} className="hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors">
                                 <CardContent className="p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-2">
                                             <Badge variant="outline" className="uppercase text-xs font-bold text-slate-600 bg-slate-100">
                                                 {item.tipo === 'novoMembro' ? 'Novo Membro' : item.tipo}
                                             </Badge>
-                                            <span className="text-sm text-slate-400">|</span>
-                                            <span className="text-sm text-slate-500 font-medium">{item.rede.split('-')[1] || 'nome da rede'}</span>
-                                            <span className="text-sm text-slate-400">|</span>
-                                            <span className="text-sm text-slate-500 font-medium">{item.horario}</span>
+                                            <span className="text-sm text-slate-400 dark:text-gray-100">|</span>
+                                            <span className="text-sm text-slate-500 font-medium dark:text-gray-200">{item.rede.split('-')[1] || 'nome da rede'}</span>
+                                            <span className="text-sm text-slate-400 dark:text-gray-100">|</span>
+                                            <span className="text-sm text-slate-500 font-medium dark:text-gray-200">{item.horario}</span>
                                         </div>
 
-                                        <div className="font-semibold text-lg text-slate-800 flex items-center gap-2">
-                                            <User className="w-4 h-4 text-slate-400" />
+                                        <div className="font-semibold text-lg text-slate-800 flex items-center gap-2 dark:text-gray-100">
+                                            <User className="w-4 h-4 text-slate-400 dark:text-gray-100" />
                                             {item.tipo === 'alianca' && `${item.nomeHomem} & ${item.nomeMulher}`}
                                             {item.tipo === 'novoMembro' && item.nome}
                                             {item.tipo === 'crianca' && item.nomeCrianca}
                                         </div>
 
                                         {item.tipo === 'crianca' && (
-                                            <div className="text-sm text-slate-500 pl-6">
+                                            <div className="text-sm text-slate-500 pl-6 dark:text-gray-100">
                                                 Pais: {item.nomePai} & {item.nomeMae}
                                             </div>
                                         )}
                                     </div>
 
                                     <Link href={`/app/${churchId}/secretary/apresentacao/${item._id}`}>
-                                        <Button variant="ghost" size="sm" className="text-slate-500 hover:text-blue-600">
+                                        <Button variant="ghost" size="sm" className="text-slate-500 hover:text-blue-600 dark:text-gray-100">
                                             <Edit className="w-4 h-4 mr-2" />
                                             Editar
                                         </Button>
