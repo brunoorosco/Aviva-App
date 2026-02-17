@@ -47,7 +47,7 @@ const MembersWithImportExport = () => {
     totalInativos: number;
   }>(
     // `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}`
-    `/api/protected/churches/${churchid}/cems/${cemid}/members?page=${page}&limit=${limit}${
+    `/api/protected/churches/${churchid}/redes/${cemid}/members?page=${page}&limit=${limit}${
       search ? `&name=${search}` : ""
     }`,
   );
@@ -102,8 +102,8 @@ const MembersWithImportExport = () => {
         totalInativo={members?.data.totalInativos}
       />
       {/* se desktop */}
-      <div className="hidden sm:block shadow-sm">
-        <ul className="w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary">
+       <div className="hidden sm:block shadow-sm">
+        <ul className="w-full p-4 bg-card divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secundary">
           <Suspense fallback={<p>Carregando membros...</p>}>
             {members?.data?.data.map((member) => (
               <MemberItem

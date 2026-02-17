@@ -26,7 +26,7 @@ export function SelectCem({
   errors,
   isRequired = false,
 }: DropdownProps) {
-  const { data, isLoading } = useHttpGet<any[]>(`/api/protected/churches/${churchId}/cems`);
+  const { data, isLoading } = useHttpGet<any[]>(`/api/protected/churches/${churchId}/redes`);
   const items = data?.data ?? [];
   const required = isRequired ? { required: "Selecione uma Rede" } : {};
   return (

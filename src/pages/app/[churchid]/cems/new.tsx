@@ -1,28 +1,29 @@
 "use client";
 
 import { useForm, useFieldArray, Controller } from "react-hook-form";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import ImportButton, { LeaderPair } from "../../../../components/casaDePaz/ImportButton";
 import { useHttpPost } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import Toast from "@/components/Toast";
 import { Button } from "@/components/ui/button";
-import { Loader2Icon, Trash2, Plus } from "lucide-react";
+import { Loader2Icon, Trash2, Plus, X } from "lucide-react";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ROLES } from "@/lib/permissions";
 import { PermissionGuard } from "@/components/PermissionGuard";
+import { SelectMembrosRede } from "@/components/Select/SelectMembrosRede";
+import { TCems } from "@/domain/models/cems";
 
 type FormValues = {
-  casas: LeaderPair[];
+  casas: TCems[];
   data_inicial: string;
 };
 
 const NovaCem = () => {
-  const { control, handleSubmit, watch, setValue } = useForm<FormValues>({
+  const { control, handleSubmit, watch } = useForm<FormValues>({
     defaultValues: {
       casas: [],
       data_inicial: new Date().toISOString().split("T")[0],
@@ -30,31 +31,33 @@ const NovaCem = () => {
   });
 
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const { fields, append, remove } = useFieldArray({ control, name: "casas" });
+  const { fields, append, remove, prepend } = useFieldArray({ control, name: "casas" }); // ← adiciona prepend
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
   const { hasPermission } = usePermissions();
   const casas = watch("casas");
 
-  // Verifica se pode editar o campo rede
   const canEditRede = hasPermission([ROLES.ADMIN, ROLES.SECRETARIA]);
   const defaultRede = session?.user?.cem?.name || "";
 
-  // Ao adicionar nova casa, preenche automaticamente a rede se não puder editar
+  const churchId = session?.user?.churchId || "";
+  const cemId = session?.user?.cem?._id || "";
+
+  // ↓ Usa prepend em vez de append - adiciona no topo
   const handleAddCasa = () => {
-    append({
-      lider1: "",
-      lider2: "",
+    prepend({
+      lider1: { name: "", _id: "" },
+      lider2: { name: "", _id: "" },
       endereco: "",
       rede: canEditRede ? "" : defaultRede,
       anfitria: "",
       telefone: "",
+      _id: "",
     });
   };
 
-  // Quando importar, preenche a rede se necessário
-  const handleImport = (imported: LeaderPair[]) => {
+  const handleImport = (imported: TCems[]) => {
     fields.forEach((_, index) => remove(index));
     imported.forEach((casa) => {
       append({
@@ -100,12 +103,44 @@ const NovaCem = () => {
               render={({ field }) => <Input {...field} type="date" className="w-full sm:w-auto" />}
             />
           </div>
-          <PermissionGuard roles={[ROLES.ADMIN, ROLES.SECRETARIA]}>
-            <div className="mt-4">
-              <ImportButton inputFileRef={inputFileRef} onImport={handleImport} />
-            </div>
-          </PermissionGuard>
         </div>
+      </div>
+
+      {/* ↓ Botões de ação movidos para cima */}
+      <div className="flex flex-col sm:flex-row gap-2 justify-end mb-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.back()}
+          className="w-full sm:w-auto"
+        >
+          <X className="mr-2 h-4 w-4" />
+          Cancelar
+        </Button>
+
+        <Button
+          type="button"
+          onClick={handleAddCasa}
+          className="w-full sm:w-auto bg-blue-500"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Adicionar Cem's
+        </Button>
+
+        <Button
+          onClick={onSubmit}
+          disabled={isLoading || !casas || casas.length === 0}
+          className="bg-[#04AA6D] hover:bg-[#04AA6D]/90 w-full sm:w-auto"
+        >
+          {isLoading ? (
+            <>
+              <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              Salvando...
+            </>
+          ) : (
+            "Salvar Cem's"
+          )}
+        </Button>
       </div>
 
       {/* Form */}
@@ -117,7 +152,7 @@ const NovaCem = () => {
               <Button
                 type="button"
                 onClick={handleAddCasa}
-                className="bg-blue-500 hover:bg-blue-600"
+                className="bg-blue-500 hover:bg-blue-600 dark:bg-orange-500 dark:hover:bg-orange-600"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar Primeira Cem's
@@ -129,14 +164,21 @@ const NovaCem = () => {
             <Card key={field.id}>
               <CardContent className="pt-6">
                 <div className="flex flex-col gap-4">
-                  {/* Linha 1: Líderes e Rede */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="flex flex-col">
                       <Label className="mb-2">Líder 1 *</Label>
                       <Controller
                         name={`casas.${index}.lider1`}
                         control={control}
-                        render={({ field }) => <Input {...field} placeholder="Nome do Líder 1" />}
+                        render={({ field }) => (
+                          <SelectMembrosRede
+                            title="Selecionar Líder 1"
+                            churchId={churchId}
+                            cemId={cemId}
+                            value={field.value?._id ?? ""}
+                            onChange={field.onChange}
+                          />
+                        )}
                       />
                     </div>
 
@@ -145,7 +187,15 @@ const NovaCem = () => {
                       <Controller
                         name={`casas.${index}.lider2`}
                         control={control}
-                        render={({ field }) => <Input {...field} placeholder="Nome do Líder 2" />}
+                        render={({ field }) => (
+                          <SelectMembrosRede
+                            title="Selecionar Líder 2"
+                            churchId={churchId}
+                            cemId={cemId}
+                            value={field.value?._id ?? ""}
+                            onChange={field.onChange}
+                          />
+                        )}
                       />
                     </div>
 
@@ -171,7 +221,6 @@ const NovaCem = () => {
                     </div>
                   </div>
 
-                  {/* Linha 2: Detalhes */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="flex flex-col">
                       <Label className="mb-2">Anfitriã</Label>
@@ -192,6 +241,7 @@ const NovaCem = () => {
                         )}
                       />
                     </div>
+
                     <div className="flex flex-col">
                       <Label className="mb-2">Endereço</Label>
                       <Controller
@@ -204,7 +254,6 @@ const NovaCem = () => {
                     </div>
                   </div>
 
-                  {/* Botão Remover */}
                   <div className="flex justify-end">
                     <Button
                       type="button"
@@ -220,36 +269,6 @@ const NovaCem = () => {
               </CardContent>
             </Card>
           ))
-        )}
-
-        {/* Botões de Ação */}
-        {fields.length > 0 && (
-          <div className="flex flex-col sm:flex-row gap-2 justify-end mt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleAddCasa}
-              className="w-full sm:w-auto"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Adicionar Outra Cem's
-            </Button>
-
-            <Button
-              type="submit"
-              disabled={isLoading || !casas || casas.length === 0}
-              className="bg-[#04AA6D] hover:bg-[#04AA6D]/90 w-full sm:w-auto"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                  Salvando...
-                </>
-              ) : (
-                "Salvar Cem's"
-              )}
-            </Button>
-          </div>
         )}
       </form>
     </div>

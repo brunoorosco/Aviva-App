@@ -66,7 +66,8 @@ export class UsersMongoRepository {
 
       // 🔹 filtro dinâmico
       const filter: any = {
-        "cem._id": cemId,
+        cem: { $ne: null },
+       "cem._id": cemId,
         role: { $ne: "bispo" }, // sempre exclui bispo
       };
 
@@ -86,6 +87,8 @@ export class UsersMongoRepository {
         collection.countDocuments({ active: false, ...filter }),
         collection.countDocuments({ active: true, ...filter }),
       ]);
+
+      console.log('[users.ts:90]', JSON.stringify(data,null,2));
       return {
         data,
         total,

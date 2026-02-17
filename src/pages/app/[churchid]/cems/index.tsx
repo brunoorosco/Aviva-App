@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { useHttpGet, useHttpDelete } from "@/hooks/api";
 import Pagination from "@/components/Pagination";
 import CemHeader from "@/components/cems/CemHeader";
-import { CasaDePazModel } from "@/domain/models/casaDePaz";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,8 @@ import { usePermissions } from "@/hooks/usePermissions";
 import { ROLES } from "@/lib/permissions";
 import { useSession } from "next-auth/react";
 import Toast from "@/components/Toast";
+import { CemsModel } from "@/domain/models/cems";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 const CemsList = () => {
   const router = useRouter();
@@ -25,10 +26,15 @@ const CemsList = () => {
   const { hasPermission } = usePermissions();
 
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedBatismo, setSelectedBatismo] = useState<CasaDePazModel | null>(null);
+  const [selectedBatismo, setSelectedBatismo] = useState<CemsModel | null>(null);
   const [page, setPage] = useState(1);
   const limit = 8;
-
+  const [confirm, setConfirm] = useState<{
+    open: boolean;
+    title?: string;
+    description?: string;
+    onConfirm?: () => void;
+  }>({ open: false });
   // Verificar se pode deletar (apenas admin e secretaria)
   const canDelete = hasPermission([ROLES.ADMIN, ROLES.SECRETARIA]);
 
@@ -37,37 +43,39 @@ const CemsList = () => {
   const { data: cems, mutate: refreshMembers } = useHttpGet<{
     total: number;
     page: number;
-    data: CasaDePazModel[];
+    data: CemsModel[];
     totalPages: number;
   }>(`/api/protected/churches/${churchid}/cems?page=${page}&limit=${limit}`);
 
-  const handleEdit = (casaDePaz: CasaDePazModel) => {
-    setSelectedBatismo(casaDePaz);
-    setShowEditModal(true);
-  };
-
-  const handleDelete = async (e: React.MouseEvent, grupo: CasaDePazModel) => {
+  const handleDelete = async (e: React.MouseEvent, grupo: CemsModel) => {
     e.preventDefault(); // Evita navegação do Link
     e.stopPropagation();
+    openConfirm(
+      "Remover Cem's",
+      `Tem certeza que deseja remover o período de ${formatDate(grupo.data_inicial)} com ${grupo.casas.length} cem's?\n\nEsta ação não pode ser desfeita.`,
 
-    const confirmDelete = window.confirm(
-      `Tem certeza que deseja remover o período de ${formatDate(grupo.data_inicial)} com ${grupo.casas.length} casa(s) de paz?\n\nEsta ação não pode ser desfeita.`,
+      async () => {
+        try {
+          await useHttpDelete({
+            url: `/api/protected/churches/${session?.user.churchId}/cems/${grupo._id}`,
+          });
+
+          Toast.showSuccess("Cem's removida com sucesso!");
+          closeConfirm();
+          await refreshMembers();
+        } catch (error) {
+          Toast.showError("Erro ao remover Cem`s!");
+          console.error("Erro ao deletar:", error);
+        }
+      },
     );
-
-    if (!confirmDelete) return;
-
-    try {
-      await useHttpDelete({
-        url: `/api/protected/churches/${session?.user.churchId}/cems/${grupo._id}`,
-      });
-
-      Toast.showSuccess("Período removido com sucesso!");
-      await refreshMembers();
-    } catch (error) {
-      Toast.showError("Erro ao remover período!");
-      console.error("Erro ao deletar:", error);
-    }
   };
+
+  const openConfirm = (title: string, description: string, onConfirm: () => void) => {
+    setConfirm({ open: true, title, description, onConfirm });
+  };
+
+  const closeConfirm = () => setConfirm({ open: false });
 
   const formatDate = (dateValue: any) => {
     if (!dateValue) return "";
@@ -117,7 +125,7 @@ const CemsList = () => {
               </Card>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                {cems.data.data?.map((grupo: CasaDePazModel) => (
+                {cems.data.data?.map((grupo: CemsModel) => (
                   <div key={grupo._id} className="group relative">
                     <Link href={`${asPath}/${grupo._id}`} className="block">
                       <Card className="h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer border-2 border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500">
@@ -215,6 +223,13 @@ const CemsList = () => {
                 ))}
               </div>
             )}
+            <ConfirmDialog
+              open={confirm.open}
+              onClose={closeConfirm}
+              onConfirm={confirm.onConfirm ?? closeConfirm}
+              title={confirm.title}
+              description={confirm.description}
+            />
 
             {/* Paginação */}
             {cems?.data.totalPages > 1 && (
