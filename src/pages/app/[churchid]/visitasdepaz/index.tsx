@@ -108,7 +108,7 @@ const CasaDePazList = () => {
         {!visitasDePaz ? (
           <div className='flex items-center justify-center min-h-[400px]'>
             <div className='flex flex-col items-center gap-3'>
-              <Loader2 className='w-8 h-8 animate-spin text-blue-500' />
+              <Loader2 className='w-8 h-8 animate-spin text-blue-500 dark:text-orange-500' />
               <p className='text-gray-500 dark:text-gray-400'>Carregando Visitas de Paz...</p>
             </div>
           </div>
@@ -145,8 +145,8 @@ const CasaDePazList = () => {
                         <CardContent className='p-6'>
                           {/* Ícone e Badge */}
                           <div className='flex items-start justify-between mb-4'>
-                            <div className='p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors'>
-                              <Home className='w-6 h-6 text-blue-600 dark:text-blue-400' />
+                            <div className='p-3 bg-blue-100 dark:bg-orange-900/30 rounded-xl group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors'>
+                              <Home className='w-6 h-6 text-blue-600 dark:text-orange-400' />
                             </div>
                             <Badge 
                               variant='secondary' 
@@ -171,11 +171,11 @@ const CasaDePazList = () => {
                                 Visitas de Paz realizadas:
                               </p>
                               <div className='flex items-baseline gap-2'>
-                                <span className='text-3xl font-bold text-blue-600 dark:text-blue-400'>
+                                <span className='text-3xl font-bold text-blue-600 dark:text-orange-400'>
                                   {grupo.casas.length}
                                 </span>
                                 <span className='text-sm text-gray-500 dark:text-gray-400'>
-                                  {grupo.casas.length === 1 ? 'reunião' : 'reuniões'}
+                                  {grupo.casas.length === 1 ? 'Casa' : 'Casas'}
                                 </span>
                               </div>
                             </div>

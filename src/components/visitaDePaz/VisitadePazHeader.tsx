@@ -1,82 +1,5 @@
-// import { baptism } from '@/domain/models/baptism'
-// import Link from 'next/link'
-// import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
-// import ExportButton from '@/components/ExportButton'
-// import { CasaDePaz, CasaDePazModel } from '@/domain/models/casaDePaz'
-// // import ExportButton from '../ExportButton'
-
-// type TProps<T> = {
-//   total: number
-//   pathname: string
-//   inputFileRef: React.RefObject<HTMLInputElement>
-//   data: T[]
-//   mapExport?: any
-//   sheetName?: string
-//   filename?: string
-//   title?: string
-// }
-
-// type Props = {
-//   pathname: string
-//   inputFileRef: React.RefObject<HTMLInputElement>
-//   casasdepaz: CasaDePazModel[]
-// }
-
-// const VisitadePazHeader = ({ pathname, inputFileRef, casasdepaz }: Props) => {
-//   const mapBaptismToExport = (m: Omit<CasaDePaz, '_id'>) => ({
-//     lider1:'',
-//     lider2:'',
-//     endereço: '',
-//     anfitria:'',
-//     telefone:''
-//     })
-
-//   return (
-//     <Header<CasaDePazModel>
-//       title='Visitas de Paz'
-//       total={casasdepaz.length}
-//       pathname={pathname}
-//       inputFileRef={inputFileRef}
-//       data={casasdepaz}
-//       mapExport={mapBaptismToExport}
-//       sheetName='Visitas'
-//       filename='visita_de_paz.xlsx'
-//     />
-//   )
-// }
-
-// export default VisitadePazHeader
-
-// const VisitadePazHeader = <T,>({
-//   total,
-//   pathname,
-//   inputFileRef,
-//   data,
-//   mapExport,
-//   sheetName = 'Export',
-//   filename = 'export.xlsx',
-//   title = 'Itens'
-// }: TProps<T>) => {
-//   return (
-//     <div className='flex justify-between px-3 pt-5 mt-2 bg-white rounded-t-lg dark:bg-dark-secondary'>
-//       <div>
-//         <div className='flex items-center gap-2'>
-//           <h2 className='text-2xl font-bold'>{title}</h2>
-//         </div>
-//         <p className='mt-2 text-gray-400'>{total}</p>
-//       </div>
-
-//       <div className='flex gap-2 h-10'>
-//         <Link href={`${pathname}/new`}>
-//           <ButtonNew />
-//         </Link>
-//       </div>
-//     </div>
-//   )
-// }
-
 import Link from 'next/link'
-import { CasaDePaz, CasaDePazModel } from '@/domain/models/casaDePaz'
+import { CasaDePaz, VisitaDePazModel } from '@/domain/models/casaDePaz'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -99,7 +22,7 @@ type TProps<T> = {
 type Props = {
   pathname: string
   inputFileRef: React.RefObject<HTMLInputElement>
-  casasdepaz: CasaDePazModel[]
+  casasdepaz: VisitaDePazModel[]
 }
 
 const VisitadePazHeader = ({ pathname, inputFileRef, casasdepaz }: Props) => {
@@ -112,7 +35,7 @@ const VisitadePazHeader = ({ pathname, inputFileRef, casasdepaz }: Props) => {
   })
 
   return (
-    <Header<CasaDePazModel>
+    <Header<VisitaDePazModel>
       title='Visitas de Paz'
       description='Gerencie e acompanhe todas as Visitas de Paz'
       total={casasdepaz.length}
@@ -129,7 +52,7 @@ const VisitadePazHeader = ({ pathname, inputFileRef, casasdepaz }: Props) => {
 
 export default VisitadePazHeader
 
-const Header = <T extends CasaDePazModel,>({
+const Header = <T extends VisitaDePazModel,>({
   total,
   pathname,
   inputFileRef,
@@ -194,8 +117,8 @@ const Header = <T extends CasaDePazModel,>({
           <div className='flex items-start gap-4'>
             {/* Ícone */}
             {icon && (
-              <div className='hidden sm:flex p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl shrink-0'>
-                <div className='text-blue-600 dark:text-blue-400'>
+              <div className='hidden sm:flex p-3 bg-blue-100 dark:bg-orange-900/30 rounded-xl shrink-0'>
+                <div className='text-blue-600 dark:text-orange-500'>
                   {icon}
                 </div>
               </div>
@@ -209,7 +132,7 @@ const Header = <T extends CasaDePazModel,>({
                 </h2>
                 <Badge 
                   variant='secondary' 
-                  className='bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 w-fit'
+                  className='bg-blue-100 text-blue-700 dark:bg-orange-900/30 dark:text-orange-400 w-fit'
                 >
                   {total} {total === 1 ? 'período' : 'períodos'}
                 </Badge>
@@ -224,7 +147,7 @@ const Header = <T extends CasaDePazModel,>({
               {/* Informação destacada: Total de Casas */}
               {stats.totalCasas > 0 && (
                 <div className='flex items-baseline gap-2 mt-3'>
-                  <span className='text-3xl font-bold text-blue-600 dark:text-blue-400'>
+                  <span className='text-3xl font-bold text-blue-600 dark:text-orange-400'>
                     {stats.totalCasas}
                   </span>
                   <span className='text-sm text-gray-500 dark:text-gray-400'>
@@ -257,7 +180,7 @@ const Header = <T extends CasaDePazModel,>({
             {/* Botão Novo */}
             <Link href={`${pathname}/new`} className='w-full sm:w-auto'>
               <Button 
-                className='bg-blue-600 hover:bg-blue-700 text-white w-full h-full'
+                className='bg-blue-600 hover:bg-blue-700 text-white w-full h-full dark:bg-orange-500'
                 size='default'
               >
                 <Plus className='mr-2 h-4 w-4' />
