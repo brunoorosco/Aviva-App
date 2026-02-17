@@ -1,5 +1,5 @@
 
-import { getCasasdePazByIdService, saveCasaDePazService } from '@/services/casasdepaz'
+import { getCemsByIdService, saveCemsService} from '@/services/cems'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -7,13 +7,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const churchId = (req.query?.churchid as string) || ''
     const casadepazId = (req.query?.id as string) || ''
     if (req.method == 'PUT') {
-      const casa = await saveCasaDePazService(req.body)
+      const casa = await saveCemsService(req.body)
       res.status(200).json({ casa })
     } else if (req.method == 'POST') {
-      const casa = await saveCasaDePazService(req.body)
+      const casa = await saveCemsService(req.body)
       res.status(200).json({ casa })
     } else if (req.method == 'GET') {
-      const casas = await getCasasdePazByIdService(churchId, casadepazId)
+      const casas = await getCemsByIdService(churchId, casadepazId)
       res.send(casas)
     } else {
       res.send('')

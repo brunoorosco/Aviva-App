@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm, useFieldArray, Controller } from "react-hook-form";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,7 @@ import { Loader2Icon, Trash2, Plus } from "lucide-react";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ROLES } from "@/lib/permissions";
 import { PermissionGuard } from "@/components/PermissionGuard";
+import { SelectMembrosRede } from "@/components/Select/SelectMembrosRede"; // ← import
 
 type FormValues = {
   casas: LeaderPair[];
@@ -37,11 +38,12 @@ const NovaCem = () => {
   const { hasPermission } = usePermissions();
   const casas = watch("casas");
 
-  // Verifica se pode editar o campo rede
   const canEditRede = hasPermission([ROLES.ADMIN, ROLES.SECRETARIA]);
   const defaultRede = session?.user?.cem?.name || "";
 
-  // Ao adicionar nova casa, preenche automaticamente a rede se não puder editar
+  const churchId = session?.user?.churchId || "";
+  const cemId = session?.user?.cem?._id || "";
+
   const handleAddCasa = () => {
     append({
       lider1: "",
@@ -53,7 +55,6 @@ const NovaCem = () => {
     });
   };
 
-  // Quando importar, preenche a rede se necessário
   const handleImport = (imported: LeaderPair[]) => {
     fields.forEach((_, index) => remove(index));
     imported.forEach((casa) => {
@@ -87,7 +88,6 @@ const NovaCem = () => {
 
   return (
     <div className="container mx-auto p-4 max-w-7xl mt-3">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
         <h1 className="text-2xl md:text-3xl font-bold">Nova Cem's</h1>
 
@@ -108,17 +108,12 @@ const NovaCem = () => {
         </div>
       </div>
 
-      {/* Form */}
       <form onSubmit={onSubmit} className="flex flex-col gap-4">
         {fields.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <p className="text-gray-500 mb-4 text-center">Nenhuma Cem's adicionada ainda</p>
-              <Button
-                type="button"
-                onClick={handleAddCasa}
-                className="bg-blue-500 hover:bg-blue-600"
-              >
+              <Button type="button" onClick={handleAddCasa} className="bg-blue-500 hover:bg-blue-600">
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar Primeira Cem's
               </Button>
@@ -129,23 +124,43 @@ const NovaCem = () => {
             <Card key={field.id}>
               <CardContent className="pt-6">
                 <div className="flex flex-col gap-4">
+
                   {/* Linha 1: Líderes e Rede */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                    {/* ↓ Líder 1 substituído pelo Select */}
                     <div className="flex flex-col">
                       <Label className="mb-2">Líder 1 *</Label>
                       <Controller
                         name={`casas.${index}.lider1`}
                         control={control}
-                        render={({ field }) => <Input {...field} placeholder="Nome do Líder 1" />}
+                        render={({ field }) => (
+                          <SelectMembrosRede
+                            title="Selecionar Líder 1"
+                            churchId={churchId}
+                            cemId={cemId}
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        )}
                       />
                     </div>
 
+                    {/* ↓ Líder 2 substituído pelo Select */}
                     <div className="flex flex-col">
                       <Label className="mb-2">Líder 2/Auxiliar</Label>
                       <Controller
                         name={`casas.${index}.lider2`}
                         control={control}
-                        render={({ field }) => <Input {...field} placeholder="Nome do Líder 2" />}
+                        render={({ field }) => (
+                          <SelectMembrosRede
+                            title="Selecionar Líder 2"
+                            churchId={churchId}
+                            cemId={cemId}
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        )}
                       />
                     </div>
 
@@ -192,6 +207,7 @@ const NovaCem = () => {
                         )}
                       />
                     </div>
+
                     <div className="flex flex-col">
                       <Label className="mb-2">Endereço</Label>
                       <Controller
@@ -204,14 +220,8 @@ const NovaCem = () => {
                     </div>
                   </div>
 
-                  {/* Botão Remover */}
                   <div className="flex justify-end">
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => remove(index)}
-                    >
+                    <Button type="button" variant="destructive" size="sm" onClick={() => remove(index)}>
                       <Trash2 className="mr-2 h-4 w-4" />
                       Remover Cem's
                     </Button>
@@ -222,15 +232,9 @@ const NovaCem = () => {
           ))
         )}
 
-        {/* Botões de Ação */}
         {fields.length > 0 && (
           <div className="flex flex-col sm:flex-row gap-2 justify-end mt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleAddCasa}
-              className="w-full sm:w-auto"
-            >
+            <Button type="button" variant="outline" onClick={handleAddCasa} className="w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               Adicionar Outra Cem's
             </Button>

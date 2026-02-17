@@ -149,4 +149,23 @@ export class CemsRepository {
       details: r.batches
     }));
   }
+  async deleteCasaCems(cemId: string, casaId: string): Promise<any> {
+  try {
+    const collection = await MongoHelper.getCollection(this.collectionName);
+
+    const result = await collection.updateOne(
+      { _id: new ObjectId(cemId) },
+      {
+        $pull: {
+          casas: { _id: new ObjectId(casaId) }
+        }
+      }as any
+    );
+
+    return result;
+  } catch (error) {
+    console.error("Error deleting casa:", error);
+    throw error;
+  }
+  }
 }

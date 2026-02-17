@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Select,
   SelectTrigger,
@@ -8,16 +9,16 @@ import {
 } from "@/components/ui/select";
 import { useHttpGet } from "@/hooks/api";
 import Loading from "./loading";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { capitalizeWords } from "@/utils/capitalizaFirst";
 
 type DropdownProps = {
   title: string;
   churchId: string;
   cemId: string;
-  value?: string;
-  onChange?: (value: string) => void;
-  onDataLoaded?: (data: any[]) => void; // Nova prop para expor os dados
+  value?: { _id: string; name: string } | string;
+  onChange?: (value: { _id: string; name: string }) => void;
+  onDataLoaded?: (data: any[]) => void;
   error?: string;
 };
 
@@ -31,20 +32,38 @@ export function SelectMembrosRede({
   error,
 }: DropdownProps) {
   const { data, isLoading } = useHttpGet<any[]>(
-    `/api/protected/churches/${churchId}/cems/${cemId}/equipe`,
+    `/api/protected/churches/${churchId}/redes/${cemId}/equipe`,
   );
   const items = data?.data ?? [];
+console.log('data :>> ', data);
+  // ↓ Ref sempre atualizado com a lista mais recente
+  const itemsRef = useRef<any[]>([]);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
 
-  // Expõe os dados quando carregados
   useEffect(() => {
     if (!isLoading && items.length > 0 && onDataLoaded) {
       onDataLoaded(items);
     }
-  }, [items, isLoading, onDataLoaded]);
+  }, [items, isLoading]);
+
+  const selectedId = typeof value === "object" ? value?._id : value;
+
+  const handleChange = (id: string) => {
+    // ↓ Usa o ref em vez de items direto — nunca vai estar vazio
+    const membro = itemsRef.current.find((item) => item._id === id);
+    if (onChange) {
+      onChange({
+        _id: id,
+        name: membro?.name || "",
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col w-full">
-      <Select onValueChange={onChange} value={value}>
+      <Select onValueChange={handleChange} value={selectedId}>
         <SelectTrigger className="w-full bg-gray-200 dark:bg-zinc-700 dark:text-gray-100">
           <SelectValue placeholder={title} />
         </SelectTrigger>
