@@ -11,9 +11,9 @@ export default async function handler(
   res: NextApiResponse<User[] | User | Error | { _id: string; name: string }[]>,
 ) {
   if (req.method === "GET") {
-    const { cemid } = req.query;
+    const { redeid } = req.query;
 
-    const members = await usersByCemEquipe(cemid as string);
+    const members = await usersByCemEquipe(redeid as string);
     return res.status(200).json(members);
   }
   return res.status(400);

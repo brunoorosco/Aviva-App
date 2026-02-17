@@ -1,26 +1,21 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { createCemService, getCemService } from '@/services/cemService'
-import { CellsModel } from '@/domain/models/cells'
+import { createCemsService, getCemsService } from "@/services/cems";
+import { NextApiRequest, NextApiResponse } from "next";
 
-type Error = {
-  message: string
-}
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<CellsModel[] | Error>
-) {
-  const churchId = req.query.churchid as string
-  if (req.method === 'POST') {
-    const saved = await createCemService(req.body, churchId)
-    return res.status(200).json(saved)
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  try {
+    const churchId = (req.query?.churchid as string) || "";
+    if (req.method == "POST") {
+      const user = await createCemsService(churchId, req.body);
+      res.status(201).json({ user });
+    } else if (req.method == "GET") {
+      const casas = await getCemsService(churchId);
+      res.send(casas);
+    } else {
+      res.send("");
+    }
+  } catch (error) {
+    //@ts-ignore
+    console.error(error);
+    res.status(400).json({ error: "Falha na conexão com tb usuário" });
   }
-
-  if (req.method === 'GET') {
-    const { churchid } = req.query
-    const cem = await getCemService(churchid as string)
-    return res.status(200).json(cem as CellsModel[])
-  }
-
-  return res.status(204)
-}
+};

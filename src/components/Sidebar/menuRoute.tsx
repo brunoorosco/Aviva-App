@@ -54,7 +54,7 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
     {
       label: "Redes",
       icon: GroupIcon,
-      link: `${base}/cems`,
+      link: `${base}/redes`,
       roles: [ROLES.PASTOR, ROLES.SUPERVISOR, ROLES.LIDER],
     },
     // {
@@ -77,6 +77,11 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
           label: "Escola de Profeta",
           icon: GraduationCapIcon,
           link: `${base}/secretary/escola-de-profeta`,
+        },
+        {
+          label: "Cem's",
+          icon: HouseHeartIcon,
+          link: `${base}/cems`,
         },
         {
           label: "Casas de Paz",

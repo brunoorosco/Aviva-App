@@ -1,273 +1,237 @@
 "use client";
 
-import Link from "next/link";
-import Toast from "@/components/Toast";
-import ButtonNew from "@/components/ButtonSubmit/buttonAdd";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { CellsModel } from "@/domain/models/cells";
-import { useHttpGet } from "@/hooks/api";
-import { useSession } from "next-auth/react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { Suspense } from "react";
-import { Pencil, Users, Network, Loader2 } from "lucide-react";
+import { useHttpGet, useHttpDelete } from "@/hooks/api";
+import Pagination from "@/components/Pagination";
+import CemHeader from "@/components/cems/CemHeader";
+import { CasaDePazModel } from "@/domain/models/casaDePaz";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Calendar, Home, Loader2, MapPin, Trash2 } from "lucide-react";
 import { usePermissions } from "@/hooks/usePermissions";
+import { ROLES } from "@/lib/permissions";
+import { useSession } from "next-auth/react";
+import Toast from "@/components/Toast";
 
-const Cem = () => {
+const CemsList = () => {
   const router = useRouter();
-  const churchId = router.query?.churchid;
+  const { asPath, query, isReady } = router;
+  const { churchid } = query;
+  const inputFileRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
-  const { isAdmin } = usePermissions();
-  const { data: cems, mutate } = useHttpGet<CellsModel[]>(
-    `/api/protected/churches/${session?.user.churchId}/cems`,
-  );
-  const userCem = session?.user.cem._id;
+  const { hasPermission } = usePermissions();
 
-  const handleDelete = async (id: string) => {
-    Toast.showDelete(`/api/protected/churches/${session?.user.churchId}/cems/${id}`);
-    await mutate();
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedBatismo, setSelectedBatismo] = useState<CasaDePazModel | null>(null);
+  const [page, setPage] = useState(1);
+  const limit = 8;
+
+  // Verificar se pode deletar (apenas admin e secretaria)
+  const canDelete = hasPermission([ROLES.ADMIN, ROLES.SECRETARIA]);
+
+  if (!isReady || !churchid) return null;
+
+  const { data: cems, mutate: refreshMembers } = useHttpGet<{
+    total: number;
+    page: number;
+    data: CasaDePazModel[];
+    totalPages: number;
+  }>(`/api/protected/churches/${churchid}/cems?page=${page}&limit=${limit}`);
+
+  const handleEdit = (casaDePaz: CasaDePazModel) => {
+    setSelectedBatismo(casaDePaz);
+    setShowEditModal(true);
   };
 
-  const goToMembers = (cemId: string) => {
-    router.push(`/app/${churchId}/cems/${cemId}/members`);
+  const handleDelete = async (e: React.MouseEvent, grupo: CasaDePazModel) => {
+    e.preventDefault(); // Evita navegação do Link
+    e.stopPropagation();
+
+    const confirmDelete = window.confirm(
+      `Tem certeza que deseja remover o período de ${formatDate(grupo.data_inicial)} com ${grupo.casas.length} casa(s) de paz?\n\nEsta ação não pode ser desfeita.`,
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await useHttpDelete({
+        url: `/api/protected/churches/${session?.user.churchId}/cems/${grupo._id}`,
+      });
+
+      Toast.showSuccess("Período removido com sucesso!");
+      await refreshMembers();
+    } catch (error) {
+      Toast.showError("Erro ao remover período!");
+      console.error("Erro ao deletar:", error);
+    }
   };
 
-  const isUserCem = (cemId: string) => cemId === userCem;
-  const canViewCem = (cemId: string) => isAdmin || isUserCem(cemId);
+  const formatDate = (dateValue: any) => {
+    if (!dateValue) return "";
+    const date = typeof dateValue === "string" ? new Date(dateValue) : dateValue;
+    if (!(date instanceof Date) || isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+  };
 
   return (
-    <div className="min-h-screen ">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl">
-        <Suspense
-          fallback={
-            <div className="flex items-center justify-center min-h-[400px]">
-              <div className="flex flex-col items-center gap-3">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-                <p className="text-gray-500">Carregando Redes...</p>
-              </div>
-            </div>
-          }
-        >
-          {/* Cabeçalho */}
-          <div className="mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-gray-900 rounded-2xl shadow-sm p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                  <Network className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                    Nossas Redes
-                  </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    {cems?.data?.length || 0} {cems?.data?.length === 1 ? "rede" : "redes"}{" "}
-                    cadastradas
-                  </p>
-                </div>
-              </div>
+    <div className="min-h-screen bg-background from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-6xl">
+        {/* Header */}
+        {cems && (
+          <div className="mb-6">
+            <CemHeader pathname={asPath} inputFileRef={inputFileRef} casasdepaz={cems?.data.data} />
+          </div>
+        )}
 
-              {isAdmin && (
-                <Link href={`../${churchId}/cems/new`} className="w-full sm:w-auto">
-                  <ButtonNew />
-                </Link>
-              )}
+        {/* Loading State */}
+        {!cems ? (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-500 dark:text-orange-500" />
+              <p className="text-gray-500 dark:text-gray-400">Carregando Cem's...</p>
             </div>
           </div>
-
-          {/* Grid de Cards */}
-          {!cems?.data || cems.data.length === 0 ? (
-            <div className="bg-white dark:bg-dark-secondary rounded-2xl shadow-sm p-12 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <div className="p-4 bg-gray-100 dark:bg-gray-900 rounded-full">
-                  <Network className="w-12 h-12 text-gray-400" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Nenhuma rede cadastrada
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    {isAdmin
-                      ? "Clique no botão acima para criar a primeira rede"
-                      : "Aguarde até que uma rede seja criada"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 dark:bg-black/40 bg-gray-50">
-              {cems.data.map((cem: CellsModel) => {
-                const isActive = canViewCem(cem._id);
-                const isCurrentUserCem = isUserCem(cem._id);
-
-                return (
-                  <div key={cem._id} className="group relative">
-                    {/* Botão de Edição */}
-                    {isAdmin && (
-                      <Link
-                        href={`../${churchId}/cems/${cem._id}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="absolute top-3 right-3 z-10 p-2 bg-white dark:bg-gray-900 
-                                 rounded-full shadow-md opacity-0 group-hover:opacity-100 
-                                 transition-opacity duration-200 hover:bg-gray-100 
-                                 dark:hover:bg-gray-700"
-                      >
-                        <Pencil className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-                      </Link>
-                    )}
-
-                    {/* Card da Rede */}
-                    <Card
-                      className={`
-                        relative overflow-hidden rounded-2xl shadow-md 
-                        hover:shadow-xl transition-all duration-300 cursor-pointer
-                        border-2 h-full
-                        ${
-                          isCurrentUserCem
-                            ? "dark:border-orange-500 border-blue-500 from-blue-50"
-                            : isActive
-                              ? "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300"
-                              : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50"
-                        }
-                        ${isActive ? "hover:-translate-y-1" : ""}
-                      `}
-                      onClick={() => goToMembers(cem._id)}
-                    >
-                      {/* Badge Minha Rede */}
-                      {isCurrentUserCem && (
-                        <div className="absolute top-3 left-3">
-                          <Badge className="bg-blue-500 hover:bg-blue-600 dark:bg-orange-500 text-white text-xs px-2 py-1">
-                            Minha Rede
-                          </Badge>
-                        </div>
-                      )}
-
-                      <CardHeader className="pt-12 pb-4">
-                        <div className="flex flex-col items-center text-center space-y-2">
-                          {/* Ícone da Rede */}
-                          <div
-                            className={`
-                            p-3 rounded-full mb-2
-                            ${
-                              isCurrentUserCem
-                                ? "bg-blue-100 dark:bg-blue-900/40"
-                                : "bg-gray-100 dark:bg-gray-700"
-                            }
-                          `}
-                          >
-                            <Network
-                              className={`
-                              w-6 h-6
-                              ${
-                                isCurrentUserCem
-                                  ? "text-blue-600 dark:text-orange-600 "
-                                  : isActive
-                                    ? "text-gray-700 dark:text-gray-300"
-                                    : "text-gray-400"
-                              }
-                            `}
-                            />
-                          </div>
-
-                          {/* Nome da Rede */}
-                          <CardTitle
-                            className={`
-                            text-lg sm:text-xl font-bold
-                            ${
-                              isActive
-                                ? "text-gray-900 dark:text-white"
-                                : "text-gray-400 dark:text-gray-600"
-                            }
-                          `}
-                          >
-                            {cem.name}
-                          </CardTitle>
-
-                          {/* Descrição */}
-                          {cem.description && (
-                            <p
-                              className={`
-                              text-xs sm:text-sm line-clamp-2 px-2
-                              ${
-                                isActive
-                                  ? "text-gray-600 dark:text-gray-400"
-                                  : "text-gray-400 dark:text-gray-600"
-                              }
-                            `}
-                            >
-                              {cem.description}
-                            </p>
-                          )}
-                        </div>
-                      </CardHeader>
-
-                      <CardContent className="pt-0 pb-6">
-                        {/* Contador de Membros */}
-                        <div
-                          className={`
-                          flex items-center justify-center gap-2 p-4 rounded-xl
-                          ${
-                            isCurrentUserCem
-                              ? "bg-blue-100 dark:bg-blue-900/30"
-                              : "bg-gray-100 dark:bg-gray-700/50"
-                          }
-                        `}
-                        >
-                          <Users
-                            className={`
-                            w-5 h-5
-                            ${
-                              isCurrentUserCem
-                                ? "text-blue-600 dark:text-orange-500"
-                                : isActive
-                                  ? "text-gray-700 dark:text-gray-300"
-                                  : "text-gray-400"
-                            }
-                          `}
-                          />
-                          <div className="flex items-baseline gap-1">
-                            <span
-                              className={`
-                              text-2xl font-bold
-                              ${
-                                isCurrentUserCem
-                                  ? "text-blue-600 dark:text-orange-500"
-                                  : isActive
-                                    ? "text-gray-900 dark:text-white"
-                                    : "text-gray-400"
-                              }
-                            `}
-                            >
-                              {cem.membersActive || 0}
-                            </span>
-                            <span
-                              className={`
-                              text-sm font-normal
-                              ${isActive ? "text-gray-600 dark:text-gray-400" : "text-gray-400"}
-                            `}
-                            >
-                              {cem.membersActive === 1 ? "membro" : "membros"}
-                            </span>
-                          </div>
-                        </div>
-                      </CardContent>
-
-                      {/* Indicador visual de hover */}
-                      {isActive && (
-                        <div
-                          className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 
-                                      opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        />
-                      )}
-                    </Card>
+        ) : (
+          <>
+            {/* Lista de Casas de Paz */}
+            {cems.data.data.length === 0 ? (
+              <Card className="shadow-sm">
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-full">
+                      <Home className="w-12 h-12 text-gray-400" />
+                    </div>
+                    <div className="text-center">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                        Nenhuma Cem's encontrada
+                      </h3>
+                      <p className="text-gray-500 dark:text-gray-400">
+                        Comece adicionando a primeira Cem's
+                      </p>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </Suspense>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                {cems.data.data?.map((grupo: CasaDePazModel) => (
+                  <div key={grupo._id} className="group relative">
+                    <Link href={`${asPath}/${grupo._id}`} className="block">
+                      <Card className="h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer border-2 border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-500">
+                        <CardContent className="p-6">
+                          {/* Ícone e Badge */}
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="p-3 bg-blue-100 dark:bg-orange-900/30 rounded-xl group-hover:bg-blue-200 dark:group-hover:bg-orange-900/50 transition-colors">
+                              <Home className="w-6 h-6 text-blue-600 dark:text-orange-500" />
+                            </div>
+                            <Badge
+                              variant="secondary"
+                              className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            >
+                              {grupo.casas.length} {grupo.casas.length === 1 ? "casa" : "casas"}
+                            </Badge>
+                          </div>
+
+                          {/* Data */}
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                              <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                              <span className="text-sm font-medium">
+                                {formatDate(grupo.data_inicial) || "Data não definida"}
+                              </span>
+                            </div>
+
+                            {/* Informação adicional */}
+                            <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                                Cem's realizadas:
+                              </p>
+                              <div className="flex items-baseline gap-2">
+                                <span className="text-3xl font-bold text-blue-600 dark:text-orange-500">
+                                  {grupo.casas.length}
+                                </span>
+                                <span className="text-sm text-gray-500 dark:text-gray-400">
+                                  {grupo.casas.length === 1 ? "casa" : "casas"}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Preview das primeiras redes (se houver) */}
+                            {grupo.casas.length > 0 && (
+                              <div className="pt-3 border-t border-gray-200 dark:border-gray-700">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <MapPin className="w-3 h-3 text-gray-400" />
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    Redes participantes:
+                                  </p>
+                                </div>
+                                <div className="flex flex-wrap gap-1">
+                                  {Array.from(new Set(grupo.casas.map((c) => c.rede)))
+                                    .filter(Boolean)
+                                    .slice(0, 3)
+                                    .map((rede, idx) => (
+                                      <Badge
+                                        key={idx}
+                                        variant="outline"
+                                        className="text-xs px-2 py-0.5"
+                                      >
+                                        {rede}
+                                      </Badge>
+                                    ))}
+                                  {Array.from(new Set(grupo.casas.map((c) => c.rede))).length >
+                                    3 && (
+                                    <Badge variant="outline" className="text-xs px-2 py-0.5">
+                                      +
+                                      {Array.from(new Set(grupo.casas.map((c) => c.rede))).length -
+                                        3}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Indicador de hover */}
+                          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-b-lg" />
+                        </CardContent>
+                      </Card>
+                    </Link>
+
+                    {/* Botão de Remover (apenas para admin e secretaria) */}
+                    {canDelete && (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg z-10"
+                        onClick={(e) => handleDelete(e, grupo)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Paginação */}
+            {cems?.data.totalPages > 1 && (
+              <div className="mt-8">
+                <Pagination
+                  currentPage={page}
+                  pageSize={limit}
+                  items={cems.data.total}
+                  onPageChange={setPage}
+                />
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
 };
 
-export default Cem;
+export default CemsList;

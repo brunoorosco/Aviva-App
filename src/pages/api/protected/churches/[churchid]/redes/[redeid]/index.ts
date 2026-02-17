@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { deleteCemService, getCemByIdService, updateCemService } from "@/services/cemService";
+import { deleteCemService, getCemByIdService, updateCemService } from "@/services/redeService";
 
 interface Error {
   message: string;
@@ -7,7 +7,7 @@ interface Error {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
   const churchId = req.query.churchid as string;
-  const cemId = req.query.cemid as string;
+  const cemId = req.query.redeid as string;
 
   if (req.method == "GET") {
     const cem = await getCemByIdService(churchId, cemId);
