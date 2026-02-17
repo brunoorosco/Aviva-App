@@ -139,7 +139,7 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
           delete payload.cemId;
         }
         response = await useHttpPost({
-          url: `/api/protected/churches/${session?.user.churchId}/cems/${session?.user.cem._id}/members`,
+          url: `/api/protected/churches/${session?.user.churchId}/redes/${session?.user.cem._id}/members`,
           data: payload,
         });
       }
