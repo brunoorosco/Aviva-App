@@ -88,7 +88,6 @@ export class UsersMongoRepository {
         collection.countDocuments({ active: true, ...filter }),
       ]);
 
-      console.log('[users.ts:90]', JSON.stringify(data,null,2));
       return {
         data,
         total,
