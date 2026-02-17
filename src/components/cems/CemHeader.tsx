@@ -162,7 +162,7 @@ const Header = <T extends CemsModel,>({
           {/* Seção de Ações */}
           <div className='flex flex-col sm:flex-row gap-2 sm:gap-3 shrink-0'>
             {/* Botão de Exportar (se houver dados) */}
-            {data && data.length > 0 && mapExport && (
+            {/* {data && data.length > 0 && mapExport && (
               <Button
                 variant='outline'
                 size='default'
@@ -176,7 +176,7 @@ const Header = <T extends CemsModel,>({
                 <span className='hidden sm:inline'>Exportar</span>
                 <span className='sm:hidden'>Exportar Excel</span>
               </Button>
-            )}
+            )} */}
 
             {/* Botão Novo */}
             <Link href={`${pathname}/new`} className='w-full sm:w-auto'>

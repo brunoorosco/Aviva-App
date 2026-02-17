@@ -16,6 +16,7 @@ import { ROLES } from "@/lib/permissions";
 import { PermissionGuard } from "@/components/PermissionGuard";
 import { SelectMembrosRede } from "@/components/Select/SelectMembrosRede";
 import { TCems } from "@/domain/models/cems";
+import { Masks } from "@/utils/masks";
 
 type FormValues = {
   casas: TCems[];
@@ -212,7 +213,9 @@ const NovaCem = () => {
                             {...field}
                             placeholder="Nome da Rede"
                             disabled={!canEditRede}
-                            className={!canEditRede ? "bg-gray-100 dark:bg-gray-500 cursor-not-allowed" : ""}
+                            className={
+                              !canEditRede ? "bg-gray-100 dark:bg-gray-500 cursor-not-allowed" : ""
+                            }
                           />
                         )}
                       />
@@ -235,7 +238,15 @@ const NovaCem = () => {
                         name={`casas.${index}.telefone`}
                         control={control}
                         render={({ field }) => (
-                          <Input {...field} placeholder="(00) 00000-0000" type="tel" />
+                          <Input
+                            {...field}
+                            placeholder="(00) 00000-0000"
+                            type="tel"
+                            onChange={(e) => {
+                              const masked = Masks.phone(e.target.value);
+                              field.onChange(masked);
+                            }}
+                          />
                         )}
                       />
                     </div>
