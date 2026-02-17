@@ -16,7 +16,7 @@ type Props = {
   initialData?: VisitaDePazModel | null;
 };
 
-export default function CemModal({ open, onClose, onSubmit, initialData }: Props) {
+function CemModal({ open, onClose, onSubmit, initialData }: Props) {
   const { control, handleSubmit, reset } = useForm<VisitaDePaz>({
     defaultValues: {
       lider1: "",
@@ -31,7 +31,7 @@ export default function CemModal({ open, onClose, onSubmit, initialData }: Props
   const cemId = session?.user.cem._id;
   const churchId = session?.user.churchId;
 
-  if (!churchId || !cemId) return;
+  if (!churchId || !cemId) return null;
 
   useEffect(() => {
     if (initialData) {
@@ -123,3 +123,5 @@ export default function CemModal({ open, onClose, onSubmit, initialData }: Props
     </Dialog>
   );
 }
+
+export default CemModal

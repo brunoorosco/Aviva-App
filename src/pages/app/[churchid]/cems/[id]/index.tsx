@@ -36,7 +36,7 @@ type Props = {
   cems: CasaDePazModel
 }
 
-export default function EncontroPage({ cems }: Props) {
+export default function CemsPage({ cems }: Props) {
   const router = useRouter()
   const [showModal, setShowModal] = useState(false)
   const [selectedCasa, setSelectedCasa] = useState<any | null>(null)
@@ -68,7 +68,7 @@ export default function EncontroPage({ cems }: Props) {
 
   const handleDelete = async (casa: any) => {
     const confirmDelete = window.confirm(
-      `Tem certeza que deseja remover a Casa de Paz dos líderes ${casa.lider1}${casa.lider2 ? ' / ' + casa.lider2 : ''}?`
+      `Tem certeza que deseja remover a Cem's dos líderes ${casa.lider1}${casa.lider2 ? ' / ' + casa.lider2 : ''}?`
     )
     
     if (!confirmDelete) return
@@ -86,10 +86,10 @@ export default function EncontroPage({ cems }: Props) {
         data
       })
 
-      Toast.showSuccess('Casa de Paz removida com sucesso!')
+      Toast.showSuccess("Cem's removida com sucesso!")
       router.reload()
     } catch (error) {
-      Toast.showError('Erro ao remover Casa de Paz!')
+      Toast.showError("Erro ao remover Cem's!")
       console.error('Erro ao deletar:', error)
     }
   }
@@ -107,7 +107,7 @@ export default function EncontroPage({ cems }: Props) {
         url: `/api/protected/churches/${session?.user.churchId}/cems/${cems?._id}`,
         data
       })
-      Toast.showSuccess('Casa de Paz editada com sucesso!')
+      Toast.showSuccess("Cem's editada com sucesso!")
       router.reload()
       return
     }
@@ -117,7 +117,7 @@ export default function EncontroPage({ cems }: Props) {
       data
     })
 
-    Toast.showSuccess('Casa de Paz adicionada com sucesso!')
+    Toast.showSuccess("Cem's adicionada com sucesso!")
     router.reload()
   }
 

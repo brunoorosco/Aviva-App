@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { createCemService, getCemService } from '@/services/cemService'
+import { createCemService, getCemService } from '@/services/redeService'
 import { CellsModel } from '@/domain/models/cells'
 
 type Error = {

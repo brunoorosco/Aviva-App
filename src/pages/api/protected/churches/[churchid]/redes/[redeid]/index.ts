@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { deleteCemService, getCemByIdService, updateCemService } from "@/services/cemService";
+import { deleteCemService, getCemByIdService, updateCemService } from "@/services/redeService";
 
 interface Error {
   message: string;
