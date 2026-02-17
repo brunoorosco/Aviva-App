@@ -246,7 +246,7 @@ const NovaCem = () => {
                   Salvando...
                 </>
               ) : (
-                "Salvar Casas de Paz"
+                "Salvar Cem's"
               )}
             </Button>
           </div>
