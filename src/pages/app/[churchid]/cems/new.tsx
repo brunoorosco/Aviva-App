@@ -118,11 +118,7 @@ const NovaCem = () => {
           Cancelar
         </Button>
 
-        <Button
-          type="button"
-          onClick={handleAddCasa}
-          className="w-full sm:w-auto bg-blue-500"
-        >
+        <Button type="button" onClick={handleAddCasa} className="w-full sm:w-auto bg-blue-500">
           <Plus className="mr-2 h-4 w-4" />
           Adicionar Cem's
         </Button>
@@ -203,7 +199,9 @@ const NovaCem = () => {
                       <Label className="mb-2">
                         Rede *
                         {!canEditRede && (
-                          <span className="text-xs text-gray-500 ml-2">(automático)</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-300 ml-2">
+                            (automático)
+                          </span>
                         )}
                       </Label>
                       <Controller
@@ -214,7 +212,7 @@ const NovaCem = () => {
                             {...field}
                             placeholder="Nome da Rede"
                             disabled={!canEditRede}
-                            className={!canEditRede ? "bg-gray-100 cursor-not-allowed" : ""}
+                            className={!canEditRede ? "bg-gray-100 dark:bg-gray-500 cursor-not-allowed" : ""}
                           />
                         )}
                       />
