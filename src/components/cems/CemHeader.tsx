@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Home, Plus, Download, Calendar, Users, TrendingUp } from 'lucide-react'
 import { useMemo } from 'react'
+import { CemsModel } from '@/domain/models/cems'
 
 type TProps<T> = {
   total: number
@@ -22,11 +23,11 @@ type TProps<T> = {
 type Props = {
   pathname: string
   inputFileRef: React.RefObject<HTMLInputElement>
-  casasdepaz: CasaDePazModel[]
+  casasdepaz: CemsModel[]
 }
 
 const CemHeader = ({ pathname, inputFileRef, casasdepaz }: Props) => {
-  const mapBaptismToExport = (m: Omit<CasaDePaz, '_id'>) => ({
+  const mapBaptismToExport = (m: Omit<CemsModel, '_id'>) => ({
     lider1: '',
     lider2: '',
     endereço: '',
@@ -35,7 +36,7 @@ const CemHeader = ({ pathname, inputFileRef, casasdepaz }: Props) => {
   })
 
   return (
-    <Header<CasaDePazModel>
+    <Header<CemsModel>
       title="Cem's"
       description="Gerencie e acompanhe todas as nossas Cem's"
       total={casasdepaz.length}
@@ -52,7 +53,7 @@ const CemHeader = ({ pathname, inputFileRef, casasdepaz }: Props) => {
 
 export default CemHeader
 
-const Header = <T extends CasaDePazModel,>({
+const Header = <T extends CemsModel,>({
   total,
   pathname,
   inputFileRef,

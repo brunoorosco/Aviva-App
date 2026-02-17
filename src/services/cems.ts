@@ -62,10 +62,22 @@ export const deleteCasaCemsService = async (params: {
   const { churchId, casaId, cemId } = params;
 
   if (!casaId || !cemId) {
-    throw new Error("Data inicial é obrigatória para nova visita");
+    throw new Error("CasaId e CemId é obrigatória para nova visita");
   }
-  const resp = cemsRepository.deleteCasaCems( cemId, casaId);
-  console.log("casa :>> ", resp);
+  const resp = cemsRepository.deleteCasaCems(cemId, casaId);
   return resp;
+};
+
+export const deleteCemsByIdService = async (params: {
+  churchId?: string; // se existir, faz update/add
+  cemId?: string;
+}) => {
+  const { churchId, cemId } = params;
+
+  if (!cemId) {
+    throw new Error("CemId é obrigatória para nova visita");
+  }
+  const resp = cemsRepository.deleteCemById(cemId);
+  console.log("casa :>> ", resp);
   return resp;
 };

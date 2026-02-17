@@ -1,172 +1,173 @@
-import { CasaDePaz } from '@/domain/models/casaDePaz'
-import { ObjectId } from 'mongodb'
-import { MongoHelper } from '../../mongoHelper'
-import { TCems } from '@/domain/models/cems'
+import { CasaDePaz } from "@/domain/models/casaDePaz";
+import { ObjectId } from "mongodb";
+import { MongoHelper } from "../../mongoHelper";
+import { TCems } from "@/domain/models/cems";
 
 export class CemsRepository {
-  private collectionName: string
+  private collectionName: string;
   constructor() {
-    this.collectionName = 'cems'
+    this.collectionName = "cems";
   }
 
   async getCemsById(id: string): Promise<any> {
     try {
-      const collection = await MongoHelper.getCollection(this.collectionName)
-      const casaDePaz = await collection.findOne({ _id: new ObjectId(id) })
-      return casaDePaz
+      const collection = await MongoHelper.getCollection(this.collectionName);
+      const casaDePaz = await collection.findOne({ _id: new ObjectId(id) });
+      return casaDePaz;
     } catch (error) {
-      console.error('Error finding user by email:', error)
-      throw error
+      console.error("Error finding user by email:", error);
+      throw error;
     }
   }
 
   async getCems(
     churchId: string,
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<{
-    data: any[]
-    total: number
-    page: number
-    totalPages: number
+    data: any[];
+    total: number;
+    page: number;
+    totalPages: number;
   }> {
-    const collection = await MongoHelper.getCollection(this.collectionName)
-    const skip = (page - 1) * limit
+    const collection = await MongoHelper.getCollection(this.collectionName);
+    const skip = (page - 1) * limit;
 
     const [data, total] = await Promise.all([
       collection
         .find({})
-        .collation({ locale: 'pt', strength: 1 })
+        .collation({ locale: "pt", strength: 1 })
         .sort({ data_inicial: -1 })
         .skip(skip)
         .limit(limit)
         .toArray(),
-      collection.countDocuments({ churchId })
-    ])
+      collection.countDocuments({ churchId }),
+    ]);
 
     return {
       data,
       total,
       page,
-      totalPages: Math.ceil(total / limit)
-    }
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
-  async createCems(
-    casas: any
-  ): Promise<any> {
+  async createCems(casas: any): Promise<any> {
     try {
-      const collection = await MongoHelper.getCollection(this.collectionName)
-      const result = await collection.insertOne(casas)
+      const collection = await MongoHelper.getCollection(this.collectionName);
+      const result = await collection.insertOne(casas);
       return {
         success: true,
-      }
+      };
     } catch (error) {
-      console.error('Error inserting casas de paz:', error)
-      throw error
+      console.error("Error inserting casas de paz:", error);
+      throw error;
     }
   }
-  async addCasa(
-    casaId: string,
-    casa: TCems
-  ): Promise<{ success: boolean }> {
-    const collection = await MongoHelper.getCollection(this.collectionName)
+  async addCasa(casaId: string, casa: TCems): Promise<{ success: boolean }> {
+    const collection = await MongoHelper.getCollection(this.collectionName);
 
     const filteredCasa = Object.fromEntries(
-      Object.entries(casa).filter(([_, v]) => v !== undefined)
-    )
+      Object.entries(casa).filter(([_, v]) => v !== undefined),
+    );
 
     const resp = await collection.updateOne(
       { _id: new ObjectId(casaId) },
       {
         // @ts-ignore
         $push: {
-          casas: { ...filteredCasa, _id: new ObjectId() }
-        }
-      }
-    )
+          casas: { ...filteredCasa, _id: new ObjectId() },
+        },
+      },
+    );
 
-    return { success: resp.matchedCount > 0 }
+    return { success: resp.matchedCount > 0 };
   }
 
   // Edita uma casa existente dentro do documento
-  async updateCasa(
-    casaId: string,
-    casa: Partial<TCems>
-  ): Promise<{ success: boolean }> {
-    const { _id, ...rest } = casa
-    const collection = await MongoHelper.getCollection(this.collectionName)
+  async updateCasa(casaId: string, casa: Partial<TCems>): Promise<{ success: boolean }> {
+    const { _id, ...rest } = casa;
+    const collection = await MongoHelper.getCollection(this.collectionName);
     const resp = await collection.updateOne(
-      { _id: new ObjectId(casaId), 'casas._id': new ObjectId(_id) },
+      { _id: new ObjectId(casaId), "casas._id": new ObjectId(_id) },
       {
         $set: Object.fromEntries(
-          Object.entries(rest).map(([key, value]) => [`casas.$.${key}`, value])
-        )
-      }
-    )
-    return { success: true }
+          Object.entries(rest).map(([key, value]) => [`casas.$.${key}`, value]),
+        ),
+      },
+    );
+    return { success: true };
   }
   async getAnalytics(year: string, churchId: string) {
-    const startOfYear = new Date(`${year}-01-01T00:00:00.000Z`)
-    const endOfYear = new Date(`${year}-12-31T23:59:59.999Z`)
-    const collection = await MongoHelper.getCollection(this.collectionName)
+    const startOfYear = new Date(`${year}-01-01T00:00:00.000Z`);
+    const endOfYear = new Date(`${year}-12-31T23:59:59.999Z`);
+    const collection = await MongoHelper.getCollection(this.collectionName);
 
     const result = await collection
       .aggregate([
         {
           $addFields: {
-            dateObj: { $toDate: '$data_inicial' } // Converte string "YYYY-MM-DD" para Date
-          }
+            dateObj: { $toDate: "$data_inicial" }, // Converte string "YYYY-MM-DD" para Date
+          },
         },
         {
           $match: {
             churchId, // Ensure filtering by churchId if field exists (params names vary)
-            dateObj: { $gte: startOfYear, $lte: endOfYear }
-          }
+            dateObj: { $gte: startOfYear, $lte: endOfYear },
+          },
         },
         {
           $addFields: {
-            totalCasas: { $size: { $ifNull: ["$casas", []] } }
-          }
+            totalCasas: { $size: { $ifNull: ["$casas", []] } },
+          },
         },
         {
           $group: {
             _id: {
               month: { $month: "$dateObj" },
-              year: { $year: "$dateObj" }
+              year: { $year: "$dateObj" },
             },
             totalCasas: { $sum: "$totalCasas" },
-            batches: { $push: { data: "$data_inicial", count: "$totalCasas" } }
-          }
+            batches: { $push: { data: "$data_inicial", count: "$totalCasas" } },
+          },
         },
-        { $sort: { "_id.month": 1 } }
+        { $sort: { "_id.month": 1 } },
       ])
-      .toArray()
+      .toArray();
 
-    return result.map(r => ({
+    return result.map((r) => ({
       month: r._id.month,
       year: r._id.year,
       total: r.totalCasas,
-      details: r.batches
+      details: r.batches,
     }));
   }
   async deleteCasaCems(cemId: string, casaId: string): Promise<any> {
-  try {
-    const collection = await MongoHelper.getCollection(this.collectionName);
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
 
-    const result = await collection.updateOne(
-      { _id: new ObjectId(cemId) },
-      {
+      const result = await collection.updateOne({ _id: new ObjectId(cemId) }, {
         $pull: {
-          casas: { _id: new ObjectId(casaId) }
-        }
-      }as any
-    );
+          casas: { _id: new ObjectId(casaId) },
+        },
+      } as any);
 
-    return result;
-  } catch (error) {
-    console.error("Error deleting casa:", error);
-    throw error;
+      return result;
+    } catch (error) {
+      console.error("Error deleting casa:", error);
+      throw error;
+    }
   }
+  async deleteCemById(cemId: string): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+
+      const result = await collection.deleteOne({ _id: new ObjectId(cemId) });
+
+      return result;
+    } catch (error) {
+      console.error("Error deleting cem:", error);
+      throw error;
+    }
   }
 }
