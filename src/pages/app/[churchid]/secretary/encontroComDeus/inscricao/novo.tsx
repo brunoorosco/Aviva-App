@@ -2,21 +2,27 @@ import { useState, useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 import { EncontristasSection } from "@/components/finance/EncontristasSection";
 import { EquipeSection } from "@/components/finance/EquipeSection";
 import { PagamentosSection } from "@/components/finance/PagamentosSection";
 import { ResumoFinanceiro } from "@/components/finance/ResumoFinanceiro";
 import { Pagamento, TEquipe, TPeople } from "@/domain/models/encontroComDeus";
+import { useHttpPost } from "@/hooks/api";
+import Toast from "@/components/Toast";
 
 let idCounter = 0;
 const nextId = () => String(++idCounter);
 
 export default function GroupFinance() {
   const navigate = useRouter();
+  const { data: session } = useSession();
+  const { churchid, encontroId } = navigate.query;
 
   const [encontristas, setEncontristas] = useState<TPeople[]>([]);
   const [equipeMembers, setEquipeMembers] = useState<TEquipe[]>([]);
   const [pagamentos, setPagamentos] = useState<Pagamento[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Encontristas
   const addEncontrista = (data: TPeople) => {
@@ -86,11 +92,66 @@ export default function GroupFinance() {
 
   const totalPago = useMemo(() => pagamentos.reduce((sum, p) => sum + p.valor, 0), [pagamentos]);
 
-  const handleSave = () => {
-    console.log('encontristasD :>> ', encontristas);
-    console.log('equipe :>> ', equipeMembers);
-    console.log('pagamD :>> ', pagamentos);
-  }
+  const handleSave = async () => {
+    if (!encontroId) {
+      alert("ID do encontro não encontrado");
+      return;
+    }
+
+    if (!session?.user?.cem) {
+      alert("Informações da rede/célula não encontradas");
+      return;
+    }
+
+    // Valida se tem pelo menos um encontrista ou equipe
+    if (encontristas.length === 0 && equipeMembers.length === 0) {
+      alert("Adicione pelo menos um encontrista ou membro da equipe");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Calcula as quantidades (excluindo isentos)
+      const qtdEncontristas = encontristas.filter((e) => !e.isento).length;
+      const qtdEquipe = equipeMembers.filter((e) => !e.isento).length;
+
+      const payload = {
+        encontristas,
+        equipeMembers,
+        financeiro: {
+          rede: {
+            _id: session.user.cem._id,
+            name: session.user.cem.name,
+          },
+          encontrista: qtdEncontristas, // Apenas quantidade
+          equipe: qtdEquipe, // Apenas quantidade
+          pagamento: pagamentos, // Array de pagamentos
+        },
+      };
+
+      console.log("Enviando dados:", payload);
+
+      const response = await useHttpPost({
+        url: `/api/protected/churches/${churchid}/encontroComDeus/inscricao?encontroId=${encontroId}`,
+        data: payload,
+      });
+
+      console.log("Resposta:", response);
+
+      if (response.ok) {
+        Toast.showSuccess("Inscrição salva com sucesso!");
+        navigate.back();
+      } else {
+        throw new Error(response.error || "Erro ao salvar inscrição");
+      }
+    } catch (error: any) {
+      console.error("Erro ao salvar inscrição:", error);
+      alert(error?.message || "Erro ao salvar inscrição. Tente novamente.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-background">
@@ -108,7 +169,12 @@ export default function GroupFinance() {
             </div>
           </div>
           <div>
-            <Button onClick={e=>handleSave()}>Salvar</Button>
+            <Button
+              onClick={handleSave}
+              disabled={isLoading || (encontristas.length === 0 && equipeMembers.length === 0)}
+            >
+              {isLoading ? "Salvando..." : "Salvar"}
+            </Button>
           </div>
         </div>
       </div>

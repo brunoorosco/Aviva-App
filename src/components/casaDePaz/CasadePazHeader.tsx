@@ -118,8 +118,8 @@ const Header = <T extends CasaDePazModel,>({
           <div className='flex items-start gap-4'>
             {/* Ícone */}
             {icon && (
-              <div className='hidden sm:flex p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl shrink-0'>
-                <div className='text-blue-600 dark:text-blue-400'>
+              <div className='hidden sm:flex p-3 bg-blue-100 dark:bg-orange-900/30 rounded-xl shrink-0'>
+                <div className='text-blue-600 dark:text-orange-400'>
                   {icon}
                 </div>
               </div>
@@ -133,7 +133,7 @@ const Header = <T extends CasaDePazModel,>({
                 </h2>
                 <Badge 
                   variant='secondary' 
-                  className='bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 w-fit'
+                  className='bg-blue-100 text-blue-700 dark:bg-orange-900/30 dark:text-orange-400 w-fit'
                 >
                   {total} {total === 1 ? 'período' : 'períodos'}
                 </Badge>
@@ -148,7 +148,7 @@ const Header = <T extends CasaDePazModel,>({
               {/* Informação destacada: Total de Casas */}
               {stats.totalCasas > 0 && (
                 <div className='flex items-baseline gap-2 mt-3'>
-                  <span className='text-3xl font-bold text-blue-600 dark:text-blue-400'>
+                  <span className='text-3xl font-bold text-blue-600 dark:text-orange-400'>
                     {stats.totalCasas}
                   </span>
                   <span className='text-sm text-gray-500 dark:text-gray-400'>
