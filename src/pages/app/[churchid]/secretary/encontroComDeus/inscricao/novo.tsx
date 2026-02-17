@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
@@ -23,6 +23,8 @@ export default function GroupFinance() {
   const [equipeMembers, setEquipeMembers] = useState<TEquipe[]>([]);
   const [pagamentos, setPagamentos] = useState<Pagamento[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [encontroInfo, setEncontroInfo] = useState<any>(null);
 
   // Encontristas
   const addEncontrista = (data: TPeople) => {
@@ -92,6 +94,60 @@ export default function GroupFinance() {
 
   const totalPago = useMemo(() => pagamentos.reduce((sum, p) => sum + p.valor, 0), [pagamentos]);
 
+  // Carregar dados existentes ao abrir a página
+  useEffect(() => {
+    const loadInscricaoData = async () => {
+      if (!encontroId || !session?.user?.cem?._id) {
+        setIsLoadingData(false);
+        return;
+      }
+
+      try {
+        setIsLoadingData(true);
+        const redeId = session.user.cem._id;
+        
+        const response = await fetch(
+          `/api/protected/churches/${churchid}/encontroComDeus/inscricao?encontroId=${encontroId}&redeId=${redeId}`
+        );
+
+        if (!response.ok) {
+          throw new Error('Erro ao carregar dados');
+        }
+
+        const data = await response.json();
+        
+        // Carregar encontristas
+        if (data.encontristas && Array.isArray(data.encontristas)) {
+          setEncontristas(data.encontristas);
+        }
+
+        // Carregar equipe
+        if (data.equipe && Array.isArray(data.equipe)) {
+          setEquipeMembers(data.equipe);
+        }
+
+        // Carregar pagamentos
+        if (data.financeiro?.pagamento && Array.isArray(data.financeiro.pagamento)) {
+          setPagamentos(data.financeiro.pagamento);
+        }
+
+        // Salvar info do encontro
+        if (data.encontro) {
+          setEncontroInfo(data.encontro);
+        }
+
+        console.log('Dados carregados:', data);
+      } catch (error) {
+        console.error('Erro ao carregar dados da inscrição:', error);
+        // Não mostrar erro se for primeira vez (dados não existem ainda)
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    loadInscricaoData();
+  }, [encontroId, churchid, session?.user?.cem?._id]);
+
   const handleSave = async () => {
     if (!encontroId) {
       alert("ID do encontro não encontrado");
@@ -103,11 +159,8 @@ export default function GroupFinance() {
       return;
     }
 
-    // Valida se tem pelo menos um encontrista ou equipe
-    if (encontristas.length === 0 && equipeMembers.length === 0) {
-      alert("Adicione pelo menos um encontrista ou membro da equipe");
-      return;
-    }
+    // Não valida mais se está vazio - permite limpar dados
+    // Isso permite que o usuário apague tudo para remover inscrição
 
     setIsLoading(true);
 
@@ -145,6 +198,18 @@ export default function GroupFinance() {
     }
   };
 
+  // Mostrar loading enquanto carrega os dados
+  if (isLoadingData) {
+    return (
+      <div className="min-h-screen bg-gray-100 dark:bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Carregando informações...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-background">
       <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
@@ -156,14 +221,14 @@ export default function GroupFinance() {
             <div>
               <h1 className="text-xl font-bold font-[Montserrat]">Inscrição Encontro com Deus</h1>
               <p className="text-xs text-muted-foreground">
-                Gerenciamento de encontristas e equipe
+                {encontroInfo ? `Encontro #${encontroInfo.numero}` : 'Gerenciamento de encontristas e equipe'}
               </p>
             </div>
           </div>
           <div>
             <Button
               onClick={handleSave}
-              disabled={isLoading || (encontristas.length === 0 && equipeMembers.length === 0)}
+              disabled={isLoading}
             >
               {isLoading ? "Salvando..." : "Salvar"}
             </Button>

@@ -203,14 +203,40 @@ export const removePagamentoService = async (data: {
   return result;
 };
 
-// Buscar inscrição de uma rede específica
+// Buscar inscrição de uma rede específica com dados completos
 export const getInscricaoByRedeService = async (
   encontroId: string,
   redeId: string,
 ): Promise<any> => {
   const encontroRepository = new EncontroComDeusRepository();
-  const result = await encontroRepository.getInscricaoByRede(encontroId, redeId);
-  return result;
+  
+  // Buscar o encontro completo
+  const encontro = await encontroRepository.getEncontroComDeusById(encontroId);
+  
+  if (!encontro) {
+    throw new Error('Encontro não encontrado');
+  }
+  
+  // Buscar a inscrição financeira desta rede
+  const inscricaoFinanceira = encontro.financeiro?.find((f: any) => f.rede._id === redeId);
+  
+  // Filtrar encontristas desta rede
+  const encontristas = encontro.encontristas?.filter((e: any) => e.rede === redeId) || [];
+  
+  // Filtrar equipe desta rede
+  const equipe = encontro.equipe?.filter((e: any) => e.rede?._id === redeId) || [];
+  
+  // Retornar dados completos
+  return {
+    financeiro: inscricaoFinanceira || null,
+    encontristas,
+    equipe,
+    encontro: {
+      _id: encontro._id,
+      numero: encontro.numero,
+      data: encontro.data
+    }
+  };
 };
 
 // Buscar todas as inscrições
