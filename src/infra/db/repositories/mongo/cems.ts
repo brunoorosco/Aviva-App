@@ -1,6 +1,7 @@
 import { CasaDePaz } from '@/domain/models/casaDePaz'
 import { ObjectId } from 'mongodb'
 import { MongoHelper } from '../../mongoHelper'
+import { TCems } from '@/domain/models/cems'
 
 export class CemsRepository {
   private collectionName: string
@@ -67,7 +68,7 @@ export class CemsRepository {
   }
   async addCasa(
     casaId: string,
-    casa: CasaDePaz
+    casa: TCems
   ): Promise<{ success: boolean }> {
     const collection = await MongoHelper.getCollection(this.collectionName)
 
@@ -91,7 +92,7 @@ export class CemsRepository {
   // Edita uma casa existente dentro do documento
   async updateCasa(
     casaId: string,
-    casa: Partial<CasaDePaz>
+    casa: Partial<TCems>
   ): Promise<{ success: boolean }> {
     const { _id, ...rest } = casa
     const collection = await MongoHelper.getCollection(this.collectionName)

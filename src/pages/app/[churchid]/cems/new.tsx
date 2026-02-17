@@ -11,11 +11,11 @@ import { useHttpPost } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import Toast from "@/components/Toast";
 import { Button } from "@/components/ui/button";
-import { Loader2Icon, Trash2, Plus } from "lucide-react";
+import { Loader2Icon, Trash2, Plus, X } from "lucide-react";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ROLES } from "@/lib/permissions";
 import { PermissionGuard } from "@/components/PermissionGuard";
-import { SelectMembrosRede } from "@/components/Select/SelectMembrosRede"; // ← import
+import { SelectMembrosRede } from "@/components/Select/SelectMembrosRede";
 
 type FormValues = {
   casas: LeaderPair[];
@@ -23,7 +23,7 @@ type FormValues = {
 };
 
 const NovaCem = () => {
-  const { control, handleSubmit, watch, setValue } = useForm<FormValues>({
+  const { control, handleSubmit, watch } = useForm<FormValues>({
     defaultValues: {
       casas: [],
       data_inicial: new Date().toISOString().split("T")[0],
@@ -31,7 +31,7 @@ const NovaCem = () => {
   });
 
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const { fields, append, remove } = useFieldArray({ control, name: "casas" });
+  const { fields, append, remove, prepend } = useFieldArray({ control, name: "casas" }); // ← adiciona prepend
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
@@ -44,8 +44,9 @@ const NovaCem = () => {
   const churchId = session?.user?.churchId || "";
   const cemId = session?.user?.cem?._id || "";
 
+  // ↓ Usa prepend em vez de append - adiciona no topo
   const handleAddCasa = () => {
-    append({
+    prepend({
       lider1: "",
       lider2: "",
       endereco: "",
@@ -88,6 +89,7 @@ const NovaCem = () => {
 
   return (
     <div className="container mx-auto p-4 max-w-7xl mt-3">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
         <h1 className="text-2xl md:text-3xl font-bold">Nova Cem's</h1>
 
@@ -108,12 +110,55 @@ const NovaCem = () => {
         </div>
       </div>
 
+      {/* ↓ Botões de ação movidos para cima */}
+      <div className="flex flex-col sm:flex-row gap-2 justify-end mb-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.back()}
+          className="w-full sm:w-auto"
+        >
+          <X className="mr-2 h-4 w-4" />
+          Cancelar
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleAddCasa}
+          className="w-full sm:w-auto"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Adicionar Cem's
+        </Button>
+
+        <Button
+          onClick={onSubmit}
+          disabled={isLoading || !casas || casas.length === 0}
+          className="bg-[#04AA6D] hover:bg-[#04AA6D]/90 w-full sm:w-auto"
+        >
+          {isLoading ? (
+            <>
+              <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              Salvando...
+            </>
+          ) : (
+            "Salvar Cem's"
+          )}
+        </Button>
+      </div>
+
+      {/* Form */}
       <form onSubmit={onSubmit} className="flex flex-col gap-4">
         {fields.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <p className="text-gray-500 mb-4 text-center">Nenhuma Cem's adicionada ainda</p>
-              <Button type="button" onClick={handleAddCasa} className="bg-blue-500 hover:bg-blue-600">
+              <Button
+                type="button"
+                onClick={handleAddCasa}
+                className="bg-blue-500 hover:bg-blue-600 dark:bg-orange-500 dark:hover:bg-orange-600"
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar Primeira Cem's
               </Button>
@@ -124,11 +169,7 @@ const NovaCem = () => {
             <Card key={field.id}>
               <CardContent className="pt-6">
                 <div className="flex flex-col gap-4">
-
-                  {/* Linha 1: Líderes e Rede */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-                    {/* ↓ Líder 1 substituído pelo Select */}
                     <div className="flex flex-col">
                       <Label className="mb-2">Líder 1 *</Label>
                       <Controller
@@ -139,14 +180,13 @@ const NovaCem = () => {
                             title="Selecionar Líder 1"
                             churchId={churchId}
                             cemId={cemId}
-                            value={field.value}
+                            value={field.value?._id ?? ""}
                             onChange={field.onChange}
                           />
                         )}
                       />
                     </div>
 
-                    {/* ↓ Líder 2 substituído pelo Select */}
                     <div className="flex flex-col">
                       <Label className="mb-2">Líder 2/Auxiliar</Label>
                       <Controller
@@ -157,7 +197,7 @@ const NovaCem = () => {
                             title="Selecionar Líder 2"
                             churchId={churchId}
                             cemId={cemId}
-                            value={field.value}
+                            value={field.value?._id ?? ""}
                             onChange={field.onChange}
                           />
                         )}
@@ -186,7 +226,6 @@ const NovaCem = () => {
                     </div>
                   </div>
 
-                  {/* Linha 2: Detalhes */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="flex flex-col">
                       <Label className="mb-2">Anfitriã</Label>
@@ -221,7 +260,12 @@ const NovaCem = () => {
                   </div>
 
                   <div className="flex justify-end">
-                    <Button type="button" variant="destructive" size="sm" onClick={() => remove(index)}>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => remove(index)}
+                    >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Remover Cem's
                     </Button>
@@ -230,30 +274,6 @@ const NovaCem = () => {
               </CardContent>
             </Card>
           ))
-        )}
-
-        {fields.length > 0 && (
-          <div className="flex flex-col sm:flex-row gap-2 justify-end mt-4">
-            <Button type="button" variant="outline" onClick={handleAddCasa} className="w-full sm:w-auto">
-              <Plus className="mr-2 h-4 w-4" />
-              Adicionar Outra Cem's
-            </Button>
-
-            <Button
-              type="submit"
-              disabled={isLoading || !casas || casas.length === 0}
-              className="bg-[#04AA6D] hover:bg-[#04AA6D]/90 w-full sm:w-auto"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                  Salvando...
-                </>
-              ) : (
-                "Salvar Cem's"
-              )}
-            </Button>
-          </div>
         )}
       </form>
     </div>
