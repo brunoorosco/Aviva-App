@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Trash2, UserCheck } from "lucide-react";
 import { TEquipe } from "@/domain/models/encontroComDeus";
-import { User } from "@/domain/models/users";
 import { SelectMembrosRede } from "../Select/SelectMembrosRede";
 import { useSession } from "next-auth/react";
 import { capitalizeWords } from "@/utils/capitalizaFirst";
@@ -17,21 +16,30 @@ interface Props {
 }
 
 export function EquipeSection({ equipeMembers, onAdd, onRemove, onToggleIsento }: Props) {
-  const [selectedUserId, setSelectedUserId] = useState("");
-  const [users, setUsers] = useState<TEquipe[]>([]);
+  const [selectedUser, setSelectedUser] = useState<{ _id: string; name: string } | null>(null);
+  const [users, setUsers] = useState<{ _id: string; name: string }[]>([]);
   const { data: session } = useSession();
   const churchId = session?.user.churchId;
   const cem = session?.user.cem;
 
   if (!churchId || !cem) return null;
 
-  const availableUsers = users.filter((u) => !equipeMembers.some((m) => m._id === u._id));
+  const availableUsers = users.filter(
+    (u) => !equipeMembers.some((m) => m._id === u._id)
+  );
 
   const handleAdd = () => {
-    const user = users.find((u) => u._id === selectedUserId);
-    if (!user) return;
-    onAdd(user);
-    setSelectedUserId("");
+    if (!selectedUser) return;
+    
+    // ↓ Monta o objeto TEquipe completo
+    onAdd({
+      _id: selectedUser._id,
+      name: selectedUser.name,
+      isento: false,
+      rede: { _id: cem._id, name: cem.name } // ← ajuste conforme sua estrutura
+    });
+    
+    setSelectedUser(null);
   };
 
   return (
@@ -48,17 +56,20 @@ export function EquipeSection({ equipeMembers, onAdd, onRemove, onToggleIsento }
             churchId={churchId}
             cemId={cem._id}
             title="Selecione um membro"
-            value={selectedUserId}
-            onChange={setSelectedUserId}
+            value={selectedUser?._id ?? ""} // ← extrai _id do objeto
+            onChange={setSelectedUser}       // ← recebe { _id, name }
             onDataLoaded={setUsers}
           />
-          <Button onClick={handleAdd} size="sm" className="gap-1" disabled={!selectedUserId}>
+          
+          <Button onClick={handleAdd} size="sm" className="gap-1" disabled={!selectedUser}>
             <Plus className="h-4 w-4" /> Adicionar
           </Button>
         </div>
 
         {equipeMembers.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-4">Nenhum membro adicionado</p>
+          <p className="text-sm text-muted-foreground text-center py-4">
+            Nenhum membro adicionado
+          </p>
         )}
 
         <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -73,10 +84,12 @@ export function EquipeSection({ equipeMembers, onAdd, onRemove, onToggleIsento }
                 title="Isento de pagamento"
               />
               <span
-                className={`flex-1 text-sm font-medium ${m.isento ? " text-muted-foreground" : ""}`}
+                className={`flex-1 text-sm font-medium ${m.isento ? "text-muted-foreground" : ""}`}
               >
                 {capitalizeWords(m.name)}
-                {m.isento && <span className="ml-2 text-xs text-muted-foreground">(Isento)</span>}
+                {m.isento && (
+                  <span className="ml-2 text-xs text-muted-foreground">(Isento)</span>
+                )}
               </span>
               <Button
                 variant="ghost"
