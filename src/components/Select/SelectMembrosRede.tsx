@@ -35,7 +35,6 @@ export function SelectMembrosRede({
     `/api/protected/churches/${churchId}/redes/${cemId}/equipe`,
   );
   const items = data?.data ?? [];
-console.log('data :>> ', data);
   // ↓ Ref sempre atualizado com a lista mais recente
   const itemsRef = useRef<any[]>([]);
   useEffect(() => {
