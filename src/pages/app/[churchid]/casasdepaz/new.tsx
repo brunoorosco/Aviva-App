@@ -164,7 +164,7 @@ const NovaCasaDePaz = () => {
                             {...field}
                             placeholder="Nome da Rede"
                             disabled={!canEditRede}
-                            className={!canEditRede ? "bg-gray-100 cursor-not-allowed" : ""}
+                            className={!canEditRede ? "bg-gray-100 dark:bg-gray-500  cursor-not-allowed" : ""}
                           />
                         )}
                       />
