@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import ImportButton, { LeaderPair } from "../../../../components/casaDePaz/ImportButton";
 import { useHttpPost } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import Toast from "@/components/Toast";
@@ -16,9 +15,10 @@ import { usePermissions } from "@/hooks/usePermissions";
 import { ROLES } from "@/lib/permissions";
 import { PermissionGuard } from "@/components/PermissionGuard";
 import { SelectMembrosRede } from "@/components/Select/SelectMembrosRede";
+import { TCems } from "@/domain/models/cems";
 
 type FormValues = {
-  casas: LeaderPair[];
+  casas: TCems[];
   data_inicial: string;
 };
 
@@ -47,16 +47,17 @@ const NovaCem = () => {
   // ↓ Usa prepend em vez de append - adiciona no topo
   const handleAddCasa = () => {
     prepend({
-      lider1: "",
-      lider2: "",
+      lider1: { name: "", _id: "" },
+      lider2: { name: "", _id: "" },
       endereco: "",
       rede: canEditRede ? "" : defaultRede,
       anfitria: "",
       telefone: "",
+      _id: "",
     });
   };
 
-  const handleImport = (imported: LeaderPair[]) => {
+  const handleImport = (imported: TCems[]) => {
     fields.forEach((_, index) => remove(index));
     imported.forEach((casa) => {
       append({
@@ -102,11 +103,6 @@ const NovaCem = () => {
               render={({ field }) => <Input {...field} type="date" className="w-full sm:w-auto" />}
             />
           </div>
-          <PermissionGuard roles={[ROLES.ADMIN, ROLES.SECRETARIA]}>
-            <div className="mt-4">
-              <ImportButton inputFileRef={inputFileRef} onImport={handleImport} />
-            </div>
-          </PermissionGuard>
         </div>
       </div>
 
@@ -124,9 +120,8 @@ const NovaCem = () => {
 
         <Button
           type="button"
-          variant="outline"
           onClick={handleAddCasa}
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto bg-blue-500"
         >
           <Plus className="mr-2 h-4 w-4" />
           Adicionar Cem's
