@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2, CreditCard, FileImage, Upload, X } from "lucide-react";
-import { Pagamento } from "@/domain/models/encontroComDeus";
+import { Pagamento, TypePagamento } from "@/domain/models/encontroComDeus";
 
 
 interface Props {
@@ -32,8 +32,8 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove }: Props) {
     if (needsComprovante && !comprovante) return;
 
     onAdd({
-      tipo: tipo as Pagamento["tipo"],
-      valor: v,
+      tipo: tipo as TypePagamento,
+      valor: parseFloat(valor),
       comprovanteUrl: comprovante ? URL.createObjectURL(comprovante) : undefined,
       comprovanteName: comprovante?.name,
     });

@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TPeople } from "@/domain/models/encontroComDeus";
+import { Masks } from "@/utils/masks";
 
 interface Props {
   open: boolean;
@@ -82,7 +83,10 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
                 id="enc-tel"
                 placeholder="(00) 00000-0000"
                 value={telefone}
-                onChange={(e) => setTelefone(e.target.value)}
+                onChange={(e) => {
+                  const masked = Masks.phone(e.target.value);
+                  setTelefone(masked);
+                }}
               />
             </div>
             <div className="space-y-1.5 w-full">

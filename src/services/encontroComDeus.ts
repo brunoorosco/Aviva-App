@@ -1,11 +1,10 @@
-import { TPeople } from "@/domain/models/encontroComDeus";
+import { TEquipe, TPeople } from "@/domain/models/encontroComDeus";
 import { ChurChMongoRepository } from "../infra/db/repositories/mongo/churchs";
 import { EncontroComDeusRepository } from "../infra/db/repositories/mongo/encontroComDeus";
 
 export const getEncontroComDeusService = async (churchId: string) => {
   const encontroRepository = new EncontroComDeusRepository();
   const result = await encontroRepository.getEncontroComDeus(churchId);
-
   return result;
 };
 export const getEncontroComDeusByIdService = async (churchId: string, encontroId: string) => {
@@ -86,3 +85,137 @@ function normalizarEncontristasPorIgreja(
     return limparObjeto(obj) as TPeople;
   });
 }
+
+// ==================== SERVIÇOS FINANCEIROS SIMPLIFICADOS ====================
+
+// Valores padrão
+const VALOR_ENCONTRISTA = 200;
+const VALOR_EQUIPE = 100;
+
+// Calcula o status financeiro
+const calculateStatus = (totalAPagar: number, totalPago: number): string => {
+  if (totalPago === 0) return "pendente";
+  if (totalPago >= totalAPagar) return totalPago > totalAPagar ? "excedente" : "quitado";
+  return "parcial";
+};
+
+// Serviço para criar/atualizar inscrição de uma rede (apenas quantidades)
+export const upsertInscricaoRedeService = async (data: {
+  encontroId: string;
+  rede: { _id: string; name: string };
+  encontristas: TPeople[];
+  equipeMembers: TEquipe[];
+  pagamento: any[];
+}): Promise<any> => {
+  const encontroRepository = new EncontroComDeusRepository();
+
+  // Calcula quantidades baseado nos arrays
+  const qtdEncontristas = data.encontristas?.length || 0;
+  const qtdEquipe = data.equipeMembers?.length || 0;
+  let totalPago = 0;
+  let status = 'pendente';
+
+  const totalAPagar = qtdEncontristas * VALOR_ENCONTRISTA + qtdEquipe * VALOR_EQUIPE;
+
+  if (data.pagamento.length > 0) {
+    totalPago = (data?.pagamento || []).reduce((sum: number, p: any) => sum + (p.valor || 0), 0);
+    status = calculateStatus(totalAPagar, totalPago);
+  }
+
+  
+  const inscricaoData = {
+    rede: data.rede,
+    encontrista: qtdEncontristas,
+    equipe: qtdEquipe,
+    pagamento: data.pagamento || [],
+    totalAPagar,
+    totalPago,
+    status,
+  };
+  console.log("[encontroComDeus.ts:120]", JSON.stringify(inscricaoData, null, 2));
+
+  // 1. Atualiza financeiro
+  const finc = await encontroRepository.upsertInscricaoRede(
+    data.encontroId,
+    data.rede._id,
+    inscricaoData,
+  );
+  console.log("[encontroComDeus.ts:132]", finc);
+
+  // 2. Remove encontristas antigos da rede e adiciona novos
+  const enc = await encontroRepository.replaceEncontristasPorRede(
+    data.encontroId,
+    data.rede._id,
+    data.encontristas,
+  );
+  console.log(enc);
+
+  // 3. Remove equipe antiga da rede e adiciona nova
+  await encontroRepository.replaceEquipePorRede(data.encontroId, data.rede._id, data.equipeMembers);
+
+  return { success: true };
+};
+
+// Atualizar apenas quantidades
+export const updateQuantidadesService = async (data: {
+  encontroId: string;
+  redeId: string;
+  encontrista: number;
+  equipe: number;
+}): Promise<any> => {
+  const encontroRepository = new EncontroComDeusRepository();
+  const result = await encontroRepository.updateQuantidades(
+    data.encontroId,
+    data.redeId,
+    data.encontrista,
+    data.equipe,
+  );
+  return result;
+};
+
+// Adicionar pagamento
+export const addPagamentoService = async (data: {
+  encontroId: string;
+  redeId: string;
+  pagamento: any;
+}): Promise<any> => {
+  const encontroRepository = new EncontroComDeusRepository();
+  const result = await encontroRepository.addPagamento(
+    data.encontroId,
+    data.redeId,
+    data.pagamento,
+  );
+  return result;
+};
+
+// Remover pagamento
+export const removePagamentoService = async (data: {
+  encontroId: string;
+  redeId: string;
+  pagamentoId: string;
+}): Promise<any> => {
+  const encontroRepository = new EncontroComDeusRepository();
+  const result = await encontroRepository.removePagamento(
+    data.encontroId,
+    data.redeId,
+    data.pagamentoId,
+  );
+  return result;
+};
+
+// Buscar inscrição de uma rede específica
+export const getInscricaoByRedeService = async (
+  encontroId: string,
+  redeId: string,
+): Promise<any> => {
+  const encontroRepository = new EncontroComDeusRepository();
+  const result = await encontroRepository.getInscricaoByRede(encontroId, redeId);
+  return result;
+};
+
+// Buscar todas as inscrições
+export const getAllInscricoesService = async (encontroId: string): Promise<any> => {
+  const encontroRepository = new EncontroComDeusRepository();
+  const result = await encontroRepository.getAllInscricoes(encontroId);
+  return result;
+};

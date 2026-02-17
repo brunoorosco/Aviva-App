@@ -283,7 +283,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           ...encontro,
           _id: encontro._id.toString(),
           data: encontro.data.toISOString(),
-          encontristas: encontro.encontristas || []
+          encontristas: encontro.encontristas || [],
+          updatedAt: encontro.updatedAt.toISOString()
         }
       }
     }

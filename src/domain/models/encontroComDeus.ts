@@ -4,7 +4,7 @@ type BaseEncontro = {
   numero: string;
   igreja: string;
   equipe: TEquipe[];
-  financeiro: Pagamento;
+  financeiro: FinanceiroRede[]; // ← Renomeado para clareza
 };
 
 export type TEncontroComDeus = BaseEncontro & {
@@ -15,15 +15,45 @@ export type TReencontroComDeus = BaseEncontro & {
   reencontristas: People[];
 };
 
+// Estrutura financeira por rede - cada rede tem seu próprio objeto
+export interface FinanceiroRede {
+  _id: string;
+  status: StatusFinanceiro;
+  rede: {
+    _id: string;
+    name: string;
+  };
+  encontrista: number;
+  equipe: number;
+  pagamento: PagamentoItem[];
+  totalPago: number;
+  totalAPagar: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Item individual de pagamento (usado dentro de FinanceiroRede)
+export interface PagamentoItem {
+  _id?: string;
+  tipo: TypePagamento;
+  valor: number;
+  comprovanteUrl?: string;
+  comprovanteName?: string;
+  createdAt: string;
+}
+
+// ↓ Esse é o type que o componente PagamentosSection usa
+// Representa um pagamento no formulário/UI (sem createdAt obrigatório)
 export interface Pagamento {
   _id: string;
-  tipo: "pix" | "cartao" | "dinheiro";
+  tipo: TypePagamento;
   valor: number;
-  data: string;
+  data: string; // ← o componente usa p.data
   comprovanteUrl?: string;
   comprovanteName?: string;
 }
 
+export type TypePagamento = "pix" | "cartao" | "dinheiro";
 export type StatusFinanceiro = "quitado" | "parcial" | "pendente" | "excedente";
 
 export type TEquipe = {

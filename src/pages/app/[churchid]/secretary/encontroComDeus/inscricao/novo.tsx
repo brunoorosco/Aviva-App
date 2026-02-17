@@ -112,20 +112,14 @@ export default function GroupFinance() {
     setIsLoading(true);
 
     try {
-      // Calcula as quantidades (excluindo isentos)
-      const qtdEncontristas = encontristas.filter((e) => !e.isento).length;
-      const qtdEquipe = equipeMembers.filter((e) => !e.isento).length;
-
       const payload = {
         encontristas,
         equipeMembers,
+        rede: {
+          _id: session.user.cem._id,
+          name: session.user.cem.name,
+        },
         financeiro: {
-          rede: {
-            _id: session.user.cem._id,
-            name: session.user.cem.name,
-          },
-          encontrista: qtdEncontristas, // Apenas quantidade
-          equipe: qtdEquipe, // Apenas quantidade
           pagamento: pagamentos, // Array de pagamentos
         },
       };
@@ -137,9 +131,7 @@ export default function GroupFinance() {
         data: payload,
       });
 
-      console.log("Resposta:", response);
-
-      if (response.ok) {
+      if (response.result.success) {
         Toast.showSuccess("Inscrição salva com sucesso!");
         navigate.back();
       } else {
