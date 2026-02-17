@@ -37,7 +37,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       const { financeiro, encontristas, equipeMembers, rede} = req.body;
 
-      console.log(req.body);
       if (!rede || !rede._id || !rede.name) {
         return res.status(400).json({ error: "Informações da rede são obrigatórias" });
       }
@@ -47,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         rede,
         encontristas: encontristas || [],
         equipeMembers: equipeMembers || [],
-        pagamento: financeiro || [],
+        pagamento: financeiro.pagamento || [],
       });
 
       return res.status(201).json({
