@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import { GetServerSideProps } from 'next/types'
 import { useState } from 'react'
 import VisitaDePazModal from '../../../../../components/visitaDePaz/VisitaDePazModal'
+import { getRedeName } from '@/utils/helpersNameREde'
 
 function formatDate(dateValue: any) {
   if (!dateValue) return ''
@@ -116,11 +117,11 @@ export default function VisitaDePazIdPage({ visitasDePaz }: Props) {
                     )}
                   </p>
                 </div>
-                {pessoa.rede && (
+                {getRedeName(pessoa.rede) && (
                   <p className='text-xs text-gray-400'>
                     Rede:{' '}
                     <span className='font-semibold text-gray-600'>
-                      {pessoa.rede}
+                      {getRedeName(pessoa.rede)}
                     </span>
                   </p>
                 )}

@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { SelectMembrosRede } from "../Select/SelectMembrosRede";
 import { useSession } from "next-auth/react";
 import { CemsModel, TCems } from "@/domain/models/cems";
+import { getRedeName } from "@/utils/helpersNameREde";
 
 type Props = {
   open: boolean;
@@ -101,7 +102,14 @@ function CemModal({ open, onClose, onSubmit, initialData }: Props) {
               <Controller
                 name="rede"
                 control={control}
-                render={({ field }) => <Input {...field} placeholder="Rede" />}
+                render={({ field }) => (
+                  <Input 
+                    {...field} 
+                    value={getRedeName(field.value) || ''} 
+                    onChange={(e) => field.onChange(e.target.value)}
+                    placeholder="Rede" 
+                  />
+                )}
               />
             </div>
           </div>

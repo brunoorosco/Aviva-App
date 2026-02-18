@@ -65,6 +65,7 @@ export class CasasDePazRepository {
       throw error
     }
   }
+  
   async addCasa(
     casaId: string,
     casa: CasaDePaz

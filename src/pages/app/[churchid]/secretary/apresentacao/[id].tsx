@@ -13,6 +13,7 @@ import { useHttpGet, useHttpPut } from '@/hooks/api';
 import Toast from '@/components/Toast';
 import { CellsModel } from '@/domain/models/cells';
 import { TApresentacao } from '@/domain/models/apresentacao';
+import { getRedeName } from '@/utils/helpersNameREde';
 
 type FormValues = {
     tipo: 'alianca' | 'novoMembro' | 'crianca';
@@ -61,6 +62,7 @@ export default function EditarApresentacao() {
             const data = initialData.data;
             reset({
                 ...data,
+                rede: getRedeName(data.rede) || '',
                 // Ensure date is YYYY-MM-DD for input type="date"
                 dataApresentacao: data.dataApresentacao ? data.dataApresentacao.split('T')[0] : ''
             });

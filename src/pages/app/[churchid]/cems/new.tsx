@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useHttpPost } from "@/hooks/api";
 import { useSession } from "next-auth/react";
+import { getRedeName } from "@/utils/helpersNameREde";
 import Toast from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { Loader2Icon, Trash2, Plus, X } from "lucide-react";
@@ -211,6 +212,8 @@ const NovaCem = () => {
                         render={({ field }) => (
                           <Input
                             {...field}
+                            value={getRedeName(field.value) || ''}
+                            onChange={(e) => field.onChange(e.target.value)}
                             placeholder="Nome da Rede"
                             disabled={!canEditRede}
                             className={

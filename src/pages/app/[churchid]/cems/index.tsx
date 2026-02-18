@@ -8,6 +8,7 @@ import CemHeader from "@/components/cems/CemHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getRedeName } from "@/utils/helpersNameREde";
 import Link from "next/link";
 import { Calendar, Home, Loader2, MapPin, Trash2 } from "lucide-react";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -177,7 +178,7 @@ const CemsList = () => {
                                   </p>
                                 </div>
                                 <div className="flex flex-wrap gap-1">
-                                  {Array.from(new Set(grupo.casas.map((c) => c.rede)))
+                                  {Array.from(new Set(grupo.casas.map((c) => getRedeName(c.rede))))
                                     .filter(Boolean)
                                     .slice(0, 3)
                                     .map((rede, idx) => (
@@ -189,11 +190,11 @@ const CemsList = () => {
                                         {rede}
                                       </Badge>
                                     ))}
-                                  {Array.from(new Set(grupo.casas.map((c) => c.rede))).length >
+                                  {Array.from(new Set(grupo.casas.map((c) => getRedeName(c.rede)))).filter(Boolean).length >
                                     3 && (
                                     <Badge variant="outline" className="text-xs px-2 py-0.5">
                                       +
-                                      {Array.from(new Set(grupo.casas.map((c) => c.rede))).length -
+                                      {Array.from(new Set(grupo.casas.map((c) => getRedeName(c.rede)))).filter(Boolean).length -
                                         3}
                                     </Badge>
                                   )}

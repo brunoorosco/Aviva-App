@@ -215,7 +215,7 @@ export const getInscricaoByRedeService = async (
   const inscricaoFinanceira = encontro.financeiro?.find((f: any) => f.rede._id === redeId);
 
   // Filtrar encontristas desta rede
-  const encontristas = encontro.encontristas?.filter((e: any) => e.rede === redeId) || [];
+  const encontristas = encontro.encontristas?.filter((e: any) => e.rede._id === redeId) || [];
 
   // Filtrar equipe desta rede
   const equipe = encontro.equipe?.filter((e: any) => e.rede?._id === redeId) || [];

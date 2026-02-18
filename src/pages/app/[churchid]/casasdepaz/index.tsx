@@ -8,6 +8,7 @@ import EditMemberModal from '@/components/Member/EditMemberModal'
 import CasadePazHeader from '@/components/casaDePaz/CasadePazHeader'
 import { CasaDePazModel } from '@/domain/models/casaDePaz'
 import { Card, CardContent } from '@/components/ui/card'
+import { getRedeName } from '@/utils/helpersNameREde'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -190,7 +191,7 @@ const CasaDePazList = () => {
                                   </p>
                                 </div>
                                 <div className='flex flex-wrap gap-1'>
-                                  {Array.from(new Set(grupo.casas.map(c => c.rede)))
+                                  {Array.from(new Set(grupo.casas.map(c => getRedeName(c.rede))))
                                     .filter(Boolean)
                                     .slice(0, 3)
                                     .map((rede, idx) => (
@@ -202,9 +203,9 @@ const CasaDePazList = () => {
                                         {rede}
                                       </Badge>
                                     ))}
-                                  {Array.from(new Set(grupo.casas.map(c => c.rede))).length > 3 && (
+                                  {Array.from(new Set(grupo.casas.map(c => getRedeName(c.rede)))).filter(Boolean).length > 3 && (
                                     <Badge variant='outline' className='text-xs px-2 py-0.5'>
-                                      +{Array.from(new Set(grupo.casas.map(c => c.rede))).length - 3}
+                                      +{Array.from(new Set(grupo.casas.map(c => getRedeName(c.rede)))).filter(Boolean).length - 3}
                                     </Badge>
                                   )}
                                 </div>

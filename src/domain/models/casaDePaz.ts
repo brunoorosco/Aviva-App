@@ -10,7 +10,7 @@ export type CasaDePaz = {
   lider1: string
   lider2: string
   endereco: string
-  rede: string
+  rede?: { _id: string; name: string } | string
   anfitria?: string
   telefone?: string
 }

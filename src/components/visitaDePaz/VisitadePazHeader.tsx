@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { getRedeName } from '@/utils/helpersNameREde'
 import { CasaDePaz, VisitaDePazModel } from '@/domain/models/casaDePaz'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -93,7 +94,8 @@ const Header = <T extends VisitaDePazModel,>({
     const redesSet = new Set<string>()
     data.forEach(item => {
       item.casas?.forEach(casa => {
-        if (casa.rede) redesSet.add(casa.rede)
+        const redeName = getRedeName(casa.rede)
+        if (redeName) redesSet.add(redeName)
       })
     })
     const totalRedes = redesSet.size

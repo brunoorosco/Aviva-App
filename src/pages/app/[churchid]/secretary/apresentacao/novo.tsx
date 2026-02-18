@@ -14,10 +14,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Loader2, Plus } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { usePermissions } from '@/hooks/usePermissions';
 import { SelectCem } from '@/components/Select/SelectCem';
-import Link from 'next/link';
 import { useHttpPost } from '@/hooks/api';
 import Toast from '@/components/Toast';
 
@@ -27,7 +26,7 @@ import Toast from '@/components/Toast';
 
 type BaseForm = {
     tipo: 'alianca' | 'novoMembro' | 'crianca';
-    rede: string;
+    rede: { _id: string; name: string }; // ← sempre objeto agora
     dataApresentacao: string;
     horario: 'manha' | 'noite';
 };
@@ -63,7 +62,7 @@ export default function NovaApresentacao() {
     const { isAdmin } = usePermissions();
 
     const churchId = session?.user?.churchId || '';
-    const userRede = session?.user?.cem?.name || '';
+    const userCem = session?.user?.cem; // ← objeto { _id, name }
 
     const queryDate = router.query.date as string | undefined;
     const queryHorario = router.query.horario as 'manha' | 'noite' | undefined;
@@ -80,9 +79,8 @@ export default function NovaApresentacao() {
     } = useForm<FormValues>({
         defaultValues: {
             tipo: 'alianca',
-            rede: !isAdmin ? userRede : '',
-            dataApresentacao:
-                queryDate || new Date().toISOString().split('T')[0],
+            rede: userCem || { _id: '', name: '' }, // ← sempre objeto
+            dataApresentacao: queryDate || new Date().toISOString().split('T')[0],
             horario: queryHorario || 'manha',
             nomeHomem: '',
             nomeMulher: '',
@@ -96,10 +94,10 @@ export default function NovaApresentacao() {
     ======================= */
 
     useEffect(() => {
-        if (!isAdmin && userRede) {
-            setValue('rede', userRede);
+        if (!isAdmin && userCem) {
+            setValue('rede', userCem); // ← seta objeto completo
         }
-    }, [isAdmin, userRede, setValue]);
+    }, [isAdmin, userCem, setValue]);
 
     useEffect(() => {
         if (tipo === 'alianca') {
@@ -158,8 +156,8 @@ export default function NovaApresentacao() {
         <div className="max-w-3xl mx-auto">
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800">Apresentações</h1>
-                    <p className="text-slate-500">Eventos de apresentação agendados</p>
+                    <h1 className="text-2xl font-bold text-slate-800 dark:text-dark-primary">Apresentações</h1>
+                    <p className="text-slate-500 dark:text-gray-300">Eventos de apresentação agendados</p>
                 </div>
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -200,10 +198,16 @@ export default function NovaApresentacao() {
                                 isRequired
                             />
                         ) : (
-                            <Input
-                                {...register('rede')}
-                                disabled
-                                className="bg-slate-100"
+                            <Controller
+                                control={control}
+                                name="rede"
+                                render={({ field }) => (
+                                    <Input
+                                        value={field.value?.name || ''} // ← extrai o name
+                                        disabled
+                                        className="bg-slate-100"
+                                    />
+                                )}
                             />
                         )}
                     </div>
@@ -241,7 +245,7 @@ export default function NovaApresentacao() {
 
                 {/* DADOS ESPECÍFICOS */}
                 <div className="pt-4 border-t space-y-4">
-                    <h2 className="text-lg font-semibold text-slate-700">
+                    <h2 className="text-lg font-semibold text-slate-700 dark:text-gray-300">
                         Dados Específicos
                     </h2>
 

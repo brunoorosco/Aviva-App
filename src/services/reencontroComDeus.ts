@@ -1,6 +1,7 @@
 import { TPeople } from "@/domain/models/encontroComDeus";
 import { ChurChMongoRepository } from "../infra/db/repositories/mongo/churchs";
 import { ReencontroComDeusRepository } from "../infra/db/repositories/mongo/reencontroComDeus";
+import { getRedeName } from "@/utils/helpersNameREde";
 
 export const getReencontroComDeusService = async (churchId: string) => {
   const encontroRepository = new ReencontroComDeusRepository();
@@ -80,7 +81,8 @@ function normalizarEncontristasPorIgreja(
       return limparObjeto(out) as TPeople;
     }
 
-    const redeNorm = normalizar(entrada.rede);
+    const redeName = getRedeName(entrada.rede);
+    const redeNorm = normalizar(redeName);
     const contemIgreja = termos.some((t) => redeNorm.includes(t));
 
     const endereco = [entrada.endereco, entrada.bairro].filter(Boolean).join(" ") || undefined;
@@ -91,8 +93,8 @@ function normalizarEncontristasPorIgreja(
       dataNascimento: entrada.dataNascimento,
       telefone: entrada.telefone,
       endereco,
-      igreja: contemIgreja ? (entrada.rede as string) : nomeDaIgreja,
-      rede: contemIgreja ? undefined : entrada.rede,
+      igreja: contemIgreja ? redeName : nomeDaIgreja,
+      rede: contemIgreja ? undefined : redeName,
     };
 
     return limparObjeto(out) as TPeople;

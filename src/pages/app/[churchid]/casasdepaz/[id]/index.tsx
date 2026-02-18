@@ -1,4 +1,5 @@
 import Toast from '@/components/Toast'
+import { getRedeName } from '@/utils/helpersNameREde'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -53,7 +54,7 @@ export default function EncontroPage({ casasDePaz }: Props) {
     if (canEditGlobal) return true
     
     // Usuários podem editar apenas casas da sua própria rede
-    return casa.rede === userCemName
+    return getRedeName(casa.rede) === userCemName
   }
   
   const handleAdd = () => {
@@ -130,18 +131,18 @@ export default function EncontroPage({ casasDePaz }: Props) {
   }
 
   // Calcular estatísticas
-  const redesUnicas = new Set(casasDePaz.casas.map(c => c.rede).filter(Boolean))
+  const redesUnicas = new Set(casasDePaz.casas.map(c => getRedeName(c.rede)).filter(Boolean))
   const totalRedes = redesUnicas.size
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800'>
+    <div className='min-h-screen bg-gray-50 dark:bg-dark-secondary'>
       <div className='container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-6xl'>
         
         {/* Header com Voltar */}
         <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6'>
           <div className='flex items-start gap-4'>
-            <div className='hidden sm:flex p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl shrink-0'>
-              <Home className='w-6 h-6 text-blue-600 dark:text-blue-400' />
+            <div className='hidden sm:flex p-3 bg-blue-100 dark:bg-orange-900/30 rounded-xl shrink-0'>
+              <Home className='w-6 h-6 text-blue-600 dark:text-orange-400' />
             </div>
             <div>
               <h1 className='text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white'>
@@ -234,7 +235,7 @@ export default function EncontroPage({ casasDePaz }: Props) {
               </CardTitle>
               <Button 
                 onClick={handleAdd}
-                className='bg-blue-600 hover:bg-blue-700 w-full sm:w-auto'
+                className='bg-blue-600 hover:bg-blue-700 w-full sm:w-auto font-semibold dark:bg-orange-500  dark:hover:bg-orange-600' 
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Adicionar Casa
@@ -251,7 +252,7 @@ export default function EncontroPage({ casasDePaz }: Props) {
                 <p className='text-gray-500 dark:text-gray-400 text-center mb-4'>
                   Nenhuma Casa de Paz cadastrada ainda.
                 </p>
-                <Button onClick={handleAdd} variant='outline'>
+                <Button onClick={handleAdd} className='bg-blue-500 dark:bg-orange-500'>
                   <Plus className='mr-2 h-4 w-4' />
                   Adicionar primeira Casa
                 </Button>
@@ -261,7 +262,7 @@ export default function EncontroPage({ casasDePaz }: Props) {
                 {casasDePaz.casas.map((pessoa, index) => (
                   <Card 
                     key={index} 
-                    className='border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-colors'
+                    className='border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-orange-600 transition-colors'
                   >
                     <CardContent className='p-4'>
                       <div className='flex flex-col lg:flex-row lg:items-center gap-4'>
@@ -269,7 +270,7 @@ export default function EncontroPage({ casasDePaz }: Props) {
                         <div className='flex-1 space-y-3'>
                           {/* Líderes */}
                           <div className='flex items-start gap-2'>
-                            <Users className='w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0' />
+                            <Users className='w-5 h-5 text-blue-600 dark:text-orange-400 mt-0.5 shrink-0' />
                             <div>
                               <p className='text-xs text-gray-500 dark:text-gray-400 mb-1'>
                                 Dupla de Líderes
@@ -335,14 +336,14 @@ export default function EncontroPage({ casasDePaz }: Props) {
                           </div>
 
                           {/* Badge da Rede */}
-                          {pessoa.rede && (
+                          {getRedeName(pessoa.rede) && (
                             <div className='flex items-center gap-2'>
                               <Badge 
                                 variant='secondary'
                                 className='bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                               >
                                 <Network className='w-3 h-3 mr-1' />
-                                {pessoa.rede}
+                                {getRedeName(pessoa.rede)}
                               </Badge>
                             </div>
                           )}

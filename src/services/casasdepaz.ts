@@ -22,34 +22,66 @@ export const createCasasDePazService = async (
   churchId: string,
   data: { casas: CasaDePaz[]; data_inicial: string }
 ): Promise<any> => {
-  const casaMap = data.casas.map((casa) => {
-    return { ...casa, _id: new ObjectId() }
-  })
+  const casaMap = data.casas.map((casa) => ({
+    ...trimCasaFields(casa), // ✅ aplica trim
+    _id: new ObjectId()
+  }));
 
   const response = await casasdePazRepository.createCasaDePaz({
     church_id: churchId,
     data_inicial: data.data_inicial,
     casas: casaMap
-  })
-  return response
-}
+  });
+  
+  return response;
+};
 
 export const saveCasaDePazService = async (params: {
-  visitaId?: string // se existir, faz update/add
-  church_id: string
-  dataInicial?: string
-  casa: CasaDePaz
+  visitaId?: string;
+  church_id: string;
+  dataInicial?: string;
+  casa: CasaDePaz;
 }) => {
-  const { visitaId, casa } = params
+  const { visitaId, casa } = params;
+  
   if (!visitaId) {
-    throw new Error('Data inicial é obrigatória para nova visita')
+    throw new Error('Data inicial é obrigatória para nova visita');
   }
+
+  const casaTrimmed = trimCasaFields(casa); // ✅ aplica trim
 
   if (casa._id) {
-    // Edita casa existente
-    return casasdePazRepository.updateCasa(visitaId, casa)
+    return casasdePazRepository.updateCasa(visitaId, casaTrimmed);
   }
 
-  // Adiciona nova casa em documento existente
-  return casasdePazRepository.addCasa(visitaId, casa)
-}
+  return casasdePazRepository.addCasa(visitaId, casaTrimmed);
+};
+
+// Helper para limpar strings de um objeto
+const trimCasaFields = (casa: CasaDePaz): CasaDePaz => {
+  const trimmed: any = { ...casa };
+  
+  // Trim em campos string diretos
+  Object.keys(trimmed).forEach((key) => {
+    if (typeof trimmed[key] === 'string') {
+      trimmed[key] = trimmed[key].trim();
+    }
+  });
+
+  // Trim em objetos aninhados (lider1, lider2)
+  if (trimmed.lider1 && typeof trimmed.lider1 === 'object') {
+    trimmed.lider1 = {
+      ...trimmed.lider1,
+      name: trimmed.lider1.name?.trim() || '',
+    };
+  }
+
+  if (trimmed.lider2 && typeof trimmed.lider2 === 'object') {
+    trimmed.lider2 = {
+      ...trimmed.lider2,
+      name: trimmed.lider2.name?.trim() || '',
+    };
+  }
+
+  return trimmed;
+};

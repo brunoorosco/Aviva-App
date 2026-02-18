@@ -8,6 +8,7 @@ import { useHttpGet } from '@/hooks/api';
 import { Button } from '@/components/ui/button';
 import { Plus, Edit, Loader2, ArrowLeft, Calendar, User, Printer } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { getRedeName } from '@/utils/helpersNameREde';
 import { TApresentacao } from '@/domain/models/apresentacao';
 import { Badge } from '@/components/ui/badge';
 import { useReactToPrint } from 'react-to-print';
@@ -50,14 +51,9 @@ export default function DetalhesApresentacao() {
         };
     }, [filteredList]);
 
-    // Helper to extract clean network name from "id-nomeRede" format
-    const getCleanRedeName = (rede: string) => {
-        if (!rede) return '';
-        // If format is "id-nomeRede", split and get the name part
-        if (rede.includes('-')) {
-            return rede.split('-').slice(1).join('-');
-        }
-        return rede;
+    // Helper to extract clean network name
+    const getCleanRedeName = (rede?: string | { _id: string; name: string }) => {
+        return getRedeName(rede) || '';
     };
 
     const handlePrint = useReactToPrint({
@@ -239,7 +235,7 @@ export default function DetalhesApresentacao() {
                                                 {item.tipo === 'novoMembro' ? 'Novo Membro' : item.tipo}
                                             </Badge>
                                             <span className="text-sm text-slate-400 dark:text-gray-100">|</span>
-                                            <span className="text-sm text-slate-500 font-medium dark:text-gray-200">{item.rede.split('-')[1] || 'nome da rede'}</span>
+                                            <span className="text-sm text-slate-500 font-medium dark:text-gray-200">{getCleanRedeName(item.rede) || 'nome da rede'}</span>
                                             <span className="text-sm text-slate-400 dark:text-gray-100">|</span>
                                             <span className="text-sm text-slate-500 font-medium dark:text-gray-200">{item.horario}</span>
                                         </div>

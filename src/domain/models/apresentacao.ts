@@ -1,7 +1,7 @@
 
 type TBaseApresentacao = {
   _id: string;
-  rede: string;
+  rede?: { _id: string; name: string } | string;
   dataApresentacao: string;
   horario: 'manha' | 'noite';
 };

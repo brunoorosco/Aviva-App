@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useHttpPost, useHttpPut } from "@/hooks/api";
+import { getRedeName } from "@/utils/helpersNameREde";
 import {
   ArrowLeft,
   Calendar,
@@ -62,7 +63,7 @@ export default function CemsPage({ cems }: Props) {
     if (canEditGlobal) return true;
 
     // Usuários podem editar apenas casas da sua própria rede
-    return casa.rede === userCemName;
+    return getRedeName(casa.rede) === userCemName;
   };
 
   const handleAdd = () => {
@@ -151,7 +152,7 @@ export default function CemsPage({ cems }: Props) {
   }
 
   // Calcular estatísticas
-  const redesUnicas = new Set(cems.casas.map((c) => c.rede).filter(Boolean));
+  const redesUnicas = new Set(cems.casas.map((c) => getRedeName(c.rede)).filter(Boolean));
   const totalRedes = redesUnicas.size;
 
   return (
@@ -347,14 +348,14 @@ export default function CemsPage({ cems }: Props) {
                           </div>
 
                           {/* Badge da Rede */}
-                          {pessoa.rede && (
+                          {getRedeName(pessoa.rede) && (
                             <div className="flex items-center gap-2">
                               <Badge
                                 variant="secondary"
                                 className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                               >
                                 <Network className="w-3 h-3 mr-1" />
-                                {pessoa.rede}
+                                {getRedeName(pessoa.rede)}
                               </Badge>
                             </div>
                           )}

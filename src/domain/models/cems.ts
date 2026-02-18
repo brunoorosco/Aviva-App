@@ -10,7 +10,7 @@ export type TCems = {
   lider1: { _id: string; name: string } | null;
   lider2: { _id: string; name: string } | null;
   endereco: string;
-  rede: string;
+  rede?: { _id: string; name: string } | string;
   anfitria?: string;
   telefone?: string;
 };

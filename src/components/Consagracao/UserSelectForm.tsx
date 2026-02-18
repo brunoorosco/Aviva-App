@@ -22,6 +22,7 @@ import { TempUserToAdd, TMinisterialLevel } from "@/domain/models/ministerial";
 import { PlusIcon, TrashIcon, ChevronDown, ChevronRight } from "lucide-react";
 import { useHttpGet } from "@/hooks/api";
 import { getNextMinisterialLevel } from "@/utils/getNextMinisterialLevel";
+import { getRedeName } from "@/utils/helpersNameREde";
 
 interface UserSelectFormProps {
   currentMinisterialLevel: TMinisterialLevel;
@@ -91,7 +92,7 @@ export function UserSelectForm({
     const groups: Record<string, TempUserToAdd[]> = {};
 
     tempList.forEach((user) => {
-      const rede = user.rede || "Sem Rede";
+      const rede = getRedeName(user.rede) || "Sem Rede";
       if (!groups[rede]) {
         groups[rede] = [];
       }

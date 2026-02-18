@@ -2,6 +2,7 @@ import { TPeople } from '@/domain/models/encontroComDeus'
 import { excelDateToJSDate } from '@/utils/date'
 import { ChurChMongoRepository } from '../infra/db/repositories/mongo/churchs'
 import { SejaLivreRepository } from '../infra/db/repositories/mongo/sejaLivre'
+import { getRedeName } from '@/utils/helpersNameREde'
 
 export const getSejaLivreService = async (churchId: string) => {
   const encontroRepository = new SejaLivreRepository()
@@ -60,7 +61,8 @@ function normalizarEncontristasPorIgreja(
       }
     }
 
-    const contemIgreja = entrada.rede?.toLowerCase().includes('igreja')
+    const redeName = getRedeName(entrada.rede);
+    const contemIgreja = redeName?.toLowerCase().includes('igreja')
 
     const obj = {
       nome: entrada.nome.trim(),
@@ -75,8 +77,8 @@ function normalizarEncontristasPorIgreja(
       endereco: entrada.endereco?.trim()
         ? `${entrada.endereco} ${entrada.bairro}`.trim()
         : null,
-      igreja: contemIgreja ? entrada.rede!.trim() : nomeDaIgreja,
-      ...(contemIgreja ? {} : { rede: entrada.rede?.trim() })
+      igreja: contemIgreja ? redeName!.trim() : nomeDaIgreja,
+      ...(contemIgreja ? {} : { rede: redeName?.trim() })
     }
 
     return limparObjeto(obj) as TPeople

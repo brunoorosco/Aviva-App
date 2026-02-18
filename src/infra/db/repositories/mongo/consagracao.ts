@@ -138,7 +138,7 @@ export class ConsagracaoRepository {
     users: {
       name: string;
       id: string;
-      rede: string;
+      rede?: { _id: string; name: string } | string;
       role: TMinisterialLevel;
       nextRole: TMinisterialLevel;
     }[],

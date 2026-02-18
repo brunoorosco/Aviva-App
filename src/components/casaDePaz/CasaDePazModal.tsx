@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { VisitaDePaz, VisitaDePazModel } from '@/domain/models/casaDePaz'
 import { useEffect } from 'react'
+import { getRedeName } from '@/utils/helpersNameREde'
 
 type Props = {
   open: boolean
@@ -90,7 +91,14 @@ export default function CasaDePazModal({
               <Controller
                 name='rede'
                 control={control}
-                render={({ field }) => <Input {...field} placeholder='Rede' />}
+                render={({ field }) => (
+                  <Input 
+                    {...field} 
+                    value={getRedeName(field.value) || ''} 
+                    onChange={(e) => field.onChange(e.target.value)}
+                    placeholder='Rede' 
+                  />
+                )}
               />
             </div>
           </div>

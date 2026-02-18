@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { VisitaDePaz, VisitaDePazModel } from '@/domain/models/casaDePaz'
+import { getRedeName } from '@/utils/helpersNameREde'
 import { useEffect } from 'react'
 
 type Props = {
@@ -90,7 +91,14 @@ export default function VisitaDePazModal({
               <Controller
                 name='rede'
                 control={control}
-                render={({ field }) => <Input {...field} placeholder='Rede' />}
+                render={({ field }) => (
+                  <Input 
+                    {...field} 
+                    value={getRedeName(field.value) || ''} 
+                    onChange={(e) => field.onChange(e.target.value)}
+                    placeholder='Rede' 
+                  />
+                )}
               />
             </div>
           </div>

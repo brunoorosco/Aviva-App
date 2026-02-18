@@ -98,7 +98,7 @@ class EncontroComDeusRepository {
   // Remove encontristas da rede e adiciona novos
   async replaceEncontristasPorRede(
     encontroId: string,
-    redeId:string,
+    redeId: string,
     novosEncontristas: TPeople[],
   ): Promise<any> {
     try {
@@ -108,7 +108,6 @@ class EncontroComDeusRepository {
       const encontristasComRede = novosEncontristas.map((e) => ({
         ...e,
         _id: new ObjectId().toString(),
-       
       }));
 
       // Remove todos da rede e adiciona os novos em uma operação
@@ -192,7 +191,6 @@ class EncontroComDeusRepository {
   ): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
-      const { ObjectId } = await import("mongodb");
 
       const result = await collection.updateOne(
         {
@@ -219,7 +217,6 @@ class EncontroComDeusRepository {
   async addPagamento(encontroId: string, redeId: string, pagamento: any): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
-      const { ObjectId } = await import("mongodb");
 
       const result = await collection.updateOne(
         {
@@ -251,7 +248,6 @@ class EncontroComDeusRepository {
   async removePagamento(encontroId: string, redeId: string, pagamentoId: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
-      const { ObjectId } = await import("mongodb");
 
       const result = await collection.updateOne(
         {
@@ -304,13 +300,12 @@ class EncontroComDeusRepository {
   async getInscricaoByRede(encontroId: string, redeId: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
-      const { ObjectId } = await import("mongodb");
 
       const encontro = await collection.findOne(
         { _id: new ObjectId(encontroId) },
         { projection: { financeiro: 1 } },
       );
-
+      console.log("[encontroComDeus.ts:308]", JSON.stringify(encontro, null, 2));
       const inscricao = encontro?.financeiro?.find((f: any) => f.rede._id === redeId);
       return inscricao || null;
     } catch (error) {
@@ -323,7 +318,6 @@ class EncontroComDeusRepository {
   async getAllInscricoes(encontroId: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
-      const { ObjectId } = await import("mongodb");
 
       const encontro = await collection.findOne(
         { _id: new ObjectId(encontroId) },
@@ -379,6 +373,7 @@ class EncontroComDeusRepository {
       throw error;
     }
   }
+
   async fechamentoAnual(ano: string) {
     const startOfYear = new Date(`${ano}-01-01T00:00:00.000Z`);
     const endOfYear = new Date(`${ano}-12-31T23:59:59.999Z`);
