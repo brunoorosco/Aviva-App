@@ -1,46 +1,46 @@
-import { Button } from '@/components/ui/button'
-import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
-import { getEncontroComDeusByIdService } from '@/services/encontroComDeus'
-import { 
-  ArrowLeft, 
-  Calendar, 
-  Users, 
-  Church, 
-  Network, 
-  Phone, 
-  User, 
-  MapPin, 
+import { Button } from "@/components/ui/button";
+import { TEncontroComDeus } from "@/domain/models/encontroComDeus";
+import { getEncontroComDeusByIdService } from "@/services/encontroComDeus";
+import {
+  ArrowLeft,
+  Calendar,
+  Users,
+  Church,
+  Network,
+  Phone,
+  User,
+  MapPin,
   Cake,
-  Hash
-} from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { GetServerSideProps } from 'next/types'
+  Hash,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { GetServerSideProps } from "next/types";
 
 function formatDate(dateValue: any): string {
-  if (!dateValue) return 'Data não informada'
-  const date = typeof dateValue === 'string' ? new Date(dateValue) : dateValue
-  if (!(date instanceof Date) || isNaN(date.getTime())) return 'Data inválida'
-  
-  return date.toLocaleDateString('pt-BR', { 
-    timeZone: 'UTC',
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
-  })
+  if (!dateValue) return "Data não informada";
+  const date = typeof dateValue === "string" ? new Date(dateValue) : dateValue;
+  if (!(date instanceof Date) || isNaN(date.getTime())) return "Data inválida";
+
+  return date.toLocaleDateString("pt-BR", {
+    timeZone: "UTC",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 function formatAge(age?: number): string {
-  if (!age) return ''
-  return `${age} anos`
+  if (!age) return "";
+  return `${age} anos`;
 }
 
 type Props = {
-  encontro: TEncontroComDeus | null
-}
+  encontro: TEncontroComDeus | null;
+};
 
 export default function EncontroPage({ encontro }: Props) {
-  const router = useRouter()
- 
+  const router = useRouter();
+
   if (!encontro) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -54,16 +54,13 @@ export default function EncontroPage({ encontro }: Props) {
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             O encontro solicitado não existe ou foi removido.
           </p>
-          <Button 
-            onClick={() => router.back()}
-            className="inline-flex items-center gap-2"
-          >
+          <Button onClick={() => router.back()} className="inline-flex items-center gap-2">
             <ArrowLeft className="w-4 h-4" />
             Voltar
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -89,14 +86,14 @@ export default function EncontroPage({ encontro }: Props) {
             <div className="hidden sm:flex sm:items-start sm:justify-between mb-4">
               <div className="flex-1">
                 <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
-                  {encontro.numero ? `Encontro #${encontro.numero}` : 'Encontro com Deus'}
+                  {encontro.numero ? `Encontro #${encontro.numero}` : "Encontro com Deus"}
                 </h1>
                 <div className="flex items-center gap-2 mt-2 text-gray-600 dark:text-gray-400">
                   <Calendar className="w-4 h-4" />
                   <span>{formatDate(encontro.data)}</span>
                 </div>
               </div>
-              
+
               <Button
                 variant="outline"
                 onClick={() => router.back()}
@@ -110,7 +107,7 @@ export default function EncontroPage({ encontro }: Props) {
             {/* Título Mobile */}
             <div className="sm:hidden mb-4">
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                {encontro.numero ? `Encontro #${encontro.numero}` : 'Encontro com Deus'}
+                {encontro.numero ? `Encontro #${encontro.numero}` : "Encontro com Deus"}
               </h1>
               <div className="flex items-center gap-2 mt-2 text-gray-600 dark:text-gray-400">
                 <Calendar className="w-4 h-4" />
@@ -131,7 +128,7 @@ export default function EncontroPage({ encontro }: Props) {
                   </div>
                 </div>
               )}
-              
+
               <div className="flex items-center gap-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
                 <Users className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0" />
                 <div>
@@ -195,7 +192,7 @@ export default function EncontroPage({ encontro }: Props) {
                           </div>
                           <div>
                             <h3 className="font-semibold text-gray-900 dark:text-white">
-                              {pessoa.nome || 'Nome não informado'}
+                              {pessoa.nome || "Nome não informado"}
                             </h3>
                             {pessoa.idade && (
                               <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
@@ -205,7 +202,7 @@ export default function EncontroPage({ encontro }: Props) {
                             )}
                           </div>
                         </div>
-                        
+
                         {/* Badge de número */}
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 self-start">
                           #{index + 1}
@@ -222,7 +219,7 @@ export default function EncontroPage({ encontro }: Props) {
                             </span>
                           </div>
                         )}
-                        
+
                         {pessoa.igreja && (
                           <div className="flex items-center gap-2">
                             <Church className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -231,13 +228,11 @@ export default function EncontroPage({ encontro }: Props) {
                             </span>
                           </div>
                         )}
-                        
+
                         {pessoa.rede && (
                           <div className="flex items-center gap-2">
                             <Network className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                            <span className="text-gray-600 dark:text-gray-400">
-                              {pessoa.rede}
-                            </span>
+                            <span className="text-gray-600 dark:text-gray-400">{pessoa.rede}</span>
                           </div>
                         )}
 
@@ -259,37 +254,67 @@ export default function EncontroPage({ encontro }: Props) {
         </section>
       </div>
     </div>
-  )
+  );
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
-    const id = ctx.params?.id as string
-    const churchid = ctx.params?.churchid as string
+    const id = ctx.params?.id as string;
+    const churchid = ctx.params?.churchid as string;
 
     if (!id || !churchid) {
-      return { props: { encontro: null } }
+      return { props: { encontro: null } };
     }
 
-    const encontro = await getEncontroComDeusByIdService(churchid, id)
+    const encontro = await getEncontroComDeusByIdService(churchid, id);
 
     if (!encontro) {
-      return { props: { encontro: null } }
+      return { props: { encontro: null } };
     }
 
+    console.log("[index.tsx:279]", JSON.stringify(encontro, null, 2));
+    
     return {
       props: {
         encontro: {
           ...encontro,
-          _id: encontro._id.toString(),
-          data: encontro.data.toISOString(),
-          encontristas: encontro.encontristas || [],
-          updatedAt: encontro.updatedAt.toISOString()
-        }
-      }
-    }
+          _id: encontro._id?.toString() || null,
+          data: encontro.data?.toISOString() || null,
+          updatedAt: encontro.updatedAt?.toISOString() || null,
+          
+          // ✅ Remove _id se for undefined
+          encontristas: (encontro.encontristas || []).map((e: any) => {
+            const { _id, ...rest } = e;
+            return {
+              ...rest,
+              ...(e._id ? { _id: e._id.toString() } : {}), // só adiciona se existir
+            };
+          }),
+          
+          equipe: (encontro.equipe || []).map((m: any) => {
+            const { _id, ...rest } = m;
+            return {
+              ...rest,
+              ...(m._id ? { _id: m._id.toString() } : {}),
+            };
+          }),
+          
+          financeiro: (encontro.financeiro || []).map((f: any) => ({
+            ...f,
+            _id: f._id?.toString() || null,
+            createdAt: f.createdAt instanceof Date ? f.createdAt.toISOString() : f.createdAt,
+            updatedAt: f.updatedAt instanceof Date ? f.updatedAt.toISOString() : f.updatedAt,
+            pagamento: (f.pagamento || []).map((p: any) => ({
+              ...p,
+              _id: p._id?.toString() || null,
+              data: p.data instanceof Date ? p.data.toISOString() : p.data,
+            })),
+          })),
+        },
+      },
+    };
   } catch (error) {
-    console.error('Erro ao carregar encontro:', error)
-    return { props: { encontro: null } }
+    console.error("Erro ao carregar encontro:", error);
+    return { props: { encontro: null } };
   }
-}
+};
