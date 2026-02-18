@@ -152,7 +152,7 @@ const Header = <T extends CemsModel,>({
                     {stats.totalCasas}
                   </span>
                   <span className='text-sm text-gray-500 dark:text-gray-400'>
-                    {stats.totalCasas === 1 ? 'Casa de Paz realizada' : 'Casas de Paz realizadas'}
+                    {stats.totalCasas === 1 ? "Cem's realizada" : "Cem's realizadas"}
                   </span>
                 </div>
               )}
