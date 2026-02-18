@@ -88,7 +88,25 @@ export default function GroupFinance() {
   const addPagamento = (p: Omit<Pagamento, "_id" | "data">) => {
     setPagamentos((prev) => [...prev, { ...p, _id: nextId(), data: new Date().toISOString() }]);
   };
-  const removePagamento = (id: string) => {
+  const removePagamento = async (id: string) => {
+    const pagamento = pagamentos.find((p) => p._id === id);
+
+    // Se tem comprovante, deleta do Cloudinary primeiro
+    if (pagamento?.comprovantePublicId || pagamento?.comprovanteUrl) {
+      try {
+        await fetch(`/api/protected/churches/${churchid}/encontroComDeus/comprovante/delete`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            publicId: pagamento.comprovantePublicId,
+            url: pagamento.comprovanteUrl,
+          }),
+        });
+      } catch (error) {
+        console.error("Erro ao deletar comprovante do Cloudinary:", error);
+      }
+    }
+
     setPagamentos((prev) => prev.filter((p) => p._id !== id));
   };
 
@@ -105,17 +123,17 @@ export default function GroupFinance() {
       try {
         setIsLoadingData(true);
         const redeId = session.user.cem._id;
-        
+
         const response = await fetch(
-          `/api/protected/churches/${churchid}/encontroComDeus/inscricao?encontroId=${encontroId}&redeId=${redeId}`
+          `/api/protected/churches/${churchid}/encontroComDeus/inscricao?encontroId=${encontroId}&redeId=${redeId}`,
         );
 
         if (!response.ok) {
-          throw new Error('Erro ao carregar dados');
+          throw new Error("Erro ao carregar dados");
         }
 
         const data = await response.json();
-        
+
         // Carregar encontristas
         if (data.encontristas && Array.isArray(data.encontristas)) {
           setEncontristas(data.encontristas);
@@ -136,9 +154,9 @@ export default function GroupFinance() {
           setEncontroInfo(data.encontro);
         }
 
-        console.log('Dados carregados:', data);
+        console.log("Dados carregados:", data);
       } catch (error) {
-        console.error('Erro ao carregar dados da inscrição:', error);
+        console.error("Erro ao carregar dados da inscrição:", error);
         // Não mostrar erro se for primeira vez (dados não existem ainda)
       } finally {
         setIsLoadingData(false);
@@ -221,15 +239,14 @@ export default function GroupFinance() {
             <div>
               <h1 className="text-xl font-bold font-[Montserrat]">Inscrição Encontro com Deus</h1>
               <p className="text-xs text-muted-foreground">
-                {encontroInfo ? `Encontro #${encontroInfo.numero}` : 'Gerenciamento de encontristas e equipe'}
+                {encontroInfo
+                  ? `Encontro #${encontroInfo.numero}`
+                  : "Gerenciamento de encontristas e equipe"}
               </p>
             </div>
           </div>
           <div>
-            <Button
-              onClick={handleSave}
-              disabled={isLoading}
-            >
+            <Button onClick={handleSave} disabled={isLoading}>
               {isLoading ? "Salvando..." : "Salvar"}
             </Button>
           </div>

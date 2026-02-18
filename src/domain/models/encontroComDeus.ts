@@ -51,6 +51,7 @@ export interface Pagamento {
   data: string; // ← o componente usa p.data
   comprovanteUrl?: string;
   comprovanteName?: string;
+  comprovantePublicId?: string;
 }
 
 export type TypePagamento = "pix" | "cartao" | "dinheiro";

@@ -3,10 +3,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, CreditCard, FileImage, Upload, X } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Plus, Trash2, CreditCard, FileImage, Upload, X, Eye, Loader2 } from "lucide-react";
 import { Pagamento, TypePagamento } from "@/domain/models/encontroComDeus";
-
+import { ComprovanteModal } from "./ComprovanteModal";
+import { useSession } from "next-auth/react";
+import Toast from "@/components/Toast";
 
 interface Props {
   pagamentos: Pagamento[];
@@ -21,122 +29,254 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove }: Props) {
   const [tipo, setTipo] = useState<string>("");
   const [valor, setValor] = useState("");
   const [comprovante, setComprovante] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedComprovante, setSelectedComprovante] = useState<{
+    url: string;
+    name?: string;
+  } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const { data: session } = useSession();
 
   const needsComprovante = tipo === "pix" || tipo === "cartao";
   const canSave = tipo && parseFloat(valor) > 0 && (!needsComprovante || comprovante);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const v = parseFloat(valor);
     if (!tipo || isNaN(v) || v <= 0) return;
     if (needsComprovante && !comprovante) return;
 
+    let comprovanteUrl: string | undefined;
+    let comprovanteName: string | undefined;
+    let comprovantePublicId: string | undefined;
+
+    // Upload do comprovante se existir
+    if (comprovante) {
+      setIsUploading(true);
+      try {
+        // 1. Obter assinatura do backend
+        const signatureRes = await fetch(
+          `/api/protected/churches/${session?.user.churchId}/encontroComDeus/comprovante/signature`,
+          { method: "POST" },
+        );
+        const { signature, timestamp, cloudName, apiKey, folder } = await signatureRes.json();
+
+        // 2. Upload direto para Cloudinary
+        const formData = new FormData();
+        formData.append("file", comprovante);
+        formData.append("signature", signature);
+        formData.append("timestamp", timestamp.toString());
+        formData.append("api_key", apiKey);
+        formData.append("folder", folder);
+
+        const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!uploadRes.ok) throw new Error("Erro no upload");
+
+        const uploadData = await uploadRes.json();
+        comprovanteUrl = uploadData.secure_url;
+        comprovantePublicId = uploadData.public_id;
+        comprovanteName = comprovante.name;
+
+        Toast.showSuccess("Comprovante enviado com sucesso!");
+      } catch (error) {
+        console.error("Erro no upload:", error);
+        Toast.showError("Erro ao enviar comprovante");
+        setIsUploading(false);
+        return;
+      } finally {
+        setIsUploading(false);
+      }
+    }
+
     onAdd({
       tipo: tipo as TypePagamento,
-      valor: parseFloat(valor),
-      comprovanteUrl: comprovante ? URL.createObjectURL(comprovante) : undefined,
-      comprovanteName: comprovante?.name,
+      valor: v,
+      comprovanteUrl,
+      comprovanteName,
+      comprovantePublicId,
     });
+
     setTipo("");
     setValor("");
     setComprovante(null);
     setShowForm(false);
   };
 
+  const handleViewComprovante = (url: string, name?: string) => {
+    setSelectedComprovante({ url, name });
+    setModalOpen(true);
+  };
+
   return (
-    <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-      <CardHeader className="pb-4 flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <CreditCard className="h-5 w-5 text-primary" />
-          Pagamentos
-        </CardTitle>
-        {!showForm && (
-          <Button size="sm" className="gap-1" onClick={() => setShowForm(true)}>
-            <Plus className="h-4 w-4" /> Adicionar Pagamento
-          </Button>
-        )}
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {showForm && (
-          <div className="rounded-lg border border-border/50 bg-secondary/20 p-4 space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label>Tipo</Label>
-                <Select value={tipo} onValueChange={setTipo}>
-                  <SelectTrigger><SelectValue placeholder="Selecionar tipo" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pix">Pix</SelectItem>
-                    <SelectItem value="cartao">Cartão</SelectItem>
-                    <SelectItem value="dinheiro">Dinheiro</SelectItem>
-                  </SelectContent>
-                </Select>
+    <>
+      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+        <CardHeader className="pb-4 flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <CreditCard className="h-5 w-5 text-primary" />
+            Pagamentos
+          </CardTitle>
+          {!showForm && (
+            <Button size="sm" className="gap-1" onClick={() => setShowForm(true)}>
+              <Plus className="h-4 w-4" /> Adicionar Pagamento
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {showForm && (
+            <div className="rounded-lg border border-border/50 bg-secondary/20 p-4 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label>Tipo</Label>
+                  <Select value={tipo} onValueChange={setTipo}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecionar tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pix">Pix</SelectItem>
+                      <SelectItem value="cartao">Cartão</SelectItem>
+                      <SelectItem value="dinheiro">Dinheiro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Valor</Label>
+                  <Input
+                    type="number"
+                    min={0.01}
+                    step="0.01"
+                    value={valor}
+                    onChange={(e) => setValor(e.target.value)}
+                    placeholder="0,00"
+                  />
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <Label>Valor</Label>
-                <Input
-                  type="number"
-                  min={0.01}
-                  step="0.01"
-                  value={valor}
-                  onChange={(e) => setValor(e.target.value)}
-                  placeholder="0,00"
-                />
+
+              {needsComprovante && (
+                <div className="space-y-1.5">
+                  <Label>
+                    Comprovante {needsComprovante && <span className="text-destructive">*</span>}
+                  </Label>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*,.pdf"
+                    className="hidden"
+                    onChange={(e) => setComprovante(e.target.files?.[0] || null)}
+                  />
+                  {comprovante ? (
+                    <div className="flex items-center gap-2 rounded-md border border-border/50 bg-secondary/30 px-3 py-2">
+                      <FileImage className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm truncate flex-1">{comprovante.name}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => setComprovante(null)}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1 w-full"
+                      onClick={() => fileRef.current?.click()}
+                    >
+                      <Upload className="h-4 w-4" /> Enviar comprovante
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              <div className="flex gap-2 justify-end">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setShowForm(false);
+                    setTipo("");
+                    setValor("");
+                    setComprovante(null);
+                  }}
+                  disabled={isUploading}
+                >
+                  Cancelar
+                </Button>
+                <Button size="sm" onClick={handleSave} disabled={!canSave || isUploading}>
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Enviando...
+                    </>
+                  ) : (
+                    "Salvar"
+                  )}
+                </Button>
               </div>
             </div>
+          )}
 
-            {needsComprovante && (
-              <div className="space-y-1.5">
-                <Label>Comprovante {needsComprovante && <span className="text-destructive">*</span>}</Label>
-                <input ref={fileRef} type="file" accept="image/*,.pdf" className="hidden" onChange={(e) => setComprovante(e.target.files?.[0] || null)} />
-                {comprovante ? (
-                  <div className="flex items-center gap-2 rounded-md border border-border/50 bg-secondary/30 px-3 py-2">
-                    <FileImage className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm truncate flex-1">{comprovante.name}</span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setComprovante(null)}>
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ) : (
-                  <Button variant="outline" size="sm" className="gap-1 w-full" onClick={() => fileRef.current?.click()}>
-                    <Upload className="h-4 w-4" /> Enviar comprovante
+          {pagamentos.length === 0 && !showForm && (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              Nenhum pagamento registrado
+            </p>
+          )}
+
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {pagamentos.map((p) => (
+              <div
+                key={p._id}
+                className="flex items-center gap-3 rounded-lg border border-border/50 bg-secondary/30 px-3 py-2"
+              >
+                <span className="text-xs font-medium uppercase rounded-full px-2 py-0.5 bg-primary/10 text-primary">
+                  {tipoLabels[p.tipo]}
+                </span>
+                <span className="text-sm font-semibold flex-1">
+                  {p.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {new Date(p.data).toLocaleDateString("pt-BR")}
+                </span>
+                {p.comprovanteUrl && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-primary hover:text-primary/80"
+                    onClick={() => handleViewComprovante(p.comprovanteUrl!, p.comprovanteName)}
+                  >
+                    <Eye className="h-4 w-4" />
                   </Button>
                 )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-destructive hover:text-destructive"
+                  onClick={() => onRemove(p._id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
-            )}
-
-            <div className="flex gap-2 justify-end">
-              <Button variant="ghost" size="sm" onClick={() => { setShowForm(false); setTipo(""); setValor(""); setComprovante(null); }}>Cancelar</Button>
-              <Button size="sm" onClick={handleSave} disabled={!canSave}>Salvar</Button>
-            </div>
+            ))}
           </div>
-        )}
+        </CardContent>
+      </Card>
 
-        {pagamentos.length === 0 && !showForm && (
-          <p className="text-sm text-muted-foreground text-center py-4">Nenhum pagamento registrado</p>
-        )}
-
-        <div className="space-y-2 max-h-64 overflow-y-auto">
-          {pagamentos.map((p) => (
-            <div key={p._id} className="flex items-center gap-3 rounded-lg border border-border/50 bg-secondary/30 px-3 py-2">
-              <span className="text-xs font-medium uppercase rounded-full px-2 py-0.5 bg-primary/10 text-primary">
-                {tipoLabels[p.tipo]}
-              </span>
-              <span className="text-sm font-semibold flex-1">
-                {p.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-              </span>
-              <span className="text-xs text-muted-foreground">{new Date(p.data).toLocaleDateString("pt-BR")}</span>
-              {p.comprovanteUrl && (
-                <a href={p.comprovanteUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
-                  <FileImage className="h-4 w-4" />
-                </a>
-              )}
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive" onClick={() => onRemove(p._id)}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+      {selectedComprovante && (
+        <ComprovanteModal
+          isOpen={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setSelectedComprovante(null);
+          }}
+          comprovanteUrl={selectedComprovante.url}
+          comprovanteName={selectedComprovante.name}
+        />
+      )}
+    </>
   );
 }

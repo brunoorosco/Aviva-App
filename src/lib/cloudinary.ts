@@ -1,6 +1,5 @@
-// lib/cloudinary.ts
+// lib/cloudinary.ts (mantém só funções server-side)
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -8,6 +7,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Mantém apenas as funções que rodam no server
 export async function uploadToCloudinary(
   filePath: string,
   folder: string = "uploads",
@@ -21,10 +21,6 @@ export async function uploadToCloudinary(
         { quality: "auto" },
       ],
     });
-
-    // Remove o arquivo temporário
-    fs.unlinkSync(filePath);
-
     return result.secure_url;
   } catch (error) {
     console.error("Erro ao fazer upload para Cloudinary:", error);
@@ -38,5 +34,26 @@ export async function deleteFromCloudinary(publicId: string): Promise<void> {
   } catch (error) {
     console.error("Erro ao deletar do Cloudinary:", error);
     throw new Error("Falha ao deletar imagem");
+  }
+}
+
+export async function deleteComprovanteFromCloudinary(urlOrPublicId: string): Promise<void> {
+  try {
+    let publicId = urlOrPublicId;
+    
+    if (urlOrPublicId.includes('cloudinary.com')) {
+      const urlParts = urlOrPublicId.split('/');
+      const uploadIndex = urlParts.indexOf('upload');
+      if (uploadIndex !== -1 && urlParts.length > uploadIndex + 2) {
+        const pathWithVersion = urlParts.slice(uploadIndex + 1).join('/');
+        publicId = pathWithVersion.replace(/^v\d+\//, '').replace(/\.[^.]+$/, '');
+      }
+    }
+    
+    await cloudinary.uploader.destroy(publicId);
+    console.log(`Comprovante deletado do Cloudinary: ${publicId}`);
+  } catch (error) {
+    console.error("Erro ao deletar comprovante do Cloudinary:", error);
+    throw new Error("Falha ao deletar comprovante");
   }
 }
