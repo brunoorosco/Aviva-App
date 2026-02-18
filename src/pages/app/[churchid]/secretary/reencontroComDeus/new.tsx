@@ -3,7 +3,6 @@
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useRef, useState } from "react";
 import { useRouter } from "next/router";
-import ButtonSubmit from "@/components/ButtonSubmit";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ImportButton from "../../../../../components/reencontroComDeus/ImportButton";
@@ -12,6 +11,7 @@ import { useSession } from "next-auth/react";
 import Toast from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { Loader2Icon } from "lucide-react";
+import { SelectCem } from "@/components/Select/SelectCem";
 
 type TEncontrista = {
   name: string;
@@ -48,6 +48,7 @@ const NovoReencontroComDeus = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
   const encontristas = watch("reencontristas");
+  const churchId = session?.user.churchId as string;
 
   const onSubmit = handleSubmit(async (data) => {
     if (!data.reencontristas || data.reencontristas.length === 0) {
@@ -57,7 +58,7 @@ const NovoReencontroComDeus = () => {
 
     setIsLoading(true);
     const response = await useHttpPost({
-      url: `/api/protected/churches/${session?.user.churchId}/reencontroComDeus`,
+      url: `/api/protected/churches/${churchId}/reencontroComDeus`,
       data,
     });
     setIsLoading(false);
@@ -168,7 +169,7 @@ const NovoReencontroComDeus = () => {
                   )}
                 />
               </div>
-
+              {/* 
               <div className="w-1/12">
                 <Controller
                   name={`reencontristas.${index}.rede`}
@@ -177,6 +178,16 @@ const NovoReencontroComDeus = () => {
                     <div className="flex flex-col">
                       <Input {...field} placeholder="Rede" />
                     </div>
+                  )}
+                />
+              </div> */}
+              <div className="md:col-span-2">
+                <Label className="text-xs">Rede</Label>
+                <Controller
+                  name={`reencontristas.${index}.rede`}
+                  control={control}
+                  render={({ field }) => (
+                    <SelectCem {...field} title="Rede" churchId={churchId} control={control} />
                   )}
                 />
               </div>

@@ -1,33 +1,19 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Plus, Trash2, Pencil, Users } from "lucide-react";
 import { TEquipe, TPeople } from "@/domain/models/encontroComDeus";
 import { EncontristaModal } from "./EncontristaModal";
 
 interface Props {
   encontristas: TPeople[];
-  equipeMembers: TEquipe[];
   onAdd: (data: TPeople) => void;
   onEdit: (id: string, data: TPeople) => void;
   onRemove: (id: string) => void;
   onLinkEquipe: (encontristaId: string, equipeMembroId: string | undefined) => void;
 }
 
-export function EncontristasSection({
-  encontristas,
-  equipeMembers,
-  onAdd,
-  onEdit,
-  onRemove,
-}: Props) {
+export function EncontristasSection({ encontristas, onAdd, onEdit, onRemove }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<TPeople | null>(null);
 
@@ -82,22 +68,7 @@ export function EncontristasSection({
                   {e.nome}
                   {e.isento && <span className="ml-2 text-xs text-muted-foreground">(Isento)</span>}
                 </span>
-                {/* <Select
-                  value={e.equipeMembroId || "none"}
-                  onValueChange={(v) => onLinkEquipe(e.id, v === "none" ? undefined : v)}
-                >
-                  <SelectTrigger className="w-40 h-8 text-xs">
-                    <SelectValue placeholder="Vincular equipe" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Sem vínculo</SelectItem>
-                    {equipeMembers.map((m) => (
-                      <SelectItem key={m.id} value={m.id}>
-                        {m.userName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select> */}
+
                 <Button
                   variant="ghost"
                   size="icon"

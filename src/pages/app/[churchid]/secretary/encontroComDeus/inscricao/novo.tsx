@@ -264,7 +264,6 @@ export default function GroupFinance() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <EncontristasSection
             encontristas={encontristas}
-            equipeMembers={equipeMembers}
             onAdd={addEncontrista}
             onEdit={editEncontrista}
             onRemove={removeEncontrista}

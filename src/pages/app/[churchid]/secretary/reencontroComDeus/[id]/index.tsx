@@ -1,10 +1,21 @@
 import { TReencontroComDeus } from "@/domain/models/encontroComDeus";
 import { getReencontroComDeusByIdService } from "@/services/reencontroComDeus";
 import { GetServerSideProps } from "next/types";
-import { Calendar, Users, Church, Network, Phone, User, MapPin, Cake, ArrowLeft } from "lucide-react";
+import {
+  Calendar,
+  Users,
+  Church,
+  Network,
+  Phone,
+  User,
+  MapPin,
+  Cake,
+  ArrowLeft,
+} from "lucide-react";
 import Link from "next/link";
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 import router from "next/router";
+import { getRedeName } from "@/utils/helpersNameREde";
 
 function formatDate(dateValue: any): string {
   if (!dateValue) return "Data não informada";
@@ -182,7 +193,9 @@ export default function ReencontroPage({ reencontro }: Props) {
                         {pessoa.rede && (
                           <div className="flex items-center gap-2">
                             <Network className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                            <span className="text-gray-600 dark:text-gray-400">{pessoa.rede}</span>
+                            <span className="text-gray-600 dark:text-gray-400">
+                              {getRedeName(pessoa.rede)}
+                            </span>
                           </div>
                         )}
 

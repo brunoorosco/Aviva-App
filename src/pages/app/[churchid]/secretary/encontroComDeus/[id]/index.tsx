@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { TEncontroComDeus } from "@/domain/models/encontroComDeus";
 import { getEncontroComDeusByIdService } from "@/services/encontroComDeus";
+import { getRedeName } from "@/utils/helpersNameREde";
 import {
   ArrowLeft,
   Calendar,
@@ -41,13 +42,6 @@ type Props = {
 export default function EncontroPage({ encontro }: Props) {
   const router = useRouter();
 
-  // Helper function no topo do componente ou em utils
-  const getRedeName = (rede?: { _id: string; name: string } | string): string => {
-    if (!rede) return "";
-    if (typeof rede === "string") return rede;
-    return rede.name || "";
-  };
-
   if (!encontro) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -71,11 +65,11 @@ export default function EncontroPage({ encontro }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-secondary">
       <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
         {/* Header */}
         <header className="mb-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="bg-white dark:bg-black/50 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             {/* Botão Voltar Mobile */}
             <div className="flex justify-between items-start mb-4 sm:hidden">
               <Button
@@ -163,10 +157,10 @@ export default function EncontroPage({ encontro }: Props) {
 
         {/* Lista de Encontristas */}
         <section>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="bg-white dark:bg-black/50 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <Users className="w-5 h-5 text-blue-600 dark:text-orange-400" />
                 Lista de Encontristas
               </h2>
             </div>
@@ -194,8 +188,8 @@ export default function EncontroPage({ encontro }: Props) {
                       {/* Header do card */}
                       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center flex-shrink-0">
-                            <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                          <div className="w-10 h-10 bg-blue-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center flex-shrink-0">
+                            <User className="w-5 h-5 text-blue-600 dark:text-orange-400" />
                           </div>
                           <div>
                             <h3 className="font-semibold text-gray-900 dark:text-white">
@@ -211,7 +205,7 @@ export default function EncontroPage({ encontro }: Props) {
                         </div>
 
                         {/* Badge de número */}
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 self-start">
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-orange-900/30 text-blue-800 dark:text-orange-300 self-start">
                           #{index + 1}
                         </span>
                       </div>

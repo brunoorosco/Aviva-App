@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TPeople } from "@/domain/models/encontroComDeus";
 import { Masks } from "@/utils/masks";
+import { useSession } from "next-auth/react";
 
 interface Props {
   open: boolean;
@@ -27,6 +28,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
   const [endereco, setEndereco] = useState("");
   const [isento, setIsento] = useState(false);
   const [nascimento, setNascimento] = useState("");
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (encontrista) {
@@ -56,6 +58,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
       endereco: endereco.trim(),
       dataNascimento: nascimento,
       isento,
+      rede: session?.user.cem,
     });
     onClose();
   };

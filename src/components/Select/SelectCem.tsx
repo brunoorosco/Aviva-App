@@ -30,7 +30,7 @@ export function SelectCem({
   const items = data?.data ?? [];
   const required = isRequired ? { required: "Selecione uma Rede" } : {};
   return (
-    <div className="flex flex-col w-full my-2">
+    <div className="flex flex-col w-full">
       <Controller
         name={name}
         control={control}

@@ -98,7 +98,7 @@ class EncontroComDeusRepository {
   // Remove encontristas da rede e adiciona novos
   async replaceEncontristasPorRede(
     encontroId: string,
-    redeId: string,
+    redeId:string,
     novosEncontristas: TPeople[],
   ): Promise<any> {
     try {
@@ -108,7 +108,7 @@ class EncontroComDeusRepository {
       const encontristasComRede = novosEncontristas.map((e) => ({
         ...e,
         _id: new ObjectId().toString(),
-        rede: redeId,
+       
       }));
 
       // Remove todos da rede e adiciona os novos em uma operação
@@ -122,7 +122,7 @@ class EncontroComDeusRepository {
                   $filter: {
                     input: { $ifNull: ["$encontristas", []] }, // ← proteção se não existir
                     as: "encontrista",
-                    cond: { $ne: ["$$encontrista.rede", redeId] },
+                    cond: { $ne: ["$$encontrista.rede._id", redeId] },
                   },
                 },
                 // ↓ Array literal direto — não pode usar variável JS aqui

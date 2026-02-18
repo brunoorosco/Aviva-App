@@ -19,7 +19,6 @@ export const createEncontroComDeusService = async (data: any): Promise<any> => {
   const churchRepository = new ChurChMongoRepository();
   const churchs = await churchRepository.getChurch();
 
-  console.log(data);
   const dataNormalizada = normalizarEncontristasPorIgreja(data.encontristas, "Avivamento Sede");
   const novoEncontro = {
     data: new Date(data.data),
@@ -35,7 +34,6 @@ export const importEncontroComDeusService = async (data: any): Promise<any> => {
   const churchRepository = new ChurChMongoRepository();
   const churchs = await churchRepository.getChurch();
 
-  console.log(data);
   const dataNormalizada = normalizarEncontristasPorIgreja(data, "Avivamento Sede");
   const novoEncontro = {
     data: new Date(),
@@ -54,6 +52,11 @@ function limparObjeto<T extends Record<string, any>>(obj: T): Partial<T> {
   }
   return novo;
 }
+const getRedeName = (rede?: { _id: string; name: string } | string): string => {
+  if (!rede) return "";
+  if (typeof rede === "string") return rede;
+  return rede.name || "";
+};
 
 function normalizarEncontristasPorIgreja(
   entradas: (string | TPeople)[],
@@ -70,7 +73,7 @@ function normalizarEncontristasPorIgreja(
       };
     }
 
-    const contemIgreja = entrada.rede?.toLowerCase().includes("igreja");
+    const contemIgreja = getRedeName(entrada.rede).toLowerCase().includes("igreja");
 
     const obj = {
       nome: entrada.nome,
@@ -113,7 +116,7 @@ export const upsertInscricaoRedeService = async (data: {
   const qtdEncontristas = data.encontristas?.length || 0;
   const qtdEquipe = data.equipeMembers?.length || 0;
   let totalPago = 0;
-  let status = 'pendente';
+  let status = "pendente";
 
   const totalAPagar = qtdEncontristas * VALOR_ENCONTRISTA + qtdEquipe * VALOR_EQUIPE;
 
@@ -122,7 +125,6 @@ export const upsertInscricaoRedeService = async (data: {
     status = calculateStatus(totalAPagar, totalPago);
   }
 
-  
   const inscricaoData = {
     rede: data.rede,
     encontrista: qtdEncontristas,
@@ -132,23 +134,15 @@ export const upsertInscricaoRedeService = async (data: {
     totalPago,
     status,
   };
-  console.log("[encontroComDeus.ts:120]", JSON.stringify(inscricaoData, null, 2));
 
   // 1. Atualiza financeiro
-  const finc = await encontroRepository.upsertInscricaoRede(
-    data.encontroId,
-    data.rede._id,
-    inscricaoData,
-  );
-  console.log("[encontroComDeus.ts:132]", finc);
+  await encontroRepository.upsertInscricaoRede(data.encontroId, data.rede._id, inscricaoData);
 
+  const encont = data.encontristas.map((e) => {
+    return { ...e, rede: data.rede };
+  });
   // 2. Remove encontristas antigos da rede e adiciona novos
-  const enc = await encontroRepository.replaceEncontristasPorRede(
-    data.encontroId,
-    data.rede._id,
-    data.encontristas,
-  );
-  console.log(enc);
+  await encontroRepository.replaceEncontristasPorRede(data.encontroId, data.rede._id, encont);
 
   // 3. Remove equipe antiga da rede e adiciona nova
   await encontroRepository.replaceEquipePorRede(data.encontroId, data.rede._id, data.equipeMembers);
@@ -209,23 +203,23 @@ export const getInscricaoByRedeService = async (
   redeId: string,
 ): Promise<any> => {
   const encontroRepository = new EncontroComDeusRepository();
-  
+
   // Buscar o encontro completo
   const encontro = await encontroRepository.getEncontroComDeusById(encontroId);
-  
+
   if (!encontro) {
-    throw new Error('Encontro não encontrado');
+    throw new Error("Encontro não encontrado");
   }
-  
+
   // Buscar a inscrição financeira desta rede
   const inscricaoFinanceira = encontro.financeiro?.find((f: any) => f.rede._id === redeId);
-  
+
   // Filtrar encontristas desta rede
   const encontristas = encontro.encontristas?.filter((e: any) => e.rede === redeId) || [];
-  
+
   // Filtrar equipe desta rede
   const equipe = encontro.equipe?.filter((e: any) => e.rede?._id === redeId) || [];
-  
+
   // Retornar dados completos
   return {
     financeiro: inscricaoFinanceira || null,
@@ -234,8 +228,8 @@ export const getInscricaoByRedeService = async (
     encontro: {
       _id: encontro._id,
       numero: encontro.numero,
-      data: encontro.data
-    }
+      data: encontro.data,
+    },
   };
 };
 
