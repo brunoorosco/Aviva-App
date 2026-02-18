@@ -54,12 +54,12 @@ export function ResumoFinanceiro({ encontristas, equipeMembers, pagamentos, tota
     {} as Record<string, number>,
   );
 
-  const saldo = totalPago > 0 ? 0 : 0; // Without fixed values, saldo is based on payments only
-  const status = totalPago > 0 ? "quitado" : "pendente";
-  const cfg = statusConfig[status as StatusFinanceiro];
+  const status = totalPago - totalAPagar;
+  const saldo =  status === 0 ? "quitado" : "pendente";
+  const cfg = statusConfig[saldo as StatusFinanceiro];
 
   return (
-    <Card className="border-2 border-primary/20 bg-card/90 backdrop-blur-sm">
+    <Card className="border-2 border-primary/20 dark:bg-card/90 bg-gray-100 backdrop-blur-sm">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-lg">
@@ -85,19 +85,19 @@ export function ResumoFinanceiro({ encontristas, equipeMembers, pagamentos, tota
 
         {/* Total pago */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="rounded-lg border border-border/50 bg-secondary/20 p-4 text-center">
+          <div className="rounded-lg border border-gray-300 dark:border-border/70 bg-secondary/20 p-4 text-center">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
               Total à Pagar
             </p>
             <p className="text-xl font-bold mt-1 text-red-600">{formatCurrency(totalAPagar)}</p>
           </div>
-          <div className="rounded-lg border border-border/50 bg-secondary/20 p-4 text-center">
+          <div className="rounded-lg border border-gray-300 dark:border-border/70 bg-secondary/20 p-4 text-center">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total Pago</p>
             <p className="text-xl font-bold mt-1" style={{ color: "hsl(142, 71%, 45%)" }}>
               {formatCurrency(totalPago)}
             </p>
           </div>
-          <div className="rounded-lg border border-border/50 bg-secondary/20 p-4 text-center">
+          <div className="rounded-lg border border-gray-300 dark:border-border/70 bg-secondary/20 p-4 text-center">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
               Qtd Pagamentos
             </p>
@@ -115,7 +115,7 @@ export function ResumoFinanceiro({ encontristas, equipeMembers, pagamentos, tota
               {Object.entries(pagamentosPorTipo).map(([tipo, valor]) => (
                 <div
                   key={tipo}
-                  className="rounded-lg border border-border/50 bg-secondary/20 p-3 text-center"
+                  className="rounded-lg border border-gray-300 dark:border-border/70 bg-secondary/20 p-3 text-center"
                 >
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
                     {tipoLabels[tipo] || tipo}
@@ -133,7 +133,7 @@ export function ResumoFinanceiro({ encontristas, equipeMembers, pagamentos, tota
 
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-border/50 bg-secondary/20 p-3 text-center">
+    <div className="rounded-lg border border-gray-300 dark:border-border/70 bg-secondary/50 p-3 text-center">
       <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{label}</p>
       <p className="text-sm font-semibold mt-0.5">{value}</p>
     </div>
