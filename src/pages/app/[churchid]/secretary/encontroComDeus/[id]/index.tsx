@@ -41,6 +41,13 @@ type Props = {
 export default function EncontroPage({ encontro }: Props) {
   const router = useRouter();
 
+  // Helper function no topo do componente ou em utils
+  const getRedeName = (rede?: { _id: string; name: string } | string): string => {
+    if (!rede) return "";
+    if (typeof rede === "string") return rede;
+    return rede.name || "";
+  };
+
   if (!encontro) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -232,7 +239,9 @@ export default function EncontroPage({ encontro }: Props) {
                         {pessoa.rede && (
                           <div className="flex items-center gap-2">
                             <Network className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                            <span className="text-gray-600 dark:text-gray-400">{pessoa.rede}</span>
+                            <span className="text-gray-600 dark:text-gray-400">
+                              {getRedeName(pessoa.rede)}
+                            </span>
                           </div>
                         )}
 
@@ -272,8 +281,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       return { props: { encontro: null } };
     }
 
-    console.log("[index.tsx:279]", JSON.stringify(encontro, null, 2));
-    
     return {
       props: {
         encontro: {
@@ -281,7 +288,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           _id: encontro._id?.toString() || null,
           data: encontro.data?.toISOString() || null,
           updatedAt: encontro.updatedAt?.toISOString() || null,
-          
+
           // ✅ Remove _id se for undefined
           encontristas: (encontro.encontristas || []).map((e: any) => {
             const { _id, ...rest } = e;
@@ -290,7 +297,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
               ...(e._id ? { _id: e._id.toString() } : {}), // só adiciona se existir
             };
           }),
-          
+
           equipe: (encontro.equipe || []).map((m: any) => {
             const { _id, ...rest } = m;
             return {
@@ -298,7 +305,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
               ...(m._id ? { _id: m._id.toString() } : {}),
             };
           }),
-          
+
           financeiro: (encontro.financeiro || []).map((f: any) => ({
             ...f,
             _id: f._id?.toString() || null,

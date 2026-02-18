@@ -67,7 +67,7 @@ export type TEquipe = {
 type People = {
   _id?: string;
   nome: string;
-  rede?: string;
+  rede?: { _id: string; name: string } | string;
   idade?: string;
   email?: string;
   telefone?: string;
