@@ -64,12 +64,12 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
       <Link href={`${basePath}/${encontro._id}`}>
         <article
           className="
-          bg-white dark:bg-gray-800 
-          border border-gray-200 dark:border-gray-700
+          bg-gray-50 dark:bg-gray-800 
+          border border-gray-200 dark:border-orange-900
           rounded-lg shadow-sm hover:shadow-md 
           transition-all duration-200 ease-in-out
           p-4 mb-3
-          hover:border-blue-300 dark:hover:border-blue-600
+          hover:border-blue-300 dark:hover:border-orange-600
           active:scale-[0.98]
         "
         >
@@ -123,10 +123,10 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
               <div
                 className="
                 px-2 py-1 
-                bg-green-100 dark:bg-green-900/30 
-                text-green-700 dark:text-green-300
+                bg-green-100 dark:bg-orange-900/30 
+                text-green-700 dark:text-orange-300
                 text-xs font-medium rounded-full
-                border border-green-200 dark:border-green-700
+                border border-green-200 dark:border-orange-700
               "
               >
                 <div className="flex gap-2">
@@ -183,7 +183,7 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
                   </button>
                 )}
                 
-                <EyeIcon className="w-4 h-4 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                <EyeIcon className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-orange-400  transition-colors" />
               </div>
             </div>
           </div>
