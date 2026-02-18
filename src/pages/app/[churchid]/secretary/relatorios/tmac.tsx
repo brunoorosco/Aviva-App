@@ -13,7 +13,7 @@ import {
     ChartData,
 } from "chart.js";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
-import { Calendar, Users, Church, Network, Star, Loader2, ArrowLeft, Home, UserCheck, BookOpen, Menu } from "lucide-react";
+import { Calendar, Users, Church, Network, Star, Loader2, ArrowLeft, Home, UserCheck, BookOpen } from "lucide-react";
 import { useHttpGet } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -29,16 +29,34 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // --- TYPES ---
-interface StatItem {
+interface RedeReference {
     _id: string;
+    name: string;
+}
+
+interface StatItem {
+    _id: string | RedeReference; // ← pode ser string OU objeto
     total: number;
 }
 
+interface Encontrista {
+    _id: string;
+    nome: string;
+    telefone?: string;
+    email?: string;
+    endereco?: string;
+    isento: boolean;
+    dataNascimento?: string;
+    rede: RedeReference; // ← sempre objeto
+    igreja?: string;
+}
+
 interface EncontroSummary {
+    _id: string;
     numero: string;
     data: string;
     totalParticipantes: number;
-    encontristas: { rede: string; igreja: string }[];
+    encontristas: Encontrista[];
 }
 
 interface EncontroData {
@@ -79,19 +97,58 @@ interface DashboardData {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement);
 
 /**
+ * Helper: Extrai o nome da rede (pode ser string ou objeto)
+ */
+const getRedeName = (rede: string | RedeReference | undefined | null): string => {
+    if (!rede) return 'Sem Rede';
+    if (typeof rede === 'string') return rede;
+    return rede.name || 'Sem Rede';
+};
+
+/**
+ * Helper: Extrai o ID da rede (pode ser string ou objeto)
+ */
+const getRedeId = (rede: string | RedeReference | undefined | null): string => {
+    if (!rede) return '';
+    if (typeof rede === 'string') return rede;
+    return rede._id || '';
+};
+
+/**
  * Reusable Component for Encounter-like Reports (Encontro, Reencontro, Seja Livre)
  */
-const EncounterReportView = ({ data, title, year, userRede }: { data: EncontroData, title: string, year: string, userRede?: string }) => {
+const EncounterReportView = ({ 
+    data, 
+    title, 
+    year, 
+    userRede 
+}: { 
+    data: EncontroData, 
+    title: string, 
+    year: string, 
+    userRede?: string 
+}) => {
     if (!data) return <div className="p-8 text-center text-slate-500">Sem dados para exibir.</div>;
 
     const myNetworkStats = useMemo(() => {
-        if (!userRede) return null;
-        return data.totaisPorRede?.find(
-            (r) =>
-                r._id.toLowerCase().includes(userRede.toLowerCase()) ||
-                userRede.toLowerCase().includes(r._id.toLowerCase())
-        );
+        if (!userRede || !data?.totaisPorRede) return null;
+        
+        return data.totaisPorRede.find((r) => {
+            const redeName = getRedeName(r._id);
+            const lowerRede = userRede.toLowerCase();
+            const lowerRedeName = redeName.toLowerCase();
+            
+            return lowerRedeName.includes(lowerRede) || lowerRede.includes(lowerRedeName);
+        });
     }, [data, userRede]);
+
+    // Processa totaisPorRede para extrair nomes
+    const redesProcessadas = useMemo(() => {
+        return (data.totaisPorRede || []).map(r => ({
+            name: getRedeName(r._id),
+            total: r.total
+        }));
+    }, [data.totaisPorRede]);
 
     const barChartData: ChartData<"bar"> = useMemo(() => ({
         labels: (data.encontros || []).map((e) => `Enc. ${e.numero}`),
@@ -104,14 +161,14 @@ const EncounterReportView = ({ data, title, year, userRede }: { data: EncontroDa
     }), [data]);
 
     const doughnutChartData: ChartData<"doughnut"> = useMemo(() => ({
-        labels: (data.totaisPorRede || []).map((r) => r._id),
+        labels: redesProcessadas.map((r) => r.name),
         datasets: [{
             label: "Participantes",
-            data: (data.totaisPorRede || []).map((r) => r.total),
+            data: redesProcessadas.map((r) => r.total),
             backgroundColor: ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#6366f1", "#14b8a6"],
             borderWidth: 1,
         }],
-    }), [data]);
+    }), [redesProcessadas]);
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -187,11 +244,11 @@ const EncounterReportView = ({ data, title, year, userRede }: { data: EncontroDa
                     <CardHeader><CardTitle className="text-sm uppercase tracking-wide text-slate-500">Ranking das Redes</CardTitle></CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {(data.totaisPorRede || []).map((rede, i) => (
+                            {redesProcessadas.map((rede, i) => (
                                 <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
                                     <div className="flex items-center gap-2">
                                         <span className="font-medium text-sm w-6 text-slate-400">#{i + 1}</span>
-                                        <span className="font-semibold text-slate-700">{rede._id}</span>
+                                        <span className="font-semibold text-slate-700">{rede.name}</span>
                                     </div>
                                     <div className="font-bold text-slate-900">{rede.total}</div>
                                 </div>
@@ -206,7 +263,7 @@ const EncounterReportView = ({ data, title, year, userRede }: { data: EncontroDa
                         <div className="space-y-4 max-h-[400px] overflow-y-auto">
                             {(data.totaisPorIgreja || []).map((igreja, i) => (
                                 <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
-                                    <span className="font-medium text-slate-700">{igreja._id}</span>
+                                    <span className="font-medium text-slate-700">{getRedeName(igreja._id)}</span>
                                     <div className="font-bold text-slate-900">{igreja.total}</div>
                                 </div>
                             ))}
@@ -220,13 +277,13 @@ const EncounterReportView = ({ data, title, year, userRede }: { data: EncontroDa
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {(data.encontros || []).map((enc, i) => {
                         // Aggregate rede counts for this specific encounter
-                        const redeCounts = (enc.encontristas || []).reduce((acc: any, curr: any) => {
-                            const rede = curr.rede || 'Sem Rede';
-                            acc[rede] = (acc[rede] || 0) + 1;
+                        const redeCounts = (enc.encontristas || []).reduce((acc: Record<string, number>, curr) => {
+                            const redeName = getRedeName(curr.rede);
+                            acc[redeName] = (acc[redeName] || 0) + 1;
                             return acc;
                         }, {});
 
-                        const sortedRedes = Object.entries(redeCounts).sort(([, a], [, b]) => (b as number) - (a as number));
+                        const sortedRedes = Object.entries(redeCounts).sort(([, a], [, b]) => b - a);
 
                         return (
                             <Card key={i} className="overflow-hidden">
@@ -244,7 +301,7 @@ const EncounterReportView = ({ data, title, year, userRede }: { data: EncontroDa
                                                 {sortedRedes.map(([rede, count], idx) => (
                                                     <tr key={idx} className="border-b last:border-0 hover:bg-slate-50">
                                                         <td className="p-2 text-slate-600 pl-4">{rede}</td>
-                                                        <td className="p-2 font-semibold text-right pr-4">{count as number}</td>
+                                                        <td className="p-2 font-semibold text-right pr-4">{count}</td>
                                                     </tr>
                                                 ))}
                                                 {sortedRedes.length === 0 && (
@@ -268,7 +325,11 @@ export default function TmacReport() {
     const { data: session } = useSession();
     const user = session?.user as any;
     const churchId = user?.churchId;
-    const userRede = user?.rede || user?.redeId;
+    
+    // ✅ Extrai o name da rede do usuário
+    const userRede = typeof user?.cem === 'object' 
+        ? user?.cem?.name 
+        : user?.rede || user?.redeId || user?.cem;
 
     const [year, setYear] = useState(new Date().getFullYear().toString());
 
@@ -277,8 +338,12 @@ export default function TmacReport() {
     );
 
     const data = reportData?.data || {
-        encontro: null, reencontro: null, sejaLivre: null,
-        casasDePaz: [], visitasDePaz: [], escolaProfeta: null
+        encontro: { encontros: [], totaisPorRede: [], totaisPorIgreja: [], totalAnual: 0 },
+        reencontro: { encontros: [], totaisPorRede: [], totaisPorIgreja: [], totalAnual: 0 },
+        sejaLivre: { encontros: [], totaisPorRede: [], totaisPorIgreja: [], totalAnual: 0 },
+        casasDePaz: [],
+        visitasDePaz: [],
+        escolaProfeta: { courses: [], totalStudents: 0, byRede: [], aprovados: 0, reprovados: 0 }
     };
 
     // --- CASAS DE PAZ CHARTS ---
@@ -338,19 +403,19 @@ export default function TmacReport() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-900 pb-20">
+        <div className="min-h-screen bg-slate-50 p-4 dark:bg-dark-secondary  md:p-8 font-sans text-slate-900 pb-20">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div className="flex items-center gap-4">
                     <Link href={`/app/${churchId}`}>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="dark:text-gray-200">
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
+                        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-gray-300">
                             Relatórios TMAC
                         </h1>
-                        <p className="text-slate-500 mt-1">
+                        <p className="text-slate-500 mt-1 dark:text-gray-400">
                             Painel Integrado de KPI's
                         </p>
                     </div>
@@ -358,7 +423,7 @@ export default function TmacReport() {
 
                 <div className="flex items-center gap-3">
                     <Select value={year} onValueChange={setYear}>
-                        <SelectTrigger className="w-[120px] bg-white">
+                        <SelectTrigger className="w-[120px] bg-white dark:bg-dark-secondary">
                             <SelectValue placeholder="Ano" />
                         </SelectTrigger>
                         <SelectContent>
@@ -371,7 +436,7 @@ export default function TmacReport() {
             </header>
 
             <Tabs defaultValue="encontro" className="w-full">
-                <TabsList className="flex w-full justify-start h-auto mb-8 bg-white p-1 border overflow-x-auto">
+                <TabsList className="flex w-full justify-start h-auto mb-8 bg-white p-1 border overflow-x-auto dark:bg-dark-secondary">
                     <TabsTrigger value="encontro" className="flex-shrink-0"><Calendar className="w-4 h-4 mr-2" /> Encontros</TabsTrigger>
                     <TabsTrigger value="reencontro" className="flex-shrink-0"><Calendar className="w-4 h-4 mr-2" /> Reencontro</TabsTrigger>
                     <TabsTrigger value="sejalivre" className="flex-shrink-0"><Calendar className="w-4 h-4 mr-2" /> Seja Livre</TabsTrigger>
@@ -381,19 +446,21 @@ export default function TmacReport() {
                 </TabsList>
 
                 <TabsContent value="encontro">
-                    <EncounterReportView data={data.encontro as EncontroData} title="Encontro com Deus" year={year} userRede={userRede} />
+                    <EncounterReportView data={data.encontro} title="Encontro com Deus" year={year} userRede={userRede} />
                 </TabsContent>
 
                 <TabsContent value="reencontro">
-                    <EncounterReportView data={data.reencontro as EncontroData} title="Reencontro" year={year} userRede={userRede} />
+                    <EncounterReportView data={data.reencontro} title="Reencontro" year={year} userRede={userRede} />
                 </TabsContent>
 
                 <TabsContent value="sejalivre">
-                    <EncounterReportView data={data.sejaLivre as EncontroData} title="Seja Livre" year={year} userRede={userRede} />
+                    <EncounterReportView data={data.sejaLivre} title="Seja Livre" year={year} userRede={userRede} />
                 </TabsContent>
 
                 <TabsContent value="escola" className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    {!data.escolaProfeta ? <div className="p-8 text-center text-slate-500">Sem dados.</div> : (
+                    {!data.escolaProfeta || data.escolaProfeta.totalStudents === 0 ? (
+                        <div className="p-8 text-center text-slate-500">Sem dados.</div>
+                    ) : (
                         <>
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                 <Card>
