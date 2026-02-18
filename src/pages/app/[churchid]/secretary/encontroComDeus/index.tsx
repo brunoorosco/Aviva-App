@@ -52,7 +52,7 @@ const EncontroComDeusList = () => {
           inputFileRef={inputFileRef}
           encontro={encontros?.data.data || []}
         />
-        <ul className='w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
+        <ul className='w-full p-4 bg-gray-50 divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
           {!encontros ? (
             <p>Carregando encontros...</p>
           ) : (

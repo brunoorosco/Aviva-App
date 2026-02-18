@@ -1,8 +1,10 @@
 import Link from "next/link";
-import { Edit, EyeIcon, Calendar, Users, FileText } from "lucide-react";
+import { Edit, EyeIcon, Calendar, Users, FileText, DollarSign } from "lucide-react";
 import { TEncontroComDeus } from "@/domain/models/encontroComDeus";
 import { Button } from "../ui/button";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import { hasPermission, ROLES } from "@/lib/permissions";
 
 type Props = {
   encontro: TEncontroComDeus;
@@ -12,6 +14,7 @@ type Props = {
 
 const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const formatDate = (dateValue: any) => {
     if (!dateValue) return "Data não definida";
@@ -39,6 +42,19 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
     e.preventDefault();
     e.stopPropagation();
     router.push(`${basePath}/inscricao/novo?encontroId=${encontro._id}`);
+  };
+
+  const handleRelatorioFinanceiro = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`${basePath}/${encontro._id}/resumo-financeiro`);
+  };
+
+  // Verifica se o usuário tem permissão para ver relatório financeiro
+  const canViewFinancialReport = () => {
+    if (!session?.user) return false;
+    const userPermissions = session.user.permission || [];
+    return hasPermission(userPermissions, [ROLES.ADMIN, ROLES.PASTOR, ROLES.SECRETARIA]);
   };
 
   const reencontristasCount = encontro?.encontristas?.length ?? 0;
@@ -120,13 +136,33 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
               </div>
             </div>
 
-            {/* Footer com ação e botão de Ficha de Inscrição */}
+            {/* Footer com ação e botões */}
             <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
               <span className="text-xs text-gray-400 dark:text-gray-500">
                 Clique para visualizar detalhes
               </span>
               
               <div className="flex items-center gap-2">
+                {/* Botão de Relatório Financeiro - visível para Admin, Pastor e Secretaria */}
+                {canViewFinancialReport() && encontro.financeiro && (
+                  <button
+                    onClick={handleRelatorioFinanceiro}
+                    className="
+                      px-3 py-1.5
+                      bg-blue-600 hover:bg-blue-700
+                      text-white text-xs font-medium
+                      rounded-md shadow-sm hover:shadow-md
+                      flex items-center gap-1.5
+                      transition-all duration-200
+                      active:scale-95
+                    "
+                    aria-label="Relatório Financeiro"
+                  >
+                    <DollarSign className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Relatório Financeiro</span>
+                  </button>
+                )}
+                
                 {/* Botão de Ficha de Inscrição - sempre visível para encontros futuros */}
                 {isEncontroFuturo() && (
                   <button

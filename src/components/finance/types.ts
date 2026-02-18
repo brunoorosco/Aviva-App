@@ -1,0 +1,35 @@
+export interface RelatorioFinanceiroEncontro {
+  _id: string;
+  numero: string;
+  data: string;
+}
+
+export interface RelatorioFinanceiroGrupo {
+  id: string;
+  nome: string;
+  celula: string;
+  encontristas: number;
+  encontristasIsentos: number;
+  equipe: number;
+  equipeIsentos: number;
+  totalPago: number;
+  totalAPagar: number;
+  status: "quitado" | "parcial" | "pendente" | "excedente";
+  pagamentosPorTipo: Record<string, number>;
+}
+
+export interface RelatorioFinanceiroTotais {
+  totalEncontristas: number;
+  totalEquipe: number;
+  totalParticipantes: number;
+  totalIsentos: number;
+  totalPago: number;
+  totalAPagar: number;
+  pagamentosPorTipoGeral: Record<string, number>;
+}
+
+export interface RelatorioFinanceiroData {
+  encontro: RelatorioFinanceiroEncontro;
+  grupos: RelatorioFinanceiroGrupo[];
+  totais: RelatorioFinanceiroTotais;
+}

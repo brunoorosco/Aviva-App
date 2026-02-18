@@ -3,65 +3,84 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/router";
+import { useHttpGet } from "@/hooks/api";
 
 function formatCurrency(value: number) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-// Mock data for demonstration — will be replaced by API integration
-const mockGrupos = [
-  {
-    id: "1",
-    nome: "Grupo Alpha",
-    celula: "Célula Centro",
-    encontristas: 12,
-    encontristasIsentos: 2,
-    equipe: 5,
-    equipeIsentos: 1,
-    totalPago: 3500,
-    pagamentosPorTipo: { pix: 2000, cartao: 1000, dinheiro: 500 },
-  },
-  {
-    id: "2",
-    nome: "Grupo Beta",
-    celula: "Célula Norte",
-    encontristas: 8,
-    encontristasIsentos: 1,
-    equipe: 3,
-    equipeIsentos: 0,
-    totalPago: 1800,
-    pagamentosPorTipo: { pix: 1200, dinheiro: 600 },
-  },
-];
-
 const tipoLabels: Record<string, string> = { pix: "Pix", cartao: "Cartão", dinheiro: "Dinheiro" };
 
 export default function FinanceReport() {
-  const navigate = useRouter();
+  const router = useRouter();
+  const { churchid, idEncontro } = router.query;
 
-  const totalEncontristas = mockGrupos.reduce((s, g) => s + g.encontristas, 0);
-  const totalEquipe = mockGrupos.reduce((s, g) => s + g.equipe, 0);
-  const totalIsentos = mockGrupos.reduce((s, g) => s + g.encontristasIsentos + g.equipeIsentos, 0);
-  const totalPago = mockGrupos.reduce((s, g) => s + g.totalPago, 0);
-  const totalParticipantes = totalEncontristas + totalEquipe;
+  // Buscar dados do relatório financeiro da API
+  const { data: relatorioData, error, isLoading } = useHttpGet<{
+    encontro: {
+      _id: string;
+      numero: string;
+      data: string;
+    };
+    grupos: Array<{
+      id: string;
+      nome: string;
+      celula: string;
+      encontristas: number;
+      encontristasIsentos: number;
+      equipe: number;
+      equipeIsentos: number;
+      totalPago: number;
+      totalAPagar: number;
+      status: string;
+      pagamentosPorTipo: Record<string, number>;
+    }>;
+    totais: {
+      totalEncontristas: number;
+      totalEquipe: number;
+      totalParticipantes: number;
+      totalIsentos: number;
+      totalPago: number;
+      totalAPagar: number;
+      pagamentosPorTipoGeral: Record<string, number>;
+    };
+  }>(
+    churchid && idEncontro
+      ? `/api/protected/churches/${churchid}/encontroComDeus/${idEncontro}/relatorio-financeiro`
+      : null
+  );
 
-  // Aggregate payment types
-  const allTipos = mockGrupos.reduce((acc, g) => {
-    Object.entries(g.pagamentosPorTipo).forEach(([tipo, val]) => {
-      acc[tipo] = (acc[tipo] || 0) + val;
-    });
-    return acc;
-  }, {} as Record<string, number>);
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Carregando relatório financeiro...</p>
+      </div>
+    );
+  }
+
+  if (error || !relatorioData) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-red-500">Erro ao carregar relatório financeiro</p>
+      </div>
+    );
+  }
+
+  const { grupos, totais, encontro } = relatorioData.data;
+  const totalParticipantes = totais.totalParticipantes;
+
+  // Pagamentos agregados já vêm da API
+  const allTipos = totais.pagamentosPorTipoGeral || {};
 
   return (
     <div className="min-h-screen bg-background">
       <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate.back()}>
+          <Button variant="ghost" size="icon" onClick={() => router.back()}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-xl font-bold font-[Montserrat]">Relatório Financeiro</h1>
+            <h1 className="text-xl font-bold font-[Montserrat]">Relatório Financeiro - Encontro {encontro.numero}</h1>
             <p className="text-xs text-muted-foreground">Visão geral de todos os grupos</p>
           </div>
         </div>
@@ -78,16 +97,22 @@ export default function FinanceReport() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-              <InfoCard label="Grupos" value={String(mockGrupos.length)} />
-              <InfoCard label="Encontristas" value={String(totalEncontristas)} />
-              <InfoCard label="Equipe" value={String(totalEquipe)} />
+              <InfoCard label="Grupos" value={String(grupos.length)} />
+              <InfoCard label="Encontristas" value={String(totais.totalEncontristas)} />
+              <InfoCard label="Equipe" value={String(totais.totalEquipe)} />
               <InfoCard label="Total Participantes" value={String(totalParticipantes)} />
-              <InfoCard label="Isentos" value={String(totalIsentos)} />
+              <InfoCard label="Isentos" value={String(totais.totalIsentos)} />
             </div>
 
-            <div className="rounded-xl border-2 border-primary/30 bg-primary/5 p-4 text-center">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Valor Total Pago</p>
-              <p className="text-3xl font-bold text-primary">{formatCurrency(totalPago)}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="rounded-xl border-2 border-primary/30 bg-primary/5 p-4 text-center">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Valor Total Pago</p>
+                <p className="text-3xl font-bold text-primary">{formatCurrency(totais.totalPago)}</p>
+              </div>
+              <div className="rounded-xl border-2 border-orange-500/30 bg-orange-500/5 p-4 text-center">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Total a Pagar</p>
+                <p className="text-3xl font-bold text-orange-600">{formatCurrency(totais.totalAPagar)}</p>
+              </div>
             </div>
 
             {/* Formas de pagamento globais */}
@@ -107,38 +132,51 @@ export default function FinanceReport() {
 
         {/* Detalhamento por grupo */}
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Detalhamento por Grupo</h2>
-        <div className="space-y-4">
-          {mockGrupos.map((g) => (
-            <Card key={g.id} className="border-border/50 bg-card/80 backdrop-blur-sm">
-              <CardContent className="p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold">{g.nome}</h3>
-                    <p className="text-xs text-muted-foreground">{g.celula}</p>
-                  </div>
-                  <Badge variant="secondary">{formatCurrency(g.totalPago)}</Badge>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="rounded-lg border border-border/50 bg-secondary/20 p-2 text-center">
-                    <p className="text-[10px] text-muted-foreground uppercase">Encontristas</p>
-                    <p className="text-sm font-semibold">{g.encontristas} <span className="text-xs text-muted-foreground">({g.encontristasIsentos} isentos)</span></p>
-                  </div>
-                  <div className="rounded-lg border border-border/50 bg-secondary/20 p-2 text-center">
-                    <p className="text-[10px] text-muted-foreground uppercase">Equipe</p>
-                    <p className="text-sm font-semibold">{g.equipe} <span className="text-xs text-muted-foreground">({g.equipeIsentos} isentos)</span></p>
-                  </div>
-                  {Object.entries(g.pagamentosPorTipo).map(([tipo, val]) => (
-                    <div key={tipo} className="rounded-lg border border-border/50 bg-secondary/20 p-2 text-center">
-                      <p className="text-[10px] text-muted-foreground uppercase">{tipoLabels[tipo] || tipo}</p>
-                      <p className="text-sm font-semibold">{formatCurrency(val)}</p>
+        {grupos.length === 0 ? (
+          <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-8 text-center">
+              <p className="text-muted-foreground">Nenhum grupo cadastrado ainda</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            {grupos.map((g) => (
+              <Card key={g.id} className="border-border/50 bg-card/80 backdrop-blur-sm">
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold">{g.nome}</h3>
+                      <p className="text-xs text-muted-foreground">{g.celula}</p>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary">{formatCurrency(g.totalPago)}</Badge>
+                      <Badge variant={g.status === 'quitado' ? 'default' : g.status === 'pendente' ? 'destructive' : 'outline'}>
+                        {g.status}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="rounded-lg border border-border/50 bg-secondary/20 p-2 text-center">
+                      <p className="text-[10px] text-muted-foreground uppercase">Encontristas</p>
+                      <p className="text-sm font-semibold">{g.encontristas} <span className="text-xs text-muted-foreground">({g.encontristasIsentos} isentos)</span></p>
+                    </div>
+                    <div className="rounded-lg border border-border/50 bg-secondary/20 p-2 text-center">
+                      <p className="text-[10px] text-muted-foreground uppercase">Equipe</p>
+                      <p className="text-sm font-semibold">{g.equipe} <span className="text-xs text-muted-foreground">({g.equipeIsentos} isentos)</span></p>
+                    </div>
+                    {Object.entries(g.pagamentosPorTipo).map(([tipo, val]) => (
+                      <div key={tipo} className="rounded-lg border border-border/50 bg-secondary/20 p-2 text-center">
+                        <p className="text-[10px] text-muted-foreground uppercase">{tipoLabels[tipo] || tipo}</p>
+                        <p className="text-sm font-semibold">{formatCurrency(val)}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
