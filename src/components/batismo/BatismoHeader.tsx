@@ -1,71 +1,94 @@
-import { baptism } from '@/domain/models/baptism'
-import ButtonNew from '@/components/ButtonSubmit/buttonAdd'
-import Link from 'next/link'
+import { baptism } from "@/domain/models/baptism";
+import ButtonNew from "@/components/ButtonSubmit/buttonAdd";
+import Link from "next/link";
 
-type TProps<T> = {
-  total: number
-  pathname: string
-  inputFileRef: React.RefObject<HTMLInputElement>
-  data: T[]
-  mapExport?: any
-  sheetName?: string
-  filename?: string
-  title?: string
-}
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+type HeaderProps = {
+  title: string;
+  totalEventos: number;
+  totalBatizandos: number;
+  ultimaData?: string;
+  pathname: string;
+  inputFileRef: React.RefObject<HTMLInputElement>;
+};
 
 type Props = {
-  pathname: string
-  inputFileRef: React.RefObject<HTMLInputElement>
-  batismo: baptism[]
-}
+  pathname: string;
+  inputFileRef: React.RefObject<HTMLInputElement>;
+  batismo: baptism[];
+};
 
 const BatismoHeader = ({ pathname, inputFileRef, batismo }: Props) => {
-  const mapBaptismToExport = (m: baptism) => ({
-    nome: m.data,
-    rede: m.batizandos,
-    churchId: m.churchId
-  })
+  const totalEventos = batismo.length;
+
+  const totalBatizandos = batismo.reduce((acc, item) => acc + (item.batizandos?.length || 0), 0);
+
+  const ultimoBatismo = batismo
+    .slice()
+    .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())[0];
+
+  const dataUltimo = ultimoBatismo?.data
+    ? format(new Date(ultimoBatismo.data), "dd 'de' MMMM 'de' yyyy", {
+        locale: ptBR,
+      })
+    : "-";
 
   return (
-    <Header<baptism>
-      title='Batismos'
-      total={batismo.length}
+    <Header
+      title="Batismos"
+      totalEventos={totalEventos}
+      totalBatizandos={totalBatizandos}
+      ultimaData={dataUltimo}
       pathname={pathname}
       inputFileRef={inputFileRef}
-      data={batismo}
-      mapExport={mapBaptismToExport}
-      sheetName='Batismo'
-      filename='batismo.xlsx'
     />
-  )
-}
+  );
+};
 
-export default BatismoHeader
+export default BatismoHeader;
 
-const Header = <T,>({
-  total,
+const Header = ({
+  title,
+  totalEventos,
+  totalBatizandos,
+  ultimaData,
   pathname,
   inputFileRef,
-  data,
-  mapExport,
-  sheetName = 'Export',
-  filename = 'export.xlsx',
-  title = 'Itens'
-}: TProps<T>) => {
+}: HeaderProps) => {
   return (
-    <div className='flex justify-between px-3 pt-5 mt-2 bg-card text-card-foreground rounded-t-lg'>
-      <div>
-        <div className='flex items-center gap-2'>
-          <h2 className='text-2xl font-bold'>{title}</h2>
-        </div>
-        <p className='mt-2 text-gray-400'>{total}</p>
-      </div>
+    <div className="flex flex-col gap-6 p-6 bg-card rounded-xl border shadow-sm">
+      {/* Top */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
 
-      <div className='flex gap-2 h-10'>
+          <p className="text-sm text-muted-foreground mt-1">Gestão de eventos de batismo</p>
+        </div>
+
         <Link href={`${pathname}/new`}>
           <ButtonNew />
         </Link>
       </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="p-4 rounded-lg bg-muted/40">
+          <p className="text-sm text-muted-foreground">Eventos</p>
+          <p className="text-2xl font-bold">{totalEventos}</p>
+        </div>
+
+        <div className="p-4 rounded-lg bg-muted/40">
+          <p className="text-sm text-muted-foreground">Batizandos</p>
+          <p className="text-2xl font-bold text-primary">{totalBatizandos}</p>
+        </div>
+
+        <div className="p-4 rounded-lg bg-muted/40">
+          <p className="text-sm text-muted-foreground">Último batismo</p>
+          <p className="text-lg font-medium">{ultimaData}</p>
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
