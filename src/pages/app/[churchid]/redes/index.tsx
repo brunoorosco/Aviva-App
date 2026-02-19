@@ -36,7 +36,7 @@ const Cem = () => {
   const canViewCem = (cemId: string) => isAdmin || isUserCem(cemId);
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl">
         <Suspense
           fallback={
