@@ -36,7 +36,7 @@ const Cem = () => {
   const canViewCem = (cemId: string) => isAdmin || isUserCem(cemId);
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl">
         <Suspense
           fallback={
@@ -50,10 +50,10 @@ const Cem = () => {
         >
           {/* Cabeçalho */}
           <div className="mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-gray-900 rounded-2xl shadow-sm p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gray-50 dark:bg-dark-secondary rounded-2xl shadow-sm p-6">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                  <Network className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="p-3 bg-blue-100 dark:bg-orange-900/30 rounded-xl">
+                  <Network className="w-6 h-6 text-blue-600 dark:text-orange-400" />
                 </div>
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
@@ -76,7 +76,7 @@ const Cem = () => {
 
           {/* Grid de Cards */}
           {!cems?.data || cems.data.length === 0 ? (
-            <div className="bg-white dark:bg-dark-secondary rounded-2xl shadow-sm p-12 text-center">
+            <div className="bg-gray-100 dark:bg-dark-secondary rounded-2xl shadow-sm p-12 text-center">
               <div className="flex flex-col items-center gap-4">
                 <div className="p-4 bg-gray-100 dark:bg-gray-900 rounded-full">
                   <Network className="w-12 h-12 text-gray-400" />
@@ -94,7 +94,7 @@ const Cem = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 dark:bg-black/40 bg-gray-50">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 dark:bg-black/40 bg-gray-100">
               {cems.data.map((cem: CellsModel) => {
                 const isActive = canViewCem(cem._id);
                 const isCurrentUserCem = isUserCem(cem._id);
@@ -106,7 +106,7 @@ const Cem = () => {
                       <Link
                         href={`../${churchId}/redes/${cem._id}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="absolute top-3 right-3 z-10 p-2 bg-white dark:bg-gray-900 
+                        className="absolute top-3 right-3 z-10 p-2 bg-gray-100 dark:bg-dark-secondary 
                                  rounded-full shadow-md opacity-0 group-hover:opacity-100 
                                  transition-opacity duration-200 hover:bg-gray-100 
                                  dark:hover:bg-gray-700"
@@ -125,8 +125,8 @@ const Cem = () => {
                           isCurrentUserCem
                             ? "dark:border-orange-500 border-blue-500 from-blue-50"
                             : isActive
-                              ? "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300"
-                              : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50"
+                              ? "border-gray-200 dark:border-gray-700 bg-white dark:bg-dark-secondary hover:border-blue-300 dark:hover:border-orange-300"
+                              : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-dark-secondary/50"
                         }
                         ${isActive ? "hover:-translate-y-1" : ""}
                       `}

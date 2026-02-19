@@ -64,8 +64,8 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
       <Link href={`${basePath}/${encontro._id}`}>
         <article
           className="
-          bg-gray-50 dark:bg-gray-800 
-          border border-gray-200 dark:border-orange-900
+          bg-gray-50 dark:bg-dark-secondary 
+          border border-gray-200 dark:border-orange-900/30
           rounded-lg shadow-sm hover:shadow-md 
           transition-all duration-200 ease-in-out
           p-4 mb-3
@@ -110,10 +110,10 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
             {/* Stats */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                <Users className="w-4 h-4 text-blue-600 dark:text-orange-400 flex-shrink-0" />
                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
                   <span className="text-xs text-gray-500 dark:text-gray-400">Encontristas:</span>
-                  <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                  <span className="text-lg font-bold text-blue-600 dark:text-orange-400">
                     {reencontristasCount}
                   </span>
                 </div>
