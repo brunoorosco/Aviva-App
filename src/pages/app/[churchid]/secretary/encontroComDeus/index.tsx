@@ -36,7 +36,7 @@ const EncontroComDeusList = () => {
   }
 
   return (
-    <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg dark:text-dark-primary'>
+    <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg mt-8 dark:text-dark-primary'>
       {showEditModal && selectedEncontro && (
         <EditEncontroModal 
           encontro={selectedEncontro}
@@ -52,7 +52,7 @@ const EncontroComDeusList = () => {
           inputFileRef={inputFileRef}
           encontro={encontros?.data.data || []}
         />
-        <ul className='w-full p-4 bg-gray-50 divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
+        <ul className='w-full pt-4 bg-gray-50 divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-background'>
           {!encontros ? (
             <p>Carregando encontros...</p>
           ) : (

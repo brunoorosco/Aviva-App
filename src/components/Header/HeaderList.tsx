@@ -29,10 +29,10 @@ const Header = <T,>({
 }: Props<T>) => {
   return (
     <header className="
-      bg-gray-50 dark:bg-dark-secondary 
-      border-b border-gray-200 dark:border-gray-700
-      px-4 py-5 sm:px-6
-      rounded-t-lg
+      bg-gray-50 dark:bg-background 
+      border border-gray-400 dark:border-gray-700
+      py-5 sm:px-6
+      rounded-lg
     ">
       {/* Mobile Layout */}
       <div className="flex flex-col gap-4 sm:hidden">
