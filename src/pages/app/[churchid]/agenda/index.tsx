@@ -50,6 +50,7 @@ const CalendarPage = () => {
   const [horaFim, setHoraFim] = useState('')
   const [descricao, setDescricao] = useState('')
   const [dataFim, setDataFim] = useState<Date | null>(null)
+  const [cor, setCor] = useState('#3b82f6') // Cor padrão azul
   const [events, setEvents] = useState<TEvent[]>([])
   const { data: session } = useSession()
 
@@ -86,9 +87,18 @@ const CalendarPage = () => {
 
   const getEventsForDay = (day: Date) => {
     if (!Array.isArray(events)) return []
-    return events.filter((event) =>
-      isSameDay(new Date(`${event.data}T12:00:00`), day)
-    )
+    return events.filter((event) => {
+      const eventStart = parseDateNoTimezone(event.data)
+      const eventEnd = event.dataFim ? parseDateNoTimezone(event.dataFim) : null
+      
+      // Se tem data fim, verifica se o dia está no intervalo
+      if (eventEnd) {
+        return day >= eventStart && day <= eventEnd
+      }
+      
+      // Se não tem data fim, verifica se é o mesmo dia
+      return isSameDay(eventStart, day)
+    })
   }
 
   const handleDayClick = (day: Date) => {
@@ -108,6 +118,7 @@ const CalendarPage = () => {
     setHoraFim(event.horaFim || '')
     setDescricao(event.descricao || '')
     setDataFim(event.dataFim ? new Date(event.dataFim) : null)
+    setCor(event.cor || '#3b82f6')
     setIsModalOpen(true)
   }
 
@@ -118,6 +129,7 @@ const CalendarPage = () => {
     setHoraFim('')
     setDescricao('')
     setDataFim(null)
+    setCor('#3b82f6')
   }
 
   const handleSaveEvent = async () => {
@@ -132,7 +144,8 @@ const CalendarPage = () => {
       horaInicio: diaInteiro ? undefined : horaInicio,
       horaFim: diaInteiro ? undefined : horaFim,
       descricao: descricao.trim() || undefined,
-      churchId: session?.user.churchId as string
+      churchId: session?.user.churchId as string,
+      cor: cor
     }
 
     const resp = await useHttpPost<TEvent>({
@@ -249,7 +262,18 @@ const CalendarPage = () => {
                           <div
                             key={event._id}
                             onClick={(e) => handleEventClick(event, e)}
-                            className='text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded truncate hover:bg-primary/20 cursor-pointer'
+                            className='text-xs px-1.5 py-0.5 rounded truncate cursor-pointer font-medium'
+                            style={{
+                              backgroundColor: event.cor || '#3b82f6',
+                              color: '#ffffff',
+                              opacity: 0.9
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.opacity = '1'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.opacity = '0.9'
+                            }}
                           >
                             {event.titulo}
                           </div>
@@ -300,8 +324,12 @@ const CalendarPage = () => {
                         <div
                           key={event._id}
                           onClick={(e) => handleEventClick(event, e)}
-                          className='p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors'
+                          className='p-3 border rounded-lg hover:bg-accent cursor-pointer transition-colors relative overflow-hidden'
                         >
+                          <div 
+                            className='absolute left-0 top-0 bottom-0 w-1'
+                            style={{ backgroundColor: event.cor || '#3b82f6' }}
+                          />
                           <div className='flex items-start justify-between gap-2 mb-1'>
                             <h4 className='font-medium text-sm'>
                               {event.titulo}
@@ -463,6 +491,22 @@ const CalendarPage = () => {
                 placeholder='Adicione detalhes sobre o evento'
                 rows={3}
               />
+            </div>
+
+            <div className='space-y-2'>
+              <Label htmlFor='cor'>Cor do Evento</Label>
+              <div className='flex items-center gap-3'>
+                <Input
+                  id='cor'
+                  type='color'
+                  value={cor}
+                  onChange={(e) => setCor(e.target.value)}
+                  className='w-20 h-10 cursor-pointer'
+                />
+                <span className='text-sm text-muted-foreground'>
+                  {cor.toUpperCase()}
+                </span>
+              </div>
             </div>
           </div>
 
