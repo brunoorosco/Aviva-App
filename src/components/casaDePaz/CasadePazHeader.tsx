@@ -137,7 +137,7 @@ const Header = <T extends CasaDePazModel,>({
                   variant='secondary' 
                   className='bg-blue-100 text-blue-700 dark:bg-orange-900/30 dark:text-orange-400 w-fit'
                 >
-                  {total} {total === 1 ? 'período' : 'períodos'}
+                  {total} {total === 1 ? 'ciclo' : 'ciclos'}
                 </Badge>
               </div>
               
@@ -187,7 +187,7 @@ const Header = <T extends CasaDePazModel,>({
                 size='default'
               >
                 <Plus className='mr-2 h-4 w-4' />
-                <span className='hidden sm:inline'>Novo Período</span>
+                <span className='hidden sm:inline'>Novo Ciclo</span>
                 <span className='sm:hidden'>Novo</span>
               </Button>
             </Link>
@@ -202,7 +202,7 @@ const Header = <T extends CasaDePazModel,>({
               <div className='flex items-center gap-2 mb-2'>
                 <Calendar className='w-4 h-4 text-blue-600 dark:text-blue-400' />
                 <p className='text-xs text-blue-700 dark:text-blue-300 font-medium'>
-                  Períodos
+                  Ciclos de Casas de Paz
                 </p>
               </div>
               <p className='text-2xl font-bold text-blue-900 dark:text-blue-100'>
@@ -228,7 +228,7 @@ const Header = <T extends CasaDePazModel,>({
               <div className='flex items-center gap-2 mb-2'>
                 <TrendingUp className='w-4 h-4 text-purple-600 dark:text-purple-400' />
                 <p className='text-xs text-purple-700 dark:text-purple-300 font-medium'>
-                  Média/Período
+                  Média/Ciclo
                 </p>
               </div>
               <p className='text-2xl font-bold text-purple-900 dark:text-purple-100'>
