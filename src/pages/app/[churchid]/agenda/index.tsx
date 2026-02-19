@@ -33,7 +33,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { TEvent } from '@/domain/models/events'
-import { useHttpDelete, useHttpGet, useHttpPost } from '@/hooks/api'
+import { useHttpDelete, useHttpGet, useHttpPost, useHttpPut } from '@/hooks/api'
 import { useSession } from 'next-auth/react'
 import { parseDateNoTimezone } from '@/utils/date'
 
@@ -110,14 +110,14 @@ const CalendarPage = () => {
 
   const handleEventClick = (event: TEvent, e: React.MouseEvent) => {
     e.stopPropagation()
-    setSelectedDate(new Date(event.data))
+    setSelectedDate(parseDateNoTimezone(event.data))
     setEditingEvent(event)
     setTitulo(event.titulo)
     setDiaInteiro(event.diaInteiro)
     setHoraInicio(event.horaInicio || '')
     setHoraFim(event.horaFim || '')
     setDescricao(event.descricao || '')
-    setDataFim(event.dataFim ? new Date(event.dataFim) : null)
+    setDataFim(event.dataFim ? parseDateNoTimezone(event.dataFim) : null)
     setCor(event.cor || '#3b82f6')
     setIsModalOpen(true)
   }
@@ -148,13 +148,30 @@ const CalendarPage = () => {
       cor: cor
     }
 
-    const resp = await useHttpPost<TEvent>({
-      url: baseURl,
-      data: eventData
-    })
-    if (resp) {
-      setEvents((prev) => [...prev, resp]) // atualiza lista local
+    if (editingEvent) {
+      // EDITAR evento existente - usa PUT
+      const resp = await useHttpPut<TEvent>({
+        url: `${baseURl}/${editingEvent._id}`,
+        data: eventData
+      })
+      
+      if (resp) {
+        // Substitui o evento na lista
+        setEvents((prev) => prev.map((e) => e._id === editingEvent._id ? { ...eventData, _id: editingEvent._id } : e))
+      }
+    } else {
+      // CRIAR novo evento - usa POST
+      const resp = await useHttpPost<TEvent>({
+        url: baseURl,
+        data: eventData
+      })
+      
+      if (resp) {
+        // Adiciona novo evento à lista
+        setEvents((prev) => [...prev, resp])
+      }
     }
+    
     setIsModalOpen(false)
     resetForm()
   }
