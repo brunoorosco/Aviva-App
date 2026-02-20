@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type HeaderProps = {
   title: string;
@@ -22,6 +23,7 @@ type Props = {
 
 const BatismoHeader = ({ pathname, inputFileRef, batismo }: Props) => {
   const totalEventos = batismo.length;
+  const isMobile = useIsMobile();
 
   const totalBatizandos = batismo.reduce((acc, item) => acc + (item.batizandos?.length || 0), 0);
 
@@ -30,9 +32,11 @@ const BatismoHeader = ({ pathname, inputFileRef, batismo }: Props) => {
     .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())[0];
 
   const dataUltimo = ultimoBatismo?.data
-    ? format(new Date(ultimoBatismo.data), "dd 'de' MMMM 'de' yyyy", {
-        locale: ptBR,
-      })
+    ? !isMobile
+      ? format(new Date(ultimoBatismo.data), "dd 'de' MMMM 'de' yyyy", {
+          locale: ptBR,
+        })
+      : format(new Date(ultimoBatismo.data), "dd/MM/yy", { locale: ptBR })
     : "-";
 
   return (
