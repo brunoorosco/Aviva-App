@@ -1,10 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, BarChart3, Calendar, TrendingUp } from "lucide-react";
+import { BarChart3, Calendar, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Bar, Doughnut } from "react-chartjs-2";
 import {
@@ -19,12 +17,12 @@ import {
 } from "chart.js";
 import { useHttpGet } from "@/hooks/api";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 import {
   TVisitorBySource,
   TVisitorCountResponse,
   TVisitorSource,
 } from "@/domain/models/visitantes";
-import { cn } from "@/lib/utils";
 
 // Registrar componentes do Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -33,6 +31,16 @@ export default function VisitorsAnalytics() {
   const [periodView, setPeriodView] = useState<"monthly" | "annual">("monthly");
   const { data: session } = useSession();
   const churchId = session?.user.churchId as string;
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  // Cores adaptadas ao tema
+  const gridColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(100,100,100,0.2)";
+  const tickColor = isDark ? "#a1a1aa" : "#71717a";
+  const tooltipBg = isDark ? "#18181b" : "#ffffff";
+  const tooltipText = isDark ? "#fafafa" : "#09090b";
+  const tooltipBorder = isDark ? "#3f3f46" : "#e4e4e7";
+  const barColor = isDark ? "rgb(99, 179, 237)" : "rgb(0, 51, 204)";
 
   const sourceColors: Record<TVisitorSource, string> = {
     invited: "rgb(52, 211, 153)",
@@ -92,7 +100,7 @@ export default function VisitorsAnalytics() {
           periodView === "monthly"
             ? formattedVisitors.map((v) => v.count)
             : annualVisitors.map((v) => v.count),
-        backgroundColor: "rgb(00, 51, 204)",
+        backgroundColor: barColor,
         borderRadius: 8,
       },
     ],
@@ -106,10 +114,10 @@ export default function VisitorsAnalytics() {
         display: false,
       },
       tooltip: {
-        backgroundColor: "hsl(100,50%,50%)", //balão de mensagem
-        titleColor: "hsl(275,90%,100%)", //color dotitulo do balão
-        bodyColor: "hsl(275,90%,100%)", //color do texto do balão
-        borderColor: "rgba(0,0,0,0.05)",
+        backgroundColor: tooltipBg,
+        titleColor: tooltipText,
+        bodyColor: tooltipText,
+        borderColor: tooltipBorder,
         borderWidth: 1,
         padding: 12,
         displayColors: false,
@@ -117,17 +125,17 @@ export default function VisitorsAnalytics() {
     },
     scales: {
       x: {
-        grid: { color: "rgba(0, 0, 0, 0.02)", display: false },
+        grid: { display: false },
         ticks: {
-          color: "hsl(var(--muted-foreground))",
+          color: tickColor,
         },
       },
       y: {
         grid: {
-          color: "hsl(var(--border))",
+          color: gridColor,
         },
         ticks: {
-          color: "hsl(var(--muted-foreground))",
+          color: tickColor,
         },
       },
     },
@@ -155,10 +163,10 @@ export default function VisitorsAnalytics() {
         display: false,
       },
       tooltip: {
-        backgroundColor: "hsl(var(--background))",
-        titleColor: "hsl(var(--foreground))",
-        bodyColor: "hsl(var(--foreground))",
-        borderColor: "hsl(var(--border))",
+        backgroundColor: tooltipBg,
+        titleColor: tooltipText,
+        bodyColor: tooltipText,
+        borderColor: tooltipBorder,
         borderWidth: 1,
         padding: 12,
         callbacks: {
@@ -222,7 +230,7 @@ export default function VisitorsAnalytics() {
                 <Calendar className="w-4 h-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{visitors?.data.visitorsToday  || 0}</div>
+                <div className="text-2xl font-bold">{visitors?.data.visitorsToday || 0}</div>
                 <p className="text-xs text-muted-foreground">{todayLabel}</p>
               </CardContent>
             </Card>
@@ -288,12 +296,12 @@ export default function VisitorsAnalytics() {
                           backgroundColor: sourceColors[item.source] || "gray",
                         }}
                       />
-                      <span className="font-medium capitalize text-gray-800 dark:text-gray-300">
+                      <span className="font-medium capitalize">
                         {item.source === "invited" ? "Convidado" : item.source}
                       </span>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-gray-800 dark:text-gray-300">{item.count}</div>
+                      <div className="font-bold">{item.count}</div>
                       <div className="text-xs text-muted-foreground">
                         {totalVisitors > 0 ? ((item.count / totalVisitors) * 100).toFixed(1) : 0}%
                       </div>

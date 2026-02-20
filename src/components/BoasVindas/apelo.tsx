@@ -84,14 +84,14 @@ export default function ChurchAnalytics() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 dark:bg-background text-card-foreground p-4 rounded-xl shadow-sm border">
         <div>
           <h1 className="text-xl font-bold flex items-center gap-2 text-slate-800 dark:text-gray-300">
-            <LayoutDashboard className="text-blue-600 w-5 h-5" /> 
+            <LayoutDashboard className="text-blue-600 w-5 h-5 dark:text-orange-500" /> 
             Apelo
           </h1>
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
           <Select value={selectedRede} onValueChange={setSelectedRede}>
-            <SelectTrigger className="w-[180px] bg-slate-50 border-slate-200 bg-background">
+            <SelectTrigger className="w-[180px] bg-slate-50 border-slate-200 dark:bg-background">
               <SelectValue placeholder="Filtrar por Rede" />
             </SelectTrigger>
             <SelectContent>
