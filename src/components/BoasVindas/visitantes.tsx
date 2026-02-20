@@ -288,12 +288,12 @@ export default function VisitorsAnalytics() {
                           backgroundColor: sourceColors[item.source] || "gray",
                         }}
                       />
-                      <span className="font-medium capitalize">
+                      <span className="font-medium capitalize text-gray-800 dark:text-gray-300">
                         {item.source === "invited" ? "Convidado" : item.source}
                       </span>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold">{item.count}</div>
+                      <div className="font-bold text-gray-800 dark:text-gray-300">{item.count}</div>
                       <div className="text-xs text-muted-foreground">
                         {totalVisitors > 0 ? ((item.count / totalVisitors) * 100).toFixed(1) : 0}%
                       </div>

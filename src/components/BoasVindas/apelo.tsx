@@ -79,11 +79,11 @@ export default function ChurchAnalytics() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-4 md:p-8 space-y-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-background p-4 md:p-8 space-y-6">
       
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card text-card-foreground p-4 rounded-xl shadow-sm border">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 dark:bg-background text-card-foreground p-4 rounded-xl shadow-sm border">
         <div>
-          <h1 className="text-xl font-bold flex items-center gap-2 text-slate-800">
+          <h1 className="text-xl font-bold flex items-center gap-2 text-slate-800 dark:text-gray-300">
             <LayoutDashboard className="text-blue-600 w-5 h-5" /> 
             Apelo
           </h1>
@@ -91,7 +91,7 @@ export default function ChurchAnalytics() {
         
         <div className="flex flex-wrap items-center gap-3">
           <Select value={selectedRede} onValueChange={setSelectedRede}>
-            <SelectTrigger className="w-[180px] bg-slate-50 border-slate-200">
+            <SelectTrigger className="w-[180px] bg-slate-50 border-slate-200 bg-background">
               <SelectValue placeholder="Filtrar por Rede" />
             </SelectTrigger>
             <SelectContent>
@@ -101,7 +101,7 @@ export default function ChurchAnalytics() {
           </Select>
 
           <Tabs value={period} onValueChange={(v: any) => setPeriod(v)}>
-            <TabsList className="bg-slate-100">
+            <TabsList className="bg-slate-100 dark:bg-dark-secondary">
               <TabsTrigger value="monthly">Mensal</TabsTrigger>
               <TabsTrigger value="annual">Anual</TabsTrigger>
             </TabsList>
@@ -109,13 +109,13 @@ export default function ChurchAnalytics() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-4 dark:bg-background">
         <Card className="border-l-4 border-l-emerald-500 shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-xs font-semibold uppercase text-slate-500 tracking-wider">Aceitaram</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-800">{stats.newBelievers}</div>
+            <div className="text-3xl font-bold text-slate-800 dark:text-gray-300">{stats.newBelievers}</div>
             <p className="text-[11px] text-emerald-600 font-medium flex items-center gap-1 mt-1">
               <Heart className="w-3 h-3 fill-emerald-500" /> Aceitaram a Cristo
             </p>
@@ -127,7 +127,7 @@ export default function ChurchAnalytics() {
             <CardTitle className="text-xs font-semibold uppercase text-slate-500 tracking-wider">Reconciliaram</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-800">{stats.reconciled}</div>
+            <div className="text-3xl font-bold text-slate-800 dark:text-gray-300">{stats.reconciled}</div>
             <p className="text-[11px] text-amber-600 font-medium flex items-center gap-1 mt-1">
               <RefreshCcw className="w-3 h-3" /> Voltaram para o Pai
             </p>
@@ -139,19 +139,19 @@ export default function ChurchAnalytics() {
             <CardTitle className="text-xs font-semibold uppercase text-slate-500 tracking-wider">Já Batizados</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-800">{stats.baptized}</div>
+            <div className="text-3xl font-bold text-slate-800 dark:text-gray-300">{stats.baptized}</div>
             <p className="text-[11px] text-blue-600 font-medium flex items-center gap-1 mt-1">
               <CheckCircle2 className="w-3 h-3" /> Vida nas Águas
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-orange-600 bg-orange-50/30 shadow-sm">
+        <Card className="border-l-4 border-l-orange-600 bg-orange-50/30 shadow-sm dark:bg-background">
           <CardHeader className="pb-2">
             <CardTitle className="text-xs font-semibold uppercase text-orange-800 tracking-wider">Aguardando Batismo</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-orange-700">{stats.pendingBaptism}</div>
+            <div className="text-3xl font-bold text-orange-700 dark:text-gray-300">{stats.pendingBaptism}</div>
             <p className="text-[11px] text-orange-600 font-medium flex items-center gap-1 mt-1">
               <Waves className="w-3 h-3" /> Candidatos ao batismo
             </p>
@@ -187,18 +187,18 @@ export default function ChurchAnalytics() {
             <CardTitle className="text-base font-bold">Foco no Discipulado</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="group flex items-center justify-between p-4 bg-white border rounded-xl hover:border-emerald-500 transition-all cursor-pointer">
+            <div className="group flex items-center justify-between p-4 bg-white dark:bg-gray-800 border rounded-xl hover:border-emerald-500 transition-all cursor-pointer">
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-700">Consolidar Novas Vidas</span>
-                <span className="text-[10px] text-slate-400">Total de {stats.newBelievers} almas</span>
+                <span className="text-sm font-bold text-slate-700 dark:text-gray-300">Consolidar Novas Vidas</span>
+                <span className="text-[10px] text-slate-400 dark:text-gray-400">Total de {stats.newBelievers} almas</span>
               </div>
               <TrendingUp className="w-5 h-5 text-emerald-500" />
             </div>
 
-            <div className="group flex items-center justify-between p-4 bg-white border rounded-xl hover:border-amber-500 transition-all cursor-pointer">
+            <div className="group flex items-center justify-between p-4 bg-white dark:bg-gray-800 border rounded-xl hover:border-amber-500 transition-all cursor-pointer">
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-700">Visitar Reconciliados</span>
-                <span className="text-[10px] text-slate-400">{stats.reconciled} retornaram recentemente</span>
+                <span className="text-sm font-bold text-slate-700 dark:text-gray-300">Visitar Reconciliados</span>
+                <span className="text-[10px] text-slate-400 dark:text-gray-400">{stats.reconciled} retornaram recentemente</span>
               </div>
               <RefreshCcw className="w-5 h-5 text-amber-500" />
             </div>
