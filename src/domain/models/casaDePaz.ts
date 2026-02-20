@@ -7,8 +7,8 @@ export type CasaDePazModel = {
 
 export type CasaDePaz = {
   _id: string
-  lider1: string
-  lider2: string
+  lider1: { _id: string; name: string } | null;
+  lider2: { _id: string; name: string } | null;
   endereco: string
   rede?: { _id: string; name: string } | string
   anfitria?: string
