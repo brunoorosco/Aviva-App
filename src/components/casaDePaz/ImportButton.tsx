@@ -4,19 +4,11 @@ import { useRef, useState } from 'react'
 import { Upload } from 'lucide-react'
 import * as XLSX from 'xlsx'
 import Toast from '@/components/Toast'
-
-export type LeaderPair = {
-  lider1: string
-  lider2: string
-  endereco: string
-  rede: string
-  anfitria?: string
-  telefone?: string
-}
+import { CasaDePaz } from '@/domain/models/casaDePaz'
 
 type Props = {
   inputFileRef: React.RefObject<HTMLInputElement>
-  onImport?: (imported: LeaderPair[]) => void
+  onImport?: (imported: CasaDePaz[]) => void
 }
 
 const ImportButton = ({ inputFileRef, onImport }: Props) => {
@@ -30,7 +22,7 @@ const ImportButton = ({ inputFileRef, onImport }: Props) => {
       const data = await file.arrayBuffer()
       const workbook = XLSX.read(data)
       const sheet = workbook.Sheets[workbook.SheetNames[0]]
-      const json = XLSX.utils.sheet_to_json(sheet) as LeaderPair[]
+      const json = XLSX.utils.sheet_to_json(sheet) as CasaDePaz[]
 
       if (json.length === 0) {
         Toast.showError('Arquivo vazio ou inválido')

@@ -6,19 +6,22 @@ import { useRouter } from "next/router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import ImportButton, { LeaderPair } from "../../../../components/casaDePaz/ImportButton";
+import ImportButton from "../../../../components/casaDePaz/ImportButton";
 import { useHttpPost } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import Toast from "@/components/Toast";
 import { Button } from "@/components/ui/button";
-import { Loader2Icon, Trash2, Plus } from "lucide-react";
+import { Loader2Icon, Trash2, Plus, X } from "lucide-react";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ROLES } from "@/lib/permissions";
 import { PermissionGuard } from "@/components/PermissionGuard";
 import { Masks } from "@/utils/masks";
+import { SelectMembrosRede } from "@/components/Select/SelectMembrosRede";
+import { getRedeName } from "@/utils/helpersNameREde";
+import { CasaDePaz } from "@/domain/models/casaDePaz";
 
 type FormValues = {
-  casas: LeaderPair[];
+  casas: CasaDePaz[];
   data_inicial: string;
 };
 
@@ -31,7 +34,7 @@ const NovaCasaDePaz = () => {
   });
 
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const { fields, append, remove } = useFieldArray({ control, name: "casas" });
+  const { fields, append, remove, prepend } = useFieldArray({ control, name: "casas" });
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
@@ -42,20 +45,24 @@ const NovaCasaDePaz = () => {
   const canEditRede = hasPermission([ROLES.ADMIN, ROLES.SECRETARIA]);
   const defaultRede = session?.user?.cem?.name || "";
 
+  const churchId = session?.user?.churchId || "";
+  const cemId = session?.user?.cem?._id || "";
+
   // Ao adicionar nova casa, preenche automaticamente a rede se não puder editar
   const handleAddCasa = () => {
-    append({
-      lider1: "",
-      lider2: "",
+    prepend({
+      lider1: { name: "", _id: "" },
+      lider2: { name: "", _id: "" },
       endereco: "",
       rede: canEditRede ? "" : defaultRede,
       anfitria: "",
       telefone: "",
+      _id: "",
     });
   };
 
   // Quando importar, preenche a rede se necessário
-  const handleImport = (imported: LeaderPair[]) => {
+  const handleImport = (imported: CasaDePaz[]) => {
     fields.forEach((_, index) => remove(index));
     imported.forEach((casa) => {
       append({
@@ -109,6 +116,42 @@ const NovaCasaDePaz = () => {
         </div>
       </div>
 
+      <div className="flex flex-col sm:flex-row gap-2 justify-end mb-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.back()}
+          className="w-full sm:w-auto"
+        >
+          <X className="mr-2 h-4 w-4" />
+          Cancelar
+        </Button>
+
+        <Button
+          type="button"
+          onClick={handleAddCasa}
+          className="w-full sm:w-auto bg-blue-500 dark:bg-orange-500 font-semibold"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Adicionar Casa de Paz
+        </Button>
+
+        <Button
+          onClick={onSubmit}
+          disabled={isLoading || !casas || casas.length === 0}
+          className="bg-[#04AA6D] hover:bg-[#04AA6D]/90 w-full sm:w-auto font-semibold"
+        >
+          {isLoading ? (
+            <>
+              <Loader2Icon className="mr-2 h-4 w-4 animate-spin " />
+              Salvando...
+            </>
+          ) : (
+            "Salvar Casa de Paz"
+          )}
+        </Button>
+      </div>
+
       {/* Form */}
       <form onSubmit={onSubmit} className="flex flex-col gap-4">
         {fields.length === 0 ? (
@@ -118,7 +161,7 @@ const NovaCasaDePaz = () => {
               <Button
                 type="button"
                 onClick={handleAddCasa}
-                className="bg-blue-500 hover:bg-blue-600"
+                className="bg-blue-500 hover:bg-blue-600 dark:bg-orange-500 dark:hover:bg-orange-600"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar Primeira Casa
@@ -137,7 +180,15 @@ const NovaCasaDePaz = () => {
                       <Controller
                         name={`casas.${index}.lider1`}
                         control={control}
-                        render={({ field }) => <Input {...field} placeholder="Nome do Líder 1" />}
+                        render={({ field }) => (
+                          <SelectMembrosRede
+                            title="Selecionar Líder 1"
+                            churchId={churchId}
+                            cemId={cemId}
+                            value={field.value?._id ?? ""}
+                            onChange={field.onChange}
+                          />
+                        )}
                       />
                     </div>
 
@@ -146,7 +197,15 @@ const NovaCasaDePaz = () => {
                       <Controller
                         name={`casas.${index}.lider2`}
                         control={control}
-                        render={({ field }) => <Input {...field} placeholder="Nome do Líder 2" />}
+                        render={({ field }) => (
+                          <SelectMembrosRede
+                            title="Selecionar Líder 2"
+                            churchId={churchId}
+                            cemId={cemId}
+                            value={field.value?._id ?? ""}
+                            onChange={field.onChange}
+                          />
+                        )}
                       />
                     </div>
 
@@ -163,6 +222,7 @@ const NovaCasaDePaz = () => {
                         render={({ field }) => (
                           <Input
                             {...field}
+                            value={getRedeName(field.value) || ""}
                             placeholder="Nome da Rede"
                             disabled={!canEditRede}
                             className={
@@ -231,36 +291,6 @@ const NovaCasaDePaz = () => {
               </CardContent>
             </Card>
           ))
-        )}
-
-        {/* Botões de Ação */}
-        {fields.length > 0 && (
-          <div className="flex flex-col sm:flex-row gap-2 justify-end mt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleAddCasa}
-              className="w-full sm:w-auto"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Adicionar Outra Casa
-            </Button>
-
-            <Button
-              type="submit"
-              disabled={isLoading || !casas || casas.length === 0}
-              className="bg-[#04AA6D] hover:bg-[#04AA6D]/90 w-full sm:w-auto"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                  Salvando...
-                </>
-              ) : (
-                "Salvar Casas de Paz"
-              )}
-            </Button>
-          </div>
         )}
       </form>
     </div>

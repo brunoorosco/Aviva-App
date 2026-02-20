@@ -120,7 +120,11 @@ const NovaCem = () => {
           Cancelar
         </Button>
 
-        <Button type="button" onClick={handleAddCasa} className="w-full sm:w-auto bg-blue-500">
+        <Button
+          type="button"
+          onClick={handleAddCasa}
+          className="w-full sm:w-auto bg-blue-500 dark:bg-orange-500 font-semibold"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Adicionar Cem's
         </Button>
@@ -128,11 +132,11 @@ const NovaCem = () => {
         <Button
           onClick={onSubmit}
           disabled={isLoading || !casas || casas.length === 0}
-          className="bg-[#04AA6D] hover:bg-[#04AA6D]/90 w-full sm:w-auto"
+          className="bg-[#04AA6D] hover:bg-[#04AA6D]/90 w-full sm:w-auto font-semibold"
         >
           {isLoading ? (
             <>
-              <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2Icon className="mr-2 h-4 w-4 animate-spin " />
               Salvando...
             </>
           ) : (
@@ -212,7 +216,7 @@ const NovaCem = () => {
                         render={({ field }) => (
                           <Input
                             {...field}
-                            value={getRedeName(field.value) || ''}
+                            value={getRedeName(field.value) || ""}
                             onChange={(e) => field.onChange(e.target.value)}
                             placeholder="Nome da Rede"
                             disabled={!canEditRede}
