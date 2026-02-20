@@ -1,4 +1,7 @@
-export const parseDateNoTimezone = (dateStr: string) => {
+export const parseDateNoTimezone = (dateStr: string | undefined) => {
+  if (!dateStr) {
+    return new Date()
+  }
   const [year, month, day] = dateStr.split('-').map(Number)
   return new Date(year, month - 1, day) // Mês em JS é 0-indexado
 }

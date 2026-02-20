@@ -65,7 +65,7 @@ const CalendarPage = () => {
 
   const baseURl = `/api/protected/churches/${session?.user.churchId}/events`
 
-  const { data: eventsData, isLoading } = useHttpGet<{
+  const { data: eventsData, isLoading, mutate } = useHttpGet<{
     data: TEvent[]
   }>(baseURl)
 
@@ -135,8 +135,7 @@ const CalendarPage = () => {
   const handleSaveEvent = async () => {
     if (!titulo.trim() || !selectedDate) return
 
-    const eventData: TEvent = {
-      _id: editingEvent?._id,
+    const eventData: Partial<TEvent> = {
       titulo: titulo.trim(),
       data: format(selectedDate, 'yyyy-MM-dd'),
       dataFim: dataFim ? format(dataFim, 'yyyy-MM-dd') : undefined,
@@ -149,26 +148,26 @@ const CalendarPage = () => {
     }
 
     if (editingEvent) {
-      // EDITAR evento existente - usa PUT
+      // EDITAR evento existente - usa PUT (sem _id no body)
       const resp = await useHttpPut<TEvent>({
         url: `${baseURl}/${editingEvent._id}`,
-        data: eventData
+        data: eventData as TEvent
       })
       
       if (resp) {
-        // Substitui o evento na lista
-        setEvents((prev) => prev.map((e) => e._id === editingEvent._id ? { ...eventData, _id: editingEvent._id } : e))
+        // Revalida os dados do servidor
+        mutate()
       }
     } else {
       // CRIAR novo evento - usa POST
       const resp = await useHttpPost<TEvent>({
         url: baseURl,
-        data: eventData
+        data: eventData as TEvent
       })
       
       if (resp) {
-        // Adiciona novo evento à lista
-        setEvents((prev) => [...prev, resp])
+        // Revalida os dados do servidor
+        mutate()
       }
     }
     
@@ -176,11 +175,12 @@ const CalendarPage = () => {
     resetForm()
   }
 
-  const handleDeleteEvent = () => {
+  const handleDeleteEvent = async () => {
     if (editingEvent) {
       try {
-        useHttpDelete({ url: `${baseURl}/${editingEvent._id}` })
-        setEvents((prev) => prev.filter((e) => e._id !== editingEvent._id))
+        await useHttpDelete({ url: `${baseURl}/${editingEvent._id}` })
+        // Revalida os dados do servidor
+        mutate()
         resetForm()
       } catch (error) {
         console.error(error)
