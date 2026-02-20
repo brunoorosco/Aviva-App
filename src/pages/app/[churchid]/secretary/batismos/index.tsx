@@ -35,7 +35,7 @@ const BatismoList = () => {
   }
 
   return (
-    <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg dark:text-dark-primary'>
+    <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto mt-10 rounded-lg dark:text-dark-primary'>
       {showEditModal && selectedBatismo && (
         <EditMemberModal
           member={selectedBatismo}
