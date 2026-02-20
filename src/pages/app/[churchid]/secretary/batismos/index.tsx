@@ -53,7 +53,7 @@ const BatismoList = () => {
           inputFileRef={inputFileRef}
           batismo={batismos?.data.data || []}
         />
-        <ul className='w-full p-4 bg-white divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-dark-secondary'>
+        <ul className='w-full p-4 bg-gray-50 divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-background'>
           {!batismos ? (
             <div className='w-full p-4 bg-white shadow-lg dark:rounded-b-lg dark:bg-dark-secondary'>
               <p>Carregando batismos...</p>

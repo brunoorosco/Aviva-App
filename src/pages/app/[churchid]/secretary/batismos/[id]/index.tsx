@@ -23,8 +23,8 @@ export default function batismoPage({ batismo }: Props) {
   const { churchid } = useParams();
   if (!batismo) return <p>batismo não encontrado.</p>;
   return (
-    <div className="sm:p-6 max-w-4xl mx-auto">
-      <div className="flex items-start justify-between gap-4 mb-6">
+    <div className="sm:p-6 mt-10 max-w-4xl mx-auto">
+      <div className="flex items-start justify-between gap-4 p-4 mb-6">
         {/* LEFT */}
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Batismo</h1>
@@ -54,7 +54,7 @@ export default function batismoPage({ batismo }: Props) {
         </Button>
       </div>
 
-      <div className="bg-gray-50 dark:bg-dark-secondary p-2 shadow">
+      <div className="bg-gray-50 dark:bg-background px-2 shadow">
         <h2 className="text-xl font-semibold mb-2">Batizandos</h2>
 
         {batismo.batizandos.length === 0 ? (
@@ -64,7 +64,7 @@ export default function batismoPage({ batismo }: Props) {
             {batismo.batizandos.map((pessoa, index) => (
               <li
                 key={index}
-                className="bg-card border rounded-lg px-3 py-3 flex items-center justify-between hover:shadow-sm transition"
+                className="bg-gray-50 dark:bg-background  border rounded-lg px-3 py-3 flex items-center justify-between hover:shadow-sm transition"
               >
                 {/* LEFT */}
                 <div className="flex flex-col">
