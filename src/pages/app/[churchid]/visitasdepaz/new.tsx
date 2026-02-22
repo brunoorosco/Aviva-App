@@ -1,213 +1,3 @@
-// 'use client'
-
-// import { useForm, useFieldArray, Controller } from 'react-hook-form'
-// import { useRef, useState } from 'react'
-// import { useRouter } from 'next/router'
-// import { Input } from '@/components/ui/input'
-// import { Label } from '@/components/ui/label'
-// import ImportButton, { LeaderPair } from '@/components/visitaDePaz/ImportButton'
-// import { useHttpPost } from '@/hooks/api'
-// import { useSession } from 'next-auth/react'
-// import Toast from '@/components/Toast'
-// import { Button } from '@/components/ui/button'
-// import { Loader2Icon } from 'lucide-react'
-
-// type FormValues = {
-//   casas: LeaderPair[]
-//   data_inicial: string
-// }
-
-// const NovaVisitaDePaz = () => {
-//   const { control, handleSubmit, watch } = useForm<FormValues>({
-//     defaultValues: {
-//       casas: [],
-//       data_inicial: new Date().toISOString().split('T')[0] // "YYYY-MM-DD"
-//     }
-//   })
-
-//   const inputFileRef = useRef<HTMLInputElement>(null)
-//   const { fields, append, remove } = useFieldArray({ control, name: 'casas' })
-//   const router = useRouter()
-//   const [isLoading, setIsLoading] = useState(false)
-//   const { data: session } = useSession()
-//   const casas = watch('casas')
-
-//   const onSubmit = handleSubmit(async (data) => {
-//     if (!data.casas || data.casas.length === 0) {
-//       Toast.showError('Adicione pelo menos uma Casa de Paz antes de salvar!')
-//       return
-//     }
-
-//     setIsLoading(true)
-//     const response = await useHttpPost({
-//       url: `/api/protected/churches/${session?.user.churchId}/visitasdepaz`,
-//       data
-//     })
-//     setIsLoading(false)
-
-//     if (response?.error) {
-//       Toast.showError('Erro ao salvar Casas de Paz!')
-//     } else {
-//       Toast.showSuccess('Casas de Paz cadastradas com sucesso!')
-//       router.back()
-//     }
-//   })
-
-//   const handleImport = (imported: LeaderPair[]) => {
-//     fields.forEach((_, index) => remove(index))
-//     imported.forEach((casa) => append(casa))
-//   }
-
-//   return (
-//     <div className='p-4'>
-//       <div className='flex justify-between items-center mb-4'>
-//         <h1 className='text-2xl'>Visita de Paz</h1>
-
-//         <div className='flex items-end gap-2'>
-//           <Controller
-//             name='data_inicial'
-//             control={control}
-//             render={({ field }) => (
-//               <div className='flex flex-col'>
-//                 <Label>Data</Label>
-//                 <Input {...field} type='date' />
-//               </div>
-//             )}
-//           />
-
-//           <ImportButton inputFileRef={inputFileRef} onImport={handleImport} />
-//         </div>
-//       </div>
-
-//       <form onSubmit={onSubmit} className='flex flex-col gap-4'>
-//         {fields.map((field, index) => (
-//           <div
-//             key={field.id}
-//             className='border border-gray-400 p-4 rounded-lg bg-gray-50 flex flex-col gap-4'
-//           >
-//             {/* Linha 1: Líder 1, Líder 2, Rede */}
-//             <div className='flex gap-4'>
-//               <div className='flex-1'>
-//                 <Controller
-//                   name={`casas.${index}.lider1`}
-//                   control={control}
-//                   render={({ field }) => (
-//                     <div className='flex flex-col'>
-//                       <Input {...field} placeholder='Líder 1' />
-//                     </div>
-//                   )}
-//                 />
-//               </div>
-
-//               <div className='flex-1'>
-//                 <Controller
-//                   name={`casas.${index}.lider2`}
-//                   control={control}
-//                   render={({ field }) => (
-//                     <div className='flex flex-col'>
-//                       <Input {...field} placeholder='Líder 2' />
-//                     </div>
-//                   )}
-//                 />
-//               </div>
-
-//               <div className='flex-1'>
-//                 <Controller
-//                   name={`casas.${index}.rede`}
-//                   control={control}
-//                   render={({ field }) => (
-//                     <div className='flex flex-col'>
-//                       <Input {...field} placeholder='Rede' />
-//                     </div>
-//                   )}
-//                 />
-//               </div>
-//             </div>
-
-//             {/* Linha 2: Endereço, Anfitriã, Telefone */}
-//             <div className='flex gap-4'>
-//               <div className='flex-1'>
-//                 <Controller
-//                   name={`casas.${index}.endereco`}
-//                   control={control}
-//                   render={({ field }) => (
-//                     <div className='flex flex-col'>
-//                       <Input {...field} placeholder='Endereço' />
-//                     </div>
-//                   )}
-//                 />
-//               </div>
-
-//               <div className='flex-1'>
-//                 <Controller
-//                   name={`casas.${index}.anfitria`}
-//                   control={control}
-//                   render={({ field }) => (
-//                     <div className='flex flex-col'>
-//                       <Input {...field} placeholder='Anfitriã' />
-//                     </div>
-//                   )}
-//                 />
-//               </div>
-
-//               <div className='flex-1'>
-//                 <Controller
-//                   name={`casas.${index}.telefone`}
-//                   control={control}
-//                   render={({ field }) => (
-//                     <div className='flex flex-col'>
-//                       <Input {...field} placeholder='Telefone' />
-//                     </div>
-//                   )}
-//                 />
-//               </div>
-
-//               <button
-//                 type='button'
-//                 className='px-2 py-1 bg-red-500 text-white rounded'
-//                 onClick={() => remove(index)}
-//               >
-//                 Remover
-//               </button>
-//             </div>
-//           </div>
-//         ))}
-//         <div className='flex gap-2 justify-end'>
-//           <div>
-//             <Button
-//               type='button'
-//               className=' bg-blue-500 text-white rounded'
-//               onClick={() =>
-//                 append({
-//                   lider1: '',
-//                   lider2: '',
-//                   endereco: '',
-//                   rede: '',
-//                   anfitria: '',
-//                   telefone: ''
-//                 })
-//               }
-//             >
-//               + Adicionar Visita
-//             </Button>
-//           </div>
-//           <div>
-//             <Button
-//               className='bg-[#04AA6D] text-white hover:bg-[#04AA6Daa] hover:text-white'
-//               type='submit'
-//               disabled={isLoading || !casas || casas.length === 0}
-//             >
-//               {isLoading ? <Loader2Icon className='animate-spin' /> : 'Salvar'}
-//             </Button>
-//           </div>
-//         </div>
-//       </form>
-//     </div>
-//   )
-// }
-
-// export default NovaVisitaDePaz
-
 "use client";
 
 import { useForm, useFieldArray, Controller } from "react-hook-form";
@@ -216,7 +6,7 @@ import { useRouter } from "next/router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import ImportButton, { LeaderPair } from "../../../../components/casaDePaz/ImportButton";
+import ImportButton from "../../../../components/casaDePaz/ImportButton";
 import { useHttpPost } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import Toast from "@/components/Toast";
@@ -225,9 +15,12 @@ import { Loader2Icon, Trash2, Plus } from "lucide-react";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ROLES } from "@/lib/permissions";
 import { PermissionGuard } from "@/components/PermissionGuard";
+import { VisitaDePaz } from "@/domain/models/casaDePaz";
+import { SelectMembrosRede } from "@/components/Select/SelectMembrosRede";
+import { getRedeName } from "@/utils/helpersNameREde";
 
 type FormValues = {
-  casas: LeaderPair[];
+  casas: VisitaDePaz[];
   data_inicial: string;
 };
 
@@ -247,6 +40,8 @@ const NovaVisitaDePaz = () => {
   const { hasPermission } = usePermissions();
   const casas = watch("casas");
 
+  const churchId = session?.user?.churchId || "";
+  const cemId = session?.user?.cem?._id || "";
   // Verifica se pode editar o campo rede
   const canEditRede = hasPermission([ROLES.ADMIN, ROLES.SECRETARIA]);
   const defaultRede = session?.user?.cem?.name || "";
@@ -254,17 +49,18 @@ const NovaVisitaDePaz = () => {
   // Ao adicionar nova casa, preenche automaticamente a rede se não puder editar
   const handleAddCasa = () => {
     append({
-      lider1: "",
-      lider2: "",
+      lider1: { name: "", _id: "" },
+      lider2: { name: "", _id: "" },
       endereco: "",
       rede: canEditRede ? "" : defaultRede,
       anfitria: "",
       telefone: "",
+      _id: "",
     });
   };
 
   // Quando importar, preenche a rede se necessário
-  const handleImport = (imported: LeaderPair[]) => {
+  const handleImport = (imported: VisitaDePaz[]) => {
     fields.forEach((_, index) => remove(index));
     imported.forEach((casa) => {
       append({
@@ -323,7 +119,9 @@ const NovaVisitaDePaz = () => {
         {fields.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
-              <p className="text-gray-500 mb-4 text-center">Nenhuma Visita de Paz adicionada ainda</p>
+              <p className="text-gray-500 mb-4 text-center">
+                Nenhuma Visita de Paz adicionada ainda
+              </p>
               <Button
                 type="button"
                 onClick={handleAddCasa}
@@ -346,7 +144,15 @@ const NovaVisitaDePaz = () => {
                       <Controller
                         name={`casas.${index}.lider1`}
                         control={control}
-                        render={({ field }) => <Input {...field} placeholder="Nome do Líder 1" />}
+                        render={({ field }) => (
+                          <SelectMembrosRede
+                            title="Selecionar Líder 1"
+                            churchId={churchId}
+                            cemId={cemId}
+                            value={field.value?._id ?? ""}
+                            onChange={field.onChange}
+                          />
+                        )}
                       />
                     </div>
 
@@ -355,7 +161,15 @@ const NovaVisitaDePaz = () => {
                       <Controller
                         name={`casas.${index}.lider2`}
                         control={control}
-                        render={({ field }) => <Input {...field} placeholder="Nome do Líder 2" />}
+                        render={({ field }) => (
+                          <SelectMembrosRede
+                            title="Selecionar Líder 2"
+                            churchId={churchId}
+                            cemId={cemId}
+                            value={field.value?._id ?? ""}
+                            onChange={field.onChange}
+                          />
+                        )}
                       />
                     </div>
 
@@ -373,8 +187,11 @@ const NovaVisitaDePaz = () => {
                           <Input
                             {...field}
                             placeholder="Nome da Rede"
+                            value={getRedeName(field.value) || ""}
                             disabled={!canEditRede}
-                            className={!canEditRede ? "bg-gray-100 dark:bg-gray-500 cursor-not-allowed" : ""}
+                            className={
+                              !canEditRede ? "bg-gray-100 dark:bg-gray-500 cursor-not-allowed" : ""
+                            }
                           />
                         )}
                       />
