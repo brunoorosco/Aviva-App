@@ -94,7 +94,7 @@ const Cem = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 dark:bg-black/40 bg-gray-100">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 ">
               {cems.data.map((cem: CellsModel) => {
                 const isActive = canViewCem(cem._id);
                 const isCurrentUserCem = isUserCem(cem._id);

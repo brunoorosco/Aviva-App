@@ -165,7 +165,7 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
         {
           label: "Ministérios",
           icon: BicepsFlexed,
-          link: `${base}/secretary/ministerio`,
+          link: `${base}/secretary/ministerios`,
         },
         {
           label: "Consagração",

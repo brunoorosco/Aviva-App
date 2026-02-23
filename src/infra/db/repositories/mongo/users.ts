@@ -67,7 +67,7 @@ export class UsersMongoRepository {
       // 🔹 filtro dinâmico
       const filter: any = {
         cem: { $ne: null },
-       "cem._id": cemId,
+        "cem._id": cemId,
         role: { $ne: "bispo" }, // sempre exclui bispo
       };
 
@@ -171,12 +171,14 @@ export class UsersMongoRepository {
       throw error;
     }
   }
+  
   async getUserByName(churchId: string, name: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
       const result = await collection
+
         .find(
-          { name: new RegExp(name, "i"), churchId: churchId },
+          { name: new RegExp(name, "i"), churchId: churchId, active: true },
           {
             projection: {
               name: 1,
@@ -184,6 +186,7 @@ export class UsersMongoRepository {
             },
           },
         )
+        .collation({ locale: "pt", strength: 1 })
         .toArray();
       return result;
     } catch (error) {
