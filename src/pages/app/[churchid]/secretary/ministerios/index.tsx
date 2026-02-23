@@ -55,7 +55,7 @@ const Cem = () => {
           }
         >
           {/* Cabeçalho */}
-          <div className="mb-8">
+          <div className="my-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gray-50 dark:bg-dark-secondary rounded-2xl shadow-sm p-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-blue-100 dark:bg-orange-900/30 rounded-xl">

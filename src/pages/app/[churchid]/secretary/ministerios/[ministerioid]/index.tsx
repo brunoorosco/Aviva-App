@@ -151,7 +151,7 @@ export default function MinisterioDetalhes() {
   const totalMembros = (ministerio.lideres?.length || 0) + (ministerio.membros?.length || 0)
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background mt-4">
       {/* Header Sticky */}
       <div className="sticky top-0 z-10 bg-background border-b">
         <div className="container max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
