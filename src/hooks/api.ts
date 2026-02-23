@@ -14,6 +14,7 @@ interface IPatch<T> {
 
 interface IDelete {
   url: string;
+  data?: any;
 }
 interface IResponseData<T> {
   data: T;
@@ -106,12 +107,13 @@ const useHttpPut = async <T>({ url, data }: IPatch<T>) => {
   return res.json();
 };
 
-const useHttpDelete = async ({ url }: IDelete) => {
+const useHttpDelete = async ({ url, data }: IDelete) => {
   const res = await fetch(url, {
     method: "DELETE",
     headers: {
       "content-type": "application/json",
     },
+    body: data ? JSON.stringify(data) : undefined,
   });
 
   return res.json();

@@ -157,8 +157,106 @@ export const getMinisterioByIdService = async (churchid: string, cemId: string) 
   return result;
 };
 
-export const deleteMinisterioService = async (churchId: string, cemId: string) => {
+export const deleteMinisterioService = async (churchId: string, ministerioId: string) => {
   const ministerioRepository = new MinisterioMongoRepository();
-  const result = await ministerioRepository.delete(churchId, cemId);
+  
+  // Busca o ministério para pegar todos os membros e líderes
+  const ministerio = await ministerioRepository.getMinisterioById(churchId, ministerioId);
+  
+  if (ministerio) {
+    // Remove o ministério de todos os líderes
+    if (ministerio.lideres && ministerio.lideres.length > 0) {
+      for (const lider of ministerio.lideres) {
+        await ministerioRepository.updateUserMinisterios(
+          lider._id,
+          {
+            _id: ministerioId,
+            name: ministerio.name,
+            cargo: "lider",
+          },
+          "remove"
+        );
+      }
+    }
+    
+    // Remove o ministério de todos os membros
+    if (ministerio.membros && ministerio.membros.length > 0) {
+      for (const membro of ministerio.membros) {
+        await ministerioRepository.updateUserMinisterios(
+          membro._id,
+          {
+            _id: ministerioId,
+            name: ministerio.name,
+            cargo: "membro",
+          },
+          "remove"
+        );
+      }
+    }
+  }
+  
+  // Deleta o ministério
+  const result = await ministerioRepository.delete(churchId, ministerioId);
   return result;
+};
+
+// Adiciona um membro ou líder ao ministério
+export const addMembroMinisterioService = async (
+  churchId: string,
+  ministerioId: string,
+  userId: string,
+  userName: string,
+  tipo: 'membro' | 'lider'
+): Promise<any> => {
+  const ministerioRepository = new MinisterioMongoRepository();
+  
+  // Adiciona ao ministério
+  const updated = await ministerioRepository.addMembro(churchId, ministerioId, userId, userName, tipo);
+  
+  // Adiciona o ministério no usuário
+  const ministerio = await ministerioRepository.getMinisterioById(churchId, ministerioId);
+  if (ministerio) {
+    await ministerioRepository.updateUserMinisterios(
+      userId,
+      {
+        _id: ministerioId,
+        name: ministerio.name,
+        cargo: tipo === 'lider' ? 'lider' : 'membro',
+      },
+      "add"
+    );
+  }
+  
+  return updated;
+};
+
+// Remove um membro ou líder do ministério
+export const removeMembroMinisterioService = async (
+  churchId: string,
+  ministerioId: string,
+  userId: string,
+  tipo: 'membro' | 'lider'
+): Promise<any> => {
+  const ministerioRepository = new MinisterioMongoRepository();
+  
+  // Busca o ministério para pegar o nome
+  const ministerio = await ministerioRepository.getMinisterioById(churchId, ministerioId);
+  
+  // Remove do ministério
+  const updated = await ministerioRepository.removeMembro(churchId, ministerioId, userId, tipo);
+  
+  // Remove o ministério do usuário
+  if (ministerio) {
+    await ministerioRepository.updateUserMinisterios(
+      userId,
+      {
+        _id: ministerioId,
+        name: ministerio.name,
+        cargo: tipo === 'lider' ? 'lider' : 'membro',
+      },
+      "remove"
+    );
+  }
+  
+  return updated;
 };

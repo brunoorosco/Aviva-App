@@ -9,7 +9,7 @@ import { useHttpGet } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Suspense } from "react";
-import { Pencil, Users, Network, Loader2 } from "lucide-react";
+import { Pencil, Users, Network, Loader2, Trash } from "lucide-react";
 import { usePermissions } from "@/hooks/usePermissions";
 import { TMinisterios } from "@/domain/models/churchs";
 
@@ -29,7 +29,7 @@ const Cem = () => {
   };
 
   const goToMembers = (cemId: string) => {
-    router.push(`/app/${churchId}/ministerios/${cemId}/members`);
+    router.push(`/app/${churchId}/secretary/ministerios/${cemId}`);
   };
 
   const isUserCem = (cemId: string) => cemId === userCem;
@@ -113,14 +113,12 @@ const Cem = () => {
                     {/* Botão de Edição */}
                     {isAdmin && (
                       <Link
-                        href={`../${churchId}/ministerios/${cem._id}`}
+                        href={`../../${churchId}/secretary/ministerios/${cem._id}`}
                         onClick={(e) => e.stopPropagation()}
                         className="absolute top-3 right-3 z-10 p-2 bg-gray-100 dark:bg-dark-secondary 
-                                 rounded-full shadow-md opacity-0 group-hover:opacity-100 
-                                 transition-opacity duration-200 hover:bg-gray-100 
-                                 dark:hover:bg-gray-700"
+                                 rounded-full shadow-md hover:bg-gray-10 dark:hover:bg-gray-700"
                       >
-                        <Pencil className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                        <Trash className="w-4 h-4 text-red-600 dark:text-red-500" />
                       </Link>
                     )}
 

@@ -133,17 +133,78 @@ export class MinisterioMongoRepository {
     }
   }
 
-  async delete(churchId: string, cellId: string): Promise<any> {
+  async delete(churchId: string, ministerioId: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
       const result = await collection.updateOne(
         { _id: new ObjectId(churchId) },
-        //@ts-ignore
-        { $pull: { cells: { _id: new ObjectId(cellId) } } },
+        { $pull: { ministerios: { _id: new ObjectId(ministerioId) } } as any },
       );
       return result;
     } catch (error) {
-      console.error("Error deleting cell:", error);
+      console.error("Error deleting ministerio:", error);
+      throw error;
+    }
+  }
+
+  async addMembro(
+    churchId: string, 
+    ministerioId: string, 
+    userId: string, 
+    userName: string, 
+    tipo: 'membro' | 'lider'
+  ): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+      const field = tipo === 'lider' ? 'ministerios.$.lideres' : 'ministerios.$.membros';
+      
+      const result = await collection.updateOne(
+        { 
+          _id: new ObjectId(churchId),
+          'ministerios._id': new ObjectId(ministerioId)
+        },
+        { 
+          $addToSet: { 
+            [field]: { 
+              _id: userId, 
+              name: userName 
+            } 
+          } 
+        }
+      );
+      return result;
+    } catch (error) {
+      console.error("Error adding membro:", error);
+      throw error;
+    }
+  }
+
+  async removeMembro(
+    churchId: string, 
+    ministerioId: string, 
+    userId: string, 
+    tipo: 'membro' | 'lider'
+  ): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+      const field = tipo === 'lider' ? 'ministerios.$.lideres' : 'ministerios.$.membros';
+      
+      const result = await collection.updateOne(
+        { 
+          _id: new ObjectId(churchId),
+          'ministerios._id': new ObjectId(ministerioId)
+        },
+        { 
+          $pull: { 
+            [field]: { 
+              _id: userId
+            } 
+          } as any
+        }
+      );
+      return result;
+    } catch (error) {
+      console.error("Error removing membro:", error);
       throw error;
     }
   }
