@@ -1,5 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { deleteCemService, getCemByIdService, updateCemService } from "@/services/redeService";
+import { 
+  deleteMinisterioService, 
+  getMinisterioByIdService, 
+  updateMinisterioService 
+} from "@/services/ministerioService";
 
 interface Error {
   message: string;
@@ -7,21 +11,26 @@ interface Error {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
   const churchId = req.query.churchid as string;
-  const cemId = req.query.redeid as string;
+  const ministerioId = req.query.ministerioid as string;
 
-  if (req.method == "GET") {
-    const cem = await getCemByIdService(churchId, cemId);
-    return res.status(200).json(cem);
-  } else if (req.method == "DELETE") {
-    const cemDelete = await deleteCemService(churchId, cemId);
-    return res.status(200).json(cemDelete);
-  } else if (req.method == "PUT") {
-    const saved = await updateCemService(churchId, cemId, req.body);
-    return res.status(200).json(saved);
-  } else {
-    return res.status(404);
+  try {
+    if (req.method === "GET") {
+      const ministerio = await getMinisterioByIdService(churchId, ministerioId);
+      if (!ministerio) {
+        return res.status(404).json({ message: `Ministério [${ministerioId}] não encontrado.` });
+      }
+      return res.status(200).json(ministerio);
+    } else if (req.method === "DELETE") {
+      const deleted = await deleteMinisterioService(churchId, ministerioId);
+      return res.status(200).json(deleted);
+    } else if (req.method === "PUT") {
+      const updated = await updateMinisterioService(churchId, ministerioId, req.body);
+      return res.status(200).json(updated);
+    } else {
+      return res.status(405).json({ message: "Method not allowed" });
+    }
+  } catch (error: any) {
+    console.error("Error in ministerios API:", error);
+    return res.status(500).json({ message: error.message || "Internal server error" });
   }
-  // if (!cem) {
-  //   return res.status(400).json({ message: `CEM [${cemId}] not found.` })
-  // }
 }

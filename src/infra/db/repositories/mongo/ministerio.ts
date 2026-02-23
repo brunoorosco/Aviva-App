@@ -55,22 +55,22 @@ export class MinisterioMongoRepository {
     }
   }
 
-  async getMinisterioById(churchId: string, cemId: string): Promise<any> {
+  async getMinisterioById(churchId: string, ministerioId: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
       const church = await collection.findOne<ChurchModel>(
         {
           _id: new ObjectId(churchId),
-          cells: { $elemMatch: { _id: new ObjectId(cemId) } },
+          ministerios: { $elemMatch: { _id: new ObjectId(ministerioId) } },
         },
-        { projection: { "cells.$": 1, _id: 0 } },
+        { projection: { "ministerios.$": 1, _id: 0 } },
       );
-      if (!church) {
-        throw new Error(`Church with ID ${churchId} not found`);
+      if (!church || !church.ministerios || church.ministerios.length === 0) {
+        return null;
       }
-      return church.cells || [];
+      return church.ministerios[0];
     } catch (error) {
-      console.error("Error getting cells:", error);
+      console.error("Error getting ministerio by id:", error);
       throw error;
     }
   }
