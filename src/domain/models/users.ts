@@ -26,6 +26,13 @@ export type User = {
   escolaProfeta?: boolean;
   historicoEscolaProfeta?: Historico[];
   consagracao?: Consagracao[];
+  ministerios?: TMinisterioUser[];
+};
+
+export type TMinisterioUser = {
+  _id: string;
+  name: string;
+  cargo: string;
 };
 
 type Historico = {

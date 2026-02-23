@@ -5,20 +5,20 @@ import Toast from "@/components/Toast";
 import ButtonNew from "@/components/ButtonSubmit/buttonAdd";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CellsModel } from "@/domain/models/cells";
 import { useHttpGet } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Suspense } from "react";
 import { Pencil, Users, Network, Loader2 } from "lucide-react";
 import { usePermissions } from "@/hooks/usePermissions";
+import { TMinisterios } from "@/domain/models/churchs";
 
 const Cem = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const churchId = router.query?.churchid;
   const { isAdmin } = usePermissions();
-  const { data: cems, mutate } = useHttpGet<CellsModel[]>(
+  const { data: cems, mutate } = useHttpGet<TMinisterios[]>(
     `/api/protected/churches/${session?.user.churchId}/ministerios`,
   );
   const userCem = session?.user.cem._id;
@@ -34,6 +34,12 @@ const Cem = () => {
 
   const isUserCem = (cemId: string) => cemId === userCem;
   const canViewCem = (cemId: string) => isAdmin || isUserCem(cemId);
+
+  const getMembrosTotal = (ministerio: TMinisterios) => {
+    const lideres = ministerio?.lideres?.length ?? 0;
+    const membros = ministerio?.membros?.length ?? 0;
+    return lideres + membros;
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-background">
@@ -60,14 +66,17 @@ const Cem = () => {
                     Nossos Ministérios
                   </h1>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    {cems?.data?.length || 0} {cems?.data?.length === 1 ? "ministério" : "ministérios"}{" "}
-                    cadastradas
+                    {cems?.data?.length || 0}{" "}
+                    {cems?.data?.length === 1 ? "ministério" : "ministérios"} cadastradas
                   </p>
                 </div>
               </div>
 
               {isAdmin && (
-                <Link href={`../../${churchId}/secretary/ministerios/new`} className="w-full sm:w-auto">
+                <Link
+                  href={`../../${churchId}/secretary/ministerios/new`}
+                  className="w-full sm:w-auto"
+                >
                   <ButtonNew />
                 </Link>
               )}
@@ -94,8 +103,8 @@ const Cem = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 dark:bg-black/40 bg-gray-100">
-              {cems.data.map((cem: CellsModel) => {
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {cems.data.map((cem: TMinisterios) => {
                 const isActive = canViewCem(cem._id);
                 const isCurrentUserCem = isUserCem(cem._id);
 
@@ -154,7 +163,7 @@ const Cem = () => {
                             }
                           `}
                           >
-                            <Network
+                            <Users
                               className={`
                               w-6 h-6
                               ${
@@ -237,15 +246,11 @@ const Cem = () => {
                               }
                             `}
                             >
-                              {cem.membersActive || 0}
-                            </span>
-                            <span
-                              className={`
-                              text-sm font-normal
-                              ${isActive ? "text-gray-600 dark:text-gray-400" : "text-gray-400"}
-                            `}
-                            >
-                              {cem.membersActive === 1 ? "membro" : "membros"}
+                              {
+                                <span>
+                                  {getMembrosTotal(cem)}
+                                </span>
+                              }
                             </span>
                           </div>
                         </div>

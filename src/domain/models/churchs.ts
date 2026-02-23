@@ -10,6 +10,7 @@ export type ChurchModel = {
   consagracao: ConsagracaoHistory[];
   apresentacao: TApresentacao[];
   cells: CellsModel[];
+  ministerios: TMinisterios[]
 } & AddressModel;
 
 export type ConsagracaoHistory = {
@@ -23,3 +24,17 @@ export type ConsagracaoHistory = {
     //[key in TMinisterialLevel]?: { name: string; id: string; total: number };
   }[];
 };
+
+export type TMinisterios = {
+  _id: string
+  name: string
+  membros: {
+    _id: string
+    name: string
+  }[]
+  lideres: {
+    _id: string
+    name: string
+  }[]
+  description?: string
+}
