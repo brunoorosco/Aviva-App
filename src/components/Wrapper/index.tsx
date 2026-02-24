@@ -1,9 +1,3 @@
-import Card from '../Card'
-import Header from '../Header'
-import Heading1 from '../Header/Heading1'
-import Calender from '../Calender'
-import { useRouter } from 'next/router'
-
 interface Props {
   children: React.ReactNode
 }

@@ -9,5 +9,6 @@ export type TEvent = {
   horaFim?: string // HH:MM
   descricao?: string
   churchId: string
-  cor?: string // Cor do evento em hexadecimal (ex: #FF5733)
+  eventTypeId: string // Referência ao tipo de evento (event_types collection)
+  cor?: string // Cor do evento em hexadecimal (ex: #FF5733) - deprecated, usar eventType.color
 }
