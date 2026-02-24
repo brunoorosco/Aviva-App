@@ -229,7 +229,7 @@ export default function Calendario() {
                     {format(date, "d")}
                   </span>
                   {dayEvents.length > 0 && (
-                    <span className="absolute bottom-1 left-0.5 right-0.5 text-[13px] leading-tight font-semibold text-foreground line-clamp-2 break-words">
+                    <span className="absolute bottom-1 left-0.5 right-0.5 text-[10px] md:text-[13px] leading-tight font-semibold text-foreground line-clamp-2 break-words">
                       {dayEvents.map((e) => e.titulo).join(" · ")}
                     </span>
                   )}
