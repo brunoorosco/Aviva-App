@@ -132,7 +132,7 @@ export default function Calendario() {
         </div>
 
         {/* Legend */}
-        {eventTypes.length > 0 && (
+        {/* {eventTypes.length > 0 && (
           <div className="flex flex-wrap gap-3 mb-6">
             {eventTypes.map((tipo) => (
               <div key={tipo.id} className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -155,7 +155,7 @@ export default function Calendario() {
               </a>.
             </p>
           </div>
-        )}
+        )} */}
 
         {/* Month Navigation */}
         <div className="flex items-center justify-between mb-4 bg-card rounded-lg p-3 border border-border">
