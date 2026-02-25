@@ -30,16 +30,22 @@ export default function Calendario() {
   const router = useRouter();
   const { churchid } = router.query;
   const churchId = churchid as string;
-  
-  const { events, loading: loadingEvents, createEvent, updateEvent, deleteEvent } = useEvents(churchId);
+
+  const {
+    events,
+    loading: loadingEvents,
+    createEvent,
+    updateEvent,
+    deleteEvent,
+  } = useEvents(churchId);
   const { eventTypes, loading: loadingTypes } = useEventTypes(churchId);
-  
+
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<TEvent | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  
+
   const loading = loadingEvents || loadingTypes;
 
   const calendarDays = useMemo(() => {
@@ -68,7 +74,7 @@ export default function Calendario() {
   };
 
   const getEventTypeColor = (eventTypeId: string) => {
-    return eventTypes.find(t => t.id === eventTypeId)?.color || "#cccccc";
+    return eventTypes.find((t) => t.id === eventTypeId)?.color || "#cccccc";
   };
 
   const handleDayClick = (date: Date) => {
@@ -80,7 +86,7 @@ export default function Calendario() {
     try {
       await updateEvent(eventId, data);
     } catch (error) {
-      console.error('Error updating event:', error);
+      console.error("Error updating event:", error);
     }
   };
 
@@ -89,13 +95,13 @@ export default function Calendario() {
     setModalOpen(true);
   };
 
-  const handleSaveEvent = async (eventData: Omit<TEvent, '_id'>) => {
+  const handleSaveEvent = async (eventData: Omit<TEvent, "_id">) => {
     try {
       await createEvent(eventData);
       setModalOpen(false);
       setEditingEvent(null);
     } catch (error) {
-      console.error('Error creating event:', error);
+      console.error("Error creating event:", error);
     }
   };
 
@@ -104,7 +110,7 @@ export default function Calendario() {
       await deleteEvent(id);
       setDrawerOpen(false);
     } catch (error) {
-      console.error('Error deleting event:', error);
+      console.error("Error deleting event:", error);
     }
   };
 
@@ -204,34 +210,77 @@ export default function Calendario() {
                   key={i}
                   onClick={() => handleDayClick(date)}
                   className={`
-                    relative aspect-square border-t border-r border-border p-1 transition-all
-                    hover:ring-1 hover:ring-primary/50 hover:z-10 cursor-pointer
-                    ${!inMonth ? "opacity-30" : ""}
-                    ${isToday ? "ring-2 ring-primary z-10" : ""}
-                  `}
-                  style={
-                    dayEvents.length === 1
-                      ? { backgroundColor: `${getEventTypeColor(dayEvents[0].eventTypeId)}99` }
-                      : dayEvents.length >= 2
-                        ? {
-                            background: `linear-gradient(135deg, ${getEventTypeColor(dayEvents[0].eventTypeId)}99 50%, ${getEventTypeColor(dayEvents[1].eventTypeId)}99 50%)`,
-                          }
-                        : { backgroundColor: "transparent" }
-                  }
+                              relative aspect-square border-t border-r border-border transition-all overflow-hidden
+                              hover:ring-1 hover:ring-primary/50 hover:z-10 cursor-pointer
+                              ${!inMonth ? "opacity-30" : ""}
+                              ${isToday ? "ring-2 ring-primary z-10" : ""}
+                            `}
                 >
+                  {/* Fundo colorido por evento */}
+                  {dayEvents.length === 0 && <div className="absolute inset-0 bg-transparent" />}
+                  {dayEvents.length === 1 && (
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        backgroundColor: `${getEventTypeColor(dayEvents[0].eventTypeId)}99`,
+                      }}
+                    />
+                  )}
+                  {dayEvents.length >= 2 && (
+                    <>
+                      <div
+                        className="absolute inset-x-0 top-0 bottom-1/2"
+                        style={{
+                          backgroundColor: `${getEventTypeColor(dayEvents[0].eventTypeId)}99`,
+                        }}
+                      />
+                      <div
+                        className="absolute inset-x-0 top-1/2 bottom-0"
+                        style={{
+                          backgroundColor: `${getEventTypeColor(dayEvents[1].eventTypeId)}99`,
+                        }}
+                      />
+                    </>
+                  )}
+
+                  {/* Número do dia */}
                   <span
                     className={`
-                      text-xs font-medium
-                      ${isToday ? "bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center" : "text-foreground"}
-                      ${dayEvents.length > 0 ? "font-bold" : ""}
-                    `}
+                        relative z-10 text-xs font-medium p-1 block
+                        ${isToday ? "bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center" : "text-foreground"}
+                        ${dayEvents.length > 0 ? "font-bold" : ""}
+                      `}
                   >
                     {format(date, "d")}
                   </span>
-                  {dayEvents.length > 0 && (
-                    <span className="absolute bottom-1 left-0.5 right-0.5 text-[10px] md:text-[13px] leading-tight font-semibold text-foreground line-clamp-2 break-words">
-                      {dayEvents.map((e) => e.titulo).join(" · ")}
+
+                  {/* Títulos dos eventos sobre cada seção */}
+                  {dayEvents.length === 1 && (
+                    <span
+                      className="absolute z-10 bottom-1 left-0.5 right-0.5 text-[10px] md:text-[13px] leading-tight font-semibold text-foreground line-clamp-2 break-words"
+                      style={{ color: getEventTypeColor(dayEvents[0].eventTypeId) }}
+                    >
+                      {dayEvents[0].titulo}
                     </span>
+                  )}
+
+                  {dayEvents.length >= 2 && (
+                    <>
+                      {/* Título do 1º evento — metade superior */}
+                      <span className="absolute z-10 top-6 left-0.5 right-0.5 text-[10px] md:text-[11px] leading-tight font-semibold line-clamp-1 break-words">
+                        {dayEvents[0].titulo}
+                      </span>
+                      {/* Título do 2º evento — metade inferior */}
+                      <span className="absolute z-10 bottom-1 left-0.5 right-0.5 text-[10px] md:text-[11px] leading-tight font-semibold line-clamp-1 break-words">
+                        {dayEvents[1].titulo}
+                      </span>
+                      {/* Indicador se houver mais de 2 eventos */}
+                      {dayEvents.length > 2 && (
+                        <span className="absolute z-10 bottom-1 right-1 text-[9px] font-bold text-foreground/70">
+                          +{dayEvents.length - 2}
+                        </span>
+                      )}
+                    </>
                   )}
                 </button>
               );
