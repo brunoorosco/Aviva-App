@@ -11,10 +11,11 @@ export const createAceitouService = async (data: any, churchId: string): Promise
   const aceitouRepository = new AceitouRepository();
 
   let rede: { name: string; _id: string } | undefined = undefined;
+  console.log(data)
   if (data?.cem) {
     rede = {
-      name: data.cem.split("-")[1] as string,
-      _id: data.cem.split("-")[0] as string,
+      name: data.cem.name as string,
+      _id: data.cem._id as string,
     };
   }
 
