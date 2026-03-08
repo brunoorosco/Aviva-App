@@ -18,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // Montar estrutura de dados para o relatório
       const grupos = financeiroPorRede.map((fin: any) => {
         const encontristas =
-          encontro.encontristas?.filter((e: any) => e.rede === fin.rede._id) || [];
+          encontro.encontristas?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
         const equipe = encontro.equipe?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
 
         // Contar encontristas isentos
