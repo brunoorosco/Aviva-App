@@ -11,7 +11,6 @@ export const createAceitouService = async (data: any, churchId: string): Promise
   const aceitouRepository = new AceitouRepository();
 
   let rede: { name: string; _id: string } | undefined = undefined;
-  console.log(data)
   if (data?.cem) {
     rede = {
       name: data.cem.name as string,
