@@ -165,7 +165,16 @@ export default function DetalhesApresentacao() {
                                     <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Crianças</h4>
                                     {printData.noite.filter(i => i.tipo === 'crianca').map((item, idx) => (
                                         <div key={idx} style={{ padding: '0.3rem 0', borderBottom: '1px dashed #ccc' }}>
-                                            • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {getCleanRedeName(item.rede)}
+                                            {item.nomePai && item.nomeMae && (
+                                                <span>
+                                                    • {item.nomeCrianca} (Pais: {item.nomePai} & {item.nomeMae}) - {getCleanRedeName(item.rede)}
+                                                </span>
+                                            )}
+                                            {!item.nomePai && item.nomeMae && (
+                                                <span>
+                                                    • {item.nomeCrianca} (Mãe: {item.nomeMae}) - {getCleanRedeName(item.rede)}
+                                                </span>
+                                            )}
                                         </div>
                                     ))}
                                 </div>

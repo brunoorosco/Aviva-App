@@ -302,7 +302,7 @@ export default function NovaApresentacao() {
                                 <div className="space-y-2">
                                     <Label>Nome do Pai</Label>
                                     <Input
-                                        {...register('nomePai', { required: true })}
+                                        {...register('nomePai' )}
                                         placeholder="Nome do pai"
                                     />
                                 </div>
