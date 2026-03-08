@@ -205,7 +205,7 @@ export default function EditarApresentacao() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label>Nome do Pai</Label>
-                                    <Input {...register('nomePai', { required: true })} placeholder="Nome do pai" />
+                                    <Input {...register('nomePai')} placeholder="Nome do pai" />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Nome da Mãe</Label>

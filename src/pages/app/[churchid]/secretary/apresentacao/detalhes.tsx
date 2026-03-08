@@ -258,7 +258,21 @@ export default function DetalhesApresentacao() {
 
                                         {item.tipo === 'crianca' && (
                                             <div className="text-sm text-slate-500 pl-6 dark:text-gray-100">
-                                                Pais: {item.nomePai} & {item.nomeMae}
+                                                {item.nomePai && item.nomeMae && (
+                                                    <span>
+                                                        Pais: {item.nomePai} & {item.nomeMae}
+                                                    </span>
+                                                )}
+                                                {item.nomePai && !item.nomeMae && (
+                                                    <span>
+                                                        Pai: {item.nomePai}
+                                                    </span>
+                                                )}
+                                                {!item.nomePai && item.nomeMae && (
+                                                    <span>
+                                                        Mãe: {item.nomeMae}
+                                                    </span>
+                                                )}
                                             </div>
                                         )}
                                     </div>
