@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
+  Edit3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,29 +41,29 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import Toast from "@/components/Toast";
 import {
-  useAulas,
-  useCiclos,
-  useDeleteAula,
-  usePendencias,
-  useUpdateAula,
+ useAulas,
+ useCiclos,
+ useDeleteAula,
+ usePendencias,
+ useUpdateAula,
 } from "@/hooks/useDiscipulado";
 import { AulaDiscipulado } from "@/domain/models/discupulado";
 
 const Discipulado = () => {
-  const router = useRouter();
-  const { query } = router;
-  const churchId = query.churchid as string | undefined;
+ const router= useRouter();
+ const { query } = router;
+ const churchId= query.churchid as string | undefined;
   
-  const [selectedCiclo, setSelectedCiclo] = useState<string>("");
-  const [expandedAula, setExpandedAula] = useState<string>("");
+ const [selectedCiclo, setSelectedCiclo] = useState<string>("");
+ const [expandedAula, setExpandedAula] = useState<string>("");
 
-  const { data: ciclos = [] } = useCiclos(churchId);
-  const { data: aulas = [], isLoading: loadingAulas } = useAulas(churchId, selectedCiclo || undefined);
-  const { data: pendencias = [] } = usePendencias(churchId, selectedCiclo || undefined);
-  const updateAula = useUpdateAula(churchId);
-  const deleteAula = useDeleteAula(churchId, () => Toast.showSuccess("Aula excluída"));
+ const { data: ciclos = [] } = useCiclos(churchId);
+ const { data: aulas = [], isLoading: loadingAulas } = useAulas(churchId, selectedCiclo || undefined);
+ const { data: pendencias = [] } = usePendencias(churchId, selectedCiclo || undefined);
+ const updateAula = useUpdateAula(churchId);
+ const deleteAula = useDeleteAula(churchId, () => Toast.showSuccess("Aula excluída"));
 
-  const cicloAtivo = ciclos?.find((c) => c.ativo) || ciclos?.[0];
+ const cicloAtivo = ciclos?.find((c) => c.ativo) || ciclos?.[0];
   if (!selectedCiclo && cicloAtivo) {
     setSelectedCiclo(cicloAtivo.id);
   }
@@ -77,8 +78,12 @@ const Discipulado = () => {
     updateAula.mutate(updated);
   };
 
-  const handleDeleteAula = (id: string) => {
+ const handleDeleteAula = (id: string) => {
     deleteAula.mutate(id);
+  };
+
+const handleEditAula = (aula: AulaDiscipulado) => {
+  router.push(`/app/${churchId}/secretary/discipulado/editarAula?id=${aula.id}`);
   };
 
   const totalPresentes = (aula: AulaDiscipulado) => aula.alunos.filter((a) => a.presente).length;
@@ -226,7 +231,7 @@ const Discipulado = () => {
                     <div className="flex-1">
                       <p className="font-semibold">{aula.tema}</p>
                       <p className="text-sm text-muted-foreground">
-                        Ministrado por {aula.ministrador.nome}
+                        Ministrado por {aula.ministrador?.nome}
                       </p>
                     </div>
                     <div className="flex items-center gap-3 mr-4">
@@ -242,7 +247,16 @@ const Discipulado = () => {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
-                  <div className="flex justify-end mb-3">
+                  <div className="flex justify-end mb-3 gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEditAula(aula)}
+                      className="gap-1"
+                    >
+                      <Edit3 className="h-3.5 w-3.5" />
+                      Editar
+                    </Button>
                     <Button
                       variant="destructive"
                       size="sm"
@@ -257,7 +271,7 @@ const Discipulado = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Aluno</TableHead>
-                        <TableHead>Célula</TableHead>
+                        <TableHead>Rede</TableHead>
                         <TableHead className="text-center">Presença</TableHead>
                       </TableRow>
                     </TableHeader>

@@ -198,7 +198,7 @@ export class DiscipuladoMongoRepository {
       return users.map((u) => ({
         id: u._id.toHexString(),
         nome: u.name,
-        rede: { name: u.cem?.name || "Não atribuída", _id: u.cem?._id || "" },
+        rede: { name: u.cem?.name || "-", _id: u.cem?._id || "" },
       }));
     } catch (error) {
       console.error("Error getting membros:", error);
@@ -211,7 +211,7 @@ export class DiscipuladoMongoRepository {
     {
       membroId: string;
       nome: string;
-      celula: string;
+      rede: { name: string; _id: string };
       aulasPendentes: string[];
     }[]
   > {
@@ -234,6 +234,7 @@ export class DiscipuladoMongoRepository {
               _id: 1,
               name: 1,
               "cem.name": 1,
+              "cem._id": 1,
             },
           },
         )
@@ -260,7 +261,7 @@ export class DiscipuladoMongoRepository {
           pendencias.push({
             membroId,
             nome: membro.name,
-            celula: membro.cem?.name || "Não atribuída",
+            rede: { name: membro.cem?.name || "-", _id: membro.cem?._id || "" },
             aulasPendentes: aulasPerdidas,
           });
         }

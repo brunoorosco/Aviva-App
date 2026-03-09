@@ -74,7 +74,7 @@ const NovaAulaDiscipulado = () => {
             {
                 membroId: usuario._id,
                 nome: usuario.name,
-                rede: { name: usuario.rede?.name || "Não atribuída", _id: usuario.rede?._id || "" },
+                rede: { name: usuario.rede?.name || "-", _id: usuario.rede?._id || "" },
                 presente: true
             },
             ...prev,
@@ -93,7 +93,7 @@ const NovaAulaDiscipulado = () => {
             {
                 membroId: usuario._id,
                 nome: usuario.name,
-                rede: { name: usuario.rede?.name || "Não atribuída", _id: usuario.rede?._id || "" },
+                rede: { name: usuario.rede?.name || "-", _id: usuario.rede?._id || "" },
             },
         );
     };
