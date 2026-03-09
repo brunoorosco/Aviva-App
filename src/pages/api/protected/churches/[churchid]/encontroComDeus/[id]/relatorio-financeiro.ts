@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getEncontroComDeusByIdService } from "@/services/encontroComDeus";
 
+const VALOR_ENCONTRISTA = 200;
+const VALOR_EQUIPE = 100;
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const encontroId = req.query?.id as string;
@@ -15,39 +18,74 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // Agrupar dados por rede para o relatório financeiro
       const financeiroPorRede = encontro.financeiro || [];
 
-      // Montar estrutura de dados para o relatório
+      // // Montar estrutura de dados para o relatório
+      // const grupos = financeiroPorRede.map((fin: any) => {
+      //   const encontristas =
+      //     encontro.encontristas?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
+      //   const equipe = encontro.equipe?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
+
+      //   // Contar encontristas isentos
+      //   const encontristasIsentos = encontristas.filter((e: any) => e.isento).length;
+
+      //   // Contar equipe isenta
+      //   const equipeIsentos = equipe.filter((e: any) => e.isento).length;
+
+      //   // Agrupar pagamentos por tipo
+      //   const pagamentosPorTipo: Record<string, number> = {};
+      //   (fin.pagamento || []).forEach((p: any) => {
+      //     pagamentosPorTipo[p.tipo] = (pagamentosPorTipo[p.tipo] || 0) + p.valor;
+      //   });
+
+      //   return {
+      //     id: fin._id,
+      //     nome: fin.rede.name,
+      //     celula: fin.rede.name, // Usando o nome da rede como célula
+      //     encontristas: encontristas.length,
+      //     encontristasIsentos,
+      //     equipe: equipe.length,
+      //     equipeIsentos,
+      //     totalPago: fin.totalPago || 0,
+      //     totalAPagar: fin.totalAPagar || 0,
+      //     status: fin.status,
+      //     pagamentosPorTipo,
+      //   };
+      // });
+
       const grupos = financeiroPorRede.map((fin: any) => {
-        const encontristas =
-          encontro.encontristas?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
-        const equipe = encontro.equipe?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
+  const encontristas =
+    encontro.encontristas?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
+  const equipe = encontro.equipe?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
 
-        // Contar encontristas isentos
-        const encontristasIsentos = encontristas.filter((e: any) => e.isento).length;
+  const encontristasIsentos = encontristas.filter((e: any) => e.isento).length;
+  const equipeIsentos = equipe.filter((e: any) => e.isento).length;
 
-        // Contar equipe isenta
-        const equipeIsentos = equipe.filter((e: any) => e.isento).length;
+  // Calcular não-isentos
+  const encontristasNaoIsentos = encontristas.length - encontristasIsentos;
+  const equipeNaoIsenta = equipe.length - equipeIsentos;
 
-        // Agrupar pagamentos por tipo
-        const pagamentosPorTipo: Record<string, number> = {};
-        (fin.pagamento || []).forEach((p: any) => {
-          pagamentosPorTipo[p.tipo] = (pagamentosPorTipo[p.tipo] || 0) + p.valor;
-        });
+  // totalAPagar = apenas não-isentos × valor respectivo
+  const totalAPagar =
+    encontristasNaoIsentos * VALOR_ENCONTRISTA + equipeNaoIsenta * VALOR_EQUIPE;
 
-        return {
-          id: fin._id,
-          nome: fin.rede.name,
-          celula: fin.rede.name, // Usando o nome da rede como célula
-          encontristas: encontristas.length,
-          encontristasIsentos,
-          equipe: equipe.length,
-          equipeIsentos,
-          totalPago: fin.totalPago || 0,
-          totalAPagar: fin.totalAPagar || 0,
-          status: fin.status,
-          pagamentosPorTipo,
-        };
-      });
+  const pagamentosPorTipo: Record<string, number> = {};
+  (fin.pagamento || []).forEach((p: any) => {
+    pagamentosPorTipo[p.tipo] = (pagamentosPorTipo[p.tipo] || 0) + p.valor;
+  });
 
+  return {
+    id: fin._id,
+    nome: fin.rede.name,
+    celula: fin.rede.name,
+    encontristas: encontristas.length,
+    encontristasIsentos,
+    equipe: equipe.length,
+    equipeIsentos,
+    totalPago: fin.totalPago || 0,
+    totalAPagar, // ✅ recalculado aqui, ignorando o valor do banco
+    status: fin.status,
+    pagamentosPorTipo,
+  };
+});
       // Calcular totais gerais
       const totalEncontristas = grupos.reduce((s: number, g: any) => s + g.encontristas, 0);
       const totalEquipe = grupos.reduce((s: number, g: any) => s + g.equipe, 0);
