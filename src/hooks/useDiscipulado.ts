@@ -1,21 +1,22 @@
 import { AulaDiscipulado, CicloDiscipulado, Membro } from "@/domain/models/discupulado";
-import { useHttpDelete, useHttpGet, useHttpPost } from "./api";
+import { useHttpDelete, useHttpGet, useHttpPost, useHttpPut } from "./api";
 import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 
-const API_BASE = "/api";
+const API_BASE = "/api/protected/churches";
 
 // Hook genérico para GET
-function useFetch<T>(url: string, enabled = true) {
+function useFetch<T>(url: string | null, enabled = true) {
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetch = useCallback(async () => {
-    if (!enabled) return;
+  const fetchData = useCallback(async () => {
+    if (!enabled || !url) return;
     setIsLoading(true);
     try {
-      const response = await useHttpGet(url);
-      if (!response) throw new Error("Erro ao carregar dados");
+      const response = await axios.get<T>(url);
+      if (!response.data) throw new Error("Erro ao carregar dados");
       setData(response.data);
     } catch (err) {
       setError(err as Error);
@@ -25,10 +26,10 @@ function useFetch<T>(url: string, enabled = true) {
   }, [url, enabled]);
 
   useEffect(() => {
-    fetch();
-  }, [fetch]);
+    fetchData();
+  }, [fetchData]);
 
-  return { data, isLoading, error, refetch: fetch };
+  return { data, isLoading, error, refetch: fetchData };
 }
 
 // Hook genérico para mutations (POST/DELETE)
@@ -56,47 +57,50 @@ function useMutate<TData, TResult = TData>(
 }
 
 // Membros
-export function useMembros() {
-  return useFetch<Membro[]>(`${API_BASE}/membros`);
+export function useMembros(churchId?: string) {
+  return useFetch<Membro[]>(churchId ? `${API_BASE}/${churchId}/discipulado/membros` : null);
 }
 
 // Ciclos
-export function useCiclos() {
-  return useFetch<CicloDiscipulado[]>(`${API_BASE}/discipulado/ciclos`);
+export function useCiclos(churchId?: string) {
+  return useFetch<CicloDiscipulado[]>(churchId ? `${API_BASE}/${churchId}/discipulado/ciclos` : null);
 }
 
 // Aulas
-export function useAulas(cicloId?: string) {
-  const url = cicloId
-    ? `${API_BASE}/discipulado/aulas?cicloId=${cicloId}`
-    : `${API_BASE}/discipulado/aulas`;
+export function useAulas(churchId?: string, cicloId?: string) {
+  const url = churchId 
+    ? `${API_BASE}/${churchId}/discipulado/aulas`
+    : null;
   return useFetch<AulaDiscipulado[]>(url);
 }
 
 // Create aula
-export function useCreateAula(onSuccess?: () => void) {
-  const { data: aulas, refetch } = useAulas();
+export function useCreateAula(churchId?: string, onSuccess?: () => void) {
+  const { refetch } = useAulas(churchId, undefined); // ✅ adicionar refetch
+
   return useMutate(
     async (aula: Omit<AulaDiscipulado, "id" | "createdAt">) => {
-      const response = await useHttpPost(`${API_BASE}/discipulado/aulas`, aula);
+      if (!churchId) throw new Error("Church ID required");
+      const response = await useHttpPost({ url: `${API_BASE}/${churchId}/discipulado/aulas`, data: aula });
       if (!response) throw new Error("Erro ao criar aula");
-      return response.data as AulaDiscipulado;
+      return response as AulaDiscipulado;
     },
     () => {
-      refetch();
+      refetch(); // ✅ revalida lista após criar
       onSuccess?.();
     },
   );
 }
 
 // Update aula
-export function useUpdateAula(cicloId?: string, onSuccess?: () => void) {
-  const { refetch } = useAulas(cicloId);
+export function useUpdateAula(churchId?: string, onSuccess?: () => void) {
+  const { refetch } = useAulas(churchId, undefined);
   return useMutate(
     async (aula: AulaDiscipulado) => {
-      const response = await useHttpPost(`${API_BASE}/discipulado/aulas/${aula.id}`, aula);
+      if (!churchId) throw new Error("Church ID required");
+      const response = await useHttpPut({ url: `${API_BASE}/${churchId}/discipulado/aulas/${aula.id}`, data: aula });
       if (!response) throw new Error("Erro ao atualizar aula");
-      return response.data as AulaDiscipulado;
+      return response as AulaDiscipulado;
     },
     () => {
       refetch();
@@ -106,24 +110,36 @@ export function useUpdateAula(cicloId?: string, onSuccess?: () => void) {
 }
 
 // Delete aula
-export function useDeleteAula(cicloId?: string, onSuccess?: () => void) {
-  const { refetch } = useAulas(cicloId);
+export function useDeleteAula(churchId?: string, onSuccess?: () => void) {
   return useMutate(
     async (id: string) => {
-      const response = await useHttpDelete(`${API_BASE}/discipulado/aulas/${id}`);
+      if (!churchId) throw new Error("Church ID required");
+      const response = await useHttpDelete({ url: `${API_BASE}/${churchId}/discipulado/aulas/${id}` });
       if (!response) throw new Error("Erro ao excluir aula");
     },
     () => {
-      refetch();
       onSuccess?.();
     },
   );
 }
 
 // Pendências
-export function usePendencias(cicloId?: string) {
-  return useFetch<{ membroId: string; nome: string; celula: string; aulasPendentes: string[] }[]>(
-    `${API_BASE}/discipulado/pendencias?cicloId=${cicloId}`,
-    !!cicloId,
-  );
+export function usePendencias(churchId?: string, cicloId?: string) {
+  const url = churchId && cicloId
+    ? `${API_BASE}/${churchId}/discipulado/pendencias?cicloId=${cicloId}`
+    : null;
+  return useFetch<{ membroId: string; nome: string; rede: { name: string; _id: string }; aulasPendentes: string[] }[]>(url, !!url);
+}
+
+// Usuários Ativos com Rede
+export function useActiveUsersWithNetwork(churchId?: string) {
+  return useFetch<
+    {
+      _id: string;
+      name: string;
+      email: string;
+      role: string;
+      rede: { name: string; _id: string } | null;
+    }[]
+  >(churchId ? `${API_BASE}/${churchId}/users/active` : null);
 }

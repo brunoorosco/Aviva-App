@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -50,16 +50,19 @@ import { AulaDiscipulado } from "@/domain/models/discupulado";
 
 const Discipulado = () => {
   const router = useRouter();
+  const { query } = router;
+  const churchId = query.churchid as string | undefined;
+  
   const [selectedCiclo, setSelectedCiclo] = useState<string>("");
   const [expandedAula, setExpandedAula] = useState<string>("");
 
-  const { data: ciclos = [] } = useCiclos();
-  const { data: aulas = [], isLoading: loadingAulas } = useAulas(selectedCiclo || undefined);
-  const { data: pendencias = [] } = usePendencias(selectedCiclo || undefined);
-  const updateAula = useUpdateAula();
-  const deleteAula = useDeleteAula();
+  const { data: ciclos = [] } = useCiclos(churchId);
+  const { data: aulas = [], isLoading: loadingAulas } = useAulas(churchId, selectedCiclo || undefined);
+  const { data: pendencias = [] } = usePendencias(churchId, selectedCiclo || undefined);
+  const updateAula = useUpdateAula(churchId);
+  const deleteAula = useDeleteAula(churchId, () => Toast.showSuccess("Aula excluída"));
 
-  const cicloAtivo = ciclos.find((c) => c.ativo) || ciclos[0];
+  const cicloAtivo = ciclos?.find((c) => c.ativo) || ciclos?.[0];
   if (!selectedCiclo && cicloAtivo) {
     setSelectedCiclo(cicloAtivo.id);
   }
@@ -75,9 +78,7 @@ const Discipulado = () => {
   };
 
   const handleDeleteAula = (id: string) => {
-    deleteAula.mutate(id, {
-      onSuccess: () => Toast.showSuccess("Aula excluída"),
-    });
+    deleteAula.mutate(id);
   };
 
   const totalPresentes = (aula: AulaDiscipulado) => aula.alunos.filter((a) => a.presente).length;
@@ -93,19 +94,19 @@ const Discipulado = () => {
             <h1 className="text-xl font-bold">Discipulado</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Select value={selectedCiclo} onValueChange={setSelectedCiclo}>
+            {/* <Select value={selectedCiclo} onValueChange={setSelectedCiclo}>
               <SelectTrigger className="w-[220px]">
                 <SelectValue placeholder="Selecione o ciclo" />
               </SelectTrigger>
               <SelectContent>
-                {ciclos.map((c) => (
+                {(ciclos || []).map((c) => (
                   <SelectItem key={c.id} value={c.id}>
                     {c.nome} {c.ativo && "●"}
                   </SelectItem>
                 ))}
               </SelectContent>
-            </Select>
-            <Button onClick={() => router.push("/discipulado/nova-aula")} className="gap-2">
+            </Select> */}
+            <Button onClick={() => router.push(`/app/${churchId}/secretary/discipulado/novaAula`)} className="gap-2">
               <Plus className="h-4 w-4" />
               Nova Aula
             </Button>
@@ -120,7 +121,7 @@ const Discipulado = () => {
             <CardContent className="flex items-center gap-3 p-4">
               <CalendarDays className="h-8 w-8 text-primary" />
               <div>
-                <p className="text-2xl font-bold">{aulas.length}</p>
+                <p className="text-2xl font-bold">{aulas?.length || 0}</p>
                 <p className="text-sm text-muted-foreground">Aulas no ciclo</p>
               </div>
             </CardContent>
@@ -130,7 +131,7 @@ const Discipulado = () => {
               <Users className="h-8 w-8 text-accent" />
               <div>
                 <p className="text-2xl font-bold">
-                  {new Set(aulas.flatMap((a) => a.alunos.map((al) => al.membroId))).size}
+                  {new Set((aulas || []).flatMap((a) => a.alunos.map((al) => al.membroId))).size}
                 </p>
                 <p className="text-sm text-muted-foreground">Alunos matriculados</p>
               </div>
@@ -140,7 +141,7 @@ const Discipulado = () => {
             <CardContent className="flex items-center gap-3 p-4">
               <AlertTriangle className="h-8 w-8 text-destructive" />
               <div>
-                <p className="text-2xl font-bold">{pendencias.length}</p>
+                <p className="text-2xl font-bold">{pendencias?.length || 0}</p>
                 <p className="text-sm text-muted-foreground">Pendências de reposição</p>
               </div>
             </CardContent>
@@ -148,7 +149,7 @@ const Discipulado = () => {
         </div>
 
         {/* Pendências */}
-        {pendencias.length > 0 && (
+        {(pendencias?.length || 0) > 0 && (
           <Card className="border-destructive/30">
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2 text-destructive">
@@ -166,10 +167,10 @@ const Discipulado = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pendencias.map((p) => (
+                  {(pendencias || []).map((p) => (
                     <TableRow key={p.membroId}>
                       <TableCell className="font-medium">{p.nome}</TableCell>
-                      <TableCell>{p.celula}</TableCell>
+                      <TableCell>{p.rede.name}</TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
                           {p.aulasPendentes.map((tema) => (
@@ -190,7 +191,7 @@ const Discipulado = () => {
         {/* Aulas */}
         {loadingAulas ? (
           <p className="text-muted-foreground text-center py-12">Carregando aulas...</p>
-        ) : aulas.length === 0 ? (
+        ) : (aulas?.length || 0) === 0 ? (
           <Card>
             <CardContent className="text-center py-12 text-muted-foreground">
               <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-40" />
@@ -206,7 +207,7 @@ const Discipulado = () => {
             onValueChange={setExpandedAula}
             className="space-y-3"
           >
-            {aulas.map((aula) => (
+            {(aulas || []).map((aula) => (
               <AccordionItem
                 key={aula.id}
                 value={aula.id}
@@ -225,7 +226,7 @@ const Discipulado = () => {
                     <div className="flex-1">
                       <p className="font-semibold">{aula.tema}</p>
                       <p className="text-sm text-muted-foreground">
-                        Ministrado por {aula.ministrador}
+                        Ministrado por {aula.ministrador.nome}
                       </p>
                     </div>
                     <div className="flex items-center gap-3 mr-4">
@@ -264,7 +265,7 @@ const Discipulado = () => {
                       {aula.alunos.map((aluno) => (
                         <TableRow key={aluno.membroId}>
                           <TableCell className="font-medium">{aluno.nome}</TableCell>
-                          <TableCell className="text-muted-foreground">{aluno.celula}</TableCell>
+                          <TableCell className="text-muted-foreground">{aluno.rede.name}</TableCell>
                           <TableCell className="text-center">
                             <Checkbox
                               checked={aluno.presente}
