@@ -37,7 +37,6 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
       setEmail(encontrista.email || "");
       setEndereco(encontrista.endereco || "");
       setIsento(encontrista.isento || false);
-      setIsento(encontrista.isento || false);
       setNascimento(encontrista.dataNascimento || "");
     } else {
       setName("");
@@ -96,7 +95,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
               <Label htmlFor="enc-end">Data de Nascimento</Label>
               <Input
                 id="enc-nascimento"
-                value={endereco}
+                value={nascimento}
                 type="date"
                 onChange={(e) => setEndereco(e.target.value)}
               />
