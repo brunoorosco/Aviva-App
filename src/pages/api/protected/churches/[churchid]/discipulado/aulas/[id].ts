@@ -7,48 +7,56 @@ type Error = {
 };
 
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<AulaDiscipulado | Error>,
+ req: NextApiRequest,
+ res: NextApiResponse<AulaDiscipulado | Error>,
 ) {
-  const { id } = req.query;
+ const { id} = req.query;
 
-  if (!id || typeof id !== "string") {
-    return res.status(400).json({ message: "Invalid or missing id parameter" });
-  }
+ if (!id || typeof id !== "string") {
+ return res.status(400).json({ message: "Invalid or missing id parameter" });
+ }
 
   try {
-    const repository = new DiscipuladoMongoRepository();
+ const repository = new DiscipuladoMongoRepository();
 
-    if (req.method === "PUT") {
-      const aulaAtualizada = req.body;
+ if (req.method === "GET") {
+  const aula = await repository.getAulaById(id);
 
-      // Validações básicas
-      if (!aulaAtualizada.data || !aulaAtualizada.tema || !aulaAtualizada.ministrador) {
-        return res
-          .status(400)
-          .json({ message: "Missing required fields: data, tema, ministrador" });
-      }
+  if (!aula) {
+    return res.status(404).json({ message: "Aula not found" });
+     }
 
-      const result = await repository.updateAula(id, aulaAtualizada);
+  return res.status(200).json(aula);
+   } else if (req.method === "PUT") {
+  const aulaAtualizada = req.body;
 
-      if (!result) {
-        return res.status(404).json({ message: "Aula not found" });
-      }
+   // Validações básicas
+  if (!aulaAtualizada.data || !aulaAtualizada.tema || !aulaAtualizada.ministrador) {
+    return res
+       .status(400)
+       .json({ message: "Missing required fields: data, tema, ministrador" });
+     }
 
-      return res.status(200).json(result);
-    } else if (req.method === "DELETE") {
-      const deleted = await repository.deleteAula(id);
+  const result = await repository.updateAula(id, aulaAtualizada);
 
-      if (!deleted) {
-        return res.status(404).json({ message: "Aula not found" });
-      }
+  if (!result) {
+    return res.status(404).json({ message: "Aula not found" });
+     }
 
-      return res.status(200).json({ message: "Aula deleted successfully" });
-    } else {
-      return res.status(405).json({ message: "Method not allowed" });
-    }
-  } catch (error: any) {
-    console.error("Error handling aula:", error);
-    return res.status(500).json({ message: error.message || "Erro ao processar aula" });
-  }
+  return res.status(200).json(result);
+   } else if (req.method === "DELETE") {
+  const deleted = await repository.deleteAula(id);
+
+  if (!deleted) {
+    return res.status(404).json({ message: "Aula not found" });
+     }
+
+  return res.status(200).json({ message: "Aula deleted successfully" });
+   } else {
+  return res.status(405).json({ message: "Method not allowed" });
+   }
+ } catch (error: any) {
+ console.error("Error handling aula:", error);
+ return res.status(500).json({ message: error.message || "Erro ao processar aula" });
+ }
 }

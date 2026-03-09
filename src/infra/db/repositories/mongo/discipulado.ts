@@ -97,7 +97,6 @@ export class DiscipuladoMongoRepository {
       const aula = await collection.findOne({ _id: new ObjectId(id) });
 
       if (!aula) return null;
-
       return {
         id: aula._id.toHexString(),
         data: aula.data,
@@ -107,6 +106,7 @@ export class DiscipuladoMongoRepository {
         alunos: aula.alunos || [],
         createdAt: aula.createdAt,
       };
+
     } catch (error) {
       console.error("Error getting aula by id:", error);
       throw error;

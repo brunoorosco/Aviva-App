@@ -74,6 +74,14 @@ export function useAulas(churchId?: string, cicloId?: string) {
   return useFetch<AulaDiscipulado[]>(url);
 }
 
+// Aula por ID
+export function useAulaById(churchId?: string, aulaId?: string) {
+  const url = churchId && aulaId
+    ? `${API_BASE}/${churchId}/discipulado/aulas/${aulaId}`
+    : null;
+  return useFetch<AulaDiscipulado>(url);
+}
+
 // Create aula
 export function useCreateAula(churchId?: string, onSuccess?: () => void) {
   const { refetch } = useAulas(churchId, undefined); // ✅ adicionar refetch

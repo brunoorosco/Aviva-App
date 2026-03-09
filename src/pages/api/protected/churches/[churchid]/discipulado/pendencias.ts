@@ -11,7 +11,7 @@ export default async function handler(
     | {
         membroId: string;
         nome: string;
-        celula: string;
+        rede: { name: string; _id: string };
         aulasPendentes: string[];
       }[]
     | Error
