@@ -171,7 +171,7 @@ export class UsersMongoRepository {
       throw error;
     }
   }
-  
+
   async getUserByName(churchId: string, name: string): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
@@ -277,6 +277,7 @@ export class UsersMongoRepository {
           active: true,
           role: roleFilter,
           "cem.name": { $exists: true, $ne: null },
+          "cem._id": { $exists: true, $ne: null },
         },
         {
           projection: { _id: 1, name: 1, role: 1, email: 1, "cem.name": 1 },
@@ -287,6 +288,52 @@ export class UsersMongoRepository {
       .toArray();
 
     return resp;
+  }
+
+  async getAllActiveUsersWithNetwork(churchId: string): Promise<
+    {
+      _id: string;
+      name: string;
+      email: string;
+      rede: { name: string; _id: string } | null;
+      role: string;
+    }[]
+  > {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+
+      const users = await collection
+        .find(
+          {
+            churchId,
+            active: true,
+          },
+          {
+            projection: {
+              _id: 1,
+              name: 1,
+              email: 1,
+              role: 1,
+              "cem.name": 1,
+              "cem._id": 1,
+            },
+          },
+        )
+        .collation({ locale: "pt", strength: 1 })
+        .sort({ name: 1 })
+        .toArray();
+
+      return users.map((u) => ({
+        _id: u._id.toHexString(),
+        name: u.name,
+        email: u.email,
+        role: u.role,
+        rede: { name: u.cem?.name || null, _id: u.cem?._id || null },
+      }));
+    } catch (error) {
+      console.error("Error getting active users with network:", error);
+      throw error;
+    }
   }
 
   async updateSettings(userId: string, data: Partial<User>): Promise<User> {
