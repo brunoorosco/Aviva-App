@@ -93,11 +93,11 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
             </div>
             <div className="space-y-1.5 w-full">
               <Label htmlFor="enc-end">Data de Nascimento</Label>
-              <Input
+             <Input
                 id="enc-nascimento"
                 value={nascimento}
                 type="date"
-                onChange={(e) => setEndereco(e.target.value)}
+                onChange={(e) => setNascimento(e.target.value)}
               />
             </div>
           </div>
