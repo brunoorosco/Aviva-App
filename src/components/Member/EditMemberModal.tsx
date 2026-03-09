@@ -133,8 +133,8 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
 
         if (payload.cemId) {
           payload.cem = {
-            _id: payload.cemId.split("-")[0],
-            name: payload.cemId.split("-")[1],
+            _id: payload.cemId._id,
+            name: payload.cemId.name,
           };
           delete payload.cemId;
         }
