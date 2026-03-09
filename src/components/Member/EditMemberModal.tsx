@@ -14,13 +14,15 @@ import { Label } from "@/components/ui/label";
 import { roles } from "@/utils/constants/roles";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSession } from "next-auth/react";
+// Separar o tipo do form do tipo interno
+type CemOption = { _id: string; name: string };
 
 type FormValues = {
   name: string;
   email?: string;
   phone: string;
   street?: string;
-  cemId?: string;
+  cemId?: CemOption | string;  // mantém, mas tratamos com type guard
   birthDate: string;
   role?: string;
   encontroComDeus?: boolean;
@@ -43,6 +45,15 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
   const [initialData, setInitialData] = useState<FormValues | null>(null);
   const isEdit = !!member; // se tem member, é edição
   const { data: session } = useSession();
+
+  // Helper para extrair cem de cemId com segurança
+const extractCem = (cemId: CemOption | string | undefined) => {
+  if (!cemId) return undefined;
+  if (typeof cemId === "object") return { _id: cemId._id, name: cemId.name };
+  // formato "id-name"
+  const [_id, ...rest] = cemId.split("-");
+  return { _id, name: rest.join("-") };
+};
 
   const {
     control,
@@ -114,14 +125,12 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
             changes[key as keyof FormValues] = value;
           }
         });
+        console.log("Campos alterados:", changes);
 
         if (changes.cemId) {
-          changes.cem = {
-            _id: changes.cemId.split("-")[0],
-            name: changes.cemId.split("-")[1],
-          };
-          delete changes.cemId;
-        }
+  changes.cem = extractCem(changes.cemId); // ✅ sem erro de tipo
+  delete changes.cemId;
+}
 
         response = await useHttpPatch({
           url: `/api/protected/churches/${member.churchId}/users/${member._id}`,
@@ -131,13 +140,11 @@ const MemberModal = ({ member, onClose, onUpdated }: Props) => {
         // POST → cria novo usuário
         let payload: any = { ...(data as object) };
 
-        if (payload.cemId) {
-          payload.cem = {
-            _id: payload.cemId._id,
-            name: payload.cemId.name,
-          };
-          delete payload.cemId;
-        }
+       if (payload.cemId) {
+  payload.cem = extractCem(payload.cemId); // ✅ sem erro de tipo
+  delete payload.cemId;
+}
+
         response = await useHttpPost({
           url: `/api/protected/churches/${session?.user.churchId}/redes/${session?.user.cem._id}/members`,
           data: payload,
