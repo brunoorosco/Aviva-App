@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tabs";
 import { TEncontroComDeus } from "@/domain/models/encontroComDeus";
 import { getEncontroComDeusByIdService } from "@/services/encontroComDeus";
+import { capitalizeWords } from "@/utils/capitalizaFirst";
 import { getRedeName } from "@/utils/helpersNameREde";
 import { ArrowLeft, Calendar, Users, Church, Hash } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -112,11 +113,11 @@ export default function EncontroPage({ encontro }: Props) {
             const ageLabel = getAgeDisplay(pessoa.idade, pessoa.dataNascimento);
 
             return (
-              <tr key={pessoa._id ?? `${pessoa.nome}-${index}`}>
+              <tr key={pessoa._id ?? `${capitalizeWords(pessoa.nome)}-${index}`}>
                 <td className="px-4 py-3">
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {pessoa.nome || "Nome não informado"}
+                      {capitalizeWords(pessoa.nome) || "Nome não informado"}
                     </span>
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                       <span>#{index + 1}</span>
@@ -169,7 +170,7 @@ export default function EncontroPage({ encontro }: Props) {
               <tr key={membro._id ?? `${membro.name}-${index}`}>
                 <td className="px-4 py-3">
                   <span className="font-medium text-gray-900 dark:text-white">
-                    {membro.name || "Nome não informado"}
+                    {capitalizeWords(membro.name) || "Nome não informado"}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
