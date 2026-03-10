@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { TPeople } from "@/domain/models/encontroComDeus";
 import { Masks } from "@/utils/masks";
 import { useSession } from "next-auth/react";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 interface Props {
   open: boolean;
@@ -28,6 +29,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
   const [endereco, setEndereco] = useState("");
   const [isento, setIsento] = useState(false);
   const [nascimento, setNascimento] = useState("");
+  const [sexo, setSexo] = useState("");
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
       setEndereco(encontrista.endereco || "");
       setIsento(encontrista.isento || false);
       setNascimento(encontrista.dataNascimento || "");
+      setSexo(encontrista.sexo || "");
     } else {
       setName("");
       setTelefone("");
@@ -45,6 +48,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
       setEndereco("");
       setIsento(false);
       setNascimento("");
+      setSexo("");
     }
   }, [encontrista, open]);
 
@@ -57,6 +61,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
       endereco: endereco.trim(),
       dataNascimento: nascimento,
       isento,
+      sexo,
       rede: session?.user.cem,
     });
     onClose();
@@ -111,16 +116,30 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="enc-end">Endereço</Label>
-            <Input
-              id="enc-end"
-              placeholder="Rua, número, bairro"
-              value={endereco}
-              onChange={(e) => setEndereco(e.target.value)}
-            />
-          </div>
-
+            <div className="space-y-1.5">
+              <Label htmlFor="enc-end">Sexo</Label>
+              <RadioGroup value={sexo} onValueChange={setSexo} className="flex gap-10">
+<div className="flex items-center gap-3">
+                <RadioGroupItem value="masculino" id="masculino" />
+    <Label htmlFor="option-one">Masculino</Label>
+  </div>
+  <div className="flex items-center gap-3">
+                <RadioGroupItem value="feminino" id="feminino" />
+    <Label htmlFor="option-two">Feminino</Label>
+  </div>
+              </RadioGroup>
+              </div>
+                
+            
+            <div className="space-y-1.5">
+              <Label htmlFor="enc-end">Endereço</Label>
+              <Input
+                id="enc-end"
+                placeholder="Rua, número, bairro"
+                value={endereco}
+                onChange={(e) => setEndereco(e.target.value)}
+              />
+            </div>
           <div className="flex items-center gap-2">
             <Checkbox
               id="enc-isento"
@@ -130,7 +149,8 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
             <Label htmlFor="enc-isento" className="cursor-pointer">
               Isento de pagamento
             </Label>
-          </div>
+
+        </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>

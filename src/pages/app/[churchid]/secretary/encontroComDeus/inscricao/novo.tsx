@@ -39,6 +39,7 @@ export default function GroupFinance() {
         isento: data.isento,
         dataNascimento: data.dataNascimento,
         idade: data.idade,
+        sexo: data.sexo,
       },
     ]);
   };
@@ -194,8 +195,6 @@ export default function GroupFinance() {
           pagamento: pagamentos, // Array de pagamentos
         },
       };
-
-      console.log("Enviando dados:", payload);
 
       const response = await useHttpPost({
         url: `/api/protected/churches/${churchid}/encontroComDeus/inscricao?encontroId=${encontroId}`,
