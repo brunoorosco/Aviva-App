@@ -118,7 +118,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
           </div>
             <div className="space-y-1.5">
               <Label htmlFor="enc-end">Sexo</Label>
-              <RadioGroup value={sexo} onValueChange={setSexo} className="flex gap-10">
+              <RadioGroup value={sexo} onValueChange={setSexo} className="flex gap-10" required>
 <div className="flex items-center gap-3">
                 <RadioGroupItem value="masculino" id="masculino" />
     <Label htmlFor="option-one">Masculino</Label>
