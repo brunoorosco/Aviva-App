@@ -54,6 +54,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
 
   const handleSave = () => {
     if (!name.trim()) return;
+    if (!sexo) return;
     onSave({
       nome: name.trim(),
       telefone: telefone.trim(),
@@ -98,7 +99,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
             </div>
             <div className="space-y-1.5 w-full">
               <Label htmlFor="enc-end">Data de Nascimento</Label>
-             <Input
+              <Input
                 id="enc-nascimento"
                 value={nascimento}
                 type="date"
@@ -116,30 +117,30 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="enc-end">Sexo</Label>
-              <RadioGroup value={sexo} onValueChange={setSexo} className="flex gap-10" required>
-<div className="flex items-center gap-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="enc-end">Sexo</Label>
+            <RadioGroup value={sexo} onValueChange={setSexo} className="flex gap-10" required>
+              <div className="flex items-center gap-3">
                 <RadioGroupItem value="masculino" id="masculino" />
-    <Label htmlFor="option-one">Masculino</Label>
-  </div>
-  <div className="flex items-center gap-3">
-                <RadioGroupItem value="feminino" id="feminino" />
-    <Label htmlFor="option-two">Feminino</Label>
-  </div>
-              </RadioGroup>
+                <Label htmlFor="option-one">Masculino</Label>
               </div>
-                
-            
-            <div className="space-y-1.5">
-              <Label htmlFor="enc-end">Endereço</Label>
-              <Input
-                id="enc-end"
-                placeholder="Rua, número, bairro"
-                value={endereco}
-                onChange={(e) => setEndereco(e.target.value)}
-              />
-            </div>
+              <div className="flex items-center gap-3">
+                <RadioGroupItem value="feminino" id="feminino" />
+                <Label htmlFor="option-two">Feminino</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+
+          <div className="space-y-1.5">
+            <Label htmlFor="enc-end">Endereço</Label>
+            <Input
+              id="enc-end"
+              placeholder="Rua, número, bairro"
+              value={endereco}
+              onChange={(e) => setEndereco(e.target.value)}
+            />
+          </div>
           <div className="flex items-center gap-2">
             <Checkbox
               id="enc-isento"
@@ -150,7 +151,7 @@ export function EncontristaModal({ open, onClose, onSave, encontrista }: Props) 
               Isento de pagamento
             </Label>
 
-        </div>
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
