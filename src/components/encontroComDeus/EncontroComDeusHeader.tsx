@@ -1,3 +1,4 @@
+
 import { TEncontroComDeus } from "@/domain/models/encontroComDeus";
 import { Card, CardContent } from "../ui/card";
 import { Calendar, Download, Home, Plus, TrendingUp, Users } from "lucide-react";
@@ -6,6 +7,8 @@ import { getRedeName } from "@/utils/helpersNameREde";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
+import { useSession } from "next-auth/react";
+import { hasPermission, ROLES } from "@/lib/permissions";
 
 type Props = {
   pathname: string;
@@ -111,6 +114,13 @@ const Header = <T extends TEncontroComDeus,>({
     }
   }, [data, total])
 
+ const { data: session } = useSession();
+   const canViewButtons = () => {
+    if (!session?.user) return false;
+    const userPermissions = session.user.permission || [];
+    return hasPermission(userPermissions, [ROLES.ADMIN, ROLES.PASTOR, ROLES.SECRETARIA]);
+  };
+
   return (
     <Card className='shadow-sm border-2 border-gray-200 dark:border-gray-700'>
       <CardContent className='p-6'>
@@ -160,6 +170,7 @@ const Header = <T extends TEncontroComDeus,>({
           </div>
 
           {/* Seção de Ações */}
+           {canViewButtons() && (
           <div className='flex flex-col sm:flex-row gap-2 sm:gap-3 shrink-0'>
             {/* Botão de Exportar (se houver dados) */}
             {data && data.length > 0 && mapExport && (
@@ -190,6 +201,7 @@ const Header = <T extends TEncontroComDeus,>({
               </Button>
             </Link>
           </div>
+           )}
         </div>
 
         {/* Estatísticas Detalhadas */}
