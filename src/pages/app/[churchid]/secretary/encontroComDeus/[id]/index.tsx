@@ -38,6 +38,7 @@ type Props = {
 
 export default function EncontroPage({ encontro }: Props) {
   const router = useRouter();
+  
 
   if (!encontro) {
     return (
@@ -60,30 +61,47 @@ export default function EncontroPage({ encontro }: Props) {
       </div>
     );
   }
+  function calculateAgeFromBirthDate(dataNascimento: string): string {
+  const birth = new Date(dataNascimento);
+  if (isNaN(birth.getTime())) return "—";
 
-  const encontristas = encontro.encontristas ?? [];
-  const equipe = encontro.equipe ?? [];
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+
+  return age > 0 ? `${age} anos` : "—";
+}
+
+  // 3. Ordenar encontristas alfabeticamente
+const encontristas = [...(encontro.encontristas ?? [])].sort((a, b) =>
+  (a.nome || "").localeCompare(b.nome || "", "pt-BR", { sensitivity: "base" })
+);
+
+// 4. Ordenar equipe alfabeticamente
+const equipe = [...(encontro.equipe ?? [])].sort((a, b) =>
+  (a.name || "").localeCompare(b.name || "", "pt-BR", { sensitivity: "base" })
+);
   const defaultTab = encontristas.length > 0 ? "encontristas" : "equipe";
 
-  const getAgeDisplay = (idade?: string, dataNascimento?: string) => {
-    if (idade) {
-      const parsed = Number(idade);
-      if (!Number.isNaN(parsed) && parsed > 0) {
-        const labeled = formatAge(parsed);
-        return labeled || `${parsed} anos`;
-      }
-      return idade;
+const getAgeDisplay = (idade?: string, dataNascimento?: string) => {
+  if (idade) {
+    const parsed = Number(idade);
+    if (!Number.isNaN(parsed) && parsed > 0) {
+      return `${parsed} anos`;
     }
+    return idade;
+  }
 
-    if (dataNascimento) {
-      const date = new Date(dataNascimento);
-      if (!Number.isNaN(date.getTime())) {
-        return date.toLocaleDateString("pt-BR");
-      }
-    }
+  if (dataNascimento) {
+    return calculateAgeFromBirthDate(dataNascimento); // ← converte para idade
+  }
 
-    return "—";
-  };
+  return "—";
+};
 
   const renderEmptyState = (title: string, description: string) => (
     <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -120,7 +138,7 @@ export default function EncontroPage({ encontro }: Props) {
                       {capitalizeWords(pessoa.nome) || "Nome não informado"}
                     </span>
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                      <span>#{index + 1}</span>
+                    
                       {pessoa.isento && (
                         <Badge
                           variant="secondary"
