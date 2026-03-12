@@ -31,7 +31,9 @@ export function ComprovantesDropdown({ pagamentos }: Props) {
     return null;
   }
 
-  const handleViewComprovante = (comprovante: { comprovanteUrl: string; comprovanteName?: string }) => {
+  const handleViewComprovante = (comprovante: { comprovanteUrl?: string; comprovanteName?: string }) => {
+    if (!comprovante.comprovanteUrl) return;
+    
     setSelectedComprovante({
       url: comprovante.comprovanteUrl,
       name: comprovante.comprovanteName,
