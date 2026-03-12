@@ -20,6 +20,7 @@ export function ComprovantesDropdown({ pagamentos }: Props) {
     name?: string;
   } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   if (!pagamentos || pagamentos.length === 0) {
     return null;
@@ -39,6 +40,7 @@ export function ComprovantesDropdown({ pagamentos }: Props) {
       name: comprovante.comprovanteName,
     });
     setIsModalOpen(true);
+    setOpen(false); // Close dropdown when opening modal
   };
 
   const handleOpenAllInNewTab = () => {
@@ -47,11 +49,19 @@ export function ComprovantesDropdown({ pagamentos }: Props) {
         window.open(p.comprovanteUrl, "_blank", "noopener,noreferrer");
       }
     });
+    setOpen(false);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setTimeout(() => {
+      setSelectedComprovante(null);
+    }, 300); // Wait for animation to complete
   };
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
             <FileText className="h-4 w-4" />
@@ -74,7 +84,7 @@ export function ComprovantesDropdown({ pagamentos }: Props) {
                         {pagamento.comprovanteName || "Comprovante"}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(pagamento.data).toLocaleDateString("pt-BR")} -{" "}
+                        {new Date(pagamento.data).toLocaleDateString("pt-BR")} -{""}
                         {pagamento.valor.toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
@@ -102,14 +112,11 @@ export function ComprovantesDropdown({ pagamentos }: Props) {
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-
+  
       {selectedComprovante && (
         <ComprovanteModal
           isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedComprovante(null);
-          }}
+          onClose={handleModalClose}
           comprovanteUrl={selectedComprovante.url}
           comprovanteName={selectedComprovante.name}
         />
