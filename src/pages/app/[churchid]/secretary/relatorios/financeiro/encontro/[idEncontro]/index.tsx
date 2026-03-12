@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/router";
 import { useHttpGet } from "@/hooks/api";
+import { ComprovantesDropdown } from "@/components/finance/ComprovantesDropdown";
 
 function formatCurrency(value: number) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -34,6 +35,14 @@ export default function FinanceReport() {
       totalAPagar: number;
       status: string;
       pagamentosPorTipo: Record<string, number>;
+      pagamentos?: Array<{
+        _id: string;
+        tipo: string;
+        valor: number;
+        data: string;
+        comprovanteUrl?: string;
+        comprovanteName?: string;
+      }>;
     }>;
     totais: {
       totalEncontristas: number;
@@ -149,6 +158,7 @@ export default function FinanceReport() {
                       <p className="text-xs text-muted-foreground">{g.celula}</p>
                     </div>
                     <div className="flex items-center gap-2">
+                      <ComprovantesDropdown pagamentos={g.pagamentos} />
                       <Badge variant="secondary">{formatCurrency(g.totalPago)}</Badge>
                       <Badge variant={g.status === 'quitado' ? 'default' : g.status === 'pendente' ? 'destructive' : 'outline'}>
                         {g.status}

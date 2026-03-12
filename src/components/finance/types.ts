@@ -4,6 +4,15 @@ export interface RelatorioFinanceiroEncontro {
   data: string;
 }
 
+export interface PagamentoResumo {
+  _id: string;
+  tipo: string;
+  valor: number;
+  data: string;
+  comprovanteUrl?: string;
+  comprovanteName?: string;
+}
+
 export interface RelatorioFinanceiroGrupo {
   id: string;
   nome: string;
@@ -16,6 +25,7 @@ export interface RelatorioFinanceiroGrupo {
   totalAPagar: number;
   status: "quitado" | "parcial" | "pendente" | "excedente";
   pagamentosPorTipo: Record<string, number>;
+  pagamentos?: PagamentoResumo[];
 }
 
 export interface RelatorioFinanceiroTotais {

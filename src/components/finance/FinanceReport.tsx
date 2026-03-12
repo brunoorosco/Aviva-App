@@ -10,6 +10,7 @@ import {
   RelatorioFinanceiroGrupo,
   RelatorioFinanceiroTotais,
 } from "./types";
+import { ComprovantesDropdown } from "./ComprovantesDropdown";
 
 function formatCurrency(value: number) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -200,6 +201,7 @@ export default function FinanceReport() {
                       <p className="text-xs text-muted-foreground">{g.celula}</p>
                     </div>
                     <div className="flex items-center gap-2">
+                      <ComprovantesDropdown pagamentos={g.pagamentos} />
                       <Badge variant="outline" className={statusColors[g.status] || ""}>
                         {statusLabels[g.status] || g.status}
                       </Badge>

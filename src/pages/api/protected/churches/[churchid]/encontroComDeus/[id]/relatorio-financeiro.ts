@@ -72,6 +72,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     pagamentosPorTipo[p.tipo] = (pagamentosPorTipo[p.tipo] || 0) + p.valor;
   });
 
+  // Mapear pagamentos com detalhes dos comprovantes
+  const pagamentosDetalhados = (fin.pagamento || []).map((p: any) => ({
+    _id: p._id,
+    tipo: p.tipo,
+    valor: p.valor,
+    data: p.createdAt,
+    comprovanteUrl: p.comprovanteUrl,
+    comprovanteName: p.comprovanteName,
+  }));
+
   return {
     id: fin._id,
     nome: fin.rede.name,
@@ -84,6 +94,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     totalAPagar, // ✅ recalculado aqui, ignorando o valor do banco
     status: fin.status,
     pagamentosPorTipo,
+    pagamentos: pagamentosDetalhados,
   };
 });
       // Calcular totais gerais
