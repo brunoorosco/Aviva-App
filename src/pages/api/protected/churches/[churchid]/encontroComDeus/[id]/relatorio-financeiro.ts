@@ -72,6 +72,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     pagamentosPorTipo[p.tipo] = (pagamentosPorTipo[p.tipo] || 0) + p.valor;
   });
 
+  // Calcular total pago somando todos os pagamentos
+  const totalPago = (fin.pagamento || []).reduce((sum: number, p: any) => sum + p.valor, 0);
+
+  // Calcular status baseado nos valores reais dos pagamentos
+  let status: "quitado" | "parcial" | "pendente" | "excedente";
+  if (totalPago === 0) {
+    status = "pendente";
+  } else if (totalPago === totalAPagar) {
+    status = "quitado";
+  } else if (totalPago > totalAPagar) {
+    status = "excedente";
+  } else {
+    status = "parcial";
+  }
+
   // Mapear pagamentos com detalhes dos comprovantes
   const pagamentosDetalhados = (fin.pagamento || []).map((p: any) => ({
     _id: p._id,
@@ -90,9 +105,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     encontristasIsentos,
     equipe: equipe.length,
     equipeIsentos,
-    totalPago: fin.totalPago || 0,
+    totalPago, // ✅ recalculado baseado nos pagamentos
     totalAPagar, // ✅ recalculado aqui, ignorando o valor do banco
-    status: fin.status,
+    status, // ✅ calculado dinamicamente
     pagamentosPorTipo,
     pagamentos: pagamentosDetalhados,
   };
