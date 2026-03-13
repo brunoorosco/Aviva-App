@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Edit, EyeIcon, Calendar, Users, FileText, DollarSign } from "lucide-react";
+import { Edit, EyeIcon, Calendar, Users, FileText, DollarSign, Download } from "lucide-react";
 import { TEncontroComDeus } from "@/domain/models/encontroComDeus";
 import { Button } from "../ui/button";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { hasPermission, ROLES } from "@/lib/permissions";
+import ExportButton from "./ExportButton";
 
 type Props = {
   encontro: TEncontroComDeus;
@@ -144,6 +145,11 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
               </span>
               
               <div className="flex items-center gap-2">
+                {/* Botão de Exportar - sempre visível se houver dados */}
+                {encontro.encontristas && encontro.encontristas.length > 0 && (
+                  <ExportButton encontro={encontro} />
+                )}
+                
                 {/* Botão de Relatório Financeiro - visível para Admin, Pastor e Secretaria */}
                 {canViewFinancialReport() && encontro.financeiro && (
                   <button

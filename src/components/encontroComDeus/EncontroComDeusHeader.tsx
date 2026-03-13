@@ -172,22 +172,6 @@ const Header = <T extends TEncontroComDeus,>({
           {/* Seção de Ações */}
            {canViewButtons() && (
           <div className='flex flex-col sm:flex-row gap-2 sm:gap-3 shrink-0'>
-            {/* Botão de Exportar (se houver dados) */}
-            {data && data.length > 0 && mapExport && (
-              <Button
-                variant='outline'
-                size='default'
-                className='border-2 hover:bg-gray-50 hover:text-black dark:hover:bg-gray-800 w-full sm:w-auto'
-                onClick={() => {
-                  // Aqui você pode adicionar a lógica de exportação
-                  console.log('Exportar dados')
-                }}
-              >
-                <Download className='mr-2 h-4 w-4' />
-                <span className='hidden sm:inline'>Exportar</span>
-                <span className='sm:hidden'>Exportar Excel</span>
-              </Button>
-            )}
 
             {/* Botão Novo */}
             <Link href={`${pathname}/new`} className='w-full sm:w-auto'>
