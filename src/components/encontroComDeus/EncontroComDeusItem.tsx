@@ -35,7 +35,7 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
     const dataEncontro = typeof encontro.data === "string" ? new Date(encontro.data) : encontro.data;
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0); // Zera as horas para comparar apenas a data
-    return dataEncontro >= hoje;
+    return dataEncontro > hoje;
   };
 
   const handleFichaInscricao = (e: React.MouseEvent) => {
