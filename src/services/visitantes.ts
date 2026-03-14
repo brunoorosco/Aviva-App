@@ -68,9 +68,13 @@ export const createVisitantesImportService = async (data: any, churchId: string)
   return saved;
 };
 
-export const getVisitantesService = async (churchId: string, page: number, limit: number) => {
+export const getVisitantesService = async (churchId: string, page: number, limit: number, filters?: {
+  name?: string;
+  dateStart?: string;
+  dateEnd?: string;
+}) => {
   const visitantesRepository = new VisitantesRepository();
-  const result = await visitantesRepository.getVisitantes(churchId, page, limit);
+  const result = await visitantesRepository.getVisitantes(churchId, page, limit, filters);
 
   return result;
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import {
   Table,
@@ -17,31 +17,51 @@ import { useRouter } from "next/router";
 import Pagination from "@/components/Pagination";
 import { formatDate } from "@/utils/formatedDate";
 import { PageHeader } from "@/components/PageHeader";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Filter, X } from "lucide-react";
 
 export const AceitouJesusList = () => {
   const { data: session } = useSession();
   const churchId = session?.user.churchId as string;
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
+  const [redeFilter, setRedeFilter] = useState("");
+  const [dateStart, setDateStart] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
   const router = useRouter();
   const [page, setPage] = useState(1);
   const limit = 10;
+
+  // Construir URL com filtros
+  const buildFilterUrl = () => {
+    const params = new URLSearchParams();
+    params.set('page', page.toString());
+    params.set('limit', limit.toString());
+
+    if (search) params.set('name', search);
+    if (redeFilter) params.set('rede', redeFilter);
+    if (dateStart) params.set('dateStart', dateStart);
+    if (dateEnd) params.set('dateEnd', dateEnd);
+
+    return `/api/protected/churches/${churchId}/aceitou?${params.toString()}`;
+  };
 
   const {
     data: users,
     isLoading,
     mutate,
   } = useHttpGet<{ data: AceitouModel[]; total: number; page: number; totalPages: number }>(
-    `/api/protected/churches/${churchId}/aceitou?page=${page}&limit=${limit}`
+    buildFilterUrl()
   );
 
-  // Memoiza o filtro para evitar recalcular toda hora
-  const filteredRecords = useMemo(() => {
-    if (!users?.data) return [];
-    return users.data?.data?.filter((r: AceitouModel) =>
-      r.name.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [users?.data, search]);
+  const clearFilters = () => {
+    setSearch("");
+    setRedeFilter("");
+    setDateStart("");
+    setDateEnd("");
+    setPage(1);
+  };
 
   return (
     <div className="w-full max-w-6xl p-4 mx-auto mt-6">
@@ -54,6 +74,77 @@ export const AceitouJesusList = () => {
         <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
       </PageHeader>
 
+      {/* Filtros */}
+      <div className="mt-4 mb-6 bg-white dark:bg-dark-secondary border rounded-lg p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+            <Filter className="w-4 h-4" />
+            Filtros
+          </h3>
+          {(search || redeFilter || dateStart || dateEnd) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="text-xs h-8"
+            >
+              <X className="w-3 h-3 mr-1" />
+              Limpar filtros
+            </Button>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Filtro por nome */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <Label htmlFor="search-name" className="text-xs">Nome</Label>
+            <Input
+              id="search-name"
+              placeholder="Buscar por nome"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="h-9"
+            />
+          </div>
+
+          {/* Filtro por rede */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <Label htmlFor="filter-rede" className="text-xs">Rede / CEM</Label>
+            <Input
+              id="filter-rede"
+              placeholder="Buscar por rede"
+              value={redeFilter}
+              onChange={(e) => setRedeFilter(e.target.value)}
+              className="h-9"
+            />
+          </div>
+
+          {/* Filtro data inicial */}
+          <div>
+            <Label htmlFor="date-start" className="text-xs">Data inicial</Label>
+            <Input
+              id="date-start"
+              type="date"
+              value={dateStart}
+              onChange={(e) => setDateStart(e.target.value)}
+              className="h-9"
+            />
+          </div>
+
+          {/* Filtro data final */}
+          <div>
+            <Label htmlFor="date-end" className="text-xs">Data final</Label>
+            <Input
+              id="date-end"
+              type="date"
+              value={dateEnd}
+              onChange={(e) => setDateEnd(e.target.value)}
+              className="h-9"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Conteúdo */}
       {loading || isLoading ? (
         <div className="py-6 text-center text-gray-500">Carregando...</div>
@@ -61,7 +152,7 @@ export const AceitouJesusList = () => {
         <>
           {/* Versão mobile (cards) */}
           <div className="flex flex-col gap-3 md:hidden">
-            {filteredRecords?.map((r) => (
+            {users?.data?.data?.map((r: AceitouModel) => (
               <div key={r._id} className="p-3 bg-white dark:bg-dark-secondary border shadow-sm rounded-xl">
                 <div className="text-lg font-semibold dark:text-gray-200">{r.name}</div>
                 <div className="flex justify-between pr-5">
@@ -108,14 +199,14 @@ export const AceitouJesusList = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredRecords.length === 0 ? (
+                {!users?.data?.data || users.data.data.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={9} className="py-4 text-center">
                       Nenhum registro encontrado
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredRecords.map((r) => (
+                  users.data.data.map((r: AceitouModel) => (
                     <TableRow key={r._id}>
                       <TableCell>{r.name}</TableCell>
                       <TableCell>{r.email || "-"}</TableCell>

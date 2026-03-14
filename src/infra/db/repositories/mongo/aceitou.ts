@@ -10,19 +10,47 @@ export class AceitouRepository {
     this.collectionName = "aceitou";
   }
 
-  async getUseusAceitou(churchId: string, page: number = 1, limit: number = 10) {
+  async getUseusAceitou(churchId: string, page: number = 1, limit: number = 10, filters?: {
+    name?: string;
+    rede?: string;
+    dateStart?: string;
+    dateEnd?: string;
+  }) {
     const collection = await MongoHelper.getCollection(this.collectionName);
     const skip = (page - 1) * limit;
 
+    // Construir filtro para MongoDB
+    const mongoFilter: any = { churchId };
+
+    if (filters?.name) {
+      mongoFilter.name = { $regex: filters.name, $options: "i" };
+    }
+
+    if (filters?.rede) {
+      mongoFilter["rede.name"] = { $regex: filters.rede, $options: "i" };
+    }
+
+    if (filters?.dateStart || filters?.dateEnd) {
+      mongoFilter.acceptedAt = {};
+      if (filters.dateStart) {
+        mongoFilter.acceptedAt.$gte = new Date(filters.dateStart);
+      }
+      if (filters.dateEnd) {
+        const endDate = new Date(filters.dateEnd);
+        endDate.setHours(23, 59, 59, 999);
+        mongoFilter.acceptedAt.$lte = endDate;
+      }
+    }
+
     const [data, total] = await Promise.all([
       collection
-        .find({ churchId })
+        .find(mongoFilter)
         .collation({ locale: "pt", strength: 1 })
         .sort({ acceptedAt: -1, _id: -1 })
         .skip(skip)
         .limit(limit)
         .toArray(),
-       collection.countDocuments({ churchId }),
+      collection.countDocuments(mongoFilter),
     ]);
 
     return { data, total, page, totalPages: Math.ceil(total / limit) };

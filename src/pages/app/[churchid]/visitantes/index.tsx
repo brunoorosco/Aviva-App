@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,9 @@ import Toast from "@/components/Toast";
 import Pagination from "@/components/Pagination";
 import { formatDate } from "@/utils/formatedDate";
 import { PageHeader } from "@/components/PageHeader";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Filter, X } from "lucide-react";
 
 export default function VisitantesList() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -26,9 +29,24 @@ export default function VisitantesList() {
   const churchId = session?.user.churchId as string;
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
+  const [dateStart, setDateStart] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
   const router = useRouter();
   const [page, setPage] = useState(1);
   const limit = 10;
+
+  // Construir URL com filtros
+  const buildFilterUrl = () => {
+    const params = new URLSearchParams();
+    params.set('page', page.toString());
+    params.set('limit', limit.toString());
+    
+    if (search) params.set('name', search);
+    if (dateStart) params.set('dateStart', dateStart);
+    if (dateEnd) params.set('dateEnd', dateEnd);
+    
+    return `/api/protected/churches/${churchId}/visitantes?${params.toString()}`;
+  };
 
   const {
     data: users,
@@ -39,14 +57,14 @@ export default function VisitantesList() {
     total: number;
     page: number;
     totalPages: number;
-  }>(`/api/protected/churches/${churchId}/visitantes?page=${page}&limit=${limit}`);
+  }>(buildFilterUrl());
 
-  const filteredRecords = useMemo(() => {
-    if (!users?.data) return [];
-    return users.data?.data?.filter((r: VisitantesModel) =>
-      r.name.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [users?.data, search]);
+  const clearFilters = () => {
+    setSearch("");
+    setDateStart("");
+    setDateEnd("");
+    setPage(1);
+  };
 
   const getHowHeardLabel = (value: string) => {
     const mapping: Record<string, string> = {
@@ -118,6 +136,65 @@ export default function VisitantesList() {
         <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
       </PageHeader>
 
+      {/* Filtros */}
+      <div className="mt-4 mb-6 bg-white dark:bg-dark-secondary border rounded-lg p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+            <Filter className="w-4 h-4" />
+            Filtros
+          </h3>
+          {(search || dateStart || dateEnd) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="text-xs h-8"
+            >
+              <X className="w-3 h-3 mr-1" />
+              Limpar filtros
+            </Button>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Filtro por nome */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <Label htmlFor="search-name" className="text-xs">Nome</Label>
+            <Input
+              id="search-name"
+              placeholder="Buscar por nome"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="h-9"
+            />
+          </div>
+
+          {/* Filtro data inicial */}
+          <div>
+            <Label htmlFor="date-start" className="text-xs">Data inicial</Label>
+            <Input
+              id="date-start"
+              type="date"
+              value={dateStart}
+              onChange={(e) => setDateStart(e.target.value)}
+              className="h-9"
+            />
+          </div>
+
+          {/* Filtro data final */}
+          <div>
+            <Label htmlFor="date-end" className="text-xs">Data final</Label>
+            <Input
+              id="date-end"
+              type="date"
+              value={dateEnd}
+              onChange={(e) => setDateEnd(e.target.value)}
+              className="h-9"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Conteúdo */}
       {loading || isLoading ? (
         <div className="text-center py-6 text-gray-500">Carregando...</div>
@@ -125,7 +202,7 @@ export default function VisitantesList() {
         <>
           {/* Versão mobile (cards) */}
           <div className="flex flex-col gap-3 md:hidden">
-            {filteredRecords?.map((r) => (
+            {users?.data?.data?.map((r: VisitantesModel) => (
               <div key={r._id} className="border rounded-xl p-3 shadow-sm bg-white dark:bg-dark-secondary">
                 <div className="font-semibold text-lg">{r.name}</div>
 
@@ -171,7 +248,7 @@ export default function VisitantesList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredRecords?.map((r) => (
+                {users?.data?.data?.map((r: VisitantesModel) => (
                   <TableRow key={r._id}>
                     <TableCell>{r.name}</TableCell>
                     <TableCell>{r.phone || "-"}</TableCell>

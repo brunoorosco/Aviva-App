@@ -1,8 +1,13 @@
 import { AceitouRepository } from "@/infra/db/repositories/mongo/aceitou";
 
-export const getAceitouService = async (churchId: string, page: number, limit: number) => {
+export const getAceitouService = async (churchId: string, page: number, limit: number, filters?: {
+  name?: string;
+  rede?: string;
+  dateStart?: string;
+  dateEnd?: string;
+}) => {
   const aceitouRepository = new AceitouRepository();
-  const result = await aceitouRepository.getUseusAceitou(churchId, page, limit);
+  const result = await aceitouRepository.getUseusAceitou(churchId, page, limit, filters);
 
   return result;
 };
