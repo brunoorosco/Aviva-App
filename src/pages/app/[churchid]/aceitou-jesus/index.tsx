@@ -94,7 +94,7 @@ export const AceitouJesusList = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Filtro por nome */}
           <div className="md:col-span-2 lg:col-span-1">
             <Label htmlFor="search-name" className="text-xs">Nome</Label>
