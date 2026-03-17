@@ -56,7 +56,7 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
   const canViewFinancialReport = () => {
     if (!session?.user) return false;
     const userPermissions = session.user.permission || [];
-    return hasPermission(userPermissions, [ROLES.ADMIN, ROLES.PASTOR, ROLES.SECRETARIA]);
+    return hasPermission(userPermissions, [ROLES.ADMIN, ROLES.SECRETARIA]);
   };
 
   const reencontristasCount = encontro?.encontristas?.length ?? 0;
@@ -171,7 +171,7 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
                 )}
                 
                 {/* Botão de Ficha de Inscrição - sempre visível para encontros futuros */}
-                {isEncontroFuturo() && (
+                {isEncontroFuturo() || canViewFinancialReport()&& (
                   <button
                     onClick={handleFichaInscricao}
                     className="
