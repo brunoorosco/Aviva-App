@@ -323,7 +323,11 @@ export const MemberCard = ({ member }: Props) => {
                           id="date"
                           type="date"
                           value={format(selectedDate, "yyyy-MM-dd")}
-                          onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                          onChange={(e) => {
+                            if (!e.target.value) return;
+                            const [year, month, day] = e.target.value.split("-").map(Number);
+                            setSelectedDate(new Date(year, month - 1, day));
+                          }}
                         />
                       </div>
                       <Button onClick={handleAddRecord} className="w-full">

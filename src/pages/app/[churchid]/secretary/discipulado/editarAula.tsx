@@ -158,7 +158,14 @@ const EditAula = () => {
                             <Input
                                 type="date"
                                 value={data ? format(data, "yyyy-MM-dd") : ""}
-                                onChange={(e) => setData(e.target.value ? new Date(e.target.value) : undefined)}
+                                onChange={(e) => {
+                                    if (!e.target.value) {
+                                        setData(undefined);
+                                        return;
+                                    }
+                                    const [year, month, day] = e.target.value.split("-").map(Number);
+                                    setData(new Date(year, month - 1, day));
+                                }}
                             />
                         </div>
 
