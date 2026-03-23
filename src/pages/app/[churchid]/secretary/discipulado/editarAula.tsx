@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
-import { ArrowLeft, Plus, Save, Trash2, UserPlus } from "lucide-react";
+import { ArrowLeft, Plus, Save, Trash2, UserPlus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -46,6 +46,7 @@ const EditAula = () => {
     const [ministradorNome, setMinistradorNome] = useState("");
     const [alunos, setAlunos] = useState<AlunoPresenca[]>([]);
     const [membroSelecionado, setMembroSelecionado] = useState("");
+    const [busca, setBusca] = useState("");
 
     // ✅ Sincroniza state quando aula carrega
     useEffect(() => {
@@ -194,32 +195,65 @@ const EditAula = () => {
                             </span>
                         </div>
 
-                        {/* Select de usuários ativos */}
-                        <div className="flex gap-2">
-                            <Select value={membroSelecionado} onValueChange={handleAddAluno}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Selecione um usuário para adicionar" />
-                                </SelectTrigger>
-                                <SelectContent className="max-h-[300px] overflow-y-auto">
-                                    {(usuariosFiltrados || []).map((usuario) => (
-                                        <SelectItem key={usuario._id} value={usuario._id}>
-                                            <div className="flex flex-col">
-                                                <span className="font-medium">{usuario.name}</span>
+                        {/* Adicionar aluno — busca e seleção */}
+                        <div className="flex flex-col gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium">Buscar para adicionar</Label>
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Digite o nome do aluno..."
+                                        value={membroSelecionado}
+                                        onChange={(e) => setMembroSelecionado(e.target.value)}
+                                        className="pl-9"
+                                    />
+                                </div>
+                                
+                                {membroSelecionado && (
+                                    <div className="border border-border rounded-lg bg-card/50 max-h-[200px] overflow-y-auto shadow-sm">
+                                        {(usuariosFiltrados.filter(u => 
+                                            u.name.toLowerCase().includes(membroSelecionado.toLowerCase())
+                                        ) || []).map((usuario) => (
+                                            <div
+                                                key={usuario._id}
+                                                onClick={() => {
+                                                    handleAddAluno(usuario._id);
+                                                    setMembroSelecionado(""); // Limpa a busca após adicionar
+                                                }}
+                                                className="px-4 py-2 hover:bg-accent cursor-pointer border-b border-border last:border-0 flex flex-col transition-colors"
+                                            >
+                                                <span className="font-medium text-sm">{usuario.name}</span>
                                                 <span className="text-xs text-muted-foreground">
                                                     {usuario.rede?.name || "Sem rede"} • {usuario.role}
                                                 </span>
                                             </div>
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <Button
-                                onClick={() => handleAddAluno(membroSelecionado)}
-                                disabled={!membroSelecionado}
-                                size="icon"
-                            >
-                                <Plus className="h-4 w-4" />
-                            </Button>
+                                        ))}
+                                        {usuariosFiltrados.filter(u => 
+                                            u.name.toLowerCase().includes(membroSelecionado.toLowerCase())
+                                        ).length === 0 && (
+                                            <div className="px-4 py-3 text-sm text-muted-foreground text-center">
+                                                Nenhum aluno encontrado
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Campo de busca na lista de chamada (pessoas já adicionadas) */}
+                            {alunos.length > 0 && (
+                                <div className="space-y-2 pt-2 border-t border-border">
+                                    <Label className="text-sm font-medium">Filtrar lista de chamada</Label>
+                                    <div className="relative">
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            placeholder="Filtrar por nome na lista..."
+                                            value={busca}
+                                            onChange={(e) => setBusca(e.target.value)}
+                                            className="pl-9"
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Lista de alunos adicionados */}
@@ -235,30 +269,34 @@ const EditAula = () => {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {alunos.map((aluno) => (
-                                            <TableRow key={aluno.membroId} className={cn(!aluno.presente && "opacity-50")}>
-                                                <TableCell className="text-center">
-                                                    <Checkbox
-                                                        checked={aluno.presente}
-                                                        onCheckedChange={() => handleTogglePresenca(aluno.membroId)}
-                                                    />
-                                                </TableCell>
-                                                <TableCell className="font-medium">{aluno.nome}</TableCell>
-                                                <TableCell className="text-muted-foreground">
-                                                    {aluno.rede?.name || "-"}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => handleRemoveAluno(aluno.membroId)}
-                                                        className="h-8 w-8 text-destructive hover:text-destructive"
-                                                    >
-                                                        <Trash2 className="h-3.5 w-3.5" />
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                        {alunos
+                                            .filter((a) =>
+                                                a.nome.toLowerCase().includes(busca.toLowerCase())
+                                            )
+                                            .map((aluno) => (
+                                                <TableRow key={aluno.membroId} className={cn(!aluno.presente && "opacity-50")}>
+                                                    <TableCell className="text-center">
+                                                        <Checkbox
+                                                            checked={aluno.presente}
+                                                            onCheckedChange={() => handleTogglePresenca(aluno.membroId)}
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell className="font-medium">{aluno.nome}</TableCell>
+                                                    <TableCell className="text-muted-foreground">
+                                                        {aluno.rede?.name || "-"}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => handleRemoveAluno(aluno.membroId)}
+                                                            className="h-8 w-8 text-destructive hover:text-destructive"
+                                                        >
+                                                            <Trash2 className="h-3.5 w-3.5" />
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
                                     </TableBody>
                                 </Table>
                             </div>

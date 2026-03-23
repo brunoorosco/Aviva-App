@@ -12,9 +12,11 @@ import {
   XCircle,
   AlertTriangle,
   Edit3,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -56,6 +58,7 @@ const Discipulado = () => {
   
  const [selectedCiclo, setSelectedCiclo] = useState<string>("");
  const [expandedAula, setExpandedAula] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
 
  const { data: ciclos = [] } = useCiclos(churchId);
  const { data: aulas = [], isLoading: loadingAulas } = useAulas(churchId, selectedCiclo || undefined);
@@ -89,6 +92,12 @@ const handleEditAula = (aula: AulaDiscipulado) => {
   const totalPresentes = (aula: AulaDiscipulado) => aula.alunos.filter((a) => a.presente).length;
   const totalAusentes = (aula: AulaDiscipulado) => aula.alunos.filter((a) => !a.presente).length;
 
+  const aulasFiltradas = (aulas || []).filter((aula) =>
+    aula.tema.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    aula.ministrador?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    aula.alunos.some(aluno => aluno.nome.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
@@ -120,7 +129,22 @@ const handleEditAula = (aula: AulaDiscipulado) => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-        {/* Stats */}
+        {/* Search and Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div className="md:col-span-3">
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        placeholder="Buscar por tema, ministro ou aluno..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-9"
+                    />
+                </div>
+            </div>
+            {/* Ciclo Select can go here if needed */}
+        </div>
+        
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card>
             <CardContent className="flex items-center gap-3 p-4">
@@ -212,7 +236,7 @@ const handleEditAula = (aula: AulaDiscipulado) => {
             onValueChange={setExpandedAula}
             className="space-y-3"
           >
-            {(aulas || []).map((aula) => (
+            {(aulasFiltradas || []).map((aula) => (
               <AccordionItem
                 key={aula.id}
                 value={aula.id}
