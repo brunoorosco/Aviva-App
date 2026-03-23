@@ -208,10 +208,10 @@ const EditAula = () => {
                                         className="pl-9"
                                     />
                                 </div>
-                                
+
                                 {membroSelecionado && (
                                     <div className="border border-border rounded-lg bg-card/50 max-h-[200px] overflow-y-auto shadow-sm">
-                                        {(usuariosFiltrados.filter(u => 
+                                        {(usuariosFiltrados.filter(u =>
                                             u.name.toLowerCase().includes(membroSelecionado.toLowerCase())
                                         ) || []).map((usuario) => (
                                             <div
@@ -228,19 +228,19 @@ const EditAula = () => {
                                                 </span>
                                             </div>
                                         ))}
-                                        {usuariosFiltrados.filter(u => 
+                                        {usuariosFiltrados.filter(u =>
                                             u.name.toLowerCase().includes(membroSelecionado.toLowerCase())
                                         ).length === 0 && (
-                                            <div className="px-4 py-3 text-sm text-muted-foreground text-center">
-                                                Nenhum aluno encontrado
-                                            </div>
-                                        )}
+                                                <div className="px-4 py-3 text-sm text-muted-foreground text-center">
+                                                    Nenhum aluno encontrado
+                                                </div>
+                                            )}
                                     </div>
                                 )}
                             </div>
 
                             {/* Campo de busca na lista de chamada (pessoas já adicionadas) */}
-                            {alunos.length > 0 && (
+                            {/* {alunos.length > 0 && (
                                 <div className="space-y-2 pt-2 border-t border-border">
                                     <Label className="text-sm font-medium">Filtrar lista de chamada</Label>
                                     <div className="relative">
@@ -253,7 +253,7 @@ const EditAula = () => {
                                         />
                                     </div>
                                 </div>
-                            )}
+                            )} */}
                         </div>
 
                         {/* Lista de alunos adicionados */}
