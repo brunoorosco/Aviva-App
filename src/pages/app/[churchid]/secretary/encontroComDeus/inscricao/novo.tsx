@@ -229,23 +229,29 @@ export default function GroupFinance() {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-background">
-      <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4 justify-between">
-          <div className="flex">
-            <Button variant="ghost" size="icon" onClick={() => navigate.back()}>
+      <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-2 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+            <Button variant="ghost" size="icon" onClick={() => navigate.back()} className="shrink-0 h-9 w-9">
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div>
-              <h1 className="text-xl font-bold font-[Montserrat]">Inscrição Encontro com Deus</h1>
-              <p className="text-xs text-muted-foreground">
+            <div className="min-w-0">
+              <h1 className="text-base sm:text-lg md:text-xl font-bold font-[Montserrat] leading-tight truncate sm:whitespace-normal">
+                Inscrição Encontro com Deus
+              </h1>
+              <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
                 {encontroInfo
                   ? `Encontro #${encontroInfo.numero}`
                   : "Gerenciamento de encontristas e equipe"}
               </p>
             </div>
           </div>
-          <div>
-            <Button onClick={handleSave} disabled={isLoading}>
+          <div className="shrink-0">
+            <Button 
+              onClick={handleSave} 
+              disabled={isLoading}
+              className="bg-orange-600 hover:bg-orange-700 text-white font-bold h-9 sm:h-10 px-4 sm:px-8"
+            >
               {isLoading ? "Salvando..." : "Salvar"}
             </Button>
           </div>

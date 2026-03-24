@@ -14,19 +14,33 @@ export const getEncontroComDeusByIdService = async (churchId: string, encontroId
   return result;
 };
 
-export const createEncontroComDeusService = async (data: any): Promise<any> => {
+export const createEncontroComDeusService = async (data: any, churchId: string): Promise<any> => {
   const encontroRepository = new EncontroComDeusRepository();
-  const churchRepository = new ChurChMongoRepository();
-  const churchs = await churchRepository.getChurch();
 
-  const dataNormalizada = normalizarEncontristasPorIgreja(data.encontristas, "Avivamento Sede");
   const novoEncontro = {
     data: new Date(data.data),
-    encontristas: data.encontristas,
+    encontristas: data.encontristas || [],
     numero: data.numero,
+    descricao: data.descricao,
+    churchId,
+    igreja: "Avivamento Sede", // Mantendo o padrão anterior ou buscando da igreja se necessário
+    equipe: [],
+    financeiro: [],
   };
   const saved = await encontroRepository.create(novoEncontro);
   return saved;
+};
+
+export const updateEncontroComDeusService = async (id: string, data: any): Promise<any> => {
+  const encontroRepository = new EncontroComDeusRepository();
+
+  const updateData = {
+    data: new Date(data.data),
+    numero: data.numero,
+    descricao: data.descricao,
+  };
+  const result = await encontroRepository.update(id, updateData);
+  return result;
 };
 
 export const importEncontroComDeusService = async (data: any): Promise<any> => {

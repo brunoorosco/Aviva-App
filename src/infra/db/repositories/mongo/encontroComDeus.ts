@@ -15,6 +15,20 @@ class EncontroComDeusRepository {
       throw error;
     }
   }
+  
+  async update(id: string, encontro: any): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+      const result = await collection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { ...encontro, updatedAt: new Date().toISOString() } },
+      );
+      return result;
+    } catch (error) {
+      console.error("Error updating encontroComDeus:", error);
+      throw error;
+    }
+  }
 
   // Criar ou atualizar inscrição financeira de uma rede
   async upsertInscricaoRede(encontroId: string, redeId: string, inscricaoData: any): Promise<any> {

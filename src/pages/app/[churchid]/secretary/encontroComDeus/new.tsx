@@ -20,6 +20,7 @@ type FormValues = {
   data: string;
   igreja: string;
   numero?: number;
+  descricao?: string;
 };
 
 const NovoEncontroComDeus = () => {
@@ -28,6 +29,7 @@ const NovoEncontroComDeus = () => {
       encontristas: [],
       data: new Date().toISOString().split("T")[0],
       igreja: "",
+      descricao: "",
     },
   });
 
@@ -40,10 +42,6 @@ const NovoEncontroComDeus = () => {
   const churchId = session?.user.churchId as string;
 
   const onSubmit = handleSubmit(async (data) => {
-    if (!data.encontristas?.length) {
-      Toast.showError("Adicione pelo menos um encontrista!");
-      return;
-    }
     setIsLoading(true);
     const response = await useHttpPost({
       url: `/api/protected/churches/${churchId}/encontroComDeus`,
@@ -71,7 +69,7 @@ const NovoEncontroComDeus = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             <div className="space-y-1">
               <Label className="text-xs uppercase font-bold text-slate-500 dark:text-gray-200">
                 Data
@@ -101,8 +99,24 @@ const NovoEncontroComDeus = () => {
                 )}
               />
             </div>
+            <div className="space-y-1 md:col-span-2 lg:col-span-1">
+              <Label className="text-xs uppercase font-bold text-slate-500  dark:text-gray-200">
+                Descrição
+              </Label>
+              <Controller
+                name="descricao"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder="Ex: Encontro de Casais"
+                    className="h-9 dark:border-gray-400"
+                  />
+                )}
+              />
+            </div>
           </div>
-          <div className="self-end">
+          <div className="flex items-center gap-2 self-end">
             <ImportButton
               inputFileRef={inputFileRef}
               onImport={(imported) => imported.forEach((c) => append(c))}
@@ -225,20 +239,18 @@ const NovoEncontroComDeus = () => {
         </div>
 
         {/* FOOTER DE AÇÕES */}
-        {fields.length > 0 && (
-          <div className="sticky bottom-6 flex justify-end gap-4 bg-white/80 dark:bg-dark-secondary/30 backdrop-blur-md p-4 rounded-2xl border shadow-lg">
-            <Button variant="ghost" type="button" onClick={() => router.back()}>
-              Cancelar
-            </Button>
-            <Button
-              className="bg-emerald-600 hover:bg-emerald-700 min-w-[150px]"
-              type="submit"
-              disabled={isLoading}
-            >
-              {isLoading ? <Loader2Icon className="animate-spin" /> : "Finalizar Cadastro"}
-            </Button>
-          </div>
-        )}
+        <div className="sticky bottom-6 flex justify-end gap-4 bg-white/80 dark:bg-dark-secondary/30 backdrop-blur-md p-4 rounded-2xl border shadow-lg">
+          <Button variant="ghost" type="button" onClick={() => router.back()}>
+            Cancelar
+          </Button>
+          <Button
+            className="bg-emerald-600 hover:bg-emerald-700 min-w-[150px]"
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? <Loader2Icon className="animate-spin" /> : "Finalizar Cadastro"}
+          </Button>
+        </div>
       </form>
     </div>
   );

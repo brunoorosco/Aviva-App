@@ -37,7 +37,8 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
     const hoje = new Date();
     hoje.setDate(hoje.getDate() - 1);
     hoje.setHours(0, 0, 0, 0); // Zera as horas para comparar apenas a data
-    return dataEncontro >= hoje;
+    const data = dataEncontro >= hoje;
+    return data;
   };
 
   const handleFichaInscricao = (e: React.MouseEvent) => {
@@ -80,7 +81,12 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
             <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <Calendar className="w-4 h-4 flex-shrink-0" />
               <time className="text-sm font-medium">{formatDate(encontro.data)}</time>
-              
+              {encontro.descricao && (
+                <span className="text-xs text-gray-400 dark:text-gray-500 italic ml-2">
+                  - {encontro.descricao}
+                </span>
+              )}
+
               {/* Botão de editar ao lado da data */}
               <button
                 onClick={(e) => {
@@ -143,13 +149,13 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
               <span className="text-xs text-gray-400 dark:text-gray-500">
                 Clique para visualizar detalhes
               </span>
-              
+
               <div className="flex items-center gap-2">
                 {/* Botão de Exportar - sempre visível se houver dados */}
                 {encontro.encontristas && encontro.encontristas.length > 0 && (
                   <ExportButton encontro={encontro} />
                 )}
-                
+
                 {/* Botão de Relatório Financeiro - visível para Admin, Pastor e Secretaria */}
                 {canViewFinancialReport() && encontro.financeiro && (
                   <button
@@ -169,9 +175,9 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
                     <span className="hidden sm:inline">Relatório Financeiro</span>
                   </button>
                 )}
-                
+
                 {/* Botão de Ficha de Inscrição - sempre visível para encontros futuros */}
-                {isEncontroFuturo() || canViewFinancialReport()&& (
+                {(isEncontroFuturo() || canViewFinancialReport()) && (
                   <button
                     onClick={handleFichaInscricao}
                     className="
@@ -189,7 +195,7 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
                     <span className="hidden sm:inline">Ficha de Inscrição</span>
                   </button>
                 )}
-                
+
                 <EyeIcon className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-orange-400  transition-colors" />
               </div>
             </div>

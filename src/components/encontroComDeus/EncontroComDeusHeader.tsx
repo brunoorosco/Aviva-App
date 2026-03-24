@@ -88,8 +88,8 @@ const Header = <T extends TEncontroComDeus,>({
       .filter(item => {
         if (!item.data) return false
         const date = new Date(item.data)
-        return date.getMonth() === now.getMonth() && 
-               date.getFullYear() === now.getFullYear()
+        return date.getMonth() === now.getMonth() &&
+          date.getFullYear() === now.getFullYear()
       })
       .reduce((sum, item) => sum + (item.encontristas?.length || 0), 0)
 
@@ -114,8 +114,8 @@ const Header = <T extends TEncontroComDeus,>({
     }
   }, [data, total])
 
- const { data: session } = useSession();
-   const canViewButtons = () => {
+  const { data: session } = useSession();
+  const canViewButtons = () => {
     if (!session?.user) return false;
     const userPermissions = session.user.permission || [];
     return hasPermission(userPermissions, [ROLES.ADMIN, ROLES.PASTOR, ROLES.SECRETARIA]);
@@ -142,13 +142,13 @@ const Header = <T extends TEncontroComDeus,>({
                 <h2 className='text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white'>
                   {title}
                 </h2>
-                <Badge 
+                <Badge
                   className='bg-blue-100 text-blue-700 dark:bg-orange-900/30 dark:text-orange-400 w-fit'
                 >
                   {total} {total === 1 ? 'encontro' : 'encontros'}
                 </Badge>
               </div>
-              
+
               {description && (
                 <p className='text-sm text-gray-500 dark:text-gray-400 mt-1'>
                   {description}
@@ -170,22 +170,22 @@ const Header = <T extends TEncontroComDeus,>({
           </div>
 
           {/* Seção de Ações */}
-           {canViewButtons() && (
-          <div className='flex flex-col sm:flex-row gap-2 sm:gap-3 shrink-0'>
+          {canViewButtons() && (
+            <div className='flex flex-col sm:flex-row gap-2 sm:gap-3 shrink-0'>
 
-            {/* Botão Novo */}
-            <Link href={`${pathname}/new`} className='w-full sm:w-auto'>
-              <Button 
-                className='text-white w-full h-full bg-blue-500 hover:bg-blue-600  font-semibold dark:bg-orange-500 dark:hover:bg-orange-600' 
-                size='default'
-              >
-                <Plus className='mr-2 h-4 w-4' />
-                <span className='hidden sm:inline'>Novo Encontro</span>
-                <span className='sm:hidden'>Novo</span>
-              </Button>
-            </Link>
-          </div>
-           )}
+              {/* Botão Novo */}
+              <Link href={`${pathname}/new`} className='w-full sm:w-auto'>
+                <Button
+                  className='text-white w-full h-full bg-blue-500 hover:bg-blue-600  font-semibold dark:bg-orange-500 dark:hover:bg-orange-600'
+                  size='default'
+                >
+                  <Plus className='mr-2 h-4 w-4' />
+                  <span className='hidden sm:inline'>Novo Encontro</span>
+                  <span className='sm:hidden'>Novo</span>
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Estatísticas Detalhadas */}
@@ -203,7 +203,7 @@ const Header = <T extends TEncontroComDeus,>({
                 {total}
               </p>
             </div>
-            
+
             {/* Casas deste Mês */}
             <div className='bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-xl'>
               <div className='flex items-center gap-2 mb-2'>

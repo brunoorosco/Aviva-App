@@ -9,7 +9,7 @@ import { TEncontroComDeus } from '@/domain/models/encontroComDeus'
 import { useHttpPut } from '@/hooks/api'
 import { useState } from 'react'
 import Toast from '@/components/Toast'
-import { Loader2Icon, Calendar, Hash } from 'lucide-react'
+import { Loader2Icon, Calendar, Hash, FileText } from 'lucide-react'
 
 interface EditEncontroModalProps {
   encontro: TEncontroComDeus
@@ -25,14 +25,14 @@ export function EditEncontroModal({ encontro, isOpen, onClose, onSuccess }: Edit
     defaultValues: {
       data: encontro.data ? new Date(encontro.data).toISOString().split('T')[0] : '',
       numero: encontro.numero || 0,
+      descricao: encontro.descricao || '',
     }
   })
 
   const onSubmit = async (data: any) => {
     setIsLoading(true)
-    // Ajuste a URL conforme sua API
     const response = await useHttpPut({
-      url: `/api/protected/encontroComDeus/${encontro._id}`,
+      url: `/api/protected/churches/${encontro.churchId || 'default'}/encontroComDeus/${encontro._id}`,
       data
     })
     setIsLoading(false)
@@ -75,6 +75,17 @@ export function EditEncontroModal({ encontro, isOpen, onClose, onSuccess }: Edit
               name="numero"
               control={control}
               render={({ field }) => <Input {...field} type="number" />}
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <Label className="flex items-center gap-2 text-slate-600">
+              <FileText className="w-4 h-4" /> Descrição
+            </Label>
+            <Controller
+              name="descricao"
+              control={control}
+              render={({ field }) => <Input {...field} placeholder="Ex: Encontro de Casais" />}
             />
           </div>
 

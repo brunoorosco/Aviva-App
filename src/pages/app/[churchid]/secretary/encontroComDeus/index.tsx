@@ -38,7 +38,7 @@ const EncontroComDeusList = () => {
   return (
     <div className='flex flex-col w-full max-w-4xl px-3 py-1 mx-auto rounded-lg mt-8 dark:text-dark-primary'>
       {showEditModal && selectedEncontro && (
-        <EditEncontroModal 
+        <EditEncontroModal
           encontro={selectedEncontro}
           isOpen={showEditModal}
           onClose={() => setShowEditModal(false)}

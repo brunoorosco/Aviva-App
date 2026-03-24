@@ -3,6 +3,8 @@ type BaseEncontro = {
   data: Date;
   numero: string;
   igreja: string;
+  churchId: string;
+  descricao?: string;
   equipe: TEquipe[];
   financeiro: FinanceiroRede[]; // ← Renomeado para clareza
 };
