@@ -63,3 +63,20 @@ export const createBatismoImportedService = async (
   const saved = await batismoRepository.create(novoBatismo)
   return saved
 }
+
+export const addBatizandoService = async (
+  batismoId: string,
+  batizando: { nome: string; rede: string; sexo: string }
+): Promise<any> => {
+  const batismoRepository = new BatismoMongoRepository()
+  return batismoRepository.addBatizando(batismoId, batizando)
+}
+
+export const removeBatizandoService = async (
+  batismoId: string,
+  nome: string,
+  rede: string
+): Promise<any> => {
+  const batismoRepository = new BatismoMongoRepository()
+  return batismoRepository.removeBatizando(batismoId, nome, rede)
+}

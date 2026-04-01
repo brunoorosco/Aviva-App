@@ -68,7 +68,7 @@ const BatismoList = () => {
                 key={bat._id}
                 batismos={bat}
                 onEdit={() => handleEdit(bat)}
-                basePath={asPath}
+                basePath={`/app/${churchid}/secretary/batismos`}
               />
             ))
           )}

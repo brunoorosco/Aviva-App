@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { useState } from "react";
-import { PrinterIcon } from "lucide-react";
+import { PrinterIcon, Edit3 } from "lucide-react";
 import { baptism } from "@/domain/models/baptism";
 import { gerarCertificados } from "../../lib/pdf";
+import { useSession } from "next-auth/react";
 
 type Props = {
   batismos: baptism;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 const BatismoItem = ({ batismos, onEdit, basePath }: Props) => {
+  const { data: session } = useSession();
   const [disabled, setDisabled] = useState(false);
 
   const formatDate = (dateValue: any) => {
@@ -21,13 +23,35 @@ const BatismoItem = ({ batismos, onEdit, basePath }: Props) => {
     return date.toLocaleDateString("pt-BR", { timeZone: "UTC" });
   };
 
+  const isAdmin = session?.user?.permission?.includes("admin");
+
+  // Comparação de data robusta (apenas dia, mês e ano)
+  const getDateOnly = (date: Date) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  };
+
+  const baptismDate = new Date(batismos.data);
+  // Se a data vier como string YYYY-MM-DD (comum em APIs), o JS pode interpretar como UTC 00:00. 
+  // Adicionamos 12 horas para garantir que caia no dia correto em fusos negativos (Brasil).
+  const dataString = batismos.data as unknown as string;
+  if (typeof dataString === 'string' && dataString.length <= 10) {
+    baptismDate.setHours(12, 0, 0, 0);
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const isFuture = getDateOnly(baptismDate) >= today.getTime() || isAdmin;
+
   const total = batismos.batizandos?.length || 0;
 
   const redes = [...new Set(batismos.batizandos?.map((b: any) => b.rede).filter(Boolean))];
 
   return (
-    <Link href={`${basePath}/${batismos._id}`}>
-      <li className="bg-card border rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition flex items-center justify-between gap-4">
+    <li className="bg-card border rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition flex items-center justify-between gap-4">
+      <Link href={`${basePath}/${batismos._id}`} className="flex-1 flex items-center gap-4">
         {/* LEFT */}
         <div className="flex flex-col gap-1">
           {/* Linha principal */}
@@ -61,20 +85,32 @@ const BatismoItem = ({ batismos, onEdit, basePath }: Props) => {
             </div>
           )}
         </div>
+      </Link>
 
-        {/* ACTIONS */}
+      {/* ACTIONS */}
+      <div className="flex items-center gap-3">
+        {isFuture && (
+          <Link
+            href={`${basePath}/${batismos._id}`}
+            className="flex items-center gap-2 text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-sm font-bold uppercase"
+          >
+            <Edit3 className="w-4 h-4" />
+            Editar Batismo
+          </Link>
+        )}
+
         <button
           onClick={(e) => {
             e.preventDefault();
             gerarCertificados(batismos.churchId, batismos);
           }}
-          className="flex items-center gap-1 text-sm text-primary hover:opacity-80"
+          className="flex items-center gap-1 text-sm text-primary hover:opacity-80 p-1.5"
         >
           <PrinterIcon className="w-4 h-4" />
           Certificados
         </button>
-      </li>
-    </Link>
+      </div>
+    </li>
   );
 };
 

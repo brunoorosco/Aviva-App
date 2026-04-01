@@ -52,19 +52,17 @@ const Batismo = () => {
   return (
     <div className='flex flex-col content-center w-full max-w-lg p-3 mx-auto rounded-lg dark:text-dark-primary'>
       <Suspense fallback={'teste loading'}>
-        <div className='flex justify-between px-3 pt-5 mt-2 bg-white rounded-t-lg dark:bg-dark-secondary'>
-          <div className=''>
-            <div className='flex justify-between'>
-              <p className='mr-3 text-2xl font-bold leading-5'>Batizandos</p>
-              <div className='leading-5'>
-                {/* <GiMeepleGroup size={24} /> */}
-              </div>
-            </div>
-            <p className='mt-2 mb-5 text-gray-400'>{baptism?.data.length}</p>
+        <div className='flex flex-col gap-4 p-4 mb-2 bg-white rounded-lg shadow dark:bg-dark-secondary'>
+          <div className='flex justify-between items-center'>
+            <h1 className='text-2xl font-bold'>Lista de Batizados</h1>
+            <Link 
+              href={`/app/${session?.user.churchId}/secretary/batismos`}
+              className='bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold uppercase hover:bg-blue-700 transition'
+            >
+              Gerenciar Eventos (Editar)
+            </Link>
           </div>
-          <div onClick={handlePrint}>
-            <IoPrintOutline size={25} />
-          </div>
+          <p className='text-sm text-gray-500'>Total: {baptism?.data.length || 0}</p>
         </div>
 
         <div className='shadow-sm'>

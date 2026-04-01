@@ -75,4 +75,40 @@ export class BatismoMongoRepository {
       throw error
     }
   }
+
+  async addBatizando(batismoId: string, batizando: any): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName)
+      const result = await collection.updateOne(
+        { _id: new ObjectId(batismoId) },
+        { $push: { batizandos: batizando } as any }
+      )
+      return result
+    } catch (error) {
+      console.error('Error adding batizando:', error)
+      throw error
+    }
+  }
+
+  async removeBatizando(
+    batismoId: string,
+    nome: string,
+    rede: string
+  ): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName)
+      const result = await collection.updateOne(
+        { _id: new ObjectId(batismoId) },
+        {
+          $pull: {
+            batizandos: { nome, rede }
+          } as any
+        }
+      )
+      return result
+    } catch (error) {
+      console.error('Error removing batizando:', error)
+      throw error
+    }
+  }
 }
