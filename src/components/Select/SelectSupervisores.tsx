@@ -36,14 +36,17 @@ export const SupervisorSelect = ({
   const [items, setItems] = useState<TSupervisor[]>([])
 
   const { data: supervisores } = useHttpGet<TSupervisor[]>(
-    `/api/protected/churches/${session?.user.churchId}/cems`
+    `/api/protected/churches/${session?.user.churchId}/redes`
   )
 
   useEffect(() => {
-    if (supervisores?.data){
-      setItems(supervisores.data)
+    if (supervisores?.data) {
+      if (Array.isArray(supervisores.data)) {
+        setItems(supervisores.data)
+      } else if ((supervisores.data as any).data && Array.isArray((supervisores.data as any).data)) {
+        setItems((supervisores.data as any).data)
+      }
     } 
-      
   }, [supervisores])
 
   return (
@@ -57,7 +60,7 @@ export const SupervisorSelect = ({
             <SelectValue placeholder={title} />
           </SelectTrigger>
           <SelectContent>
-            {items.map((item) => (
+            {Array.isArray(items) && items.map((item) => (
               <SelectItem key={item._id} value={`${item._id}|${item.name}`}>
                 {item.name}
               </SelectItem>
