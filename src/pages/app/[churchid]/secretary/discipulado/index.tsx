@@ -43,30 +43,31 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import Toast from "@/components/Toast";
 import {
- useAulas,
- useCiclos,
- useDeleteAula,
- usePendencias,
- useUpdateAula,
+  useAulas,
+  useCiclos,
+  useDeleteAula,
+  usePendencias,
+  useUpdateAula,
 } from "@/hooks/useDiscipulado";
 import { AulaDiscipulado } from "@/domain/models/discupulado";
+import { capitalizeWords } from "@/utils/capitalizaFirst";
 
 const Discipulado = () => {
- const router= useRouter();
- const { query } = router;
- const churchId= query.churchid as string | undefined;
-  
- const [selectedCiclo, setSelectedCiclo] = useState<string>("");
- const [expandedAula, setExpandedAula] = useState<string>("");
+  const router = useRouter();
+  const { query } = router;
+  const churchId = query.churchid as string | undefined;
+
+  const [selectedCiclo, setSelectedCiclo] = useState<string>("");
+  const [expandedAula, setExpandedAula] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
 
- const { data: ciclos = [] } = useCiclos(churchId);
- const { data: aulas = [], isLoading: loadingAulas } = useAulas(churchId, selectedCiclo || undefined);
- const { data: pendencias = [] } = usePendencias(churchId, selectedCiclo || undefined);
- const updateAula = useUpdateAula(churchId);
- const deleteAula = useDeleteAula(churchId, () => Toast.showSuccess("Aula excluída"));
+  const { data: ciclos = [] } = useCiclos(churchId);
+  const { data: aulas = [], isLoading: loadingAulas } = useAulas(churchId, selectedCiclo || undefined);
+  const { data: pendencias = [] } = usePendencias(churchId, selectedCiclo || undefined);
+  const updateAula = useUpdateAula(churchId);
+  const deleteAula = useDeleteAula(churchId, () => Toast.showSuccess("Aula excluída"));
 
- const cicloAtivo = ciclos?.find((c) => c.ativo) || ciclos?.[0];
+  const cicloAtivo = ciclos?.find((c) => c.ativo) || ciclos?.[0];
   if (!selectedCiclo && cicloAtivo) {
     setSelectedCiclo(cicloAtivo.id);
   }
@@ -81,12 +82,12 @@ const Discipulado = () => {
     updateAula.mutate(updated);
   };
 
- const handleDeleteAula = (id: string) => {
+  const handleDeleteAula = (id: string) => {
     deleteAula.mutate(id);
   };
 
-const handleEditAula = (aula: AulaDiscipulado) => {
-  router.push(`/app/${churchId}/secretary/discipulado/editarAula?id=${aula.id}`);
+  const handleEditAula = (aula: AulaDiscipulado) => {
+    router.push(`/app/${churchId}/secretary/discipulado/editarAula?id=${aula.id}`);
   };
 
   const totalPresentes = (aula: AulaDiscipulado) => aula.alunos.filter((a) => a.presente).length;
@@ -131,20 +132,20 @@ const handleEditAula = (aula: AulaDiscipulado) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Search and Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-            <div className="md:col-span-3">
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        placeholder="Buscar por tema, ministro ou aluno..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-9"
-                    />
-                </div>
+          <div className="md:col-span-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por tema, ministro ou aluno..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9"
+              />
             </div>
-            {/* Ciclo Select can go here if needed */}
+          </div>
+          {/* Ciclo Select can go here if needed */}
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card>
             <CardContent className="flex items-center gap-3 p-4">
@@ -302,7 +303,7 @@ const handleEditAula = (aula: AulaDiscipulado) => {
                     <TableBody>
                       {aula.alunos.map((aluno) => (
                         <TableRow key={aluno.membroId}>
-                          <TableCell className="font-medium">{aluno.nome}</TableCell>
+                          <TableCell className="font-medium">{capitalizeWords(aluno.nome)}</TableCell>
                           <TableCell className="text-muted-foreground">{aluno.rede.name}</TableCell>
                           <TableCell className="text-center">
                             <Checkbox
