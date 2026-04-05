@@ -2,11 +2,11 @@ import { Button } from "@/components/ui/button";
 import { baptism } from "@/domain/models/baptism";
 import { getBatismoByIdService } from "@/services/batismos";
 import { capitalizeWords } from "@/utils/capitalizaFirst";
-import { ArrowLeft, PrinterIcon, Trash2, Plus, UserPlus, Edit3 } from "lucide-react";
+import { ArrowLeft, PrinterIcon, Trash2, UserPlus, FileSpreadsheet } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { GetServerSideProps } from "next/types";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import Toast from "@/components/Toast";
@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SupervisorSelect } from "@/components/Select/SelectSupervisores";
 import { useForm, Controller } from "react-hook-form";
+import * as XLSX from "xlsx";
 
 function formatDate(dateValue: any) {
   if (!dateValue) return "";
@@ -26,6 +27,57 @@ function formatDate(dateValue: any) {
 type Props = {
   batismo: baptism | null;
 };
+
+// ─── Função de exportação ────────────────────────────────────────────────────
+function exportarListaExcel(batismo: baptism, dataFormatada: string) {
+  const wb = XLSX.utils.book_new();
+
+  const toRow = (p: any, i: number) => ({
+    "#": i + 1,
+    Nome: capitalizeWords(p.nome),
+    Rede: p.rede || "-",
+    Sexo: p.sexo === "M" ? "Masculino" : p.sexo === "F" ? "Feminino" : "-",
+  });
+
+  // Sheet 1 — Todos (ordem alfabética)
+  const todos = [...batismo.batizandos]
+    .sort((a, b) => a.nome.localeCompare(b.nome))
+    .map(toRow);
+
+  // Sheet 2 — Somente homens
+  const homens = [...batismo.batizandos]
+    .filter((p) => p.sexo === "M")
+    .sort((a, b) => a.nome.localeCompare(b.nome))
+    .map(toRow);
+
+  // Sheet 3 — Somente mulheres
+  const mulheres = [...batismo.batizandos]
+    .filter((p) => p.sexo === "F")
+    .sort((a, b) => a.nome.localeCompare(b.nome))
+    .map(toRow);
+
+  const addSheet = (data: any[], sheetName: string) => {
+    const ws = XLSX.utils.json_to_sheet(data);
+
+    // Larguras de coluna
+    ws["!cols"] = [
+      { wch: 5 },   // #
+      { wch: 35 },  // Nome
+      { wch: 20 },  // Rede
+      { wch: 12 },  // Sexo
+    ];
+
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  };
+
+  addSheet(todos, "Todos");
+  addSheet(homens, "Homens");
+  addSheet(mulheres, "Mulheres");
+
+  const fileName = `batismo_${dataFormatada.replace(/\//g, "-")}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function BatismoPage({ batismo: initialBatismo }: Props) {
   const router = useRouter();
@@ -56,9 +108,9 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
   today.setHours(0, 0, 0, 0);
 
   const isFutureOrAdmin = getDateOnly(baptismDate) >= today.getTime() || isAdmin;
-
-  // Pode adicionar: batismo futuro + (admin ou mesma rede)
   const canAdd = isFutureOrAdmin;
+
+  const dataFormatada = formatDate(batismo.data);
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues: { nome: "", sexo: "", rede: "" },
@@ -122,7 +174,7 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Batismo</h1>
           <div className="flex flex-wrap items-center gap-3 text-sm">
-            <span className="text-muted-foreground">{formatDate(batismo.data)}</span>
+            <span className="text-muted-foreground">{dataFormatada}</span>
             <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary font-medium">
               {batismo.batizandos.length} batizandos
             </span>
@@ -142,7 +194,13 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
               className={`flex items-center gap-2 w-full sm:w-auto justify-center ${!isAdding ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md" : ""
                 }`}
             >
-              {isAdding ? "Cancelar Inscrição" : <><UserPlus size={18} /> Adicionar Batizando</>}
+              {isAdding ? (
+                "Cancelar Inscrição"
+              ) : (
+                <>
+                  <UserPlus size={18} /> Adicionar Batizando
+                </>
+              )}
             </Button>
           )}
           <Button
@@ -219,7 +277,23 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
 
       {/* LISTA */}
       <div className="bg-gray-50 dark:bg-background px-2 py-4 rounded-xl shadow-sm border">
-        <h2 className="text-xl font-semibold mb-4 px-2">Batizandos Confirmados</h2>
+        {/* Cabeçalho da lista com botão de exportar */}
+        <div className="flex items-center justify-between mb-4 px-2">
+          <h2 className="text-xl font-semibold">Batizandos Confirmados</h2>
+
+          {isAdmin && batismo.batizandos.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => exportarListaExcel(batismo, dataFormatada)}
+              className="flex items-center gap-2 text-green-700 border-green-300 hover:bg-green-50 hover:text-green-800"
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+              <span className="hidden sm:inline">Exportar Excel</span>
+              <span className="sm:hidden">Excel</span>
+            </Button>
+          )}
+        </div>
 
         {batismo.batizandos.length === 0 ? (
           <p className="text-sm text-center py-10 text-gray-500">
@@ -228,8 +302,6 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
         ) : (
           <ul className="grid sm:grid-cols-2 gap-3 p-2">
             {batismo.batizandos.map((pessoa, index) => {
-              // Admin pode remover qualquer um.
-              // Usuário comum pode remover apenas da própria rede.
               const canDelete = isAdmin || (!!userRede && pessoa.rede === userRede);
 
               return (
@@ -260,7 +332,7 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
                           pathname: `/api/protected/churches/${churchid}/baptism/certificado-pdf`,
                           query: {
                             nome: capitalizeWords(pessoa.nome),
-                            data: formatDate(batismo.data),
+                            data: dataFormatada,
                           },
                         }}
                         className="text-primary hover:opacity-80 p-2 rounded-full hover:bg-primary/10 transition"
