@@ -126,7 +126,7 @@ export default function FinanceReport() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-              <InfoCard label="Grupos" value={String(grupos.length)} />
+              <InfoCard label="Redes" value={String(grupos.length)} />
               <InfoCard label="Encontristas" value={String(totalEncontristas)} />
               <InfoCard label="Equipe" value={String(totalEquipe)} />
               <InfoCard label="Total Participantes" value={String(totalParticipantes)} />
