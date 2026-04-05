@@ -1,3 +1,8 @@
 {
-    "public": true
+    "public": true,
+    "functions": {
+        "src/pages/api/protected/churches/[churchid]/batismo/list-pdf.ts": {
+            "maxDuration": 30
+        }
+    }
 }
