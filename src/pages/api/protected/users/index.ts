@@ -11,7 +11,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.send({ message: "ok" });
     } else if (req.method === "PUT") {
       const resp = await updatePermissionAndPasswordUser(req.body);
-      res.send({ message: resp });
+      const { status, ...data } = resp;
+      res.status(status).json(data);
     } else {
       res.send("");
     }

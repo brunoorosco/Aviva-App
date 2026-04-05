@@ -248,9 +248,10 @@ export class UsersMongoRepository {
     password: string;
     permission: string[];
   }) {
+    const emailLower = email.toLowerCase();
     const collection = await MongoHelper.getCollection(this.collectionName);
     const resp = await collection.updateOne(
-      { email },
+      { email: { $regex: emailLower, $options: "i" } },
       {
         $set: {
           password,
@@ -258,7 +259,8 @@ export class UsersMongoRepository {
           updatedAt: new Date(),
         },
       },
-    );
+    )
+    console.log("```", resp);
     return resp;
   }
 

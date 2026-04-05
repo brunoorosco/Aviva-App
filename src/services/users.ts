@@ -2,8 +2,6 @@ import { TMinisterialLevel } from "@/domain/models/ministerial";
 import { User } from "@/domain/models/users";
 import CryptAdapter from "@/infra/cryptography/bcrypt";
 import { UsersMongoRepository } from "@/infra/db/repositories/mongo/users";
-import { NextResponse } from "next/server";
-import crypto from "crypto";
 import { AddressModel } from "@/domain/models/address";
 
 type TUser = {
@@ -114,7 +112,7 @@ export const updatePermissionAndPasswordUser = async (data: any) => {
   const cripto = new CryptAdapter();
 
   if (!emails || !password || !permission) {
-    return NextResponse.json({ message: "Campos obrigatórios." }, { status: 400 });
+    return { status: 400, message: "Campos obrigatórios." };
   }
 
   const emailList = emails
@@ -123,7 +121,7 @@ export const updatePermissionAndPasswordUser = async (data: any) => {
     .filter((e: string) => e.length > 0);
 
   if (emailList.length === 0) {
-    return NextResponse.json({ message: "Nenhum email válido informado." }, { status: 400 });
+    return { status: 400, message: "Nenhum email válido informado." };
   }
 
   const hashedPassword = await cripto.hashPassword(password);
@@ -131,9 +129,9 @@ export const updatePermissionAndPasswordUser = async (data: any) => {
   const results: any[] = [];
   for (const email of emailList) {
     const user = await userRepository.getByEmail(email);
-    if (!user) {
-      results.push({ email, updated: false, reason: "Usuário não encontrado" });
-      continue;
+
+    if (!user || user === null) {
+      return { status: 404, message: `Usuário não encontrado para o email: ${email}` };
     }
 
     let permissions: string[] = [];
@@ -147,6 +145,8 @@ export const updatePermissionAndPasswordUser = async (data: any) => {
       permissions.push(permission);
     }
 
+    console.log(permissions);
+
     await userRepository.updateByEmail({
       email,
       password: hashedPassword,
@@ -156,10 +156,11 @@ export const updatePermissionAndPasswordUser = async (data: any) => {
     results.push({ email, updated: true });
   }
 
-  return NextResponse.json({
+  return {
+    status: 200,
     message: "Usuários atualizados com sucesso!",
     results,
-  });
+  };
 };
 
 export const getUsersByStatus = async (churchId: string, cargo: TMinisterialLevel) => {

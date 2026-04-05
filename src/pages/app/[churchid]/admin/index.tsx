@@ -61,7 +61,7 @@ export default function UpdateUsersPage() {
           <div className="space-y-2">
             <Label>Senha</Label>
             <Input
-              type="password"
+              type="text"
               placeholder="Digite a nova senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
