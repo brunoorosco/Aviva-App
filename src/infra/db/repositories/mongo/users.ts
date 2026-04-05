@@ -260,7 +260,6 @@ export class UsersMongoRepository {
         },
       },
     )
-    console.log("```", resp);
     return resp;
   }
 

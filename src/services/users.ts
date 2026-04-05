@@ -3,6 +3,7 @@ import { User } from "@/domain/models/users";
 import CryptAdapter from "@/infra/cryptography/bcrypt";
 import { UsersMongoRepository } from "@/infra/db/repositories/mongo/users";
 import { AddressModel } from "@/domain/models/address";
+import { sendMessageApiWhatsapp } from "@/infra/http/whatsapp";
 
 type TUser = {
   name: string;
@@ -145,14 +146,17 @@ export const updatePermissionAndPasswordUser = async (data: any) => {
       permissions.push(permission);
     }
 
-    console.log(permissions);
-
-    await userRepository.updateByEmail({
+    const resp = await userRepository.updateByEmail({
       email,
       password: hashedPassword,
       permission: permissions,
     });
+    console.log("```", resp);
+    if (resp.modifiedCount === 0) {
+      return { status: 400, message: `Usuário não encontrado para o email: ${email}` };
+    }
 
+    await sendMessageApiWhatsapp(user.phone, `Sua senha foi alterada com sucesso!\n\nE-mail: ${email}\nNova senha: ${password}\n\nAcesse: https://aviva.vercel.app/login`, true);
     results.push({ email, updated: true });
   }
 
