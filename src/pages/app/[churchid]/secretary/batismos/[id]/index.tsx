@@ -36,12 +36,10 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   if (!batismo) return <p className="p-10 text-center">Batismo não encontrado.</p>;
-  
-  // Regra de Administrador
-  const isAdmin = session?.user?.role?.toLowerCase() === "bispo" || session?.user?.role?.toLowerCase() === "admin";
+
+  const isAdmin = !!session?.user?.permission?.includes("admin");
   const userRede = session?.user?.cem?.name;
 
-  // Comparação de data robusta (apenas dia, mês e ano)
   const getDateOnly = (date: Date) => {
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
@@ -49,23 +47,21 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
   };
 
   const baptismDate = new Date(batismo.data);
-  // Se a data vier como string YYYY-MM-DD, JS pode ler como UTC 00:00 (dia anterior no BR).
-  // Forçamos o deslocamento para garantir o dia correto.
   const dataString = batismo.data as unknown as string;
-  if (typeof dataString === 'string' && dataString.length <= 10) {
+  if (typeof dataString === "string" && dataString.length <= 10) {
     baptismDate.setHours(12, 0, 0, 0);
   }
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+
   const isFutureOrAdmin = getDateOnly(baptismDate) >= today.getTime() || isAdmin;
 
+  // Pode adicionar: batismo futuro + (admin ou mesma rede)
+  const canAdd = isFutureOrAdmin;
+
   const { control, handleSubmit, reset } = useForm({
-    defaultValues: {
-      nome: "",
-      sexo: "",
-      rede: "",
-    },
+    defaultValues: { nome: "", sexo: "", rede: "" },
   });
 
   const onAddCandidate = async (data: any) => {
@@ -78,18 +74,14 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
       };
 
       await axios.post(`/api/protected/churches/${churchid}/batismo/${batismo._id}`, payload);
-      
       Toast.showSuccess("Batizando adicionado!");
-      
-      // Atualizar lista local
+
       setBatismo({
         ...batismo,
-        batizandos: [...batismo.batizandos, { 
-          nome: payload.nome, 
-          rede: payload.rede, 
-          sexo: payload.sexo,
-          isCourse: false 
-        }].sort((a, b) => a.nome.localeCompare(b.nome)),
+        batizandos: [
+          ...batismo.batizandos,
+          { nome: payload.nome, rede: payload.rede, sexo: payload.sexo, isCourse: false },
+        ].sort((a, b) => a.nome.localeCompare(b.nome)),
       });
 
       setIsAdding(false);
@@ -104,7 +96,6 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
 
   const removeCandidate = async (nome: string, rede: string) => {
     if (!confirm(`Deseja remover ${nome}?`)) return;
-
     try {
       setIsLoading(true);
       await axios.delete(`/api/protected/churches/${churchid}/batismo/${batismo._id}`, {
@@ -114,7 +105,7 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
       Toast.showSuccess("Batizando removido!");
       setBatismo({
         ...batismo,
-        batizandos: batismo.batizandos.filter(p => !(p.nome === nome && p.rede === rede)),
+        batizandos: batismo.batizandos.filter((p) => !(p.nome === nome && p.rede === rede)),
       });
     } catch (error) {
       console.error(error);
@@ -126,7 +117,8 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
 
   return (
     <div className="sm:p-6 mt-10 max-w-4xl mx-auto pb-20">
-      <div className="flex items-start justify-between gap-4 p-4 mb-6">
+      {/* HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 p-4 mb-6">
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Batismo</h1>
           <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -142,34 +134,45 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
           </div>
         </div>
 
-        <div className="flex gap-2">
-          {isFutureOrAdmin && (
-            <Button 
-              onClick={() => setIsAdding(!isAdding)} 
-              variant={isAdding ? "outline" : "default"} 
-              className={`flex items-center gap-2 ${!isAdding ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md' : ''}`}
+        <div className="flex flex-wrap gap-2 sm:flex-nowrap">
+          {canAdd && (
+            <Button
+              onClick={() => setIsAdding(!isAdding)}
+              variant={isAdding ? "outline" : "default"}
+              className={`flex items-center gap-2 w-full sm:w-auto justify-center ${!isAdding ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md" : ""
+                }`}
             >
               {isAdding ? "Cancelar Inscrição" : <><UserPlus size={18} /> Adicionar Batizando</>}
             </Button>
           )}
-          <Button variant="outline" className="flex items-center gap-2" onClick={() => router.back()}>
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 w-full sm:w-auto justify-center"
+            onClick={() => router.back()}
+          >
             <ArrowLeft size={18} />
             Voltar
           </Button>
         </div>
       </div>
 
+      {/* FORM ADICIONAR */}
       {isAdding && (
         <div className="bg-white dark:bg-dark-secondary p-6 rounded-xl border shadow-sm mb-8 animate-in fade-in slide-in-from-top-4">
           <h3 className="text-lg font-medium mb-4">Novo Batizando</h3>
-          <form onSubmit={handleSubmit(onAddCandidate)} className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+          <form
+            onSubmit={handleSubmit(onAddCandidate)}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end"
+          >
             <div className="flex flex-col gap-1.5">
               <Label>Nome Completo</Label>
               <Controller
                 name="nome"
                 control={control}
                 rules={{ required: true }}
-                render={({ field }) => <Input {...field} placeholder="NOME DO BATIZANDO" className="uppercase" />}
+                render={({ field }) => (
+                  <Input {...field} placeholder="NOME DO BATIZANDO" className="uppercase" />
+                )}
               />
             </div>
 
@@ -206,7 +209,7 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
             )}
 
             <div className="sm:col-span-3 flex justify-end mt-2">
-              <Button type="submit" disabled={isLoading}>
+              <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                 {isLoading ? "Salvando..." : "Confirmar Inscrição"}
               </Button>
             </div>
@@ -214,16 +217,21 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
         </div>
       )}
 
+      {/* LISTA */}
       <div className="bg-gray-50 dark:bg-background px-2 py-4 rounded-xl shadow-sm border">
         <h2 className="text-xl font-semibold mb-4 px-2">Batizandos Confirmados</h2>
 
         {batismo.batizandos.length === 0 ? (
-          <p className="text-sm text-center py-10 text-gray-500">Nenhum batizando cadastrado até o momento.</p>
+          <p className="text-sm text-center py-10 text-gray-500">
+            Nenhum batizando cadastrado até o momento.
+          </p>
         ) : (
           <ul className="grid sm:grid-cols-2 gap-3 p-2">
             {batismo.batizandos.map((pessoa, index) => {
-              const canDelete = isAdmin || (userRede && pessoa.rede === userRede);
-              
+              // Admin pode remover qualquer um.
+              // Usuário comum pode remover apenas da própria rede.
+              const canDelete = isAdmin || (!!userRede && pessoa.rede === userRede);
+
               return (
                 <li
                   key={index}
@@ -243,24 +251,26 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <Link
-                      download
-                      target="_blank"
-                      href={{
-                        pathname: `/api/protected/churches/${churchid}/baptism/certificado-pdf`,
-                        query: {
-                          nome: capitalizeWords(pessoa.nome),
-                          data: formatDate(batismo.data),
-                        },
-                      }}
-                      className="text-primary hover:opacity-80 p-2 rounded-full hover:bg-primary/10 transition"
-                      title="Imprimir Certificado"
-                    >
-                      <PrinterIcon className="w-4 h-4" />
-                    </Link>
+                  <div className="flex items-center gap-2">
+                    {isAdmin && (
+                      <Link
+                        download
+                        target="_blank"
+                        href={{
+                          pathname: `/api/protected/churches/${churchid}/baptism/certificado-pdf`,
+                          query: {
+                            nome: capitalizeWords(pessoa.nome),
+                            data: formatDate(batismo.data),
+                          },
+                        }}
+                        className="text-primary hover:opacity-80 p-2 rounded-full hover:bg-primary/10 transition"
+                        title="Imprimir Certificado"
+                      >
+                        <PrinterIcon className="w-4 h-4" />
+                      </Link>
+                    )}
 
-                    {isFutureOrAdmin && canDelete && (
+                    {canDelete && (
                       <button
                         onClick={() => removeCandidate(pessoa.nome, pessoa.rede || "")}
                         className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition"

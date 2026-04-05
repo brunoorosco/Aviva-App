@@ -53,7 +53,7 @@ const BatismoList = () => {
           inputFileRef={inputFileRef}
           batismo={batismos?.data.data || []}
         />
-        <ul className='w-full p-4 bg-gray-50 divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-background'>
+        <ul className='w-full bg-gray-50 shadow-lg dark:rounded-b-lg dark:bg-background'>
           {!batismos ? (
             <div className='w-full p-4 bg-white shadow-lg dark:rounded-b-lg dark:bg-dark-secondary'>
               <p>Carregando batismos...</p>
@@ -64,12 +64,14 @@ const BatismoList = () => {
             </li>
           ) : (
             batismos.data.data.map((bat: baptism) => (
-              <BatismoItem
-                key={bat._id}
-                batismos={bat}
-                onEdit={() => handleEdit(bat)}
-                basePath={`/app/${churchid}/secretary/batismos`}
-              />
+              <div className='mt-2'>
+                <BatismoItem
+                  key={bat._id}
+                  batismos={bat}
+                  onEdit={() => handleEdit(bat)}
+                  basePath={`/app/${churchid}/secretary/batismos`}
+                />
+              </div>
             ))
           )}
         </ul>
