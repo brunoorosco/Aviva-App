@@ -88,7 +88,7 @@ const BatismoItem = ({ batismos, onEdit, basePath }: Props) => {
               className="flex items-center gap-2 text-xs sm:text-sm bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition shadow-sm font-bold uppercase w-full sm:w-auto justify-center"
             >
               <Edit3 className="w-4 h-4 shrink-0" />
-              Editar Batismo
+              Editar
             </Link>
           )}
 
