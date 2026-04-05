@@ -27,7 +27,6 @@ function formatDate(dateValue: any) {
 type Props = {
   batismo: baptism | null;
 };
-
 // ─── Função de exportação ────────────────────────────────────────────────────
 function exportarListaExcel(batismo: baptism, dataFormatada: string) {
   const wb = XLSX.utils.book_new();
@@ -115,6 +114,35 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
   const { control, handleSubmit, reset } = useForm({
     defaultValues: { nome: "", sexo: "", rede: "" },
   });
+
+  async function exportPdf(batismo: baptism, dataFormatada: string) {
+    const resp = await fetch(
+      `/api/protected/churches/${churchid}/batismo/list-pdf`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          batizandos: batismo.batizandos,
+          data: batismo.data,
+        }),
+      }
+    );
+
+    if (!resp.ok) {
+      // Loga o status e o body do erro para diagnóstico
+      const errorText = await resp.text();
+      console.error("PDF error →", resp.status, errorText);
+      throw new Error(`Erro ao gerar PDF: ${resp.status} - ${errorText}`);
+    }
+
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `lista-batismo-${dataFormatada.replace(/\//g, "-")}.pdf`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
 
   const onAddCandidate = async (data: any) => {
     try {
@@ -285,12 +313,13 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => exportarListaExcel(batismo, dataFormatada)}
+              onClick={() => exportPdf(batismo, dataFormatada)}
               className="flex items-center gap-2 text-green-700 border-green-300 hover:bg-green-50 hover:text-green-800"
             >
               <FileSpreadsheet className="w-4 h-4" />
-              <span className="hidden sm:inline">Exportar Excel</span>
-              <span className="sm:hidden">Excel</span>
+              <span className="hidden sm:inline">Exportar Lista</span>
+              {/* <span className="hidden sm:inline">Exportar Excel</span> */}
+              <span className="sm:hidden">Lista</span>
             </Button>
           )}
         </div>
