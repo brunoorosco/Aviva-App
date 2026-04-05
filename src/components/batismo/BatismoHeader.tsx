@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Droplets, Users, CalendarCheck } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 type HeaderProps = {
   title: string;
@@ -62,6 +63,13 @@ const Header = ({
   pathname,
   inputFileRef,
 }: HeaderProps) => {
+
+  const { data: session } = useSession();
+  if (!session?.user?.permission) return null;
+  const permission = session?.user?.permission as string[];
+  const isAdmin = permission.some((p) => p === "admin" || p === "secretaria");
+
+
   return (
     <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
       {/* Top bar */}
@@ -79,10 +87,11 @@ const Header = ({
             </p>
           </div>
         </div>
-
-        <Link href={`${pathname}/new`}>
-          <ButtonNew />
-        </Link>
+        {isAdmin && (
+          <Link href={`${pathname}/new`}>
+            <ButtonNew />
+          </Link>
+        )}
       </div>
 
       {/* Stats */}
