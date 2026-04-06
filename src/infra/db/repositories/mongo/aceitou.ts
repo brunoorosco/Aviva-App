@@ -56,6 +56,45 @@ export class AceitouRepository {
     return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
+  async getAllForExport(churchId: string, filters?: {
+    name?: string;
+    rede?: string;
+    dateStart?: string;
+    dateEnd?: string;
+  }) {
+    const collection = await MongoHelper.getCollection(this.collectionName);
+
+    const mongoFilter: any = { churchId };
+
+    if (filters?.name) {
+      mongoFilter.name = { $regex: filters.name, $options: "i" };
+    }
+
+    if (filters?.rede) {
+      mongoFilter["rede.name"] = { $regex: filters.rede, $options: "i" };
+    }
+
+    if (filters?.dateStart || filters?.dateEnd) {
+      mongoFilter.acceptedAt = {};
+      if (filters.dateStart) {
+        mongoFilter.acceptedAt.$gte = new Date(filters.dateStart);
+      }
+      if (filters.dateEnd) {
+        const endDate = new Date(filters.dateEnd);
+        endDate.setHours(23, 59, 59, 999);
+        mongoFilter.acceptedAt.$lte = endDate;
+      }
+    }
+
+    const data = await collection
+      .find(mongoFilter)
+      .collation({ locale: "pt", strength: 1 })
+      .sort({ acceptedAt: -1, _id: -1 })
+      .toArray();
+
+    return data;
+  }
+
   async getUseusAceitouByCem(churchId: string, cemId: string) {
     const collection = await MongoHelper.getCollection(this.collectionName);
 

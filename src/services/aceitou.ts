@@ -65,6 +65,16 @@ export const importAceitouService = async (data: any, churchId: string): Promise
   return saved;
 };
 
+export const exportAceitouService = async (churchId: string, filters?: {
+  name?: string;
+  rede?: string;
+  dateStart?: string;
+  dateEnd?: string;
+}) => {
+  const aceitouRepository = new AceitouRepository();
+  return aceitouRepository.getAllForExport(churchId, filters);
+};
+
 export const reportAceitouService = async (churchId: string, redeId?: string) => {
   const apelo = new AceitouRepository();
   const result = await apelo.getAnalytics(churchId, redeId);
