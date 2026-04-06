@@ -106,6 +106,8 @@ function buildPdfHtml(records: any[], logoBase64: string): string {
 <head>
   <meta charset="UTF-8" />
   <style>
+    @page { margin-top: 24px; }
+    @page :first { margin-top: 0; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: Arial, sans-serif; font-size: 11px; color: #111827; background: #fff; }
 
