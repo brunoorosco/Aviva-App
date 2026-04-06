@@ -15,13 +15,13 @@ class EncontroComDeusRepository {
       throw error;
     }
   }
-  
+
   async update(id: string, encontro: any): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
       const result = await collection.updateOne(
         { _id: new ObjectId(id) },
-        { $set: { ...encontro, updatedAt: new Date().toISOString() } },
+        { $set: { ...encontro, updatedAt: new Date() } },
       );
       return result;
     } catch (error) {

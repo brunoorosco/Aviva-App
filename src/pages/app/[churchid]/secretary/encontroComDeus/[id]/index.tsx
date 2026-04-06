@@ -38,7 +38,7 @@ type Props = {
 
 export default function EncontroPage({ encontro }: Props) {
   const router = useRouter();
-  
+
 
   if (!encontro) {
     return (
@@ -62,46 +62,46 @@ export default function EncontroPage({ encontro }: Props) {
     );
   }
   function calculateAgeFromBirthDate(dataNascimento: string): string {
-  const birth = new Date(dataNascimento);
-  if (isNaN(birth.getTime())) return "—";
+    const birth = new Date(dataNascimento);
+    if (isNaN(birth.getTime())) return "—";
 
-  const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  const monthDiff = today.getMonth() - birth.getMonth();
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
 
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--;
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+
+    return age > 0 ? `${age} anos` : "—";
   }
-
-  return age > 0 ? `${age} anos` : "—";
-}
 
   // 3. Ordenar encontristas alfabeticamente
-const encontristas = [...(encontro.encontristas ?? [])].sort((a, b) =>
-  (a.nome || "").localeCompare(b.nome || "", "pt-BR", { sensitivity: "base" })
-);
+  const encontristas = [...(encontro.encontristas ?? [])].sort((a, b) =>
+    (a.nome || "").localeCompare(b.nome || "", "pt-BR", { sensitivity: "base" })
+  );
 
-// 4. Ordenar equipe alfabeticamente
-const equipe = [...(encontro.equipe ?? [])].sort((a, b) =>
-  (a.name || "").localeCompare(b.name || "", "pt-BR", { sensitivity: "base" })
-);
+  // 4. Ordenar equipe alfabeticamente
+  const equipe = [...(encontro.equipe ?? [])].sort((a, b) =>
+    (a.name || "").localeCompare(b.name || "", "pt-BR", { sensitivity: "base" })
+  );
   const defaultTab = encontristas.length > 0 ? "encontristas" : "equipe";
 
-const getAgeDisplay = (idade?: string, dataNascimento?: string) => {
-  if (idade) {
-    const parsed = Number(idade);
-    if (!Number.isNaN(parsed) && parsed > 0) {
-      return `${parsed} anos`;
+  const getAgeDisplay = (idade?: string, dataNascimento?: string) => {
+    if (idade) {
+      const parsed = Number(idade);
+      if (!Number.isNaN(parsed) && parsed > 0) {
+        return `${parsed} anos`;
+      }
+      return idade;
     }
-    return idade;
-  }
 
-  if (dataNascimento) {
-    return calculateAgeFromBirthDate(dataNascimento); // ← converte para idade
-  }
+    if (dataNascimento) {
+      return calculateAgeFromBirthDate(dataNascimento); // ← converte para idade
+    }
 
-  return "—";
-};
+    return "—";
+  };
 
   const renderEmptyState = (title: string, description: string) => (
     <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -138,7 +138,7 @@ const getAgeDisplay = (idade?: string, dataNascimento?: string) => {
                       {capitalizeWords(pessoa.nome) || "Nome não informado"}
                     </span>
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                    
+
                       {pessoa.isento && (
                         <Badge
                           variant="secondary"
@@ -363,18 +363,18 @@ const getAgeDisplay = (idade?: string, dataNascimento?: string) => {
                 <TabsContent value="encontristas" className="mt-4">
                   {encontristas.length === 0
                     ? renderEmptyState(
-                        "Nenhum encontrista cadastrado",
-                        "Ainda não há participantes registrados neste encontro."
-                      )
+                      "Nenhum encontrista cadastrado",
+                      "Ainda não há participantes registrados neste encontro."
+                    )
                     : renderEncontristasTable()}
                 </TabsContent>
 
                 <TabsContent value="equipe" className="mt-4">
                   {equipe.length === 0
                     ? renderEmptyState(
-                        "Nenhuma equipe cadastrada",
-                        "Cadastre os membros da equipe para acompanhar o encontro."
-                      )
+                      "Nenhuma equipe cadastrada",
+                      "Cadastre os membros da equipe para acompanhar o encontro."
+                    )
                     : renderEquipeTable()}
                 </TabsContent>
               </Tabs>
@@ -408,6 +408,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           _id: encontro._id?.toString() || null,
           data: encontro.data?.toISOString() || null,
           updatedAt: encontro.updatedAt?.toISOString() || null,
+          createdAt: encontro.createdAt?.toISOString() || null,
 
           // ✅ Remove _id se for undefined
           encontristas: (encontro.encontristas || []).map((e: any) => {
