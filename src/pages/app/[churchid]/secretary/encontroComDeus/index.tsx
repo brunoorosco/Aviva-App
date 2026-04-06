@@ -51,6 +51,7 @@ const EncontroComDeusList = () => {
           pathname={asPath}
           inputFileRef={inputFileRef}
           encontro={encontros?.data.data || []}
+          onImportSuccess={refreshEncontros}
         />
         <ul className='w-full pt-4 bg-gray-50 divide-y divide-gray-200 shadow-lg dark:divide-gray-700 dark:rounded-b-lg dark:bg-background'>
           {!encontros ? (

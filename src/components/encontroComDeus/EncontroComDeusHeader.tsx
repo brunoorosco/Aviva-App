@@ -1,7 +1,7 @@
 
 import { TEncontroComDeus } from "@/domain/models/encontroComDeus";
 import { Card, CardContent } from "../ui/card";
-import { Calendar, Download, Home, Plus, TrendingUp, Users } from "lucide-react";
+import { Calendar, Download, Home, Plus, TrendingUp, Users, Upload } from "lucide-react";
 import { useMemo } from "react";
 import { getRedeName } from "@/utils/helpersNameREde";
 import { Button } from "../ui/button";
@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Badge } from "../ui/badge";
 import { useSession } from "next-auth/react";
 import { hasPermission, ROLES } from "@/lib/permissions";
+import ImportButton from "./ImportButton";
 
 type Props = {
   pathname: string;
@@ -17,19 +18,25 @@ type Props = {
 };
 
 type TProps<T> = {
-  total: number
-  pathname: string
-  inputFileRef: React.RefObject<HTMLInputElement>
-  data: T[]
-  mapExport?: any
-  sheetName?: string
-  filename?: string
-  title?: string
-  icon?: React.ReactNode
-  description?: string
-}
+  total: number;
+  pathname: string;
+  inputFileRef: React.RefObject<HTMLInputElement>;
+  data: T[];
+  mapExport?: any;
+  sheetName?: string;
+  filename?: string;
+  title?: string;
+  icon?: React.ReactNode;
+  description?: string;
+  onImportSuccess?: () => void;
+};
 
-const EncontroComDeusHeader = ({ pathname, inputFileRef, encontro }: Props) => {
+const EncontroComDeusHeader = ({
+  pathname,
+  inputFileRef,
+  encontro,
+  onImportSuccess,
+}: Props & { onImportSuccess?: () => void }) => {
   const mapReencontroToExport = (m: any) => {
     return {
       nome: m?.nome,
@@ -52,7 +59,8 @@ const EncontroComDeusHeader = ({ pathname, inputFileRef, encontro }: Props) => {
       mapExport={mapReencontroToExport}
       sheetName="encontro_com_Deus"
       filename="encontro_com_Deus.xlsx"
-      icon={<Home className='w-6 h-6' />}
+      icon={<Home className="w-6 h-6" />}
+      onImportSuccess={onImportSuccess}
     />
   );
 };
@@ -64,9 +72,11 @@ const Header = <T extends TEncontroComDeus,>({
   pathname,
   data,
   mapExport,
-  title = 'Itens',
+  title = "Itens",
   icon,
-  description
+  description,
+  onImportSuccess,
+  inputFileRef,
 }: TProps<T>) => {
   // Calcular estatísticas
   const stats = useMemo(() => {
@@ -173,15 +183,18 @@ const Header = <T extends TEncontroComDeus,>({
           {canViewButtons() && (
             <div className='flex flex-col sm:flex-row gap-2 sm:gap-3 shrink-0'>
 
+              {/* Botão Importar */}
+              <ImportButton inputFileRef={inputFileRef} onSuccess={onImportSuccess} />
+
               {/* Botão Novo */}
-              <Link href={`${pathname}/new`} className='w-full sm:w-auto'>
+              <Link href={`${pathname}/new`} className="w-full sm:w-auto">
                 <Button
-                  className='text-white w-full h-full bg-blue-500 hover:bg-blue-600  font-semibold dark:bg-orange-500 dark:hover:bg-orange-600'
-                  size='default'
+                  className="text-white w-full h-full bg-blue-500 hover:bg-blue-600 font-semibold dark:bg-orange-500 dark:hover:bg-orange-600"
+                  size="default"
                 >
-                  <Plus className='mr-2 h-4 w-4' />
-                  <span className='hidden sm:inline'>Novo Encontro</span>
-                  <span className='sm:hidden'>Novo</span>
+                  <Plus className="mr-2 h-4 w-4" />
+                  <span className="hidden sm:inline">Novo Encontro</span>
+                  <span className="sm:hidden">Novo</span>
                 </Button>
               </Link>
             </div>

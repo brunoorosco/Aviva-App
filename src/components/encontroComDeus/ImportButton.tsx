@@ -9,9 +9,10 @@ import { TPeople } from "@/domain/models/encontroComDeus";
 type Props = {
   inputFileRef: React.RefObject<HTMLInputElement>;
   onImport?: (imported: TPeople[]) => void;
+  onSuccess?: () => void;
 };
 
-const ImportButton = ({ inputFileRef, onImport }: Props) => {
+const ImportButton = ({ inputFileRef, onImport, onSuccess }: Props) => {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,7 +28,7 @@ const ImportButton = ({ inputFileRef, onImport }: Props) => {
 
       setIsLoading(true);
       const response = await useHttpPost({
-        url: `/api/protected/churches/${session?.user.churchId}/encontroComDeus`,
+        url: `/api/protected/churches/${session?.user.churchId}/encontroComDeus/import`,
         data: json,
       });
       setIsLoading(false);
@@ -36,6 +37,10 @@ const ImportButton = ({ inputFileRef, onImport }: Props) => {
         Toast.showError("Erro na importação!");
       } else {
         Toast.showSuccess("Importado com sucesso!");
+        if (onSuccess) onSuccess();
+        if (onImport && response.result?.encontristas) {
+          onImport(response.result.encontristas);
+        }
       }
     } catch (error) {
       setIsLoading(false);

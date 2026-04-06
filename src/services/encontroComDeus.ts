@@ -1,6 +1,7 @@
 import { TEquipe, TPeople } from "@/domain/models/encontroComDeus";
 import { ChurChMongoRepository } from "../infra/db/repositories/mongo/churchs";
 import { EncontroComDeusRepository } from "../infra/db/repositories/mongo/encontroComDeus";
+import { CellsMongoRepository } from "../infra/db/repositories/mongo/cells";
 
 export const getEncontroComDeusService = async (churchId: string) => {
   const encontroRepository = new EncontroComDeusRepository();
@@ -43,15 +44,23 @@ export const updateEncontroComDeusService = async (id: string, data: any): Promi
   return result;
 };
 
-export const importEncontroComDeusService = async (data: any): Promise<any> => {
+export const importEncontroComDeusService = async (data: any, churchId: string): Promise<any> => {
   const encontroRepository = new EncontroComDeusRepository();
-  const churchRepository = new ChurChMongoRepository();
-  const churchs = await churchRepository.getChurch();
 
-  const dataNormalizada = normalizarEncontristasPorIgreja(data, "Avivamento Sede");
+  const cellRepository = new CellsMongoRepository();
+  const redes = await cellRepository.getCells(churchId);
+
+  const dataNormalizada = normalizarEncontristasPorIgreja(data, "Avivamento Sede", redes);
   const novoEncontro = {
     data: new Date(),
     encontristas: dataNormalizada,
+    churchId,
+    numero: null,
+    descricao: "Importação Automática",
+    igreja: "Avivamento Sede",
+    equipe: [],
+    financeiro: [],
+    createdAt: new Date(),
   };
   const saved = await encontroRepository.create(novoEncontro);
   return saved;
@@ -73,30 +82,61 @@ const getRedeName = (rede?: { _id: string; name: string } | string): string => {
 };
 
 function normalizarEncontristasPorIgreja(
-  entradas: (string | TPeople)[],
+  entradas: (string | any)[],
   nomeDaIgreja: string,
+  redes: any[] = [],
 ): TPeople[] {
   return entradas.map((entrada) => {
     if (typeof entrada === "string") {
       const contemIgreja = entrada.toLowerCase().includes("igreja");
 
+      const redeObj = contemIgreja
+        ? {}
+        : {
+          rede: {
+            name: entrada,
+            _id: redes.find((r) => r.name.toLowerCase() === entrada.toLowerCase())?._id?.toString() || "",
+          },
+        };
+
       return {
         nome: "",
         igreja: contemIgreja ? entrada : nomeDaIgreja,
-        ...(contemIgreja ? {} : { rede: entrada }),
+        ...redeObj,
       };
     }
 
-    const contemIgreja = getRedeName(entrada.rede).toLowerCase().includes("igreja");
+    const redeName = getRedeName(entrada.rede || entrada.Rede || entrada.REDE);
+    const contemIgreja = redeName && redeName.toLowerCase().includes("igreja");
+
+    const phone = entrada.telefone ||
+      entrada.Telefone ||
+      entrada.TELEFONE ||
+      entrada.WhatsApp ||
+      entrada.whatsapp ||
+      null
 
     const obj = {
-      nome: entrada.nome,
-      idade: entrada.idade,
-      nasciemento: entrada.dataNascimento,
-      telefone: entrada.telefone,
-      endereco: entrada.endereco ? `${entrada.endereco} ${entrada.bairro}`.trim() : null,
-      igreja: contemIgreja ? entrada.rede! : nomeDaIgreja,
-      ...(contemIgreja ? {} : { rede: entrada.rede }),
+      nome: entrada.nome || entrada.Nome || entrada.NOME || "",
+      descricao: entrada.descricao || entrada.descricao || entrada.DESCRICAO || "",
+      ...resolverIdadeOuNascimento(entrada),
+      telefone: phone?.replace(/\D/g, "") || "",
+      endereco: entrada.endereco
+        ? `${entrada.endereco} ${entrada.bairro || ""}`.trim()
+        : entrada.Endereco || entrada.ENDERECO || null,
+      igreja: contemIgreja ? redeName : nomeDaIgreja,
+      ...(contemIgreja
+        ? {}
+        : {
+          rede: redeName
+            ? {
+              name: redeName,
+              _id:
+                redes.find((r) => r.name.toLowerCase() === redeName.toLowerCase())?._id?.toString() ||
+                "",
+            }
+            : null,
+        }),
     };
 
     return limparObjeto(obj) as TPeople;
@@ -253,3 +293,48 @@ export const getAllInscricoesService = async (encontroId: string): Promise<any> 
   const result = await encontroRepository.getAllInscricoes(encontroId);
   return result;
 };
+
+function excelSerialToDate(serial: number): Date {
+  // Excel conta erroneamente 1900 como bissexto, por isso subtrai 1
+  const utc_days = Math.floor(serial - 25569);
+  const utc_value = utc_days * 86400 * 1000;
+  return new Date(utc_value);
+}
+
+function calcularIdade(nascimento: Date): number {
+  const hoje = new Date();
+  let idade = hoje.getFullYear() - nascimento.getFullYear();
+  const m = hoje.getMonth() - nascimento.getMonth();
+  if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
+    idade--;
+  }
+  return idade;
+}
+
+function resolverIdadeOuNascimento(entrada: any): { idade?: number; dataNascimento?: string } {
+  const rawIdade = entrada.idade || entrada.Idade || entrada.IDADE || entrada.Anos;
+  const rawNasc = entrada.dataNascimento || entrada.nascimento || entrada.nasciemento || entrada.DataNascimento;
+
+  // Se vier número serial do Excel (datas ficam entre ~20000 e ~60000)
+  if (typeof rawIdade === "number" && rawIdade > 1000) {
+    const data = excelSerialToDate(rawIdade);
+    return {
+      idade: calcularIdade(data),
+      dataNascimento: data.toISOString().split("T")[0],
+    };
+  }
+
+  // Se vier data de nascimento em vez da idade
+  if (rawNasc) {
+    const data = new Date(rawNasc);
+    if (!isNaN(data.getTime())) {
+      return {
+        idade: calcularIdade(data),
+        dataNascimento: data.toISOString().split("T")[0],
+      };
+    }
+  }
+
+  // Se vier já como número simples (ex: 25)
+  return { idade: rawIdade ? Number(rawIdade) : undefined };
+}
