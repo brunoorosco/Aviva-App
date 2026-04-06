@@ -36,6 +36,7 @@ export default function VisitantesList() {
   const limit = 10;
   const [exportFormat, setExportFormat] = useState<"pdf" | "excel">("pdf");
   const [exporting, setExporting] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   // Construir URL com filtros
   const buildFilterUrl = () => {
@@ -143,54 +144,69 @@ export default function VisitantesList() {
           onChange={handleImport}
         />
 
-        <Button
+        {/* <Button
           type="button"
           className="bg-green-500 text-white"
           onClick={() => fileInputRef.current?.click()}
         >
           Importar
-        </Button>
+        </Button> */}
 
         <Button onClick={() => router.push(router.asPath + "/novo")}>Novo</Button>
       </PageHeader>
 
       {/* Filtros */}
-      <div className="mt-4 mb-6 bg-white dark:bg-dark-secondary border rounded-lg p-4 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
+      <div className="mt-4 mb-6 bg-white dark:bg-dark-secondary border rounded-lg shadow-sm">
+
+        {/* Header do collapse (visível no mobile) / Header normal (desktop) */}
+        <div
+          className="flex items-center justify-between p-4 cursor-pointer md:cursor-default"
+          onClick={() => setFiltersOpen((prev) => !prev)}
+        >
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
             <Filter className="w-4 h-4" />
             Filtros
           </h3>
-          {(search || dateStart || dateEnd) && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearFilters}
-              className="text-xs h-8"
-            >
-              <X className="w-3 h-3 mr-1" />
-              Limpar filtros
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {(search || dateStart || dateEnd) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => { e.stopPropagation(); clearFilters(); }}
+                className="text-xs h-8"
+              >
+                <X className="w-3 h-3 mr-1" />
+                Limpar filtros
+              </Button>
+            )}
+            {/* Chevron só aparece no mobile */}
+            <span className="md:hidden text-gray-400 transition-transform duration-200" style={{ transform: filtersOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
+              ▾
+            </span>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Filtro por nome */}
-          <div className="md:col-span-2 lg:col-span-1">
-            <Label htmlFor="search-name" className="text-xs">Nome</Label>
-            <Input
-              id="search-name"
-              placeholder="Buscar por nome"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="h-9"
-            />
-          </div>
+        {/* Conteúdo dos filtros: sempre visível no desktop, colapsa no mobile */}
+        <div className={`px-4 pb-4 ${filtersOpen ? "block" : "hidden"} md:block`}>
 
-          {/* Filtro data inicial */}
-          <div className="flex gap-2">
+          {/* Desktop: 3 colunas na mesma linha | Mobile: empilhado */}
+          {/* Desktop: tudo em uma linha | Mobile: empilhado */}
+          <div className="flex flex-col md:flex-row md:items-end gap-4">
 
-            <div className="w-full">
+            {/* Nome */}
+            <div className="flex-1 min-w-0">
+              <Label htmlFor="search-name" className="text-xs">Nome</Label>
+              <Input
+                id="search-name"
+                placeholder="Buscar por nome"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-9"
+              />
+            </div>
+
+            {/* Data inicial */}
+            <div className="flex-1 min-w-0">
               <Label htmlFor="date-start" className="text-xs">Data inicial</Label>
               <Input
                 id="date-start"
@@ -201,8 +217,8 @@ export default function VisitantesList() {
               />
             </div>
 
-            {/* Filtro data final */}
-            <div className="w-full">
+            {/* Data final */}
+            <div className="flex-1 min-w-0">
               <Label htmlFor="date-end" className="text-xs">Data final</Label>
               <Input
                 id="date-end"
@@ -212,39 +228,39 @@ export default function VisitantesList() {
                 className="h-9"
               />
             </div>
-          </div>
-        </div>
 
-        {/* Export input-group */}
-        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 flex items-center gap-1">
-            <Download className="w-3 h-3" />
-            Exportar dados filtrados
-          </p>
-          <div className="flex w-full rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600 shadow-sm">
-            <select
-              id="export-format-visitantes"
-              value={exportFormat}
-              onChange={(e) => setExportFormat(e.target.value as "pdf" | "excel")}
-              className="flex-1 min-w-0 px-3 py-2 text-sm bg-white dark:bg-dark-tertiary dark:text-gray-700 border-r border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-400 cursor-pointer"
-              aria-label="Formato de exportação"
-            >
-              <option value="pdf">📄 PDF</option>
-              <option value="excel">📊 Excel (.xlsx)</option>
-            </select>
-            <button
-              id="btn-export-visitantes"
-              onClick={handleExport}
-              disabled={exporting}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-blue-600 dark:bg-orange-500 text-white hover:bg-blue-700 dark:hover:bg-orange-600 active:scale-95 transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap"
-            >
-              {exporting ? (
-                <ExportLoader className="w-4 h-4 animate-spin" />
-              ) : (
-                <Download className="w-4 h-4" />
-              )}
-              Exportar
-            </button>
+            {/* Exportar — inline no desktop, separado no mobile */}
+            <div className="flex-shrink-0 md:pb-0">
+              <Label className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mb-1">
+                <Download className="w-3 h-3" />
+                Exportar
+              </Label>
+              <div className="flex rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600 shadow-sm">
+                <select
+                  id="export-format-visitantes"
+                  value={exportFormat}
+                  onChange={(e) => setExportFormat(e.target.value as "pdf" | "excel")}
+                  className="px-3 w-full py-2 text-sm bg-white dark:bg-dark-tertiary dark:text-gray-700 border-r border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-400 cursor-pointer"
+                  aria-label="Formato de exportação"
+                >
+                  <option value="pdf">📄 PDF</option>
+                  <option value="excel">📊 Excel (.xlsx)</option>
+                </select>
+                <button
+                  id="btn-export-visitantes"
+                  onClick={handleExport}
+                  disabled={exporting}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-blue-600 dark:bg-orange-500 text-white hover:bg-blue-700 dark:hover:bg-orange-600 active:scale-95 transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap"
+                >
+                  {exporting ? (
+                    <ExportLoader className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
+                  Exportar
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
