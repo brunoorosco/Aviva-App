@@ -78,6 +78,16 @@ export const getVisitantesService = async (churchId: string, page: number, limit
 
   return result;
 };
+
+export const exportVisitantesService = async (churchId: string, filters?: {
+  name?: string;
+  dateStart?: string;
+  dateEnd?: string;
+}) => {
+  const visitantesRepository = new VisitantesRepository();
+  return visitantesRepository.getAllForExport(churchId, filters);
+};
+
 export const getVisitantesAnalyticsService = async (churchId: string) => {
   const visitors = new VisitantesRepository();
   const result = await visitors.countVisitors(churchId);

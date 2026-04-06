@@ -21,7 +21,7 @@ import { formatDate } from "@/utils/formatedDate";
 import { PageHeader } from "@/components/PageHeader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Filter, X } from "lucide-react";
+import { Download, Filter, Loader2 as ExportLoader, X } from "lucide-react";
 
 export default function VisitantesList() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -34,18 +34,36 @@ export default function VisitantesList() {
   const router = useRouter();
   const [page, setPage] = useState(1);
   const limit = 10;
+  const [exportFormat, setExportFormat] = useState<"pdf" | "excel">("pdf");
+  const [exporting, setExporting] = useState(false);
 
   // Construir URL com filtros
   const buildFilterUrl = () => {
     const params = new URLSearchParams();
     params.set('page', page.toString());
     params.set('limit', limit.toString());
-    
+
     if (search) params.set('name', search);
     if (dateStart) params.set('dateStart', dateStart);
     if (dateEnd) params.set('dateEnd', dateEnd);
-    
+
     return `/api/protected/churches/${churchId}/visitantes?${params.toString()}`;
+  };
+
+  const handleExport = () => {
+    if (!churchId || exporting) return;
+    setExporting(true);
+
+    const params = new URLSearchParams();
+    params.set("format", exportFormat);
+    if (search) params.set("name", search);
+    if (dateStart) params.set("dateStart", dateStart);
+    if (dateEnd) params.set("dateEnd", dateEnd);
+
+    const url = `/api/protected/churches/${churchId}/visitantes/export?${params.toString()}`;
+    window.open(url, "_blank");
+
+    setTimeout(() => setExporting(false), 2000);
   };
 
   const {
@@ -170,27 +188,63 @@ export default function VisitantesList() {
           </div>
 
           {/* Filtro data inicial */}
-          <div>
-            <Label htmlFor="date-start" className="text-xs">Data inicial</Label>
-            <Input
-              id="date-start"
-              type="date"
-              value={dateStart}
-              onChange={(e) => setDateStart(e.target.value)}
-              className="h-9"
-            />
-          </div>
+          <div className="flex gap-2">
 
-          {/* Filtro data final */}
-          <div>
-            <Label htmlFor="date-end" className="text-xs">Data final</Label>
-            <Input
-              id="date-end"
-              type="date"
-              value={dateEnd}
-              onChange={(e) => setDateEnd(e.target.value)}
-              className="h-9"
-            />
+            <div className="w-full">
+              <Label htmlFor="date-start" className="text-xs">Data inicial</Label>
+              <Input
+                id="date-start"
+                type="date"
+                value={dateStart}
+                onChange={(e) => setDateStart(e.target.value)}
+                className="h-9"
+              />
+            </div>
+
+            {/* Filtro data final */}
+            <div className="w-full">
+              <Label htmlFor="date-end" className="text-xs">Data final</Label>
+              <Input
+                id="date-end"
+                type="date"
+                value={dateEnd}
+                onChange={(e) => setDateEnd(e.target.value)}
+                className="h-9"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Export input-group */}
+        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2 flex items-center gap-1">
+            <Download className="w-3 h-3" />
+            Exportar dados filtrados
+          </p>
+          <div className="flex w-full rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600 shadow-sm">
+            <select
+              id="export-format-visitantes"
+              value={exportFormat}
+              onChange={(e) => setExportFormat(e.target.value as "pdf" | "excel")}
+              className="flex-1 min-w-0 px-3 py-2 text-sm bg-white dark:bg-dark-tertiary dark:text-gray-700 border-r border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-orange-400 cursor-pointer"
+              aria-label="Formato de exportação"
+            >
+              <option value="pdf">📄 PDF</option>
+              <option value="excel">📊 Excel (.xlsx)</option>
+            </select>
+            <button
+              id="btn-export-visitantes"
+              onClick={handleExport}
+              disabled={exporting}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-blue-600 dark:bg-orange-500 text-white hover:bg-blue-700 dark:hover:bg-orange-600 active:scale-95 transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap"
+            >
+              {exporting ? (
+                <ExportLoader className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              Exportar
+            </button>
           </div>
         </div>
       </div>
