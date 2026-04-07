@@ -18,7 +18,7 @@ const MembersById = () => {
     data: member,
     error,
     isLoading,
-  } = useHttpGet<User>(`/api/protected/churches/${churchId}/cems/${cemId}/members/${query.id}`);
+  } = useHttpGet<User>(`/api/protected/churches/${churchId}/redes/${cemId}/members/${query.id}`);
 
   if (error) return <p>Ocorreu um erro: {error.message}</p>;
   if (isLoading) return <Loading />;
