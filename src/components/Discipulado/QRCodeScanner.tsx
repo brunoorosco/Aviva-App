@@ -22,7 +22,18 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onScanErro
       try {
         const devices = await Html5Qrcode.getCameras();
         if (devices && devices.length > 0) {
-          setCameras(devices.map(d => ({ id: d.id, label: d.label })));
+          // Filtrar apenas câmeras traseiras (excluir "front", "frontal", "user", "selfie")
+          const rearCameras = devices.filter(d => 
+            !d.label.toLowerCase().includes("front") && 
+            !d.label.toLowerCase().includes("frontal") &&
+            !d.label.toLowerCase().includes("user") &&
+            !d.label.toLowerCase().includes("selfie")
+          );
+
+          // Se encontrar câmeras traseiras, usa elas. Caso contrário, usa todas (fallback)
+          const filteredDevices = rearCameras.length > 0 ? rearCameras : devices;
+          
+          setCameras(filteredDevices.map(d => ({ id: d.id, label: d.label })));
         }
       } catch (err) {
         console.error("Erro ao buscar câmeras:", err);
