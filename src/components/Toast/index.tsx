@@ -95,10 +95,18 @@ const Toast = () => {
     })
   }
 
+  function showInfo(message: string) {
+    DefaultToast.fire({
+      icon: 'info',
+      title: message
+    })
+  }
+
   return {
     showSuccess,
     showError,
-    showDelete
+    showDelete,
+    showInfo
   }
 }
 
