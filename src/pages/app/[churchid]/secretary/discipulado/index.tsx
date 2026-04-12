@@ -13,7 +13,9 @@ import {
   AlertTriangle,
   Edit3,
   Search,
+  QrCode,
 } from "lucide-react";
+import QRCodeScanner from "@/components/Discipulado/QRCodeScanner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -60,6 +62,8 @@ const Discipulado = () => {
   const [selectedCiclo, setSelectedCiclo] = useState<string>("");
   const [expandedAula, setExpandedAula] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [currentAulaForScan, setCurrentAulaForScan] = useState<AulaDiscipulado | null>(null);
 
   const { data: ciclos = [] } = useCiclos(churchId);
   const { data: aulas = [], isLoading: loadingAulas } = useAulas(churchId, selectedCiclo || undefined);
@@ -88,6 +92,57 @@ const Discipulado = () => {
 
   const handleEditAula = (aula: AulaDiscipulado) => {
     router.push(`/app/${churchId}/secretary/discipulado/editarAula?id=${aula.id}`);
+  };
+
+  const handleOpenScanner = (aula: AulaDiscipulado) => {
+    setCurrentAulaForScan(aula);
+    setIsScannerOpen(true);
+  };
+
+  const handleScanSuccess = (decodedText: string) => {
+    if (!currentAulaForScan) return;
+
+    try {
+      let studentData;
+      try {
+        studentData = JSON.parse(decodedText);
+      } catch {
+        // Fallback for raw ID
+        studentData = { _id: decodedText };
+      }
+
+      const studentId = studentData._id || studentData.id;
+      if (!studentId) {
+        Toast.showError("QR Code inválido: ID não encontrado");
+        return;
+      }
+
+      const aluno = currentAulaForScan.alunos.find((a) => a.membroId === studentId);
+      if (!aluno) {
+        Toast.showError(`Aluno não encontrado nesta lista: ${studentData.nome || studentId}`);
+        return;
+      }
+
+      if (aluno.presente) {
+        Toast.showSuccess(`${capitalizeWords(aluno.nome)} já estava presente`);
+        return;
+      }
+
+      const updated = {
+        ...currentAulaForScan,
+        alunos: currentAulaForScan.alunos.map((a) =>
+          a.membroId === studentId ? { ...a, presente: true } : a,
+        ),
+      };
+
+      updateAula.mutate(updated);
+      // Atualiza o estado local da aula sendo escaneada para que scans subsequentes funcionem corretamente
+      setCurrentAulaForScan(updated);
+      Toast.showSuccess(`registrado presença ${capitalizeWords(aluno.nome)}`);
+    } catch (error) {
+      console.error("Erro ao processar scan:", error);
+      Toast.showError("Erro na leitura");
+    }
   };
 
   const totalPresentes = (aula: AulaDiscipulado) => aula.alunos.filter((a) => a.presente).length;
@@ -276,6 +331,15 @@ const Discipulado = () => {
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => handleOpenScanner(aula)}
+                      className="gap-1 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary"
+                    >
+                      <QrCode className="h-4 w-4" />
+                      Presença por QR Code
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleEditAula(aula)}
                       className="gap-1"
                     >
@@ -328,6 +392,16 @@ const Discipulado = () => {
           </Accordion>
         )}
       </div>
+
+      {isScannerOpen && (
+        <QRCodeScanner
+          onScanSuccess={handleScanSuccess}
+          onClose={() => {
+            setIsScannerOpen(false);
+            setCurrentAulaForScan(null);
+          }}
+        />
+      )}
     </div>
   );
 };
