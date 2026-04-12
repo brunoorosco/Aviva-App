@@ -96,7 +96,7 @@ const BatismoItem = ({ batismos, onEdit, basePath }: Props) => {
             <button
               onClick={(e) => {
                 e.preventDefault();
-                gerarCertificados(batismos.churchId, batismos);
+                gerarCertificados(batismos.churchId ?? session?.user?.churchId, batismos);
               }}
               className="flex items-center gap-1 text-xs sm:text-sm text-primary hover:opacity-80 p-1.5 w-full sm:w-auto justify-center"
             >
