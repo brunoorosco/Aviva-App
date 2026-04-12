@@ -42,6 +42,17 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 import Toast from "@/components/Toast";
 import {
@@ -211,7 +222,7 @@ const Discipulado = () => {
               </div>
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card>
             <CardContent className="flex items-center gap-3 p-4">
               <Users className="h-8 w-8 text-accent" />
               <div>
@@ -230,7 +241,7 @@ const Discipulado = () => {
                 <p className="text-sm text-muted-foreground">Pendências de reposição</p>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
         {/* Pendências */}
@@ -296,43 +307,98 @@ const Discipulado = () => {
               <AccordionItem
                 key={aula.id}
                 value={aula.id}
-                className="border rounded-lg bg-card overflow-hidden"
+                className="border rounded-xl bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
               >
-                <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                  <div className="flex items-center gap-4 text-left flex-1">
-                    <div className="flex flex-col items-center bg-primary/10 rounded-lg px-3 py-1.5 min-w-[60px]">
-                      <span className="text-xs text-primary font-medium uppercase">
+                <AccordionTrigger className="px-4 py-4 hover:no-underline">
+                  <div className="flex items-center gap-4 text-left flex-1 min-w-0">
+                    {/* Modern Date Badge */}
+                    <div className="flex flex-col items-center justify-center bg-primary/10 border border-primary/20 rounded-lg w-14 h-14 shrink-0 transition-colors group-hover:bg-primary/20">
+                      <span className="text-[10px] text-primary font-bold uppercase tracking-wider leading-none mb-1">
                         {format(new Date(aula.data), "MMM", { locale: ptBR })}
                       </span>
-                      <span className="text-lg font-bold text-primary">
+                      <span className="text-xl font-black text-primary leading-none">
                         {format(new Date(aula.data), "dd")}
                       </span>
                     </div>
-                    <div className="flex-1">
-                      <p className="font-semibold">{aula.tema}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Ministrado por {aula.ministrador?.nome}
+
+                    <div className="flex-1 min-w-0 space-y-0.5">
+                      <p className="font-bold text-base text-card-foreground leading-tight truncate pr-2">
+                        {aula.tema}
                       </p>
-                    </div>
-                    <div className="flex items-center gap-3 mr-4">
-                      <div className="flex items-center gap-1 text-sm">
-                        <CheckCircle2 className="h-4 w-4 text-primary" />
-                        <span>{totalPresentes(aula)}</span>
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <span className="shrink-0 opacity-70">ministrado por</span>
+                        <span className="font-medium text-foreground/80 truncate">
+                          {aula.ministrador?.nome}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-1 text-sm">
-                        <XCircle className="h-4 w-4 text-destructive" />
-                        <span>{totalAusentes(aula)}</span>
+                    </div>
+
+                    <div className="flex items-center gap-4 mr-2 shrink-0">
+                      <div className="hidden sm:flex items-center gap-3">
+                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-primary/5 border border-primary/10">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+                          <span className="text-xs font-bold text-primary">{totalPresentes(aula)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-destructive/5 border border-destructive/10">
+                          <XCircle className="h-3.5 w-3.5 text-destructive" />
+                          <span className="text-xs font-bold text-destructive">{totalAusentes(aula)}</span>
+                        </div>
+                      </div>
+
+                      {/* Compact Stats for Mobile */}
+                      <div className="flex sm:hidden items-center gap-2">
+                         <div className="flex items-center gap-1">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                          <span className="text-xs font-bold">{totalPresentes(aula)}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-1.5 h-1.5 rounded-full bg-destructive" />
+                          <span className="text-xs font-bold text-muted-foreground">{totalAusentes(aula)}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-9 w-9 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors rounded-full"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Trash2 className="h-4.5 w-4.5" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Excluir Aula</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Realmente você deseja excluir a aula e todos os alunos?
+                                Esta ação não poderá ser desfeita.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteAula(aula.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Excluir
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
-                  <div className="flex justify-end mb-3 gap-2">
+                  <div className="flex flex-wrap items-center justify-end mb-4 gap-3">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleOpenScanner(aula)}
-                      className="gap-1 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary"
+                      className="gap-2 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary h-10 px-4 flex-1 sm:flex-none shadow-sm"
                     >
                       <QrCode className="h-4 w-4" />
                       Presença por QR Code
@@ -341,19 +407,10 @@ const Discipulado = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => handleEditAula(aula)}
-                      className="gap-1"
+                      className="gap-2 h-10 px-4 flex-1 sm:flex-none shadow-sm"
                     >
-                      <Edit3 className="h-3.5 w-3.5" />
-                      Editar
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeleteAula(aula.id)}
-                      className="gap-1"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      Excluir
+                      <Edit3 className="h-4 w-4" />
+                      Editar Aula
                     </Button>
                   </div>
                   <Table>
