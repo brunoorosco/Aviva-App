@@ -75,7 +75,7 @@ const NovaAulaDiscipulado = () => {
                 membroId: usuario._id,
                 nome: usuario.name,
                 rede: { name: usuario.rede?.name || "-", _id: usuario.rede?._id || "" },
-                presente: true
+                presente: false // ← presença confirmada só na chegada (QR ou checkbox)
             },
             ...prev,
         ]);
@@ -130,7 +130,7 @@ const NovaAulaDiscipulado = () => {
     const totalPresentes = alunos.filter((a) => a.presente).length;
 
     return (
-        <div className="min-h-screen bg-background text-foreground">
+        <div className="min-h-screen bg-background text-foreground mt-6">
             {/* Header fixo */}
             <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
                 <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">

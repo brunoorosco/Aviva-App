@@ -347,7 +347,7 @@ const Discipulado = () => {
 
                       {/* Compact Stats for Mobile */}
                       <div className="flex sm:hidden items-center gap-2">
-                         <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1">
                           <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                           <span className="text-xs font-bold">{totalPresentes(aula)}</span>
                         </div>
@@ -450,13 +450,16 @@ const Discipulado = () => {
         )}
       </div>
 
-      {isScannerOpen && (
+      {isScannerOpen && currentAulaForScan && (
         <QRCodeScanner
           onScanSuccess={handleScanSuccess}
           onClose={() => {
             setIsScannerOpen(false);
             setCurrentAulaForScan(null);
           }}
+          totalAlunos={currentAulaForScan.alunos.length}
+          totalPresentes={currentAulaForScan.alunos.filter((a) => a.presente).length}
+          tema={currentAulaForScan.tema}
         />
       )}
     </div>

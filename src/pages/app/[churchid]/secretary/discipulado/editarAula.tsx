@@ -44,6 +44,7 @@ const EditAula = () => {
     const [data, setData] = useState<Date | undefined>(undefined);
     const [tema, setTema] = useState("");
     const [ministradorNome, setMinistradorNome] = useState("");
+    const [ministradorOriginal, setMinistradorOriginal] = useState<MinistroDaAula | undefined>(undefined);
     const [alunos, setAlunos] = useState<AlunoPresenca[]>([]);
     const [membroSelecionado, setMembroSelecionado] = useState("");
     const [busca, setBusca] = useState("");
@@ -53,9 +54,11 @@ const EditAula = () => {
         if (!aula) return;
         setData(new Date(aula.data));
         setTema(aula.tema);
-        setMinistradorNome(
-            typeof aula.ministrador === "string" ? aula.ministrador : aula.ministrador?.nome || ""
-        );
+        const ministrador = typeof aula.ministrador === "string"
+            ? { membroId: "", nome: aula.ministrador, rede: { name: "", _id: "" } }
+            : aula.ministrador;
+        setMinistradorNome(ministrador?.nome || "");
+        setMinistradorOriginal(ministrador);
         setAlunos(aula.alunos || []);
     }, [aula]);
 
@@ -122,10 +125,11 @@ const EditAula = () => {
             return;
         }
 
+        // Preserva membroId e rede do ministrador original, só atualiza o nome
         const ministrador: MinistroDaAula = {
-            membroId: "",
+            membroId: ministradorOriginal?.membroId || "",
             nome: ministradorNome,
-            rede: { name: "", _id: "" },
+            rede: ministradorOriginal?.rede || { name: "", _id: "" },
         };
 
         updateAula.mutate({ ...aula, data: data.toISOString(), tema, ministrador, alunos });

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
-import { X, RefreshCw, Camera } from "lucide-react";
+import { X, RefreshCw, Camera, CheckCircle2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Toast from "@/components/Toast";
 
@@ -8,31 +8,40 @@ interface QRCodeScannerProps {
   onScanSuccess: (decodedText: string) => void;
   onScanError?: (errorMessage: string) => void;
   onClose: () => void;
+  // Feedback em tempo real
+  totalAlunos?: number;
+  totalPresentes?: number;
+  tema?: string;
 }
 
-const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onScanError, onClose }) => {
+const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
+  onScanSuccess,
+  onScanError,
+  onClose,
+  totalAlunos = 0,
+  totalPresentes = 0,
+  tema,
+}) => {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const regionId = "qr-reader-region";
   const [cameras, setCameras] = useState<{ id: string; label: string }[]>([]);
   const [currentCameraIndex, setCurrentCameraIndex] = useState<number>(0);
   const [isInitializing, setIsInitializing] = useState(true);
 
+  const progresso = totalAlunos > 0 ? Math.round((totalPresentes / totalAlunos) * 100) : 0;
+
   useEffect(() => {
     const fetchCameras = async () => {
       try {
         const devices = await Html5Qrcode.getCameras();
         if (devices && devices.length > 0) {
-          // Filtrar apenas câmeras traseiras (excluir "front", "frontal", "user", "selfie")
-          const rearCameras = devices.filter(d => 
-            !d.label.toLowerCase().includes("front") && 
+          const rearCameras = devices.filter(d =>
+            !d.label.toLowerCase().includes("front") &&
             !d.label.toLowerCase().includes("frontal") &&
             !d.label.toLowerCase().includes("user") &&
             !d.label.toLowerCase().includes("selfie")
           );
-
-          // Se encontrar câmeras traseiras, usa elas. Caso contrário, usa todas (fallback)
           const filteredDevices = rearCameras.length > 0 ? rearCameras : devices;
-          
           setCameras(filteredDevices.map(d => ({ id: d.id, label: d.label })));
         }
       } catch (err) {
@@ -72,7 +81,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onScanErro
         (decodedText) => {
           onScanSuccess(decodedText);
         },
-        (errorMessage) => {
+        () => {
           // Silent errors during scan
         }
       );
@@ -108,6 +117,8 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onScanErro
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
       <div className="relative w-full max-w-lg bg-card rounded-2xl overflow-hidden shadow-2xl border border-border">
+
+        {/* Header */}
         <div className="p-4 border-b border-border flex items-center justify-between bg-muted/50">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <RefreshCw className="h-5 w-5 animate-spin text-primary" />
@@ -124,13 +135,43 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onScanErro
           </Button>
         </div>
 
+        {/* Painel de progresso em tempo real */}
+        {totalAlunos > 0 && (
+          <div className="px-5 pt-4 pb-3 bg-primary/5 border-b border-primary/10 space-y-2">
+            {tema && (
+              <p className="text-xs text-muted-foreground truncate font-medium">{tema}</p>
+            )}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                <span className="text-sm font-bold text-primary">{totalPresentes} presentes</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Users className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">
+                  {totalAlunos - totalPresentes} pendentes · {totalAlunos} total
+                </span>
+              </div>
+            </div>
+            {/* Barra de progresso */}
+            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${progresso}%` }}
+              />
+            </div>
+            <p className="text-right text-[11px] text-muted-foreground">{progresso}% confirmados</p>
+          </div>
+        )}
+
+        {/* Área da câmera */}
         <div className="p-6">
           <div
             id={regionId}
             className="overflow-hidden rounded-xl border-2 border-dashed border-primary/30"
-          ></div>
+          />
           <p className="text-center text-sm text-muted-foreground mt-4">
-            Aponte a câmera para o QR Code.
+            Aponte a câmera para o QR Code do aluno.
           </p>
           {cameras.length > 1 && (
             <p className="text-center text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">
@@ -139,6 +180,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onScanErro
           )}
         </div>
 
+        {/* Footer */}
         <div className="p-4 bg-muted/30 border-t border-border flex flex-col gap-3">
           {cameras.length > 1 && (
             <Button
@@ -150,7 +192,11 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onScanErro
               Trocar Câmera
             </Button>
           )}
-          <Button variant="outline" onClick={onClose} className="w-full border-destructive/30 text-destructive hover:bg-destructive/10">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="w-full border-destructive/30 text-destructive hover:bg-destructive/10"
+          >
             <X className="h-4 w-4 mr-2" />
             Fechar Scanner
           </Button>

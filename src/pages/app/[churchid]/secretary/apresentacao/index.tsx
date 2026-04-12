@@ -49,7 +49,7 @@ export default function ListaApresentacao() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-background   p-4 md:p-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-background mt-6 p-4 md:p-8">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-gray-100">Apresentações</h1>
