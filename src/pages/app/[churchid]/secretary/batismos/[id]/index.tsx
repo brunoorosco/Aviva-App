@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { SupervisorSelect } from "@/components/Select/SelectSupervisores";
 import { useForm, Controller } from "react-hook-form";
 import * as XLSX from "xlsx";
+import { gerarCertificados } from "@/lib/pdf";
 
 function formatDate(dateValue: any) {
   if (!dateValue) return "";
@@ -319,7 +320,19 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
               <FileSpreadsheet className="w-4 h-4" />
               <span className="hidden sm:inline">Exportar Lista</span>
               {/* <span className="hidden sm:inline">Exportar Excel</span> */}
-              <span className="sm:hidden">Lista</span>
+            </Button>
+          )}
+
+          {isAdmin && batismo.batizandos.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => gerarCertificados(churchid as string, batismo)}
+              className="flex items-center gap-2 text-blue-700 border-blue-300 hover:bg-blue-50 hover:text-blue-800"
+            >
+              <PrinterIcon className="w-4 h-4" />
+              <span className="hidden sm:inline">Certificados (PDF)</span>
+              <span className="sm:hidden">Certificados</span>
             </Button>
           )}
         </div>
