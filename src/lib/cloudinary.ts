@@ -9,18 +9,23 @@ cloudinary.config({
 
 // Mantém apenas as funções que rodam no server
 export async function uploadToCloudinary(
-  filePath: string,
+  file: string, // Pode ser path ou Base64
   folder: string = "uploads",
+  transform: boolean = true
 ): Promise<string> {
   try {
-    const result = await cloudinary.uploader.upload(filePath, {
+    const options: any = {
       folder,
       resource_type: "auto",
-      transformation: [
-        { width: 400, height: 400, crop: "fill", gravity: "face" },
+    };
+
+    if (transform) {
+      options.transformation = [
         { quality: "auto" },
-      ],
-    });
+      ];
+    }
+
+    const result = await cloudinary.uploader.upload(file, options);
     return result.secure_url;
   } catch (error) {
     console.error("Erro ao fazer upload para Cloudinary:", error);

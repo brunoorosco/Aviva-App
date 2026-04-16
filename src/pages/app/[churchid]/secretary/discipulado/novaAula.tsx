@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -58,6 +58,22 @@ const NovaAulaDiscipulado = () => {
         setCicloId(cicloAtivo.id);
     }
 
+    const alunosCarregados = useRef(false);
+    useEffect(() => {
+        if (cicloAtivo && !alunosCarregados.current) {
+            if (cicloAtivo.inscritos && cicloAtivo.inscritos.length > 0) {
+                const initialAlunos = cicloAtivo.inscritos.map((inscrito) => ({
+                    membroId: inscrito.id,
+                    nome: inscrito.nome,
+                    rede: inscrito.rede,
+                    presente: false
+                }));
+                setAlunos(initialAlunos);
+            }
+            alunosCarregados.current = true;
+        }
+    }, [cicloAtivo]);
+
     // Filtra usuários para o select (exclui os já adicionados)
     const usuariosFiltrados = (usuariosAtivos || []).filter(
         (u) => !alunos.some((a) => a.membroId === u._id)
@@ -109,6 +125,10 @@ const NovaAulaDiscipulado = () => {
     };
 
     const handleSalvar = () => {
+        if (!cicloId) {
+            Toast.showError("Nenhum semestre ativo. Crie um semestre primeiro.");
+            return;
+        }
         if (!data || !tema || !ministrador) {
             Toast.showError("Preencha todos os campos obrigatórios");
             return;
@@ -168,19 +188,22 @@ const NovaAulaDiscipulado = () => {
                         </div>
 
                         <div className="space-y-2">
-                            {/* <Label>Ciclo *</Label>
+                            <Label>Semestre / Ciclo *</Label>
                             <Select value={cicloId} onValueChange={setCicloId}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Selecione o ciclo" />
+                                <SelectTrigger className="bg-primary/5 border-primary/20">
+                                    <SelectValue placeholder="Selecione o semestre" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {(ciclos || []).map((c) => (
                                         <SelectItem key={c.id} value={c.id}>
-                                            {c.nome} {c.ativo && "●"}
+                                            {c.nome} {c.ativo && " (Ativo)"}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
-                            </Select> */}
+                            </Select>
+                            <p className="text-[10px] text-muted-foreground italic">
+                                A aula será vinculada a este semestre para controle de pendências.
+                            </p>
                         </div>
 
                         <div className="space-y-2">
@@ -327,7 +350,7 @@ const NovaAulaDiscipulado = () => {
                         ) : (
                             <div className="text-center py-8 text-muted-foreground">
                                 <UserPlus className="h-10 w-10 mx-auto mb-2 opacity-30" />
-                                <p className="text-sm">Busque e adicione os alunos conforme chegam</p>
+                                <p className="text-sm">Nenhum aluno matriculado no ciclo atual.<br/>Busque e adicione os alunos extras se necessário.</p>
                             </div>
                         )}
                     </CardContent>

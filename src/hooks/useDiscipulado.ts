@@ -66,9 +66,25 @@ export function useCiclos(churchId?: string) {
   return useFetch<CicloDiscipulado[]>(churchId ? `${API_BASE}/${churchId}/discipulado/ciclos` : null);
 }
 
+export function useCreateCiclo(churchId?: string, onSuccess?: () => void) {
+  const { refetch } = useCiclos(churchId);
+  return useMutate(
+    async (ciclo: Omit<CicloDiscipulado, "id">) => {
+      if (!churchId) throw new Error("Church ID required");
+      const response = await useHttpPost({ url: `${API_BASE}/${churchId}/discipulado/ciclos`, data: ciclo });
+      if (!response) throw new Error("Erro ao criar ciclo");
+      return response as CicloDiscipulado;
+    },
+    () => {
+      refetch();
+      onSuccess?.();
+    },
+  );
+}
+
 // Aulas
 export function useAulas(churchId?: string, cicloId?: string) {
-  const url = churchId 
+  const url = churchId
     ? `${API_BASE}/${churchId}/discipulado/aulas`
     : null;
   return useFetch<AulaDiscipulado[]>(url);
@@ -137,6 +153,42 @@ export function usePendencias(churchId?: string, cicloId?: string) {
     ? `${API_BASE}/${churchId}/discipulado/pendencias?cicloId=${cicloId}`
     : null;
   return useFetch<{ membroId: string; nome: string; rede: { name: string; _id: string }; aulasPendentes: string[] }[]>(url, !!url);
+}
+
+// Inscrições
+export function useAddInscrito(churchId?: string, cicloId?: string, onSuccess?: () => void) {
+  const { refetch } = useCiclos(churchId);
+  return useMutate(
+    async (inscrito: Membro) => {
+      if (!churchId || !cicloId) throw new Error("Church ID and Ciclo ID required");
+      const response = await useHttpPost({ url: `${API_BASE}/${churchId}/discipulado/ciclos/${cicloId}/inscricao`, data: inscrito });
+      if (!response) throw new Error("Erro ao matricular no ciclo");
+      return response;
+    },
+    () => {
+      refetch();
+      onSuccess?.();
+    },
+  );
+}
+
+export function useRemoveInscrito(churchId?: string, cicloId?: string, onSuccess?: () => void) {
+  const { refetch } = useCiclos(churchId);
+  return useMutate(
+    async (membroId: string) => {
+      if (!churchId || !cicloId) throw new Error("Church ID and Ciclo ID required");
+      const url = `${API_BASE}/${churchId}/discipulado/ciclos/${cicloId}/inscricao`;
+      // useHttpDelete doesn't easily support body in this generic fetcher, but fetch supports body in DELETE.
+      // We will fallback to axios or fetch for this specifically if needed. Use axios directly to be safe:
+      const response = await import("axios").then(axios => axios.default.delete(url, { data: { membroId } }));
+      if (!response.data) throw new Error("Erro ao remover matrícula");
+      return response.data;
+    },
+    () => {
+      refetch();
+      onSuccess?.();
+    },
+  );
 }
 
 // Usuários Ativos com Rede

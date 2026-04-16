@@ -10,7 +10,7 @@ axiosInstanceEvo.interceptors.request.use(
         config.headers.apikey = process.env.EVO_APIKEY
         return config
     },
-    (error) => Promise.reject(error),
+    (error) => Promise.reject(console.error("Error en interceptor:", error)),
 )
 
 export const sendMessageApiWhatsapp = async (userPhone: string, message: string, signature = true) => {
@@ -35,13 +35,16 @@ export const sendMediaApiWhatsapp = async (userPhone: string, message: string, m
     if (!userPhone || userPhone === "") return
     const msg = signature ? `*Secretaria Aviva:*\n${message}` : message
 
+    console.log(mediaUrl)
+    console.log("55" + userPhone.replace(/\D/g, ""))
+
     await axiosInstanceEvo.post(`/message/sendMedia/${process.env.EVO_INSTANCE}`, {
-        number: "55" + userPhone,
+        number: "55" + userPhone.replace(/\D/g, ""),
         mediatype: "image", // image, video or document
-        mimetype: "image/png",
+        // mimetype: "image/png",
         caption: msg,
         media: mediaUrl,
-        fileName: "Imagem.png",
+        // fileName: "Imagem.png",
     })
 }
 

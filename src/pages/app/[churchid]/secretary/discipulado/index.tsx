@@ -40,6 +40,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -53,17 +54,29 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import Toast from "@/components/Toast";
 import {
   useAulas,
   useCiclos,
+  useCreateCiclo,
   useDeleteAula,
   usePendencias,
   useUpdateAula,
 } from "@/hooks/useDiscipulado";
 import { AulaDiscipulado } from "@/domain/models/discupulado";
 import { capitalizeWords } from "@/utils/capitalizaFirst";
+import InscricoesCiclo from "@/components/Discipulado/InscricoesCiclo";
 
 const Discipulado = () => {
   const router = useRouter();
@@ -76,11 +89,33 @@ const Discipulado = () => {
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [currentAulaForScan, setCurrentAulaForScan] = useState<AulaDiscipulado | null>(null);
 
-  const { data: ciclos = [] } = useCiclos(churchId);
+  const { data: ciclos = [], refetch: refetchCiclos } = useCiclos(churchId);
   const { data: aulas = [], isLoading: loadingAulas } = useAulas(churchId, selectedCiclo || undefined);
   const { data: pendencias = [] } = usePendencias(churchId, selectedCiclo || undefined);
   const updateAula = useUpdateAula(churchId);
   const deleteAula = useDeleteAula(churchId, () => Toast.showSuccess("Aula excluída"));
+  const createCiclo = useCreateCiclo(churchId, () => {
+    Toast.showSuccess("Semestre criado com sucesso!");
+    setOpenNovoCiclo(false);
+  });
+
+  const [openNovoCiclo, setOpenNovoCiclo] = useState(false);
+  const [novoCicloNome, setNovoCicloNome] = useState("");
+  const [novoCicloInicio, setNovoCicloInicio] = useState("");
+  const [novoCicloFim, setNovoCicloFim] = useState("");
+
+  const handleCreateCiclo = () => {
+    if (!novoCicloNome || !novoCicloInicio || !novoCicloFim) {
+      Toast.showError("Preencha todos os campos do semestre");
+      return;
+    }
+    createCiclo.mutate({
+      nome: novoCicloNome,
+      dataInicio: new Date(novoCicloInicio).toISOString(),
+      dataFim: new Date(novoCicloFim).toISOString(),
+      ativo: true, // Make it active by default
+    });
+  };
 
   const cicloAtivo = ciclos?.find((c) => c.ativo) || ciclos?.[0];
   if (!selectedCiclo && cicloAtivo) {
@@ -128,9 +163,25 @@ const Discipulado = () => {
         return;
       }
 
-      const aluno = currentAulaForScan.alunos.find((a) => a.membroId === studentId);
+      let aluno = currentAulaForScan.alunos.find((a) => a.membroId === studentId);
+      
       if (!aluno) {
-        Toast.showError(`Aluno não encontrado nesta lista: ${studentData.nome || studentId}`);
+        // Auto-adicionar aluno de repósição (semestre anterior) se tiver o QR Code
+        aluno = {
+          membroId: studentId,
+          nome: studentData.nome || "Aluno Identificado Pelo QR",
+          rede: { name: "Reposição/Visitante", _id: "" },
+          presente: true
+        };
+        
+        const updated = {
+          ...currentAulaForScan,
+          alunos: [aluno, ...currentAulaForScan.alunos],
+        };
+        
+        updateAula.mutate(updated);
+        setCurrentAulaForScan(updated);
+        Toast.showSuccess(`Adicionado à aula para reposição: ${capitalizeWords(aluno.nome)}`);
         return;
       }
 
@@ -175,19 +226,63 @@ const Discipulado = () => {
             <h1 className="text-xl font-bold">Discipulado</h1>
           </div>
           <div className="flex items-center gap-3">
-            {/* <Select value={selectedCiclo} onValueChange={setSelectedCiclo}>
-              <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Selecione o ciclo" />
-              </SelectTrigger>
-              <SelectContent>
-                {(ciclos || []).map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.nome} {c.ativo && "●"}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select> */}
-            <Button onClick={() => router.push(`/app/${churchId}/secretary/discipulado/novaAula`)} className="gap-2">
+            <Dialog open={openNovoCiclo} onOpenChange={setOpenNovoCiclo}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  Novo Semestre
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Criar Novo Semestre</DialogTitle>
+                  <DialogDescription>
+                    O semestre ativo receberá as matrículas dos alunos e as novas aulas.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label>Nome do Semestre *</Label>
+                    <Input 
+                      placeholder="Ex: 1º Semestre 2026" 
+                      value={novoCicloNome} 
+                      onChange={(e) => setNovoCicloNome(e.target.value)} 
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Data de Início *</Label>
+                      <Input 
+                        type="date" 
+                        value={novoCicloInicio} 
+                        onChange={(e) => setNovoCicloInicio(e.target.value)} 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Data de Fim *</Label>
+                      <Input 
+                        type="date" 
+                        value={novoCicloFim} 
+                        onChange={(e) => setNovoCicloFim(e.target.value)} 
+                      />
+                    </div>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setOpenNovoCiclo(false)}>Cancelar</Button>
+                  <Button onClick={handleCreateCiclo} disabled={createCiclo.isLoading}>
+                    {createCiclo.isLoading ? "Salvando..." : "Criar Semestre"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Button 
+              onClick={() => router.push(`/app/${churchId}/secretary/discipulado/novaAula`)} 
+              className="gap-2"
+              disabled={!cicloAtivo}
+              title={!cicloAtivo ? "Crie um semestre primeiro" : ""}
+            >
               <Plus className="h-4 w-4" />
               Nova Aula
             </Button>
@@ -196,23 +291,30 @@ const Discipulado = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-        {/* Search and Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-          <div className="md:col-span-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por tema, ministro ou aluno..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
-              />
+        <Tabs defaultValue="aulas" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
+            <TabsTrigger value="aulas">Aulas</TabsTrigger>
+            <TabsTrigger value="inscricoes">Inscrições do Ciclo</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="aulas" className="mt-6 space-y-6">
+            {/* Search and Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+              <div className="md:col-span-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por tema, ministro ou aluno..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+              {/* Ciclo Select can go here if needed */}
             </div>
-          </div>
-          {/* Ciclo Select can go here if needed */}
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card>
             <CardContent className="flex items-center gap-3 p-4">
               <CalendarDays className="h-8 w-8 text-primary" />
@@ -448,6 +550,31 @@ const Discipulado = () => {
             ))}
           </Accordion>
         )}
+          </TabsContent>
+
+          <TabsContent value="inscricoes">
+            {cicloAtivo ? (
+              <InscricoesCiclo 
+                churchId={churchId} 
+                ciclo={cicloAtivo} 
+                onRefresh={refetchCiclos} 
+              />
+            ) : (
+              <div className="text-center py-12 text-muted-foreground border rounded-lg bg-card mt-6">
+                <Users className="h-10 w-10 mx-auto mb-3 opacity-30" />
+                <p>Nenhum semestre/ciclo ativo encontrado.</p>
+                <p className="text-sm mt-1">Crie um Novo Semestre para começar a matricular os alunos.</p>
+                <Button 
+                  variant="outline" 
+                  className="mt-4 gap-2"
+                  onClick={() => setOpenNovoCiclo(true)}
+                >
+                  <Plus className="h-4 w-4" /> Criar Semestre
+                </Button>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       {isScannerOpen && currentAulaForScan && (

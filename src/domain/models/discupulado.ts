@@ -2,6 +2,8 @@ export type Membro = {
   id: string;
   nome: string;
   rede: { name: string; _id: string };
+  dataEnvioQRCode?: string;
+  qrCodeUrl?: string;
 };
 
 export type AlunoPresenca = {
@@ -33,4 +35,5 @@ export type CicloDiscipulado = {
   dataInicio: string;
   dataFim: string;
   ativo: boolean;
+  inscritos?: Membro[];
 };

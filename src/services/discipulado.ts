@@ -27,6 +27,29 @@ export const discipuladoApi = {
     return response.json();
   },
 
+  addInscrito: async (churchId: string, cicloId: string, inscrito: Membro): Promise<{ success: boolean; message?: string }> => {
+    const response = await fetch(`${API_BASE}/${churchId}/discipulado/ciclos/${cicloId}/inscricao`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(inscrito),
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => null);
+      throw new Error(data?.message || "Erro ao matricular no ciclo");
+    }
+    return response.json();
+  },
+
+  removeInscrito: async (churchId: string, cicloId: string, membroId: string): Promise<{ success: boolean; message?: string }> => {
+    const response = await fetch(`${API_BASE}/${churchId}/discipulado/ciclos/${cicloId}/inscricao`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ membroId }),
+    });
+    if (!response.ok) throw new Error("Erro ao remover matrícula");
+    return response.json();
+  },
+
   // Aulas
   getAulas: async (churchId: string, cicloId: string): Promise<AulaDiscipulado[]> => {
     const response = await fetch(`${API_BASE}/${churchId}/discipulado/aulas?cicloId=${cicloId}`);

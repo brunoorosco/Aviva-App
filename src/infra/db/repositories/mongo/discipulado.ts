@@ -25,6 +25,7 @@ export class DiscipuladoMongoRepository {
         dataInicio: c.dataInicio,
         dataFim: c.dataFim,
         ativo: c.ativo || false,
+        inscritos: c.inscritos || [],
       }));
     } catch (error) {
       console.error("Error getting ciclos:", error);
@@ -45,6 +46,7 @@ export class DiscipuladoMongoRepository {
         dataInicio: ciclo.dataInicio,
         dataFim: ciclo.dataFim,
         ativo: true,
+        inscritos: ciclo.inscritos || [],
       };
     } catch (error) {
       console.error("Error getting active ciclo:", error);
@@ -66,6 +68,64 @@ export class DiscipuladoMongoRepository {
       };
     } catch (error) {
       console.error("Error creating ciclo:", error);
+      throw error;
+    }
+  }
+
+  async addInscrito(cicloId: string, inscrito: Membro): Promise<boolean> {
+    try {
+      const collection = await MongoHelper.getCollection(this.ciclosCollection);
+      
+      // Ensure we don't add duplicates
+      const result = await collection.updateOne(
+        { _id: new ObjectId(cicloId), "inscritos.id": { $ne: inscrito.id } },
+        {
+          $push: { inscritos: inscrito } as any
+        }
+      );
+
+      return result.modifiedCount > 0;
+    } catch (error) {
+      console.error("Error adding inscrito to ciclo:", error);
+      throw error;
+    }
+  }
+
+  async removeInscrito(cicloId: string, membroId: string): Promise<boolean> {
+    try {
+      const collection = await MongoHelper.getCollection(this.ciclosCollection);
+      const result = await collection.updateOne(
+        { _id: new ObjectId(cicloId) },
+        {
+          $pull: { inscritos: { id: membroId } } as any
+        }
+      );
+
+      return result.modifiedCount > 0;
+    } catch (error) {
+      console.error("Error removing inscrito from ciclo:", error);
+      throw error;
+    }
+  }
+
+  async updateInscritoEnvio(cicloId: string, membroId: string, data: string, qrCodeUrl?: string): Promise<boolean> {
+    try {
+      const collection = await MongoHelper.getCollection(this.ciclosCollection);
+      const updateData: any = { "inscritos.$.dataEnvioQRCode": data };
+      if (qrCodeUrl) {
+        updateData["inscritos.$.qrCodeUrl"] = qrCodeUrl;
+      }
+
+      const result = await collection.updateOne(
+        { _id: new ObjectId(cicloId), "inscritos.id": membroId },
+        {
+          $set: updateData
+        }
+      );
+
+      return result.modifiedCount > 0;
+    } catch (error) {
+      console.error("Error updating inscrito envio date:", error);
       throw error;
     }
   }
@@ -222,29 +282,17 @@ export class DiscipuladoMongoRepository {
       // Busca todas as aulas do ciclo
       const aulas = await aulasCollection.find({ cicloId }).toArray();
 
-      // Busca todos os membros ativos
-      const membros = await usuariosCollection
-        .find(
-          {
-            active: true,
-            role: { $regex: /^(membro|discípulo)$/i },
-          },
-          {
-            projection: {
-              _id: 1,
-              name: 1,
-              "cem.name": 1,
-              "cem._id": 1,
-            },
-          },
-        )
-        .toArray();
+      // Busca o Ciclo para saber quem são os inscritos
+      const ciclosCollection = await MongoHelper.getCollection(this.ciclosCollection);
+      const ciclo = await ciclosCollection.findOne({ _id: new ObjectId(cicloId) });
 
-      // Para cada membro, verifica quais aulas ele faltou
+      if (!ciclo || !ciclo.inscritos) return [];
+
+      const inscritos = ciclo.inscritos;
       const pendencias: any[] = [];
 
-      for (const membro of membros) {
-        const membroId = membro._id.toHexString();
+      for (const inscrito of inscritos) {
+        const membroId = inscrito.id;
         const aulasPerdidas: string[] = [];
 
         for (const aula of aulas) {
@@ -260,8 +308,8 @@ export class DiscipuladoMongoRepository {
         if (aulasPerdidas.length > 0) {
           pendencias.push({
             membroId,
-            nome: membro.name,
-            rede: { name: membro.cem?.name || "-", _id: membro.cem?._id || "" },
+            nome: inscrito.nome,
+            rede: inscrito.rede,
             aulasPendentes: aulasPerdidas,
           });
         }
