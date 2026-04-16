@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { ReencontristasSection } from "@/components/finance/ReencontristasSection";
+import { EncontristasSection } from "@/components/finance/EncontristasSection";
 import { EquipeSection } from "@/components/finance/EquipeSection";
 import { PagamentosSection } from "@/components/finance/PagamentosSection";
 import { ResumoFinanceiro } from "@/components/finance/ResumoFinanceiro";
@@ -48,13 +48,13 @@ export default function GroupFinance() {
       prev.map((e) =>
         e._id === id
           ? {
-              ...e,
-              name: data.nome,
-              telefone: data.telefone,
-              email: data.email,
-              endereco: data.endereco,
-              isento: data.isento,
-            }
+            ...e,
+            name: data.nome,
+            telefone: data.telefone,
+            email: data.email,
+            endereco: data.endereco,
+            isento: data.isento,
+          }
           : e,
       ),
     );
@@ -247,8 +247,8 @@ export default function GroupFinance() {
             </div>
           </div>
           <div className="shrink-0">
-            <Button 
-              onClick={handleSave} 
+            <Button
+              onClick={handleSave}
               disabled={isLoading}
               className="bg-orange-600 hover:bg-orange-700 text-white font-bold h-9 sm:h-10 px-4 sm:px-8"
             >
@@ -260,15 +260,15 @@ export default function GroupFinance() {
 
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
         <ResumoFinanceiro
-          reencontristas={reencontristas}
+          encontristas={reencontristas}
           equipeMembers={equipeMembers}
           pagamentos={pagamentos}
           totalPago={totalPago}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ReencontristasSection
-            reencontristas={reencontristas}
+          <EncontristasSection
+            encontristas={reencontristas}
             onAdd={addReencontrista}
             onEdit={editReencontrista}
             onRemove={removeReencontrista}

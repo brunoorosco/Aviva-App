@@ -61,6 +61,7 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
   };
 
   const reencontristasCount = reencontro?.reencontristas?.length ?? 0;
+  const equipeCount = reencontro?.equipe?.length ?? 0;
 
   return (
     <div className="group relative">
@@ -117,13 +118,24 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
           <div className="space-y-3">
             {/* Stats */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-blue-600 dark:text-orange-400 flex-shrink-0" />
-                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                  <span className="text-xs text-gray-500 dark:text-gray-400">Reencontristas:</span>
-                  <span className="text-lg font-bold text-blue-600 dark:text-orange-400">
-                    {reencontristasCount}
-                  </span>
+              <div className="flex gap-10">
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-blue-600 dark:text-orange-400 flex-shrink-0" />
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Reencontristas:</span>
+                    <span className="text-lg font-bold text-blue-600 dark:text-orange-400">
+                      {reencontristasCount}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-blue-600 dark:text-orange-400 flex-shrink-0" />
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Equipe:</span>
+                    <span className="text-lg font-bold text-blue-600 dark:text-orange-400">
+                      {equipeCount}
+                    </span>
+                  </div>
                 </div>
               </div>
 
