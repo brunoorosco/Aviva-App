@@ -52,66 +52,66 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // });
 
       const grupos = financeiroPorRede.map((fin: any) => {
-  const reencontristas =
-    reencontro.reencontristas?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
-  const equipe = reencontro.equipe?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
+        const reencontristas =
+          reencontro.reencontristas?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
+        const equipe = reencontro.equipe?.filter((e: any) => e.rede?._id === fin.rede._id) || [];
 
-  const reencontristasIsentos = reencontristas.filter((e: any) => e.isento).length;
-  const equipeIsentos = equipe.filter((e: any) => e.isento).length;
+        const reencontristasIsentos = reencontristas.filter((e: any) => e.isento).length;
+        const equipeIsentos = equipe.filter((e: any) => e.isento).length;
 
-  // Calcular não-isentos
-  const reencontristasNaoIsentos = reencontristas.length - reencontristasIsentos;
-  const equipeNaoIsenta = equipe.length - equipeIsentos;
+        // Calcular não-isentos
+        const reencontristasNaoIsentos = reencontristas.length - reencontristasIsentos;
+        const equipeNaoIsenta = equipe.length - equipeIsentos;
 
-  // totalAPagar = apenas não-isentos × valor respectivo
-  const totalAPagar =
-    reencontristasNaoIsentos * VALOR_REENCONTRISTA + equipeNaoIsenta * VALOR_EQUIPE;
+        // totalAPagar = apenas não-isentos × valor respectivo
+        const totalAPagar =
+          reencontristasNaoIsentos * VALOR_REENCONTRISTA + equipeNaoIsenta * VALOR_EQUIPE;
 
-  const pagamentosPorTipo: Record<string, number> = {};
-  (fin.pagamento || []).forEach((p: any) => {
-    pagamentosPorTipo[p.tipo] = (pagamentosPorTipo[p.tipo] || 0) + p.valor;
-  });
+        const pagamentosPorTipo: Record<string, number> = {};
+        (fin.pagamento || []).forEach((p: any) => {
+          pagamentosPorTipo[p.tipo] = (pagamentosPorTipo[p.tipo] || 0) + p.valor;
+        });
 
-  // Calcular total pago somando todos os pagamentos
-  const totalPago = (fin.pagamento || []).reduce((sum: number, p: any) => sum + p.valor, 0);
+        // Calcular total pago somando todos os pagamentos
+        const totalPago = (fin.pagamento || []).reduce((sum: number, p: any) => sum + p.valor, 0);
 
-  // Calcular status baseado nos valores reais dos pagamentos
-  let status: "quitado" | "parcial" | "pendente" | "excedente";
-  if (totalPago === 0) {
-    status = "pendente";
-  } else if (totalPago === totalAPagar) {
-    status = "quitado";
-  } else if (totalPago > totalAPagar) {
-    status = "excedente";
-  } else {
-    status = "parcial";
-  }
+        // Calcular status baseado nos valores reais dos pagamentos
+        let status: "quitado" | "parcial" | "pendente" | "excedente";
+        if (totalPago === 0) {
+          status = "pendente";
+        } else if (totalPago === totalAPagar) {
+          status = "quitado";
+        } else if (totalPago > totalAPagar) {
+          status = "excedente";
+        } else {
+          status = "parcial";
+        }
 
-  // Mapear pagamentos com detalhes dos comprovantes
-  const pagamentosDetalhados = (fin.pagamento || []).map((p: any) => ({
-    _id: p._id,
-    tipo: p.tipo,
-    valor: p.valor,
-    data: p.createdAt,
-    comprovanteUrl: p.comprovanteUrl,
-    comprovanteName: p.comprovanteName,
-  }));
+        // Mapear pagamentos com detalhes dos comprovantes
+        const pagamentosDetalhados = (fin.pagamento || []).map((p: any) => ({
+          _id: p._id,
+          tipo: p.tipo,
+          valor: p.valor,
+          data: p.createdAt,
+          comprovanteUrl: p.comprovanteUrl,
+          comprovanteName: p.comprovanteName,
+        }));
 
-  return {
-    id: fin._id,
-    nome: fin.rede.name,
-    celula: fin.rede.name,
-    reencontristas: reencontristas.length,
-    reencontristasIsentos,
-    equipe: equipe.length,
-    equipeIsentos,
-    totalPago, // ✅ recalculado baseado nos pagamentos
-    totalAPagar, // ✅ recalculado aqui, ignorando o valor do banco
-    status, // ✅ calculado dinamicamente
-    pagamentosPorTipo,
-    pagamentos: pagamentosDetalhados,
-  };
-});
+        return {
+          id: fin._id,
+          nome: fin.rede.name,
+          celula: fin.rede.name,
+          reencontristas: reencontristas.length,
+          reencontristasIsentos,
+          equipe: equipe.length,
+          equipeIsentos,
+          totalPago, // ✅ recalculado baseado nos pagamentos
+          totalAPagar, // ✅ recalculado aqui, ignorando o valor do banco
+          status, // ✅ calculado dinamicamente
+          pagamentosPorTipo,
+          pagamentos: pagamentosDetalhados,
+        };
+      });
       // Calcular totais gerais
       const totalReencontristas = grupos.reduce((s: number, g: any) => s + g.reencontristas, 0);
       const totalEquipe = grupos.reduce((s: number, g: any) => s + g.equipe, 0);

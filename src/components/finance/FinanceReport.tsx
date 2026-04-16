@@ -36,9 +36,10 @@ const statusLabels: Record<string, string> = {
   excedente: "Excedente",
 };
 
-export default function FinanceReport() {
+export default function FinanceReport({ type }: { type: "encontro" | "reencontro" }) {
   const navigate = useRouter();
   const { churchid, id } = navigate.query;
+  const urlType = type === "encontro" ? "encontroComDeus" : "reencontroComDeus";
 
   const {
     data: response,
@@ -46,7 +47,7 @@ export default function FinanceReport() {
     error,
   } = useHttpGet<RelatorioFinanceiroData>(
     churchid && id
-      ? `/api/protected/churches/${churchid}/encontroComDeus/${id}/relatorio-financeiro`
+      ? `/api/protected/churches/${churchid}/${urlType}/${id}/relatorio-financeiro`
       : null,
   );
 
@@ -55,6 +56,7 @@ export default function FinanceReport() {
   const grupos: RelatorioFinanceiroGrupo[] = reportData?.grupos ?? [];
   const totais: RelatorioFinanceiroTotais = reportData?.totais ?? {
     totalEncontristas: 0,
+    totalReencontristas: 0,
     totalEquipe: 0,
     totalParticipantes: 0,
     totalIsentos: 0,
@@ -62,13 +64,12 @@ export default function FinanceReport() {
     totalAPagar: 0,
     pagamentosPorTipoGeral: {},
   };
-  const encontro: RelatorioFinanceiroEncontro = reportData?.encontro ?? {
+  const encontro: RelatorioFinanceiroEncontro = reportData?.encontro ?? reportData?.reencontro ?? {
     _id: "",
     numero: "",
     data: "",
   };
-
-  const totalEncontristas = totais.totalEncontristas ?? 0;
+  const totalEncontristas = totais.totalEncontristas ?? totais.totalReencontristas ?? 0;
   const totalEquipe = totais.totalEquipe ?? 0;
   const totalIsentos = totais.totalIsentos ?? 0;
   const totalPago = totais.totalPago ?? 0;
@@ -100,7 +101,7 @@ export default function FinanceReport() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background mt-6 sm:mt-0">
       <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate.back()}>
@@ -109,7 +110,7 @@ export default function FinanceReport() {
           <div>
             <h1 className="text-xl font-bold font-[Montserrat]">Relatório Financeiro</h1>
             <p className="text-xs text-muted-foreground">
-              Encontro #{encontro.numero} - {new Date(encontro.data).toLocaleDateString("pt-BR")}
+              {type === "encontro" ? "Encontro" : "Reencontro"} #{encontro.numero} - {new Date(encontro.data).toLocaleDateString("pt-BR")}
             </p>
           </div>
         </div>
@@ -127,7 +128,7 @@ export default function FinanceReport() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
               <InfoCard label="Redes" value={String(grupos.length)} />
-              <InfoCard label="Encontristas" value={String(totalEncontristas)} />
+              <InfoCard label={type === "encontro" ? "Encontristas" : "Reencontristas"} value={String(totalEncontristas)} />
               <InfoCard label="Equipe" value={String(totalEquipe)} />
               <InfoCard label="Total Participantes" value={String(totalParticipantes)} />
               <InfoCard label="Isentos" value={String(totalIsentos)} />
@@ -213,11 +214,11 @@ export default function FinanceReport() {
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="rounded-lg border border-border/50 bg-secondary/20 p-3 text-center">
-                      <p className="text-[10px] text-muted-foreground uppercase">Encontristas</p>
-                      <p className="text-lg font-semibold">{g.encontristas}</p>
-                      {g.encontristasIsentos > 0 && (
+                      <p className="text-[10px] text-muted-foreground uppercase">{type === "encontro" ? "Encontristas" : "Reencontristas"}</p>
+                      <p className="text-lg font-semibold">{g.encontristas ?? g.reencontristas}</p>
+                      {(g.encontristasIsentos ?? g.reencontristasIsentos) > 0 && (
                         <p className="text-xs text-muted-foreground">
-                          ({g.encontristasIsentos} isentos)
+                          ({g.encontristasIsentos ?? g.reencontristasIsentos} isentos)
                         </p>
                       )}
                     </div>
