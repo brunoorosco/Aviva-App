@@ -30,6 +30,7 @@ export interface RelatorioFinanceiroGrupo {
 
 export interface RelatorioFinanceiroTotais {
   totalEncontristas: number;
+  totalReencontristas: number;
   totalEquipe: number;
   totalParticipantes: number;
   totalIsentos: number;
@@ -40,6 +41,7 @@ export interface RelatorioFinanceiroTotais {
 
 export interface RelatorioFinanceiroData {
   encontro: RelatorioFinanceiroEncontro;
+  reencontro: RelatorioFinanceiroEncontro;
   grupos: RelatorioFinanceiroGrupo[];
   totais: RelatorioFinanceiroTotais;
 }

@@ -55,7 +55,7 @@ export function ResumoFinanceiro({ encontristas, equipeMembers, pagamentos, tota
   );
 
   const status = totalPago - totalAPagar;
-  const saldo =  status === 0 ? "quitado" : "pendente";
+  const saldo = status === 0 ? "quitado" : "pendente";
   const cfg = statusConfig[saldo as StatusFinanceiro];
 
   return (
@@ -77,7 +77,7 @@ export function ResumoFinanceiro({ encontristas, equipeMembers, pagamentos, tota
       <CardContent className="space-y-4">
         {/* Contagens */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <InfoCard label="Encontristas" value={String(qtdEncontristas)} />
+          <InfoCard label="(Re)Encontristas" value={String(qtdEncontristas)} />
           <InfoCard label="Equipe" value={String(qtdEquipe)} />
           <InfoCard label="Total Participantes" value={String(totalParticipantes)} />
           <InfoCard label="Isentos" value={String(totalIsento)} />

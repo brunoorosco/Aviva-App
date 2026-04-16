@@ -42,7 +42,7 @@ export function EncontristasSection({ encontristas, onAdd, onEdit, onRemove }: P
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Users className="h-5 w-5 text-primary" />
-              Encontristas
+              (Re)Encontristas
             </CardTitle>
             <Button onClick={handleNew} size="sm" className="gap-1">
               <Plus className="h-4 w-4" /> Adicionar
