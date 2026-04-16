@@ -88,6 +88,8 @@ const Discipulado = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [currentAulaForScan, setCurrentAulaForScan] = useState<AulaDiscipulado | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [lastMarkedName, setLastMarkedName] = useState("");
 
   const { data: ciclos = [], refetch: refetchCiclos } = useCiclos(churchId);
   const { data: aulas = [], isLoading: loadingAulas } = useAulas(churchId, selectedCiclo || undefined);
@@ -123,13 +125,23 @@ const Discipulado = () => {
   }
 
   const handleTogglePresenca = (aula: AulaDiscipulado, membroId: string) => {
+    const aluno = aula.alunos.find(a => a.membroId === membroId);
+    const novoStatus = !aluno?.presente;
+
     const updated = {
       ...aula,
       alunos: aula.alunos.map((a) =>
-        a.membroId === membroId ? { ...a, presente: !a.presente } : a,
+        a.membroId === membroId ? { ...a, presente: novoStatus } : a,
       ),
     };
+
     updateAula.mutate(updated);
+
+    if (novoStatus && aluno) {
+      setLastMarkedName(aluno.nome);
+      setShowSuccessModal(true);
+      setTimeout(() => setShowSuccessModal(false), 1200);
+    }
   };
 
   const handleDeleteAula = (id: string) => {
@@ -589,6 +601,26 @@ const Discipulado = () => {
           tema={currentAulaForScan.tema}
         />
       )}
+
+      {/* Modal de Sucesso - Presença Manual */}
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent className="max-w-[300px] border-none bg-transparent shadow-none flex flex-col items-center justify-center p-0 outline-none">
+          <div className="bg-card/90 backdrop-blur-xl border border-primary/20 p-8 rounded-3xl flex flex-col items-center gap-4 animate-in zoom-in-95 duration-300">
+            <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center border-4 border-primary/20">
+              <CheckCircle2 className="h-12 w-12 text-primary animate-bounce" />
+            </div>
+            <div className="text-center space-y-1">
+              <h3 className="text-xl font-black text-foreground">Presença!</h3>
+              <p className="text-sm text-muted-foreground font-medium truncate max-w-[200px]">
+                {capitalizeWords(lastMarkedName)}
+              </p>
+            </div>
+            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">
+              Registrada com sucesso
+            </Badge>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
