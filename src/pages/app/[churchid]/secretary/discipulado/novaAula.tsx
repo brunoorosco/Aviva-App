@@ -23,10 +23,32 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import Toast from "@/components/Toast";
 import { useCreateAula, useMembros, useCiclos, useActiveUsersWithNetwork } from "@/hooks/useDiscipulado";
 import { AlunoPresenca, MinistroDaAula } from "@/domain/models/discupulado";
 import { cn } from "@/lib/utils";
+
+const TEMAS_AULA = [
+    { aula: 1, assunto: "Pecado e Arrependimento" },
+    { aula: 2, assunto: "Novo Nascimento" },
+    { aula: 3, assunto: "Perdão e Rejeição" },
+    { aula: 4, assunto: "Caráter de Cristo em Nós" },
+    { aula: 5, assunto: "Nossa Identidade em Cristo" },
+    { aula: 6, assunto: "Autoridade Submissão e Integração no Corpo" },
+    { aula: 7, assunto: "Oração e Autoridade" },
+    { aula: 8, assunto: "Fé a Vida do Cristão" },
+    { aula: 9, assunto: "Dízimos e Ofertas na Vida do Cristão" },
+    { aula: 10, assunto: "Jejum" },
+    { aula: 11, assunto: "Libertação" },
+    { aula: 12, assunto: "Espírito, Alma e Corpo" },
+    { aula: 13, assunto: "O Batismo no Espírito Santo" },
+    { aula: 14, assunto: "Manifestações do Espírito Santo" },
+    { aula: 15, assunto: "O Poder da Palavra Falada" },
+    { aula: 16, assunto: "O Poder do Louvor e da Adoração" },
+    { aula: 17, assunto: "A Aliança e os Nomes Redentores de Deus" },
+    { aula: 18, assunto: "O Fluir da Benção" }
+];
 
 const NovaAulaDiscipulado = () => {
     const router = useRouter();
@@ -207,8 +229,24 @@ const NovaAulaDiscipulado = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Tema da Aula *</Label>
-                            <Input placeholder="Ex: A importância da oração" value={tema} onChange={(e) => setTema(e.target.value)} />
+                            <Label>Aula / Assunto *</Label>
+                            <Select value={tema} onValueChange={setTema}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Selecione o assunto da aula" />
+                                </SelectTrigger>
+                                <SelectContent className="max-h-[300px] overflow-y-auto">
+                                    {TEMAS_AULA.map((t) => (
+                                        <SelectItem key={t.aula} value={t.assunto}>
+                                            <div className="flex items-center gap-2">
+                                                <Badge variant="outline" className="h-5 w-5 p-0 flex items-center justify-center rounded-full text-[10px] font-bold">
+                                                    {t.aula}
+                                                </Badge>
+                                                <span>{t.assunto}</span>
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
 
                         <div className="space-y-2">

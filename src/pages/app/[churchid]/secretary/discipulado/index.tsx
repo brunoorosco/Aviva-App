@@ -92,10 +92,19 @@ const Discipulado = () => {
   const [lastMarkedName, setLastMarkedName] = useState("");
 
   const { data: ciclos = [], refetch: refetchCiclos } = useCiclos(churchId);
-  const { data: aulas = [], isLoading: loadingAulas } = useAulas(churchId, selectedCiclo || undefined);
-  const { data: pendencias = [] } = usePendencias(churchId, selectedCiclo || undefined);
-  const updateAula = useUpdateAula(churchId);
-  const deleteAula = useDeleteAula(churchId, () => Toast.showSuccess("Aula excluída"));
+  const { data: aulas = [], isLoading: loadingAulas, refetch: refetchAulas } = useAulas(churchId, selectedCiclo || undefined);
+  const { data: pendencias = [], refetch: refetchPendencias } = usePendencias(churchId, selectedCiclo || undefined);
+  
+  const updateAula = useUpdateAula(churchId, () => {
+    refetchAulas();
+    refetchPendencias();
+  });
+  
+  const deleteAula = useDeleteAula(churchId, () => {
+    Toast.showSuccess("Aula excluída");
+    refetchAulas();
+    refetchPendencias();
+  });
   const createCiclo = useCreateCiclo(churchId, () => {
     Toast.showSuccess("Semestre criado com sucesso!");
     setOpenNovoCiclo(false);
@@ -360,42 +369,46 @@ const Discipulado = () => {
 
         {/* Pendências */}
         {(pendencias?.length || 0) > 0 && (
-          <Card className="border-destructive/30">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2 text-destructive">
-                <AlertTriangle className="h-4 w-4" />
-                Alunos com pendência de reposição
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Aluno</TableHead>
-                    <TableHead>Célula</TableHead>
-                    <TableHead>Aulas pendentes</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {(pendencias || []).map((p) => (
-                    <TableRow key={p.membroId}>
-                      <TableCell className="font-medium">{p.nome}</TableCell>
-                      <TableCell>{p.rede.name}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {p.aulasPendentes.map((tema) => (
-                            <Badge key={tema} variant="destructive" className="text-xs">
-                              {tema}
-                            </Badge>
-                          ))}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="pendencias" className="border rounded-xl bg-destructive/5 overflow-hidden shadow-sm">
+              <AccordionTrigger className="px-4 py-4 hover:no-underline">
+                <div className="flex items-center gap-2 text-destructive">
+                  <AlertTriangle className="h-5 w-5" />
+                  <h2 className="font-bold text-base">Alunos com pendência de reposição ({pendencias.length})</h2>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                <div className="bg-card rounded-lg border border-destructive/20 overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/50">
+                        <TableHead className="font-bold">Aluno</TableHead>
+                        <TableHead className="font-bold">Célula</TableHead>
+                        <TableHead className="font-bold">Aulas pendentes</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {(pendencias || []).map((p) => (
+                        <TableRow key={p.membroId} className="hover:bg-destructive/5 transition-colors">
+                          <TableCell className="font-medium">{p.nome}</TableCell>
+                          <TableCell className="text-muted-foreground">{p.rede.name}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-wrap gap-1">
+                              {p.aulasPendentes.map((tema) => (
+                                <Badge key={tema} variant="destructive" className="text-[10px] px-1.5 py-0 uppercase font-black">
+                                  {tema}
+                                </Badge>
+                              ))}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         )}
 
         {/* Aulas */}
@@ -479,8 +492,13 @@ const Discipulado = () => {
                               size="icon"
                               className="h-9 w-9 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors rounded-full"
                               onClick={(e) => e.stopPropagation()}
+                              disabled={deleteAula.isLoading}
                             >
-                              <Trash2 className="h-4.5 w-4.5" />
+                              {deleteAula.isLoading ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="h-4.5 w-4.5" />
+                              )}
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent onClick={(e) => e.stopPropagation()}>
@@ -544,6 +562,7 @@ const Discipulado = () => {
                             <Checkbox
                               checked={aluno.presente}
                               onCheckedChange={() => handleTogglePresenca(aula, aluno.membroId)}
+                              disabled={updateAula.isLoading}
                             />
                           </TableCell>
                         </TableRow>

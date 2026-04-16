@@ -135,6 +135,7 @@ export function useUpdateAula(churchId?: string, onSuccess?: () => void) {
 
 // Delete aula
 export function useDeleteAula(churchId?: string, onSuccess?: () => void) {
+  const { refetch } = useAulas(churchId, undefined);
   return useMutate(
     async (id: string) => {
       if (!churchId) throw new Error("Church ID required");
@@ -142,6 +143,7 @@ export function useDeleteAula(churchId?: string, onSuccess?: () => void) {
       if (!response) throw new Error("Erro ao excluir aula");
     },
     () => {
+      refetch();
       onSuccess?.();
     },
   );
