@@ -45,34 +45,34 @@ const NovaAulaDiscipulado = () => {
     const [data, setData] = useState<Date | undefined>(new Date());
     const [tema, setTema] = useState("");
     const [ministrador, setMinistrador] = useState<MinistroDaAula | undefined>(undefined);
-    const [cicloId, setCicloId] = useState(() => {
-        return "";
-    });
+    const [cicloId, setCicloId] = useState("");
     const [alunos, setAlunos] = useState<AlunoPresenca[]>([]);
     const [busca, setBusca] = useState("");
     const [membroSelecionado, setMembroSelecionado] = useState("");
 
     // Set default ciclo when loaded
-    const cicloAtivo = ciclos?.find((c) => c.ativo) || ciclos?.[0];
-    if (!cicloId && cicloAtivo) {
-        setCicloId(cicloAtivo.id);
-    }
-
-    const alunosCarregados = useRef(false);
     useEffect(() => {
-        if (cicloAtivo && !alunosCarregados.current) {
-            if (cicloAtivo.inscritos && cicloAtivo.inscritos.length > 0) {
-                const initialAlunos = cicloAtivo.inscritos.map((inscrito) => ({
+        if (!cicloId && ciclos && ciclos.length > 0) {
+            const ativo = ciclos.find((c) => c.ativo) || ciclos[0];
+            setCicloId(ativo.id);
+        }
+    }, [ciclos, cicloId]);
+
+    // Atualiza lista de alunos quando o ciclo muda
+    useEffect(() => {
+        if (cicloId && ciclos) {
+            const cicloSelecionado = ciclos.find(c => c.id === cicloId);
+            if (cicloSelecionado?.inscritos) {
+                const matriculados = cicloSelecionado.inscritos.map((inscrito) => ({
                     membroId: inscrito.id,
                     nome: inscrito.nome,
                     rede: inscrito.rede,
                     presente: false
                 }));
-                setAlunos(initialAlunos);
+                setAlunos(matriculados);
             }
-            alunosCarregados.current = true;
         }
-    }, [cicloAtivo]);
+    }, [cicloId, ciclos]);
 
     // Filtra usuários para o select (exclui os já adicionados)
     const usuariosFiltrados = (usuariosAtivos || []).filter(
@@ -349,8 +349,7 @@ const NovaAulaDiscipulado = () => {
                             </div>
                         ) : (
                             <div className="text-center py-8 text-muted-foreground">
-                                <UserPlus className="h-10 w-10 mx-auto mb-2 opacity-30" />
-                                <p className="text-sm">Nenhum aluno matriculado no ciclo atual.<br/>Busque e adicione os alunos extras se necessário.</p>
+                                <p className="text-sm">Nenhum aluno matriculado neste semestre ainda.<br />Busque e adicione alunos manualmente se necessário.</p>
                             </div>
                         )}
                     </CardContent>
