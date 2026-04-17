@@ -28,6 +28,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
   const [currentCameraIndex, setCurrentCameraIndex] = useState<number>(0);
   const [isInitializing, setIsInitializing] = useState(true);
   const [isCooldown, setIsCooldown] = useState(false);
+  const isLocked = useRef(false);
 
   const progresso = totalAlunos > 0 ? Math.round((totalPresentes / totalAlunos) * 100) : 0;
 
@@ -80,13 +81,15 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
         cameraParam,
         config,
         (decodedText) => {
-          if (isCooldown) return;
+          if (isLocked.current) return;
           
+          isLocked.current = true;
           setIsCooldown(true);
           onScanSuccess(decodedText);
           
           // Intervalo de 4 segundos antes da próxima leitura
           setTimeout(() => {
+            isLocked.current = false;
             setIsCooldown(false);
           }, 4000);
         },
