@@ -134,7 +134,8 @@ export class DiscipuladoMongoRepository {
   async getAulasByCicloId(cicloId?: string): Promise<AulaDiscipulado[]> {
     try {
       const collection = await MongoHelper.getCollection(this.aulasCollection);
-      const aulas = await collection.find().toArray();
+      const query = cicloId ? { cicloId } : {};
+      const aulas = await collection.find(query).toArray();
 
       return aulas.map((a) => ({
         id: a._id.toHexString(),

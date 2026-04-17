@@ -85,7 +85,7 @@ export function useCreateCiclo(churchId?: string, onSuccess?: () => void) {
 // Aulas
 export function useAulas(churchId?: string, cicloId?: string) {
   const url = churchId
-    ? `${API_BASE}/${churchId}/discipulado/aulas`
+    ? `${API_BASE}/${churchId}/discipulado/aulas${cicloId ? `?cicloId=${cicloId}` : ""}`
     : null;
   return useFetch<AulaDiscipulado[]>(url);
 }

@@ -14,13 +14,9 @@ export default async function handler(
     const repository = new DiscipuladoMongoRepository();
 
     if (req.method === "GET") {
-    //   const { cicloId } = req.query;
+      const { cicloId } = req.query;
 
-    //   if (!cicloId) {
-    //     return res.status(400).json({ message: "Missing required query parameter: cicloId" });
-    //   }
-
-      const aulas = await repository.getAulasByCicloId();
+      const aulas = await repository.getAulasByCicloId(cicloId as string);
       return res.status(200).json(aulas);
     } else if (req.method === "POST") {
       const novaAula = req.body;

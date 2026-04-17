@@ -330,6 +330,19 @@ const Discipulado = () => {
 
           <TabsContent value="aulas" className="mt-6 space-y-6">
             {/* Search and Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+              <div className="md:col-span-3">
+                <Label className="text-xs font-bold mb-1.5 block opacity-70">Pesquisar na Lista</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por tema, ministro ou aluno..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 bg-card shadow-sm"
+                  />
+                </div>
+              </div>
               <div className="md:col-span-1">
                 <Label className="text-xs font-bold mb-1.5 block opacity-70">Filtrar por Semestre</Label>
                 <Select value={selectedCiclo} onValueChange={setSelectedCiclo}>
