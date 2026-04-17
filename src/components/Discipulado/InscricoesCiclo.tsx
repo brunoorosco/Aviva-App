@@ -43,9 +43,9 @@ export default function InscricoesCiclo({
 
   const inscritos = ciclo.inscritos || [];
 
-  const usuariosFiltrados = (usuariosAtivos || []).filter(
-    (u) => !inscritos.some((inscrito) => inscrito.id === u._id),
-  );
+  const usuariosFiltrados = (usuariosAtivos || [])
+    .filter((u) => !inscritos.some((inscrito) => inscrito.id === u._id))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const handleAddInscrito = (usuarioId: string) => {
     const usuario = usuariosAtivos?.find((u) => u._id === usuarioId);
@@ -176,6 +176,7 @@ export default function InscricoesCiclo({
               <TableBody>
                 {inscritos
                   .filter((a) => a.nome.toLowerCase().includes(busca.toLowerCase()))
+                  .sort((a, b) => a.nome.localeCompare(b.nome))
                   .map((aluno) => (
                     <TableRow key={aluno.id}>
                       <TableCell className="font-medium">{capitalizeWords(aluno.nome)}</TableCell>

@@ -579,19 +579,21 @@ const Discipulado = () => {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {aula.alunos.map((aluno) => (
-                            <TableRow key={aluno.membroId}>
-                              <TableCell className="font-medium">{capitalizeWords(aluno.nome)}</TableCell>
-                              <TableCell className="text-muted-foreground">{aluno.rede.name}</TableCell>
-                              <TableCell className="text-center">
-                                <Checkbox
-                                  checked={aluno.presente}
-                                  onCheckedChange={() => handleTogglePresenca(aula, aluno.membroId)}
-                                  disabled={updateAula.isLoading}
-                                />
-                              </TableCell>
-                            </TableRow>
-                          ))}
+                          {[...aula.alunos]
+                            .sort((a, b) => a.nome.localeCompare(b.nome))
+                            .map((aluno) => (
+                              <TableRow key={aluno.membroId}>
+                                <TableCell className="font-medium">{capitalizeWords(aluno.nome)}</TableCell>
+                                <TableCell className="text-muted-foreground">{aluno.rede.name}</TableCell>
+                                <TableCell className="text-center">
+                                  <Checkbox
+                                    checked={aluno.presente}
+                                    onCheckedChange={() => handleTogglePresenca(aula, aluno.membroId)}
+                                    disabled={updateAula.isLoading}
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            ))}
                           {aula.alunos.length === 0 && (
                             <TableRow>
                               <TableCell colSpan={3} className="text-center text-muted-foreground py-6">

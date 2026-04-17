@@ -356,10 +356,11 @@ const NovaAulaDiscipulado = () => {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {alunos
+                                        {[...alunos]
                                             .filter((a) =>
                                                 a.nome.toLowerCase().includes(busca.toLowerCase())
                                             )
+                                            .sort((a, b) => a.nome.localeCompare(b.nome))
                                             .map((aluno) => (
                                                 <TableRow key={aluno.membroId} className={cn(!aluno.presente && "opacity-50")}>
                                                     <TableCell className="text-center">
