@@ -27,6 +27,7 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
   const [cameras, setCameras] = useState<{ id: string; label: string }[]>([]);
   const [currentCameraIndex, setCurrentCameraIndex] = useState<number>(0);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isCooldown, setIsCooldown] = useState(false);
 
   const progresso = totalAlunos > 0 ? Math.round((totalPresentes / totalAlunos) * 100) : 0;
 
@@ -79,7 +80,15 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
         cameraParam,
         config,
         (decodedText) => {
+          if (isCooldown) return;
+          
+          setIsCooldown(true);
           onScanSuccess(decodedText);
+          
+          // Intervalo de 4 segundos antes da próxima leitura
+          setTimeout(() => {
+            setIsCooldown(false);
+          }, 4000);
         },
         () => {
           // Silent errors during scan
@@ -166,10 +175,30 @@ const QRCodeScanner: React.FC<QRCodeScannerProps> = ({
 
         {/* Área da câmera */}
         <div className="p-6">
-          <div
-            id={regionId}
-            className="overflow-hidden rounded-xl border-2 border-dashed border-primary/30"
-          />
+          <div className="relative">
+            <div
+              id={regionId}
+              className="overflow-hidden rounded-xl border-2 border-dashed border-primary/30"
+            />
+            
+            {/* Overlay de Cooldown (Feedback Visual) */}
+            {isCooldown && (
+              <div className="absolute inset-0 bg-primary/90 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center text-white p-6 animate-in fade-in zoom-in duration-300 z-10">
+                <div className="bg-white/20 p-4 rounded-full mb-4">
+                  <CheckCircle2 className="h-12 w-12 text-white" />
+                </div>
+                <h3 className="text-xl font-black text-center">Leitura OK!</h3>
+                <p className="text-sm text-center opacity-80 mt-1 font-medium">Aguarde a próxima leitura...</p>
+                
+                {/* Loader discreto */}
+                <div className="mt-6 flex gap-1">
+                   <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
+                   <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
+                   <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" />
+                </div>
+              </div>
+            )}
+          </div>
           <p className="text-center text-sm text-muted-foreground mt-4">
             Aponte a câmera para o QR Code do aluno.
           </p>

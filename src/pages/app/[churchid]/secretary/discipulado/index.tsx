@@ -175,13 +175,16 @@ const Discipulado = () => {
       try {
         studentData = JSON.parse(decodedText);
       } catch {
-        // Fallback for raw ID
-        studentData = { _id: decodedText };
+        Toast.showError("QR Code Inválido: Não pertence à aplicação");
+        return;
       }
 
+      // Validação Estrita: O QR Code deve ter pelo menos ID e Nome para ser válido no sistema
       const studentId = studentData._id || studentData.id;
-      if (!studentId) {
-        Toast.showError("QR Code inválido: ID não encontrado");
+      const studentNome = studentData.nome;
+
+      if (!studentId || !studentNome) {
+        Toast.showError("QR Code Desconhecido: Dados incompatíveis");
         return;
       }
 
