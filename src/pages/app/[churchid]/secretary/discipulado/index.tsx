@@ -246,56 +246,61 @@ const Discipulado = () => {
       {/* Header */}
       <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <BookOpen className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">Discipulado</h1>
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-primary shrink-0" />
+            <h1 className="text-lg font-bold truncate">Discipulado</h1>
           </div>
           <div className="flex items-center gap-3">
             <Dialog open={openNovoCiclo} onOpenChange={setOpenNovoCiclo}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 sm:px-4">
                   <Plus className="h-4 w-4" />
-                  Novo Semestre
+                  <span className="hidden sm:inline">Novo Semestre</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-[425px] w-[95vw] rounded-2xl sm:rounded-lg">
                 <DialogHeader>
-                  <DialogTitle>Criar Novo Semestre</DialogTitle>
+                  <DialogTitle className="text-xl font-bold">Novo Semestre</DialogTitle>
                   <DialogDescription>
                     O semestre ativo receberá as matrículas dos alunos e as novas aulas.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4 py-4">
+                <div className="space-y-4 py-6">
                   <div className="space-y-2">
-                    <Label>Nome do Semestre *</Label>
+                    <Label className="font-semibold text-sm">Nome do Semestre *</Label>
                     <Input
                       placeholder="Ex: 1º Semestre 2026"
                       value={novoCicloNome}
                       onChange={(e) => setNovoCicloNome(e.target.value)}
+                      className="h-11 bg-muted/50"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Data de Início *</Label>
+                      <Label className="font-semibold text-sm">Data de Início *</Label>
                       <Input
                         type="date"
                         value={novoCicloInicio}
                         onChange={(e) => setNovoCicloInicio(e.target.value)}
+                        className="h-11 bg-muted/50"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Data de Fim *</Label>
+                      <Label className="font-semibold text-sm">Data de Fim *</Label>
                       <Input
                         type="date"
                         value={novoCicloFim}
                         onChange={(e) => setNovoCicloFim(e.target.value)}
+                        className="h-11 bg-muted/50"
                       />
                     </div>
                   </div>
                 </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setOpenNovoCiclo(false)}>Cancelar</Button>
-                  <Button onClick={handleCreateCiclo} disabled={createCiclo.isLoading}>
+                <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
+                  <Button variant="ghost" onClick={() => setOpenNovoCiclo(false)} className="w-full sm:w-auto h-11 sm:h-10">
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleCreateCiclo} disabled={createCiclo.isLoading} className="w-full sm:w-auto h-11 sm:h-10 shadow-lg shadow-primary/20">
                     {createCiclo.isLoading ? "Salvando..." : "Criar Semestre"}
                   </Button>
                 </DialogFooter>
@@ -303,13 +308,14 @@ const Discipulado = () => {
             </Dialog>
 
             <Button
+              size="sm"
               onClick={() => router.push(`/app/${churchId}/secretary/discipulado/novaAula`)}
-              className="gap-2"
+              className="gap-2 sm:px-4"
               disabled={!cicloAtivo}
               title={!cicloAtivo ? "Crie um semestre primeiro" : ""}
             >
               <Plus className="h-4 w-4" />
-              Nova Aula
+              <span className="hidden sm:inline">Nova Aula</span>
             </Button>
           </div>
         </div>
@@ -324,19 +330,21 @@ const Discipulado = () => {
 
           <TabsContent value="aulas" className="mt-6 space-y-6">
             {/* Search and Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-              <div className="md:col-span-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Buscar por tema, ministro ou aluno..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9"
-                  />
-                </div>
+              <div className="md:col-span-1">
+                <Label className="text-xs font-bold mb-1.5 block opacity-70">Filtrar por Semestre</Label>
+                <Select value={selectedCiclo} onValueChange={setSelectedCiclo}>
+                  <SelectTrigger className="bg-card shadow-sm border-primary/20">
+                    <SelectValue placeholder="Escolha o semestre" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(ciclos || []).map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.nome} {c.ativo && " (Ativo)"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              {/* Ciclo Select can go here if needed */}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
