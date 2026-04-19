@@ -286,6 +286,7 @@ export default function GroupFinance() {
           pagamentos={pagamentos}
           onAdd={addPagamento}
           onRemove={removePagamento}
+          customFolder={reencontroInfo?.numero ? `comprovantes/reencontro/${reencontroInfo.numero}` : 'comprovantes/reencontro'}
         />
       </div>
     </div>

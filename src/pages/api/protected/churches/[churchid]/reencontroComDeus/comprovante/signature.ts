@@ -13,8 +13,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    const { folder: customFolder } = req.body;
     const timestamp = Math.round(new Date().getTime() / 1000);
-    const folder = 'comprovantes';
+    const folder = customFolder || 'comprovantes';
 
     // Parâmetros para o upload (assinado)
     const params: Record<string, any> = {

@@ -20,11 +20,12 @@ interface Props {
   pagamentos: Pagamento[];
   onAdd: (p: Omit<Pagamento, "_id" | "data">) => void;
   onRemove: (id: string) => void;
+  customFolder?: string;
 }
 
 const tipoLabels: Record<string, string> = { pix: "Pix", cartao: "Cartão", dinheiro: "Dinheiro" };
 
-export function PagamentosSection({ pagamentos, onAdd, onRemove }: Props) {
+export function PagamentosSection({ pagamentos, onAdd, onRemove, customFolder }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [tipo, setTipo] = useState<string>("");
   const [valor, setValor] = useState("");
@@ -55,9 +56,17 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove }: Props) {
       setIsUploading(true);
       try {
         // 1. Obter assinatura do backend
+        const module = customFolder?.includes("reencontro")
+          ? "reencontroComDeus"
+          : "encontroComDeus";
+
         const signatureRes = await fetch(
-          `/api/protected/churches/${session?.user.churchId}/encontroComDeus/comprovante/signature`,
-          { method: "POST" },
+          `/api/protected/churches/${session?.user.churchId}/${module}/comprovante/signature`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ folder: customFolder }),
+          },
         );
         const { signature, timestamp, cloudName, apiKey, folder } = await signatureRes.json();
 
