@@ -18,10 +18,12 @@ import { TEncontroComDeus } from "@/domain/models/encontroComDeus";
 import { getEncontroComDeusByIdService } from "@/services/encontroComDeus";
 import { capitalizeWords } from "@/utils/capitalizaFirst";
 import { getRedeName } from "@/utils/helpersNameREde";
-import { ArrowLeft, Calendar, Users, Church, Hash, Search, FilterX } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { ArrowLeft, Calendar, Users, Church, Hash, Search, FilterX, UserPlus, Loader2 } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import { GetServerSideProps } from "next/types";
 import { useMemo, useState } from "react";
+import { toast } from "react-hot-toast";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 function formatDate(dateValue: any): string {
   if (!dateValue) return "Data não informada";
@@ -144,6 +146,41 @@ export default function EncontroPage({ encontro }: Props) {
 
   const defaultTab = encontristasFiltrados.length > 0 || equipeFiltrada.length === 0 ? "encontristas" : "equipe";
 
+  // --- LOGICA DE CONVERSÃO ---
+  const params = useParams();
+  const [isConverting, setIsConverting] = useState(false);
+  const [selectedEncontrista, setSelectedEncontrista] = useState<any>(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
+  const handleConvertToMember = async () => {
+    if (!selectedEncontrista) return;
+
+    setIsConverting(true);
+    try {
+      const response = await fetch(
+        `/api/protected/churches/${params.churchid}/encontroComDeus/${params.id}/encontrista/${selectedEncontrista._id}/convert`,
+        { method: "POST" }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(`${selectedEncontrista.nome} agora é um membro!`);
+        // Atualiza o estado local para refletir a mudança
+        selectedEncontrista.isMembro = true;
+        setIsConfirmOpen(false);
+      } else {
+        toast.error(data.error || "Erro ao converter para membro");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro na comunicação com o servidor");
+    } finally {
+      setIsConverting(false);
+      setSelectedEncontrista(null);
+    }
+  };
+
   const getAgeDisplay = (idade?: string, dataNascimento?: string) => {
     if (idade) {
       const parsed = Number(idade);
@@ -180,6 +217,7 @@ export default function EncontroPage({ encontro }: Props) {
             <th className="px-4 py-3">Telefone</th>
             <th className="px-4 py-3 hidden md:table-cell">Igreja</th>
             <th className="px-4 py-3 hidden lg:table-cell">Idade</th>
+            <th className="px-4 py-3 text-right">Ações</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-transparent">
@@ -218,6 +256,26 @@ export default function EncontroPage({ encontro }: Props) {
                 </td>
                 <td className="px-4 py-3 text-gray-600 dark:text-gray-300 hidden lg:table-cell">
                   {ageLabel}
+                </td>
+                <td className="px-4 py-3 text-right">
+                  {pessoa.isMembro ? (
+                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800">
+                      Membro
+                    </Badge>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                      onClick={() => {
+                        setSelectedEncontrista(pessoa);
+                        setIsConfirmOpen(true);
+                      }}
+                    >
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Virar Membro
+                    </Button>
+                  )}
                 </td>
               </tr>
             );
@@ -493,6 +551,18 @@ export default function EncontroPage({ encontro }: Props) {
           </div>
         </section>
       </div>
+
+      <ConfirmDialog
+        open={isConfirmOpen}
+        onClose={() => !isConverting && setIsConfirmOpen(false)}
+        onConfirm={handleConvertToMember}
+        title="Converter em Membro"
+        description={`Deseja transformar ${selectedEncontrista?.nome} em um membro da igreja? Todas as informações de contato e rede serão copiadas para o novo cadastro.`}
+        confirmLabel="Sim, virar membro"
+        cancelLabel="Cancelar"
+        variant="default"
+        isLoading={isConverting}
+      />
     </div>
   );
 }

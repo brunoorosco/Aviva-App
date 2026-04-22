@@ -2,6 +2,7 @@ import { TEquipe, TPeople } from "@/domain/models/encontroComDeus";
 import { ChurChMongoRepository } from "../infra/db/repositories/mongo/churchs";
 import { EncontroComDeusRepository } from "../infra/db/repositories/mongo/encontroComDeus";
 import { CellsMongoRepository } from "../infra/db/repositories/mongo/cells";
+import { UsersMongoRepository } from "../infra/db/repositories/mongo/users";
 
 export const getEncontroComDeusService = async (churchId: string) => {
   const encontroRepository = new EncontroComDeusRepository();
@@ -338,3 +339,44 @@ function resolverIdadeOuNascimento(entrada: any): { idade?: number; dataNascimen
   // Se vier já como número simples (ex: 25)
   return { idade: rawIdade ? Number(rawIdade) : undefined };
 }
+export const convertToMemberService = async (
+  churchId: string,
+  encontroId: string,
+  encontristaId: string,
+): Promise<any> => {
+  const encontroRepository = new EncontroComDeusRepository();
+  const userRepository = new UsersMongoRepository();
+
+  const encontro = await encontroRepository.getEncontroComDeusById(encontroId);
+  if (!encontro) throw new Error("Encontro não encontrado");
+
+  const encontrista = encontro.encontristas?.find((e: any) => e._id === encontristaId);
+  if (!encontrista) throw new Error("Encontrista não encontrado");
+
+  if (encontrista.isMembro) throw new Error("Este participante já é um membro");
+
+  // Mapear dados para o novo usuário
+  const userData: any = {
+    churchId,
+    name: encontrista.nome,
+    email: encontrista.email || "",
+    phone: encontrista.telefone || "",
+    active: true,
+    birthDate: encontrista.dataNascimento || "",
+    cem: encontrista.rede || null,
+    role: "membro",
+    password: "123", // Senha padrão inicial
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    encontroComDeus: true,
+  };
+
+  // Criar o usuário
+  const result = await userRepository.create(userData);
+  if (!result) throw new Error("Erro ao criar usuário");
+
+  // Marcar encontrista como membro
+  await encontroRepository.markEncontristaAsMember(encontroId, encontristaId);
+
+  return result;
+};

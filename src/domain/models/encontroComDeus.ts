@@ -79,6 +79,7 @@ type People = {
   sexo?: string;
   dataNascimento?: string;
   isento?: boolean;
+  isMembro?: boolean;
 };
 
 export type TPeople = People;

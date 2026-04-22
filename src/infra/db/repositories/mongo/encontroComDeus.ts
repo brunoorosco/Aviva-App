@@ -475,6 +475,25 @@ class EncontroComDeusRepository {
 
     return resp;
   }
+
+  async markEncontristaAsMember(encontroId: string, encontristaId: string): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+      const result = await collection.updateOne(
+        { _id: new ObjectId(encontroId), "encontristas._id": encontristaId },
+        {
+          $set: {
+            "encontristas.$.isMembro": true,
+            updatedAt: new Date(),
+          },
+        },
+      );
+      return result;
+    } catch (error) {
+      console.error("Error marking encontrista as member:", error);
+      throw error;
+    }
+  }
 }
 
 export { EncontroComDeusRepository };
