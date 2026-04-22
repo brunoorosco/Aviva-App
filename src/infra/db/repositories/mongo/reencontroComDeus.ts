@@ -118,10 +118,10 @@ class ReencontroComDeusRepository {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
 
-      // Adiciona a rede em cada reencontrista
+      // Adiciona a rede em cada reencontrista e preserva o _id se existir
       const reencontristasComRede = novosReencontristas.map((e) => ({
         ...e,
-        _id: new ObjectId().toString(),
+        _id: e._id || new ObjectId().toString(),
       }));
 
       // Remove todos da rede e adiciona os novos em uma operação
@@ -133,15 +133,15 @@ class ReencontroComDeusRepository {
                 // Mantém reencontristas de outras redes
                 {
                   $filter: {
-                    input: { $ifNull: ["$reencontristas", []] }, // ← proteção se não existir
+                    input: { $ifNull: ["$reencontristas", []] },
                     as: "reencontrista",
                     cond: { $ne: ["$$reencontrista.rede._id", redeId] },
                   },
                 },
-                // ↓ Array literal direto — não pode usar variável JS aqui
                 reencontristasComRede,
               ],
             },
+            updatedAt: new Date(),
           },
         },
       ]);

@@ -31,7 +31,7 @@ export default function GroupFinance() {
     setReencontristas((prev) => [
       ...prev,
       {
-        _id: nextId(),
+        _id: data._id || nextId(),
         nome: data.nome,
         telefone: data.telefone,
         email: data.email,
@@ -49,11 +49,7 @@ export default function GroupFinance() {
         e._id === id
           ? {
             ...e,
-            name: data.nome,
-            telefone: data.telefone,
-            email: data.email,
-            endereco: data.endereco,
-            isento: data.isento,
+            ...data,
           }
           : e,
       ),
