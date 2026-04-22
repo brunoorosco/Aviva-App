@@ -49,11 +49,7 @@ export default function GroupFinance() {
         e._id === id
           ? {
               ...e,
-              name: data.nome,
-              telefone: data.telefone,
-              email: data.email,
-              endereco: data.endereco,
-              isento: data.isento,
+              ...data,
             }
           : e,
       ),
