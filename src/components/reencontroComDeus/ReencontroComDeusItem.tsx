@@ -60,6 +60,13 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
     return hasPermission(userPermissions, [ROLES.ADMIN, ROLES.SECRETARIA]);
   };
 
+  // Verifica se o usuário tem permissão para editar o reencontro (somente Admin)
+  const canEditReencontro = () => {
+    if (!session?.user) return false;
+    const userPermissions = session.user.permission || [];
+    return hasPermission(userPermissions, [ROLES.ADMIN]);
+  };
+
   const reencontristasCount = reencontro?.reencontristas?.length ?? 0;
   const equipeCount = reencontro?.equipe?.length ?? 0;
 
@@ -88,29 +95,31 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
                 </span>
               )}
 
-              {/* Botão de editar ao lado da data */}
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onEdit();
-                }}
-                className="
-                  w-7 h-7 
-                  bg-white dark:bg-gray-700 
-                  border border-gray-200 dark:border-gray-600
-                  rounded-full 
-                  shadow-sm hover:shadow-md
-                  flex items-center justify-center
-                  transition-all duration-200
-                  hover:bg-blue-50 dark:hover:bg-blue-900/30
-                  hover:border-blue-300 dark:hover:border-blue-600
-                  active:scale-95
-                "
-                aria-label="Editar Reencontro"
-              >
-                <Edit className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400" />
-              </button>
+              {/* Botão de editar ao lado da data (Somente Admin) */}
+              {canEditReencontro() && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onEdit();
+                  }}
+                  className="
+                    w-7 h-7 
+                    bg-white dark:bg-gray-700 
+                    border border-gray-200 dark:border-gray-600
+                    rounded-full 
+                    shadow-sm hover:shadow-md
+                    flex items-center justify-center
+                    transition-all duration-200
+                    hover:bg-blue-50 dark:hover:bg-blue-900/30
+                    hover:border-blue-300 dark:hover:border-blue-600
+                    active:scale-95
+                  "
+                  aria-label="Editar Reencontro"
+                >
+                  <Edit className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400" />
+                </button>
+              )}
             </div>
           </header>
 
