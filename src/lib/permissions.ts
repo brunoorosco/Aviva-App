@@ -7,6 +7,7 @@ export const ROLES = {
   LIDER: "lider",
   AUXILIAR: "auxiliar",
   BOAS_VINDAS: "boas-vindas",
+  USER: "user",
 } as const;
 
 export type Role = (typeof ROLES)[keyof typeof ROLES];
@@ -20,6 +21,7 @@ const ROLE_HIERARCHY: Record<Role, number> = {
   [ROLES.LIDER]: 30,
   [ROLES.BOAS_VINDAS]: 20,
   [ROLES.AUXILIAR]: 10,
+  [ROLES.USER]: 5,
 };
 
 export function hasPermission(userRoles: string[], requiredRoles: string[]): boolean {

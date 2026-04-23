@@ -20,6 +20,7 @@ import {
   Footprints,
   University,
   Settings,
+  LayoutDashboard,
 } from "lucide-react";
 import { Role, ROLES } from "@/lib/permissions";
 
@@ -43,7 +44,13 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
       label: "Home",
       icon: House,
       link: `${base}/`,
-      roles: [ROLES.LIDER, ROLES.SUPERVISOR, ROLES.PASTOR, ROLES.AUXILIAR],
+      roles: [ROLES.LIDER, ROLES.SUPERVISOR, ROLES.PASTOR, ROLES.AUXILIAR, ROLES.USER],
+    },
+    {
+      label: "Meu Perfil",
+      icon: LayoutDashboard,
+      link: `${base}/my-profile`,
+      roles: [ROLES.LIDER, ROLES.SUPERVISOR, ROLES.PASTOR, ROLES.AUXILIAR, ROLES.SECRETARIA, ROLES.BOAS_VINDAS, ROLES.USER],
     },
     {
       label: "Minha Rede",
