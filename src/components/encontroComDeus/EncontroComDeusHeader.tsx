@@ -128,7 +128,7 @@ const Header = <T extends TEncontroComDeus,>({
   const canViewButtons = () => {
     if (!session?.user) return false;
     const userPermissions = session.user.permission || [];
-    return hasPermission(userPermissions, [ROLES.ADMIN, ROLES.PASTOR, ROLES.SECRETARIA]);
+    return hasPermission(userPermissions, [ROLES.ADMIN, ROLES.SECRETARIA]);
   };
 
   return (
