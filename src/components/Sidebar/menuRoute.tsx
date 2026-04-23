@@ -8,6 +8,7 @@ import {
   WorkflowIcon,
   CrossIcon,
   Waves,
+  ShieldCheck,
   GraduationCapIcon,
   BookOpenCheckIcon,
   UserPlus,
@@ -212,12 +213,17 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
     {
       label: "Administrador",
       icon: Settings,
-      roles: [ROLES.ADMIN],
+      roles: [ROLES.ADMIN, ROLES.SECRETARIA],
       children: [
         {
           label: "Usuários",
           link: `${base}/admin`,
-          icon: Calendar1Icon,
+          icon: Users,
+        },
+        {
+          label: "Permissões",
+          link: `${base}/admin/permissions`,
+          icon: ShieldCheck,
         },
         {
           label: "Eventos",

@@ -7,9 +7,9 @@ import { getRedeName } from "@/utils/helpersNameREde";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Badge } from "../ui/badge";
-import { useSession } from "next-auth/react";
 import { hasPermission, ROLES } from "@/lib/permissions";
 import ImportButton from "./ImportButton";
+import { usePermissions } from "@/hooks/usePermissions";
 
 type Props = {
   pathname: string;
@@ -124,12 +124,10 @@ const Header = <T extends TEncontroComDeus,>({
     }
   }, [data, total])
 
-  const { data: session } = useSession();
-  const canViewButtons = () => {
-    if (!session?.user) return false;
-    const userPermissions = session.user.permission || [];
-    return hasPermission(userPermissions, [ROLES.ADMIN, ROLES.SECRETARIA]);
-  };
+  const { can } = usePermissions();
+
+  const canCreate = () => can("encontroComDeus", "write");
+  const canImport = () => can("encontroComDeus", "write"); // Ou criar uma permissão específica para importação
 
   return (
     <Card className='shadow-sm border-2 border-gray-200 dark:border-gray-700'>
@@ -180,23 +178,27 @@ const Header = <T extends TEncontroComDeus,>({
           </div>
 
           {/* Seção de Ações */}
-          {canViewButtons() && (
+          {(canCreate() || canImport()) && (
             <div className='flex flex-col sm:flex-row gap-2 sm:gap-3 shrink-0'>
-
+              
               {/* Botão Importar */}
-              <ImportButton inputFileRef={inputFileRef} onSuccess={onImportSuccess} />
+              {canImport() && (
+                <ImportButton inputFileRef={inputFileRef} onSuccess={onImportSuccess} />
+              )}
 
               {/* Botão Novo */}
-              <Link href={`${pathname}/new`} className="w-full sm:w-auto">
-                <Button
-                  className="text-white w-full h-full bg-blue-500 hover:bg-blue-600 font-semibold dark:bg-orange-500 dark:hover:bg-orange-600"
-                  size="default"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  <span className="hidden sm:inline">Novo Encontro</span>
-                  <span className="sm:hidden">Novo</span>
-                </Button>
-              </Link>
+              {canCreate() && (
+                <Link href={`${pathname}/new`} className="w-full sm:w-auto">
+                  <Button
+                    className="text-white w-full h-full bg-blue-500 hover:bg-blue-600 font-semibold dark:bg-orange-500 dark:hover:bg-orange-600"
+                    size="default"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    <span className="hidden sm:inline">Novo Encontro</span>
+                    <span className="sm:hidden">Novo</span>
+                  </Button>
+                </Link>
+              )}
             </div>
           )}
         </div>

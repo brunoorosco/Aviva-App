@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { Edit, EyeIcon, Calendar, Users, FileText, DollarSign, Download } from "lucide-react";
 import { TEncontroComDeus } from "@/domain/models/encontroComDeus";
-import { Button } from "../ui/button";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
-import { hasPermission, ROLES } from "@/lib/permissions";
 import ExportButton from "./ExportButton";
+import { usePermissions } from "@/hooks/usePermissions";
 
 type Props = {
   encontro: TEncontroComDeus;
@@ -15,7 +13,6 @@ type Props = {
 
 const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
   const router = useRouter();
-  const { data: session } = useSession();
 
   const formatDate = (dateValue: any) => {
     if (!dateValue) return "Data não definida";
@@ -53,19 +50,11 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
     router.push(`${basePath}/${encontro._id}/resumo-financeiro`);
   };
 
-  // Verifica se o usuário tem permissão para ver relatório financeiro
-  const canViewFinancialReport = () => {
-    if (!session?.user) return false;
-    const userPermissions = session.user.permission || [];
-    return hasPermission(userPermissions, [ROLES.ADMIN, ROLES.SECRETARIA]);
-  };
+  const { can } = usePermissions();
 
-  // Verifica se o usuário tem permissão para editar o encontro (somente Admin)
-  const canEditEncontro = () => {
-    if (!session?.user) return false;
-    const userPermissions = session.user.permission || [];
-    return hasPermission(userPermissions, [ROLES.ADMIN]);
-  };
+  const canEditEncontro = () => can("encontroComDeus", "edit");
+  const canViewFinancialReport = () => can("financeiro", "read");
+  const canWriteRegistration = () => can("encontroComDeus", "write");
 
   const reencontristasCount = encontro?.encontristas?.length ?? 0;
   const equipeCount = encontro?.equipe?.length ?? 0;
@@ -197,8 +186,8 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath }: Props) => {
                   </button>
                 )}
 
-                {/* Botão de Ficha de Inscrição - sempre visível para encontros futuros */}
-                {(isEncontroFuturo() || canViewFinancialReport()) && (
+                {/* Botão de Ficha de Inscrição - visível se tiver permissão de escrita ou for admin */}
+                {(isEncontroFuturo() || canViewFinancialReport() || canWriteRegistration()) && (
                   <button
                     onClick={handleFichaInscricao}
                     className="

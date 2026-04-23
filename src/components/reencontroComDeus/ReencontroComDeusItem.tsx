@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { Edit, EyeIcon, Calendar, Users, FileText, DollarSign, Download } from "lucide-react";
 import { TReencontroComDeus } from "@/domain/models/encontroComDeus";
-import { Button } from "../ui/button";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
-import { hasPermission, ROLES } from "@/lib/permissions";
 import ExportButton from "./ExportButton";
+import { usePermissions } from "@/hooks/usePermissions";
 
 type Props = {
   reencontro: TReencontroComDeus;
@@ -15,7 +13,6 @@ type Props = {
 
 const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
   const router = useRouter();
-  const { data: session } = useSession();
 
   const formatDate = (dateValue: any) => {
     if (!dateValue) return "Data não definida";
@@ -53,19 +50,12 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
     router.push(`${basePath}/${reencontro._id}/resumo-financeiro`);
   };
 
-  // Verifica se o usuário tem permissão para ver relatório financeiro
-  const canViewFinancialReport = () => {
-    if (!session?.user) return false;
-    const userPermissions = session.user.permission || [];
-    return hasPermission(userPermissions, [ROLES.ADMIN, ROLES.SECRETARIA]);
-  };
+  const { can } = usePermissions();
 
-  // Verifica se o usuário tem permissão para editar o reencontro (somente Admin)
-  const canEditReencontro = () => {
-    if (!session?.user) return false;
-    const userPermissions = session.user.permission || [];
-    return hasPermission(userPermissions, [ROLES.ADMIN]);
-  };
+  const canEditReencontro = () => can("reencontroComDeus", "edit");
+  const canViewFinancialReport = () => can("financeiro", "read");
+  const canWriteRegistration = () => can("reencontroComDeus", "write");
+
 
   const reencontristasCount = reencontro?.reencontristas?.length ?? 0;
   const equipeCount = reencontro?.equipe?.length ?? 0;
@@ -95,7 +85,7 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
                 </span>
               )}
 
-              {/* Botão de editar ao lado da data (Somente Admin) */}
+              {/* Botão de editar ao lado da data (Somente Admin ou permissão de edit) */}
               {canEditReencontro() && (
                 <button
                   onClick={(e) => {
@@ -197,8 +187,8 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
                   </button>
                 )}
 
-                {/* Botão de Ficha de Inscrição - sempre visível para reencontros futuros */}
-                {(isReencontroFuturo() || canViewFinancialReport()) && (
+                {/* Botão de Ficha de Inscrição - visível se tiver permissão de escrita ou for admin */}
+                {(isReencontroFuturo() || canViewFinancialReport() || canWriteRegistration()) && (
                   <button
                     onClick={handleFichaInscricao}
                     className="

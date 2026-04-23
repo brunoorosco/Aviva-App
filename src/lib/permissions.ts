@@ -35,3 +35,41 @@ export function hasMinimumRole(userRoles: string[], minimumRole: Role): boolean 
 
   return userMaxLevel >= requiredLevel;
 }
+
+export interface ModulePermission {
+  name: string;
+  read: boolean;
+  write: boolean;
+  edit: boolean;
+  delete: boolean;
+}
+
+export interface RolePermission {
+  role: string;
+  modules: ModulePermission[];
+}
+
+/**
+ * Verifica se o usuário tem uma permissão específica em um módulo,
+ * baseando-se no conjunto de regras dinâmicas carregadas do banco.
+ */
+export function checkModulePermission(
+  userRoles: string[],
+  allRolePermissions: RolePermission[],
+  moduleName: string,
+  action: "read" | "write" | "edit" | "delete"
+): boolean {
+  // Admin sempre tem permissão total
+  if (userRoles.includes(ROLES.ADMIN)) return true;
+
+  // Verifica cada papel do usuário
+  return userRoles.some((role) => {
+    const roleRules = allRolePermissions.find((p) => p.role === role);
+    if (!roleRules) return false;
+
+    const moduleRule = roleRules.modules.find((m) => m.name === moduleName);
+    if (!moduleRule) return false;
+
+    return !!moduleRule[action];
+  });
+}
