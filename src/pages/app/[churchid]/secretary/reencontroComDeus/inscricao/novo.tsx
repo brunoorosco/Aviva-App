@@ -339,6 +339,8 @@ export default function GroupFinance() {
             onAdd={addEquipeMember}
             onRemove={removeEquipeMember}
             onToggleIsento={toggleIsentoEquipe}
+            cemId={isPrivileged ? selectedRede?._id : undefined}
+            cemName={isPrivileged ? selectedRede?.name : undefined}
           />
         </div>
 
