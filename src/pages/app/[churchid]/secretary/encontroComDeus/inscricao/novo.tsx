@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Network } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
@@ -10,14 +10,29 @@ import { ResumoFinanceiro } from "@/components/finance/ResumoFinanceiro";
 import { Pagamento, TEquipe, TPeople } from "@/domain/models/encontroComDeus";
 import { useHttpPost } from "@/hooks/api";
 import Toast from "@/components/Toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 let idCounter = 0;
 const nextId = () => String(++idCounter);
+
+type TRede = { _id: string; name: string };
+
+const PRIVILEGED_PERMISSIONS = ["ADMIN_CHURCH", "SUPERADMIN", "secretaria"];
 
 export default function GroupFinance() {
   const navigate = useRouter();
   const { data: session } = useSession();
   const { churchid, encontroId } = navigate.query;
+
+  const isPrivileged = session?.user?.permission?.some((p: string) =>
+    PRIVILEGED_PERMISSIONS.includes(p)
+  ) ?? false;
 
   const [encontristas, setEncontristas] = useState<TPeople[]>([]);
   const [equipeMembers, setEquipeMembers] = useState<TEquipe[]>([]);
@@ -25,6 +40,8 @@ export default function GroupFinance() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [encontroInfo, setEncontroInfo] = useState<any>(null);
+  const [redes, setRedes] = useState<TRede[]>([]);
+  const [selectedRede, setSelectedRede] = useState<TRede | null>(null);
 
   // Encontristas
   const addEncontrista = (data: TPeople) => {
@@ -109,17 +126,39 @@ export default function GroupFinance() {
 
   const totalPago = useMemo(() => pagamentos.reduce((sum, p) => sum + p.valor, 0), [pagamentos]);
 
+  // Carregar lista de redes se for usuário privilegiado
+  useEffect(() => {
+    if (!isPrivileged || !churchid) return;
+    fetch(`/api/protected/churches/${churchid}/redes`)
+      .then((res) => res.json())
+      .then((data: TRede[]) => {
+        if (Array.isArray(data)) {
+          setRedes(data);
+          // Pré-selecionar a rede do usuário logado, se disponível
+          const myRede = data.find((r) => r._id === session?.user?.cem?._id);
+          setSelectedRede(myRede ?? data[0] ?? null);
+        }
+      })
+      .catch(console.error);
+  }, [isPrivileged, churchid, session?.user?.cem?._id]);
+
   // Carregar dados existentes ao abrir a página
   useEffect(() => {
     const loadInscricaoData = async () => {
-      if (!encontroId || !session?.user?.cem?._id) {
+      if (!encontroId) {
+        setIsLoadingData(false);
+        return;
+      }
+
+      // Para usuário privilegiado, aguarda seleção de rede
+      const redeId = isPrivileged ? selectedRede?._id : session?.user?.cem?._id;
+      if (!redeId) {
         setIsLoadingData(false);
         return;
       }
 
       try {
         setIsLoadingData(true);
-        const redeId = session.user.cem._id;
 
         const response = await fetch(
           `/api/protected/churches/${churchid}/encontroComDeus/inscricao?encontroId=${encontroId}&redeId=${redeId}`,
@@ -161,16 +200,24 @@ export default function GroupFinance() {
     };
 
     loadInscricaoData();
-  }, [encontroId, churchid, session?.user?.cem?._id]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [encontroId, churchid, selectedRede?._id, session?.user?.cem?._id]);
 
   const handleSave = async () => {
     if (!encontroId) {
-      alert("ID do encontro não encontrado");
+      Toast.showError("ID do encontro não encontrado");
       return;
     }
 
-    if (!session?.user?.cem) {
-      alert("Informações da rede/célula não encontradas");
+    // Determinar qual rede usar
+    const redeToSave = isPrivileged
+      ? selectedRede
+      : session?.user?.cem
+        ? { _id: session.user.cem._id, name: session.user.cem.name }
+        : null;
+
+    if (!redeToSave) {
+      Toast.showError("Selecione uma rede antes de salvar");
       return;
     }
 
@@ -183,12 +230,9 @@ export default function GroupFinance() {
       const payload = {
         encontristas,
         equipeMembers,
-        rede: {
-          _id: session.user.cem._id,
-          name: session.user.cem.name,
-        },
+        rede: redeToSave,
         financeiro: {
-          pagamento: pagamentos, // Array de pagamentos
+          pagamento: pagamentos,
         },
       };
 
@@ -205,7 +249,7 @@ export default function GroupFinance() {
       }
     } catch (error: any) {
       console.error("Erro ao salvar inscrição:", error);
-      alert(error?.message || "Erro ao salvar inscrição. Tente novamente.");
+      Toast.showError(error?.message || "Erro ao salvar inscrição. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -252,6 +296,38 @@ export default function GroupFinance() {
             </Button>
           </div>
         </div>
+
+        {/* Seletor de rede para usuários privilegiados */}
+        {isPrivileged && redes.length > 0 && (
+          <div className="max-w-6xl mx-auto px-2 sm:px-4 pb-3 flex items-center gap-2">
+            <Network className="h-4 w-4 text-orange-500 shrink-0" />
+            <span className="text-xs text-muted-foreground whitespace-nowrap">Inserindo para a rede:</span>
+            <Select
+              value={selectedRede?._id ?? ""}
+              onValueChange={(value) => {
+                const rede = redes.find((r) => r._id === value);
+                if (rede) {
+                  setSelectedRede(rede);
+                  // Limpa dados ao trocar de rede
+                  setEncontristas([]);
+                  setEquipeMembers([]);
+                  setPagamentos([]);
+                }
+              }}
+            >
+              <SelectTrigger className="h-8 text-xs max-w-xs border-orange-500/40 bg-orange-500/5 focus:ring-orange-500">
+                <SelectValue placeholder="Selecione a rede..." />
+              </SelectTrigger>
+              <SelectContent>
+                {redes.map((r) => (
+                  <SelectItem key={r._id} value={r._id} className="text-xs">
+                    {r.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
@@ -275,6 +351,8 @@ export default function GroupFinance() {
             onAdd={addEquipeMember}
             onRemove={removeEquipeMember}
             onToggleIsento={toggleIsentoEquipe}
+            cemId={isPrivileged ? selectedRede?._id : undefined}
+            cemName={isPrivileged ? selectedRede?.name : undefined}
           />
         </div>
 

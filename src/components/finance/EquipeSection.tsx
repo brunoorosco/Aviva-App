@@ -13,16 +13,24 @@ interface Props {
   onAdd: (user: TEquipe) => void;
   onRemove: (id: string) => void;
   onToggleIsento: (id: string) => void;
+  /** ID e nome da rede a usar para buscar membros.
+   *  Quando informados (admin/secretária), sobrepõem o cem da sessão. */
+  cemId?: string;
+  cemName?: string;
 }
 
-export function EquipeSection({ equipeMembers, onAdd, onRemove, onToggleIsento }: Props) {
+export function EquipeSection({ equipeMembers, onAdd, onRemove, onToggleIsento, cemId: cemIdProp, cemName: cemNameProp }: Props) {
   const [selectedUser, setSelectedUser] = useState<{ _id: string; name: string } | null>(null);
   const [users, setUsers] = useState<{ _id: string; name: string }[]>([]);
   const { data: session } = useSession();
   const churchId = session?.user.churchId;
   const cem = session?.user.cem;
 
-  if (!churchId || !cem) return null;
+  // Usa o cemId/cemName recebidos via prop (admin selecionou outra rede) ou cai para os da sessão
+  const activeCemId   = cemIdProp   ?? cem?._id   ?? "";
+  const activeCemName = cemNameProp ?? cem?.name  ?? "";
+
+  if (!churchId || !activeCemId) return null;
 
   const availableUsers = users.filter(
     (u) => !equipeMembers.some((m) => m._id === u._id)
@@ -30,15 +38,15 @@ export function EquipeSection({ equipeMembers, onAdd, onRemove, onToggleIsento }
 
   const handleAdd = () => {
     if (!selectedUser) return;
-    
-    // ↓ Monta o objeto TEquipe completo
+
     onAdd({
       _id: selectedUser._id,
       name: selectedUser.name,
       isento: false,
-      rede: { _id: cem._id, name: cem.name } // ← ajuste conforme sua estrutura
+      // Usa a rede ativa (pode ser diferente da rede do usuário logado)
+      rede: { _id: activeCemId, name: activeCemName }
     });
-    
+
     setSelectedUser(null);
   };
 
@@ -54,10 +62,10 @@ export function EquipeSection({ equipeMembers, onAdd, onRemove, onToggleIsento }
         <div className="flex gap-2">
           <SelectMembrosRede
             churchId={churchId}
-            cemId={cem._id}
+            cemId={activeCemId}
             title="Selecione um membro"
-            value={selectedUser?._id ?? ""} // ← extrai _id do objeto
-            onChange={setSelectedUser}       // ← recebe { _id, name }
+            value={selectedUser?._id ?? ""}
+            onChange={setSelectedUser}
             onDataLoaded={setUsers}
           />
           
