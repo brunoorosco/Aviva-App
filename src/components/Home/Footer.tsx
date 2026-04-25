@@ -1,5 +1,4 @@
 import { MapPin, Phone, Church, MessageCircle } from "lucide-react";
-import NameSaas from "./nameSaas";
 import Image from "next/image";
 import logoLlaranja from "@/public/logo-laranja.png";
 
@@ -66,9 +65,8 @@ const Footer = () => {
               Sede Principal
             </h4>
             <address className="text-muted-foreground text-sm not-italic space-y-1">
-              <p>Av. Principal, 1000</p>
-              <p>Centro - São Paulo, SP</p>
-              <p>CEP: 01000-000</p>
+              <p>Av. dos Ipês, 1094</p>
+              <p>Itaim Paulista - São Paulo, SP</p>
             </address>
           </div>
 
@@ -80,7 +78,7 @@ const Footer = () => {
             </h4>
             <div className="space-y-3">
               <a
-                href="https://wa.me/5511999999999"
+                href="https://wa.me/5511967380685"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 px-4 py-3 bg-black/30 rounded-lg hover:bg-orange-500/20 transition-all duration-300 group"
@@ -92,7 +90,7 @@ const Footer = () => {
                   <p className="text-sm font-medium text-white group-hover:text-orange-500 transition-colors">
                     WhatsApp
                   </p>
-                  <p className="text-xs text-muted-foreground">(11) 99999-9999</p>
+                  <p className="text-xs text-muted-foreground">(11) 96738-0685</p>
                 </div>
               </a>
             </div>
