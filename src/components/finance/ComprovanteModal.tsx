@@ -17,9 +17,11 @@ export function ComprovanteModal({ isOpen, onClose, comprovanteUrl, comprovanteN
   const isPDF = comprovanteUrl?.toLowerCase().includes('.pdf') || 
                 comprovanteName?.toLowerCase().endsWith('.pdf');
   
+  const isLocal = comprovanteUrl?.startsWith('blob:');
+
   // Para PDFs do Cloudinary, converte para JPG (primeira página)
-  // Para imagens, usa URL original
-  const displayUrl = isPDF && comprovanteUrl.includes('cloudinary.com')
+  // Para imagens ou blobs locais, usa URL original
+  const displayUrl = isPDF && !isLocal && comprovanteUrl.includes('cloudinary.com')
     ? comprovanteUrl.replace('/upload/', '/upload/f_jpg,pg_1,q_auto,w_1200/')
     : comprovanteUrl;
 
@@ -47,19 +49,19 @@ export function ComprovanteModal({ isOpen, onClose, comprovanteUrl, comprovanteN
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span className="truncate pr-4 flex items-center gap-2">
-              {isPDF && <FileText className="h-5 w-5 text-primary" />}
-              {comprovanteName || 'Comprovante de Pagamento'}
+      <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-hidden p-0 sm:p-6">
+        <DialogHeader className="p-4 sm:p-0">
+          <DialogTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <span className="truncate pr-4 flex items-center gap-2 max-w-full">
+              {isPDF && <FileText className="h-5 w-5 text-primary shrink-0" />}
+              <span className="truncate">{comprovanteName || 'Comprovante de Pagamento'}</span>
             </span>
-            <div className="flex gap-2 flex-shrink-0">
-              <Button variant="outline" size="sm" onClick={handleOpenNewTab}>
+            <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
+              <Button variant="outline" size="sm" onClick={handleOpenNewTab} className="flex-1 sm:flex-none">
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Abrir PDF
+                {isPDF ? 'Abrir PDF' : 'Ver original'}
               </Button>
-              <Button variant="outline" size="sm" onClick={handleDownload}>
+              <Button variant="outline" size="sm" onClick={handleDownload} className="flex-1 sm:flex-none">
                 <Download className="h-4 w-4 mr-2" />
                 Baixar
               </Button>
@@ -67,13 +69,13 @@ export function ComprovanteModal({ isOpen, onClose, comprovanteUrl, comprovanteN
           </DialogTitle>
         </DialogHeader>
         
-        <div className="w-full h-[70vh] overflow-auto bg-secondary/20 rounded-lg relative">
+        <div className="w-full h-[60vh] sm:h-[70vh] overflow-auto bg-secondary/10 relative">
           {imageError ? (
             <div className="flex flex-col items-center justify-center h-full gap-4 p-8 text-center">
               <FileText className="h-16 w-16 text-muted-foreground" />
               <p className="text-lg font-medium">Não foi possível carregar a prévia</p>
               <p className="text-muted-foreground text-sm max-w-md">
-                Use os botões acima para abrir o arquivo completo ou fazer download.
+                O arquivo pode ser muito grande ou o formato não é suportado para prévia direta.
               </p>
               <div className="flex gap-2">
                 <Button onClick={handleOpenNewTab}>
@@ -87,17 +89,26 @@ export function ComprovanteModal({ isOpen, onClose, comprovanteUrl, comprovanteN
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-center h-full p-4">
-              <img
-                src={displayUrl}
-                alt={comprovanteName || 'Comprovante'}
-                className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-                onError={() => setImageError(true)}
-              />
+            <div className="flex items-center justify-center h-full">
+              {isPDF && isLocal ? (
+                <iframe
+                  src={displayUrl}
+                  className="w-full h-full border-none"
+                  title="PDF Preview"
+                />
+              ) : (
+                <img
+                  src={displayUrl}
+                  alt={comprovanteName || 'Comprovante'}
+                  className="max-w-full max-h-full object-contain shadow-sm"
+                  onError={() => setImageError(true)}
+                />
+              )}
+              
               {isPDF && !imageError && (
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm flex items-center gap-2">
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-xs sm:text-sm flex items-center gap-2 backdrop-blur-md">
                   <FileText className="h-4 w-4" />
-                  Prévia - Primeira página do PDF
+                  {isLocal ? 'Prévia do PDF' : 'Prévia - Primeira página do PDF'}
                 </div>
               )}
             </div>

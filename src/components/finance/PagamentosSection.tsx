@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,12 +30,25 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, customFolder }:
   const [tipo, setTipo] = useState<string>("");
   const [valor, setValor] = useState("");
   const [comprovante, setComprovante] = useState<File | null>(null);
+  const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedComprovante, setSelectedComprovante] = useState<{
     url: string;
     name?: string;
   } | null>(null);
+
+  // Gerenciar URL local para preview
+  useEffect(() => {
+    if (comprovante) {
+      const url = URL.createObjectURL(comprovante);
+      setLocalPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setLocalPreviewUrl(null);
+    }
+  }, [comprovante]);
+
   const fileRef = useRef<HTMLInputElement>(null);
   const { data: session } = useSession();
 
@@ -178,16 +191,28 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, customFolder }:
                   />
                   {comprovante ? (
                     <div className="flex items-center gap-2 rounded-md border border-border/50 bg-secondary/30 px-3 py-2">
-                      <FileImage className="h-4 w-4 text-muted-foreground" />
+                      <FileImage className="h-4 w-4 text-muted-foreground shrink-0" />
                       <span className="text-sm truncate flex-1">{comprovante.name}</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => setComprovante(null)}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-primary"
+                          onClick={() => handleViewComprovante(localPreviewUrl!, comprovante.name)}
+                          type="button"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive"
+                          onClick={() => setComprovante(null)}
+                          type="button"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   ) : (
                     <Button
