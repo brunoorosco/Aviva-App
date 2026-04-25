@@ -223,7 +223,7 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, customFolder }:
                       Enviando...
                     </>
                   ) : (
-                    "Salvar"
+                    "Adicionar"
                   )}
                 </Button>
               </div>
