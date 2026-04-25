@@ -35,11 +35,11 @@ const Hero = () => {
             style={{ boxShadow: '0 0 60px hsl(24 95% 53% / 0.4)' }}
             onClick={() => window.location.href = '/login'}
           >
-            Começar Agora
+            Entrar
           </button>
-          <button className="px-8 py-4 border border-white/30 text-white font-semibold rounded-lg transition-all duration-300 hover:bg-white/10">
+          {/* <button className="px-8 py-4 border border-white/30 text-white font-semibold rounded-lg transition-all duration-300 hover:bg-white/10">
             Saiba Mais
-          </button>
+          </button> */}
         </div>
       </div>
 

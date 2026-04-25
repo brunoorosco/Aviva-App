@@ -26,7 +26,7 @@ const Header = () => {
         {/* Login Button */}
         <Button
           variant="outline"
-          className="border-orange-500/50 text-orange-500 hover:bg-orange-500 bg-black hover:text-primary-foreground transition-all duration-300"
+          className="hidden md:flex border-orange-500/50 text-orange-500 hover:bg-orange-500 bg-black hover:text-primary-foreground transition-all duration-300"
           style={{ boxShadow: "0 0 60px hsl(24 95% 53% / 0.4)" }}
           onClick={() => {
             router.push("/login");
