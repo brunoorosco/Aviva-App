@@ -34,7 +34,7 @@ export function ComprovantesDropdown({ pagamentos }: Props) {
 
   const handleViewComprovante = (comprovante: { comprovanteUrl?: string; comprovanteName?: string }) => {
     if (!comprovante.comprovanteUrl) return;
-    
+
     setSelectedComprovante({
       url: comprovante.comprovanteUrl,
       name: comprovante.comprovanteName,
@@ -84,7 +84,7 @@ export function ComprovantesDropdown({ pagamentos }: Props) {
                         {pagamento.comprovanteName || "Comprovante"}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(pagamento.data).toLocaleDateString("pt-BR")} -{""}
+                        {pagamento.data || (pagamento as any).createdAt ? new Date(pagamento.data || (pagamento as any).createdAt).toLocaleDateString("pt-BR") : "Data não disponível"} -{""}
                         {pagamento.valor.toLocaleString("pt-BR", {
                           style: "currency",
                           currency: "BRL",
@@ -112,7 +112,7 @@ export function ComprovantesDropdown({ pagamentos }: Props) {
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-  
+
       {selectedComprovante && (
         <ComprovanteModal
           isOpen={isModalOpen}

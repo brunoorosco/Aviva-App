@@ -110,7 +110,7 @@ export default function FinanceReport({ type }: { type: "encontro" | "reencontro
           <div>
             <h1 className="text-xl font-bold font-[Montserrat]">Relatório Financeiro</h1>
             <p className="text-xs text-muted-foreground">
-              {type === "encontro" ? "Encontro" : "Reencontro"} #{encontro.numero} - {new Date(encontro.data).toLocaleDateString("pt-BR")}
+              {type === "encontro" ? "Encontro" : "Reencontro"} #{encontro.numero} - {encontro.data ? new Date(encontro.data).toLocaleDateString("pt-BR") : "Data não definida"}
             </p>
           </div>
         </div>

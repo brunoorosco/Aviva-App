@@ -92,7 +92,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     _id: p._id,
     tipo: p.tipo,
     valor: p.valor,
-    data: p.createdAt,
+    data: p.data || p.createdAt,
     comprovanteUrl: p.comprovanteUrl,
     comprovanteName: p.comprovanteName,
   }));

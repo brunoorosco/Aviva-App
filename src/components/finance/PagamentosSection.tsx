@@ -249,7 +249,7 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, customFolder }:
                   {p.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  {new Date(p.data).toLocaleDateString("pt-BR")}
+                  {p.data || (p as any).createdAt ? new Date(p.data || (p as any).createdAt).toLocaleDateString("pt-BR") : "Data não disponível"}
                 </span>
                 {p.comprovanteUrl && (
                   <Button
