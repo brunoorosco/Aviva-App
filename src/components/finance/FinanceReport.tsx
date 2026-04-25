@@ -199,16 +199,16 @@ export default function FinanceReport({ type }: { type: "encontro" | "reencontro
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div>
                       <h3 className="font-semibold text-lg">{g.nome}</h3>
-                      <p className="text-xs text-muted-foreground">{g.celula}</p>
+                      {/* <p className="text-xs text-muted-foreground">{g.celula}</p> */}
                     </div>
                     <div className="flex items-center gap-2">
                       <ComprovantesDropdown pagamentos={g.pagamentos} />
                       <Badge variant="outline" className={statusColors[g.status] || ""}>
                         {statusLabels[g.status] || g.status}
                       </Badge>
-                      <Badge variant="secondary" className="text-base font-bold">
+                      {/* <Badge variant="secondary" className="text-base font-bold">
                         {formatCurrency(g.totalPago)}
-                      </Badge>
+                      </Badge> */}
                     </div>
                   </div>
 
