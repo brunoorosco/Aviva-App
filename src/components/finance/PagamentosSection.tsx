@@ -20,12 +20,13 @@ interface Props {
   pagamentos: Pagamento[];
   onAdd: (p: Omit<Pagamento, "_id" | "data">) => void;
   onRemove: (id: string) => void;
+  onRemoveComprovante: (id: string) => void;
   customFolder?: string;
 }
 
 const tipoLabels: Record<string, string> = { pix: "Pix", cartao: "Cartão", dinheiro: "Dinheiro" };
 
-export function PagamentosSection({ pagamentos, onAdd, onRemove, customFolder }: Props) {
+export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprovante, customFolder }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [tipo, setTipo] = useState<string>("");
   const [valor, setValor] = useState("");
@@ -277,20 +278,41 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, customFolder }:
                   {p.data || (p as any).createdAt ? new Date(p.data || (p as any).createdAt).toLocaleDateString("pt-BR") : "Data não disponível"}
                 </span>
                 {p.comprovanteUrl && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-primary hover:text-primary/80"
-                    onClick={() => handleViewComprovante(p.comprovanteUrl!, p.comprovanteName)}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-primary hover:text-primary/80"
+                      onClick={() => handleViewComprovante(p.comprovanteUrl!, p.comprovanteName)}
+                      title="Ver comprovante"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive/70 hover:text-destructive"
+                      onClick={() => {
+                        if (confirm("Deseja apagar apenas o arquivo do comprovante?")) {
+                          onRemoveComprovante(p._id);
+                        }
+                      }}
+                      title="Apagar apenas arquivo"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
                 )}
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 text-destructive hover:text-destructive"
-                  onClick={() => onRemove(p._id)}
+                  onClick={() => {
+                    if (confirm("Deseja apagar este pagamento permanentemente?")) {
+                      onRemove(p._id);
+                    }
+                  }}
+                  title="Apagar pagamento"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

@@ -18,8 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-let idCounter = 0;
-const nextId = () => String(++idCounter);
+const nextId = () => Math.random().toString(36).substr(2, 9);
 
 type TRede = { _id: string; name: string };
 
@@ -85,12 +84,12 @@ export default function GroupFinance() {
   const addEquipeMember = (user: TEquipe) => {
     setEquipeMembers((prev) => [
       ...prev,
-      { _id: user._id, name: user.name, isento: false, rede: user.rede },
+      { _id: nextId(), name: user.name, isento: false, rede: user.rede },
     ]);
   };
   const removeEquipeMember = (id: string) => {
     setEncontristas((prev) =>
-      prev.map((e) => (e._id === id ? { ...e, equipeMembroId: undefined } : e)),
+      prev.map((e) => (e.equipeMembroId === id ? { ...e, equipeMembroId: undefined } : e)),
     );
     setEquipeMembers((prev) => prev.filter((m) => m._id !== id));
   };
@@ -102,10 +101,44 @@ export default function GroupFinance() {
   const addPagamento = (p: Omit<Pagamento, "_id" | "data">) => {
     setPagamentos((prev) => [...prev, { ...p, _id: nextId(), data: new Date().toISOString() }]);
   };
+
+  const removeComprovante = async (id: string) => {
+    const pagamento = pagamentos.find((p) => p._id === id);
+    if (!pagamento) return;
+
+    // Remove do estado local imediatamente (otimista)
+    setPagamentos((prev) =>
+      prev.map((p) =>
+        p._id === id
+          ? { ...p, comprovanteUrl: undefined, comprovanteName: undefined, comprovantePublicId: undefined }
+          : p,
+      ),
+    );
+
+    // Se tem comprovante, deleta do Cloudinary em segundo plano
+    if (pagamento.comprovantePublicId || pagamento.comprovanteUrl) {
+      try {
+        await fetch(`/api/protected/churches/${churchid}/encontroComDeus/comprovante/delete`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            publicId: pagamento.comprovantePublicId,
+            url: pagamento.comprovanteUrl,
+          }),
+        });
+      } catch (error) {
+        console.error("Erro ao deletar comprovante do Cloudinary:", error);
+      }
+    }
+  };
+
   const removePagamento = async (id: string) => {
     const pagamento = pagamentos.find((p) => p._id === id);
 
-    // Se tem comprovante, deleta do Cloudinary primeiro
+    // Remove do estado local imediatamente (otimista)
+    setPagamentos((prev) => prev.filter((p) => p._id !== id));
+
+    // Se tem comprovante, deleta do Cloudinary em segundo plano
     if (pagamento?.comprovantePublicId || pagamento?.comprovanteUrl) {
       try {
         await fetch(`/api/protected/churches/${churchid}/encontroComDeus/comprovante/delete`, {
@@ -120,8 +153,6 @@ export default function GroupFinance() {
         console.error("Erro ao deletar comprovante do Cloudinary:", error);
       }
     }
-
-    setPagamentos((prev) => prev.filter((p) => p._id !== id));
   };
 
   const totalPago = useMemo(() => pagamentos.reduce((sum, p) => sum + p.valor, 0), [pagamentos]);
@@ -360,6 +391,7 @@ export default function GroupFinance() {
           pagamentos={pagamentos}
           onAdd={addPagamento}
           onRemove={removePagamento}
+          onRemoveComprovante={removeComprovante}
           customFolder={encontroInfo?.numero ? `comprovantes/encontro/${encontroInfo.numero}` : 'comprovantes/encontro'}
         />
       </div>

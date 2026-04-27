@@ -17,11 +17,11 @@ function formatCurrency(value: number) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-function getStatus(saldo: number, totalPago: number): StatusFinanceiro {
-  if (saldo === 0 && totalPago > 0) return "quitado";
-  if (saldo < 0) return "excedente";
-  if (saldo > 0 && totalPago > 0) return "parcial";
-  return "pendente";
+function getStatus(totalPago: number, totalAPagar: number): StatusFinanceiro {
+  if (totalPago === 0) return "pendente";
+  if (totalPago < totalAPagar) return "parcial";
+  if (totalPago === totalAPagar) return "quitado";
+  return "excedente";
 }
 
 const statusConfig: Record<StatusFinanceiro, { label: string; color: string; bg: string }> = {
@@ -55,8 +55,8 @@ export function ResumoFinanceiro({ encontristas, equipeMembers, pagamentos, tota
   );
 
   const status = totalPago - totalAPagar;
-  const saldo = status === 0 ? "quitado" : "pendente";
-  const cfg = statusConfig[saldo as StatusFinanceiro];
+  const saldo = getStatus(totalPago, totalAPagar);
+  const cfg = statusConfig[saldo];
 
   return (
     <Card className="border-2 border-primary/20 dark:bg-card/90 bg-gray-100 backdrop-blur-sm">
