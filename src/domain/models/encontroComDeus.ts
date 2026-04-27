@@ -80,6 +80,7 @@ type People = {
   dataNascimento?: string;
   isento?: boolean;
   isMembro?: boolean;
+  equipeMembroId?: string;
 };
 
 export type TPeople = People;
