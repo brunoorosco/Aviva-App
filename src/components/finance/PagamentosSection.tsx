@@ -15,6 +15,7 @@ import { Pagamento, TypePagamento } from "@/domain/models/encontroComDeus";
 import { ComprovanteModal } from "./ComprovanteModal";
 import { useSession } from "next-auth/react";
 import Toast from "@/components/Toast";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface Props {
   pagamentos: Pagamento[];
@@ -38,6 +39,11 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprov
     url: string;
     name?: string;
   } | null>(null);
+  const [confirmConfig, setConfirmConfig] = useState<{
+    open: boolean;
+    id: string;
+    type: "payment" | "comprovante";
+  }>({ open: false, id: "", type: "payment" });
 
   // Gerenciar URL local para preview
   useEffect(() => {
@@ -293,9 +299,7 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprov
                       size="icon"
                       className="h-8 w-8 text-destructive/70 hover:text-destructive"
                       onClick={() => {
-                        if (confirm("Deseja apagar apenas o arquivo do comprovante?")) {
-                          onRemoveComprovante(p._id);
-                        }
+                        setConfirmConfig({ open: true, id: p._id, type: "comprovante" });
                       }}
                       title="Apagar apenas arquivo"
                     >
@@ -308,9 +312,7 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprov
                   size="icon"
                   className="h-8 w-8 text-destructive hover:text-destructive"
                   onClick={() => {
-                    if (confirm("Deseja apagar este pagamento permanentemente?")) {
-                      onRemove(p._id);
-                    }
+                    setConfirmConfig({ open: true, id: p._id, type: "payment" });
                   }}
                   title="Apagar pagamento"
                 >
@@ -333,6 +335,27 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprov
           comprovanteName={selectedComprovante.name}
         />
       )}
+
+      <ConfirmDialog
+        open={confirmConfig.open}
+        onClose={() => setConfirmConfig({ ...confirmConfig, open: false })}
+        onConfirm={() => {
+          if (confirmConfig.type === "payment") {
+            onRemove(confirmConfig.id);
+          } else {
+            onRemoveComprovante(confirmConfig.id);
+          }
+          setConfirmConfig({ ...confirmConfig, open: false });
+        }}
+        title={confirmConfig.type === "payment" ? "Remover Pagamento" : "Remover Comprovante"}
+        description={
+          confirmConfig.type === "payment"
+            ? "Tem certeza que deseja remover este pagamento? Esta ação não pode ser desfeita."
+            : "Deseja apagar apenas o arquivo do comprovante? As informações do pagamento serão mantidas."
+        }
+        confirmLabel="Sim, remover"
+        cancelLabel="Cancelar"
+      />
     </>
   );
 }

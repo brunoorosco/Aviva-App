@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Pencil, Users } from "lucide-react";
 import { TEquipe, TPeople } from "@/domain/models/encontroComDeus";
 import { EncontristaModal } from "./EncontristaModal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface Props {
   encontristas: TPeople[];
@@ -16,6 +17,8 @@ interface Props {
 export function EncontristasSection({ encontristas, onAdd, onEdit, onRemove }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<TPeople | null>(null);
+
+  const [selectedToDelete, setSelectedToDelete] = useState<string | null>(null);
 
   const handleNew = () => {
     setEditing(null);
@@ -81,7 +84,7 @@ export function EncontristasSection({ encontristas, onAdd, onEdit, onRemove }: P
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 text-destructive hover:text-destructive"
-                  onClick={() => onRemove(e._id as string)}
+                  onClick={() => setSelectedToDelete(e._id as string)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -96,6 +99,21 @@ export function EncontristasSection({ encontristas, onAdd, onEdit, onRemove }: P
         onClose={() => setModalOpen(false)}
         onSave={handleSave}
         encontrista={editing}
+      />
+
+      <ConfirmDialog
+        open={!!selectedToDelete}
+        onClose={() => setSelectedToDelete(null)}
+        onConfirm={() => {
+          if (selectedToDelete) {
+            onRemove(selectedToDelete);
+            setSelectedToDelete(null);
+          }
+        }}
+        title="Remover Participante"
+        description="Tem certeza que deseja remover este participante? Todas as informações vinculadas a ele serão perdidas."
+        confirmLabel="Sim, remover"
+        cancelLabel="Cancelar"
       />
     </>
   );
