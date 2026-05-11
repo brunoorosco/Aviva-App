@@ -306,11 +306,13 @@ const Discipulado = () => {
   const totalPresentes = (aula: AulaDiscipulado) => aula.alunos.filter((a) => a.presente).length;
   const totalAusentes = (aula: AulaDiscipulado) => aula.alunos.filter((a) => !a.presente).length;
 
-  const aulasFiltradas = (aulas || []).filter((aula) =>
-    aula.tema.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    aula.ministrador?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    aula.alunos.some(aluno => aluno.nome.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const aulasFiltradas = (aulas || [])
+    .filter((aula) =>
+      aula.tema.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      aula.ministrador?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      aula.alunos.some(aluno => aluno.nome.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+    .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
 
   return (
     <div className="min-h-screen bg-background text-foreground mt-6">
