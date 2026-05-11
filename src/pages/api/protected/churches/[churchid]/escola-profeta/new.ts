@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { escolaProfeta } from '@/infra/google/accessGoogle'
 import { NextApiRequest, NextApiResponse } from 'next'
 
@@ -25,3 +26,5 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     throw new Error(error as string)
   }
 }
+
+export default withAudit(handler);

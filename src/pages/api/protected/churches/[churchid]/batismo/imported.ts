@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { createBatismoImportedService  } from '@/services/batismos'
 import { NextApiRequest, NextApiResponse } from 'next'
 
@@ -16,3 +17,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).json({ error: 'Falha na conexão com tb usuário' })
   }
 }
+
+export default withAudit(handler);

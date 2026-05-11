@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { AuditoriaRepository } from "@/infra/db/repositories/mongo/auditoria";
 import { AuditoriaModel } from "@/domain/models/auditoria";
 
@@ -13,7 +14,7 @@ export const withAudit = (handler: (req: NextApiRequest, res: NextApiResponse) =
       return handler(req, res);
     }
 
-    const session = await getSession({ req });
+    const session = await getServerSession(req, res, authOptions);
 
     const originalJson = res.json;
     const originalSend = res.send;

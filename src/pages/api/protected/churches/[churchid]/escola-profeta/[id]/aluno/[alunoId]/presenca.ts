@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { updatePresenEscolaProfetaService } from '@/services/escolaProfeta'
 import { NextApiRequest, NextApiResponse } from 'next'
 
@@ -18,3 +19,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     throw new Error(error as string)
   }
 }
+
+export default withAudit(handler);

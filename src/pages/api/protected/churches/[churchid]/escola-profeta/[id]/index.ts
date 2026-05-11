@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import {
   createEscolaProfetaService,
   getEscolaProfetaByIdService,
@@ -21,3 +22,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     throw new Error(error as string)
   }
 }
+
+export default withAudit(handler);

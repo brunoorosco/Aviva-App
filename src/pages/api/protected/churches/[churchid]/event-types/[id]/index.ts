@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import {
   deleteEventTypeService,
   getEventTypeByIdService,
@@ -26,3 +27,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(500).json({ message: 'Internal server error', error: String(error) })
   }
 }
+
+export default withAudit(handler);

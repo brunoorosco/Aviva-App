@@ -1,7 +1,8 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { addPagamentoService, removePagamentoService } from '@/services/reencontroComDeus';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { reencontroId, redeId } = req.query;
 
@@ -65,3 +66,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: 'Erro ao processar pagamento' });
   }
 }
+
+export default withAudit(handler);

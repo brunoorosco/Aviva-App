@@ -1,0 +1,815 @@
+
+> whatsapp-nextjs@0.1.0 test
+> jest src/tests/audit-coverage.test.ts
+
+FAIL src/tests/audit-coverage.test.ts
+  Cobertura de Auditoria da API
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/app/[userId]/index.ts está auditado (1 ms)
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/aceitou/export.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/aceitou/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/aceitou/report.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/baptism/certificado-pdf.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/baptism/certificados-lista-pdf.ts está auditado (1 ms)
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/baptism/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/batismo/[id]/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/batismo/imported.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/batismo/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/batismo/list-pdf.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/boas-vindas/analytics.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/casasdepaz/[id]/index.ts está auditado (1 ms)
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/casasdepaz/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/cems/[id]/delete.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/cems/[id]/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/cems/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/consagracao/[id]/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/consagracao/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/discipulado/aulas/[id].ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/discipulado/aulas/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/discipulado/ciclos/[cicloid]/inscricao.ts está auditado (1 ms)
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/discipulado/ciclos.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/discipulado/membros.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/discipulado/pendencias.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/[id]/encontrista/[encontristaId]/convert.ts está auditado (1 ms)
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/[id]/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/[id]/relatorio-financeiro.ts está auditado (1 ms)
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/comprovante/delete.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/comprovante/signature.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/import.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/index.ts está auditado (1 ms)
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/inscricao/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/inscricao/pagamento.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/escola-profeta/[id]/aluno/[alunoId]/presenca.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/escola-profeta/[id]/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/escola-profeta/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/escola-profeta/list.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/escola-profeta/new.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/escola-profeta/presence/[presence].ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/event-types/[id]/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/event-types/index.ts está auditado (1 ms)
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/events/[id]/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/events/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/fechamento-anual/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/flow/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/ministerios/[ministerioid]/equipe.ts está auditado (1 ms)
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/ministerios/[ministerioid]/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/ministerios/[ministerioid]/members/[membersId].ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/ministerios/[ministerioid]/members/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/ministerios/[ministerioid]/membros.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/ministerios/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/redes/[redeid]/equipe.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/redes/[redeid]/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/redes/[redeid]/members/[membersId].ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/redes/[redeid]/members/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/redes/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/[id]/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/[id]/relatorio-financeiro.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/comprovante/delete.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/comprovante/signature.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/import.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/index.ts está auditado (1 ms)
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/inscricao/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/inscricao/pagamento.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/secretary/apresentacao/[id].ts está auditado (1 ms)
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/secretary/apresentacao/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/secretary/tmac-report.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/secretary/users/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/sejaLivre/[id]/index.ts está auditado (1 ms)
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/sejaLivre/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/supervisories/[cemid].ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/supervisories/index.ts está auditado (1 ms)
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/users/[userid]/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/users/[userid]/settings.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/users/active.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/users/cargo/[cargo].ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/users/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/users/members/index.ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/visitantes/export.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/visitantes/import.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/visitantes/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/visitasdepaz/[id]/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/visitasdepaz/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/index.ts está auditado (1 ms)
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/profile/[profileId].ts está auditado
+    ✓ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/profile/index.ts está auditado
+    ✕ Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/users/index.ts está auditado
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/baptism/certificados-lista-pdf.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/baptism/certificados-lista-pdf.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/batismo/[id]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/batismo/[id]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/batismo/imported.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/batismo/imported.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/batismo/list-pdf.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/batismo/list-pdf.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/casasdepaz/[id]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/casasdepaz/[id]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/casasdepaz/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/casasdepaz/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/cems/[id]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/cems/[id]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/cems/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/cems/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/consagracao/[id]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/consagracao/[id]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/consagracao/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/consagracao/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/[id]/encontrista/[encontristaId]/convert.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/encontroComDeus/[id]/encontrista/[encontristaId]/convert.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/comprovante/delete.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/encontroComDeus/comprovante/delete.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/comprovante/signature.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/encontroComDeus/comprovante/signature.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/import.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/encontroComDeus/import.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/inscricao/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/encontroComDeus/inscricao/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/encontroComDeus/inscricao/pagamento.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/encontroComDeus/inscricao/pagamento.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/escola-profeta/[id]/aluno/[alunoId]/presenca.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/escola-profeta/[id]/aluno/[alunoId]/presenca.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/escola-profeta/[id]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/escola-profeta/[id]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/escola-profeta/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/escola-profeta/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/escola-profeta/new.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/escola-profeta/new.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/event-types/[id]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/event-types/[id]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/event-types/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/event-types/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/events/[id]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/events/[id]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/events/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/events/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/flow/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/flow/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/ministerios/[ministerioid]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/ministerios/[ministerioid]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/ministerios/[ministerioid]/membros.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/ministerios/[ministerioid]/membros.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/ministerios/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/ministerios/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/redes/[redeid]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/redes/[redeid]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/redes/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/redes/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/[id]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/reencontroComDeus/[id]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/comprovante/delete.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/reencontroComDeus/comprovante/delete.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/comprovante/signature.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/reencontroComDeus/comprovante/signature.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/import.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/reencontroComDeus/import.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/reencontroComDeus/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/inscricao/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/reencontroComDeus/inscricao/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/reencontroComDeus/inscricao/pagamento.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/reencontroComDeus/inscricao/pagamento.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/secretary/apresentacao/[id].ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/secretary/apresentacao/[id].ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/secretary/apresentacao/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/secretary/apresentacao/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/secretary/users/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/secretary/users/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/sejaLivre/[id]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/sejaLivre/[id]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/sejaLivre/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/sejaLivre/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/users/[userid]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/users/[userid]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/users/[userid]/settings.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/users/[userid]/settings.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/users/cargo/[cargo].ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/users/cargo/[cargo].ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/visitantes/import.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/visitantes/import.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/visitantes/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/visitantes/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/visitasdepaz/[id]/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/visitasdepaz/[id]/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/[churchid]/visitasdepaz/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/[churchid]/visitasdepaz/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/churches/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/churches/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+  ● Cobertura de Auditoria da API › Verificando se /Users/brunoorosco/projects/aviva-app/src/pages/api/protected/users/index.ts está auditado
+
+    Falha de Segurança: A rota src/pages/api/protected/users/index.ts realiza operações de escrita mas não possui o wrapper withAudit.
+
+      36 |
+      37 |     if (needsAudit && !isAudited) {
+    > 38 |       throw new Error(`Falha de Segurança: A rota ${relativePath} realiza operações de escrita mas não possui o wrapper withAudit.`);
+         |             ^
+      39 |     }
+      40 |   });
+      41 | });
+
+      at src/tests/audit-coverage.test.ts:38:13
+
+Test Suites: 1 failed, 1 total
+Tests:       51 failed, 38 passed, 89 total
+Snapshots:   0 total
+Time:        0.208 s, estimated 1 s
+Ran all test suites matching src/tests/audit-coverage.test.ts.

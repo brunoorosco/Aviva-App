@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { User } from '@/domain/models/users'
 import { createUser } from '@/services/users';
@@ -6,7 +7,7 @@ type Error = {
   message: string
 }
 
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse<
     | User[]
@@ -27,3 +28,5 @@ export default async function handler(
   }
   return res.status(200).json([])
 }
+
+export default withAudit(handler);

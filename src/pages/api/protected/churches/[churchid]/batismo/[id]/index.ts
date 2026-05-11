@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { getBatismoByIdService, addBatizandoService, removeBatizandoService } from '@/services/batismos'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
@@ -54,3 +55,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(500).json({ error: 'Erro interno ao processar solicitação' })
   }
 }
+
+export default withAudit(handler);

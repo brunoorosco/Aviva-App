@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { deleteCemsByIdService, getCemsByIdService, saveCemsService } from "@/services/cems";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -27,3 +28,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).json({ error: "Falha na conexão com tb usuário" });
   }
 };
+
+export default withAudit(handler);

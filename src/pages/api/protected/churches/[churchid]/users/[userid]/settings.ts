@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 // pages/api/protected/users/settings.ts (adicionar método PATCH)
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
@@ -12,7 +13,7 @@ export const config = {
   },
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
@@ -70,3 +71,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   return res.status(405).json({ message: "Método não permitido" });
 }
+
+export default withAudit(handler);

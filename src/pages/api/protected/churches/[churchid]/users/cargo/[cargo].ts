@@ -1,8 +1,9 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { TMinisterialLevel } from "@/domain/models/ministerial";
 import { getUsersByStatus } from "@/services/users";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
     const { churchid, cargo } = req.query;
     if (!churchid || !cargo) {
@@ -24,3 +25,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   return res.status(405).json({ message: "Método não permitido" });
 }
+
+export default withAudit(handler);
