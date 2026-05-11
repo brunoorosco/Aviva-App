@@ -6,15 +6,17 @@ import QRCode from "qrcode";
 import { MongoHelper } from "@/infra/db/mongoHelper";
 import { ObjectId } from "mongodb";
 import { uploadToCloudinary, deleteComprovanteFromCloudinary } from "@/lib/cloudinary";
+import { withAudit } from "@/middlewares/withAudit";
 
 type Error = {
   message: string;
 };
 
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse<{ success: boolean; message?: string } | Error>,
 ) {
+
   try {
     const repository = new DiscipuladoMongoRepository();
     const { cicloid } = req.query;
@@ -123,3 +125,6 @@ export default async function handler(
     return res.status(500).json({ message: error.message || "Erro ao processar matrícula no ciclo" });
   }
 }
+
+export default withAudit(handler);
+

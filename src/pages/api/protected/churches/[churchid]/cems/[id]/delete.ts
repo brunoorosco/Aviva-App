@@ -1,7 +1,8 @@
 import { deleteCasaCemsService } from "@/services/cems";
 import { NextApiRequest, NextApiResponse } from "next";
+import { withAudit } from "@/middlewares/withAudit";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const churchId = (req.query?.churchid as string) || "";
     const cemId = (req.query?.id as string) || "";
@@ -18,3 +19,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).json({ error: "Falha na conexão com tb usuário" });
   }
 };
+
+export default withAudit(handler);
+

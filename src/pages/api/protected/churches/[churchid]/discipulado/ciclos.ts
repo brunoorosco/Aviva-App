@@ -1,15 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { DiscipuladoMongoRepository } from "@/infra/db/repositories/mongo/discipulado";
 import { CicloDiscipulado } from "@/domain/models/discupulado";
+import { withAudit } from "@/middlewares/withAudit";
 
 type Error = {
   message: string;
 };
 
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse<CicloDiscipulado[] | CicloDiscipulado | Error>,
 ) {
+
   try {
     const repository = new DiscipuladoMongoRepository();
 
@@ -38,3 +40,6 @@ export default async function handler(
     return res.status(500).json({ message: error.message || "Erro ao processar ciclos" });
   }
 }
+
+export default withAudit(handler);
+

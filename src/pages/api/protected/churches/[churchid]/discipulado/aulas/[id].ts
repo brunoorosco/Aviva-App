@@ -1,12 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { DiscipuladoMongoRepository } from "@/infra/db/repositories/mongo/discipulado";
 import { AulaDiscipulado } from "@/domain/models/discupulado";
+import { withAudit } from "@/middlewares/withAudit";
 
 type Error = {
   message: string;
 };
 
-export default async function handler(
+async function handler(
  req: NextApiRequest,
  res: NextApiResponse<AulaDiscipulado | Error>,
 ) {
@@ -56,7 +57,9 @@ export default async function handler(
   return res.status(405).json({ message: "Method not allowed" });
    }
  } catch (error: any) {
- console.error("Error handling aula:", error);
- return res.status(500).json({ message: error.message || "Erro ao processar aula" });
- }
+  console.error("Error handling aula:", error);
+  return res.status(500).json({ message: error.message || "Erro ao processar aula" });
+  }
 }
+
+export default withAudit(handler);
