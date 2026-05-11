@@ -147,13 +147,12 @@ const Discipulado = () => {
         presente: nextItem.presente,
         studentData: nextItem.studentData
       });
-      
+
       // Remover item processado da fila
       setSyncQueue(prev => prev.slice(1));
     } catch (error) {
       console.error("Erro ao sincronizar presença:", error);
-      // Opcional: mover para o fim da fila ou marcar com erro
-      // Por enquanto, vamos apenas parar e tentar novamente depois
+      // Para evitar loop infinito em erro fixo, poderíamos remover ou alertar
     } finally {
       syncInProgress.current = false;
       setIsSyncing(false);
@@ -259,10 +258,10 @@ const Discipulado = () => {
       }
 
       let aluno = currentAulaForScan.alunos.find((a) => a.membroId === studentId);
-      
+
       // Verifica se já está na fila de sincronização para evitar duplicidade rápida
       const isAlreadyInQueue = syncQueue.some(item => item.membroId === studentId && item.aulaId === currentAulaForScan.id);
-      
+
       if (aluno?.presente || isAlreadyInQueue) {
         Toast.showSuccess(`${capitalizeWords(studentNome)} já está presente ou sendo sincronizado`);
         return;
@@ -291,7 +290,7 @@ const Discipulado = () => {
       // Atualização Otimista do estado visual da aula atual
       const updated = {
         ...currentAulaForScan,
-        alunos: aluno 
+        alunos: aluno
           ? currentAulaForScan.alunos.map((a) => a.membroId === studentId ? { ...a, presente: true } : a)
           : [alunoData, ...currentAulaForScan.alunos]
       };
@@ -322,11 +321,11 @@ const Discipulado = () => {
             <BookOpen className="h-5 w-5 text-primary shrink-0" />
             <h1 className="text-lg font-bold truncate">Discipulado</h1>
           </div>
-          
+
           {/* Status de Sincronização */}
           {syncQueue.length > 0 && (
-            <Badge 
-              variant="outline" 
+            <Badge
+              variant="outline"
               className={cn(
                 "hidden sm:flex items-center gap-2 px-3 py-1 animate-in fade-in slide-in-from-top-1",
                 isSyncing ? "border-primary/50 bg-primary/5 text-primary" : "border-amber-500/50 bg-amber-500/5 text-amber-600"
@@ -664,34 +663,34 @@ const Discipulado = () => {
                           <TableRow>
                             <TableHead>Aluno</TableHead>
                             <TableHead>Rede</TableHead>
-                          <TableHead className="text-center">Presença</TableHead>
-                          <TableHead className="w-[40px]"></TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {[...aula.alunos]
-                          .sort((a, b) => a.nome.localeCompare(b.nome))
-                          .map((aluno) => {
-                            const isPending = syncQueue.some(item => item.membroId === aluno.membroId && item.aulaId === aula.id);
-                            return (
-                              <TableRow key={aluno.membroId} className={cn(isPending && "opacity-60 bg-muted/30")}>
-                                <TableCell className="font-medium">{capitalizeWords(aluno.nome)}</TableCell>
-                                <TableCell className="text-muted-foreground">{aluno.rede.name}</TableCell>
-                                <TableCell className="text-center">
-                                  <Checkbox
-                                    checked={aluno.presente || isPending}
-                                    onCheckedChange={() => handleTogglePresenca(aula, aluno.membroId)}
-                                    disabled={updatePresenca.isLoading || isPending}
-                                  />
-                                </TableCell>
-                                <TableCell>
-                                  {isPending && (
-                                    <RefreshCw className="h-3 w-3 animate-spin text-muted-foreground" title="Sincronizando..." />
-                                  )}
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
+                            <TableHead className="text-center">Presença</TableHead>
+                            <TableHead className="w-[40px]"></TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {[...aula.alunos]
+                            .sort((a, b) => a.nome.localeCompare(b.nome))
+                            .map((aluno) => {
+                              const isPending = syncQueue.some(item => item.membroId === aluno.membroId && item.aulaId === aula.id);
+                              return (
+                                <TableRow key={aluno.membroId} className={cn(isPending && "opacity-60 bg-muted/30")}>
+                                  <TableCell className="font-medium">{capitalizeWords(aluno.nome)}</TableCell>
+                                  <TableCell className="text-muted-foreground">{aluno.rede.name}</TableCell>
+                                  <TableCell className="text-center">
+                                    <Checkbox
+                                      checked={aluno.presente || isPending}
+                                      onCheckedChange={() => handleTogglePresenca(aula, aluno.membroId)}
+                                      disabled={updatePresenca.isLoading || isPending}
+                                    />
+                                  </TableCell>
+                                  <TableCell>
+                                    {isPending && (
+                                      <RefreshCw className="h-3 w-3 animate-spin text-muted-foreground" />
+                                    )}
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
                           {aula.alunos.length === 0 && (
                             <TableRow>
                               <TableCell colSpan={3} className="text-center text-muted-foreground py-6">
