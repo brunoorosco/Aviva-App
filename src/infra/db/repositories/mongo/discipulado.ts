@@ -224,6 +224,43 @@ export class DiscipuladoMongoRepository {
     }
   }
 
+  async updatePresencaAluno(aulaId: string, membroId: string, presente: boolean, studentData?: any): Promise<boolean> {
+    try {
+      const collection = await MongoHelper.getCollection(this.aulasCollection);
+      
+      // 1. Tentar atualizar aluno existente
+      const updateResult = await collection.updateOne(
+        { _id: new ObjectId(aulaId), "alunos.membroId": membroId },
+        { 
+          $set: { "alunos.$.presente": presente, updatedAt: new Date().toISOString() } 
+        }
+      );
+
+      // 2. Se não encontrou o aluno na lista, adiciona (Reposição)
+      if (updateResult.matchedCount === 0 && presente) {
+        const novoAluno = {
+          membroId,
+          nome: studentData?.nome || "Aluno Identificado Pelo QR",
+          rede: studentData?.rede || { name: "Reposição/Visitante", _id: "" },
+          presente: true
+        };
+
+        await collection.updateOne(
+          { _id: new ObjectId(aulaId) },
+          { 
+            $push: { alunos: novoAluno } as any,
+            $set: { updatedAt: new Date().toISOString() }
+          }
+        );
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error updating student presence:", error);
+      throw error;
+    }
+  }
+
   async deleteAula(id: string): Promise<boolean> {
     try {
       const collection = await MongoHelper.getCollection(this.aulasCollection);
