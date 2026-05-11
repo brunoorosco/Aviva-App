@@ -15,7 +15,10 @@ import {
   Search,
   QrCode,
   Loader2,
+  CloudOff,
+  RefreshCw,
 } from "lucide-react";
+import { useEffect, useCallback, useRef } from "react";
 import QRCodeScanner from "@/components/Discipulado/QRCodeScanner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,6 +77,7 @@ import {
   useDeleteAula,
   usePendencias,
   useUpdateAula,
+  useUpdatePresencaAluno,
 } from "@/hooks/useDiscipulado";
 import { AulaDiscipulado } from "@/domain/models/discupulado";
 import { capitalizeWords } from "@/utils/capitalizaFirst";
@@ -100,6 +104,69 @@ const Discipulado = () => {
     refetchAulas();
     refetchPendencias();
   });
+
+  const updatePresenca = useUpdatePresencaAluno(churchId, () => {
+    refetchAulas();
+    refetchPendencias();
+  });
+
+  // Gerenciamento de Fila de Sincronização (Cache Local)
+  const [syncQueue, setSyncQueue] = useState<{ aulaId: string, membroId: string, presente: boolean, studentData: any, timestamp: number }[]>([]);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const syncInProgress = useRef(false);
+
+  // Carregar fila inicial do localStorage
+  useEffect(() => {
+    const savedQueue = localStorage.getItem("discipulado_presence_sync_queue");
+    if (savedQueue) {
+      try {
+        setSyncQueue(JSON.parse(savedQueue));
+      } catch (e) {
+        console.error("Erro ao carregar fila de sincronização", e);
+      }
+    }
+  }, []);
+
+  // Salvar fila no localStorage sempre que mudar
+  useEffect(() => {
+    localStorage.setItem("discipulado_presence_sync_queue", JSON.stringify(syncQueue));
+  }, [syncQueue]);
+
+  // Processador da fila
+  const processSyncQueue = useCallback(async () => {
+    if (syncInProgress.current || syncQueue.length === 0) return;
+
+    syncInProgress.current = true;
+    setIsSyncing(true);
+
+    const nextItem = syncQueue[0];
+    try {
+      await updatePresenca.mutate({
+        aulaId: nextItem.aulaId,
+        membroId: nextItem.membroId,
+        presente: nextItem.presente,
+        studentData: nextItem.studentData
+      });
+      
+      // Remover item processado da fila
+      setSyncQueue(prev => prev.slice(1));
+    } catch (error) {
+      console.error("Erro ao sincronizar presença:", error);
+      // Opcional: mover para o fim da fila ou marcar com erro
+      // Por enquanto, vamos apenas parar e tentar novamente depois
+    } finally {
+      syncInProgress.current = false;
+      setIsSyncing(false);
+    }
+  }, [syncQueue, updatePresenca]);
+
+  // Efeito para processar a fila automaticamente
+  useEffect(() => {
+    if (syncQueue.length > 0 && !isSyncing) {
+      const timer = setTimeout(processSyncQueue, 500); // Delay entre itens
+      return () => clearTimeout(timer);
+    }
+  }, [syncQueue, isSyncing, processSyncQueue]);
 
   const deleteAula = useDeleteAula(churchId, () => {
     Toast.showSuccess("Aula excluída");
@@ -138,15 +205,19 @@ const Discipulado = () => {
     const aluno = aula.alunos.find(a => a.membroId === membroId);
     const novoStatus = !aluno?.presente;
 
-    const updated = {
-      ...aula,
-      alunos: aula.alunos.map((a) =>
-        a.membroId === membroId ? { ...a, presente: novoStatus } : a,
-      ),
-    };
+    // Adiciona à fila de sincronização (LocalStorage)
+    setSyncQueue(prev => [
+      ...prev,
+      {
+        aulaId: aula.id,
+        membroId,
+        presente: novoStatus,
+        studentData: aluno,
+        timestamp: Date.now()
+      }
+    ]);
 
-    updateAula.mutate(updated);
-
+    // Feedback visual imediato (Optimistic Update)
     if (novoStatus && aluno) {
       setLastMarkedName(aluno.nome);
       setShowSuccessModal(true);
@@ -171,7 +242,7 @@ const Discipulado = () => {
     if (!currentAulaForScan) return;
 
     try {
-      let studentData;
+      let studentData: any;
       try {
         studentData = JSON.parse(decodedText);
       } catch {
@@ -179,7 +250,6 @@ const Discipulado = () => {
         return;
       }
 
-      // Validação Estrita: O QR Code deve ter pelo menos ID e Nome para ser válido no sistema
       const studentId = studentData._id || studentData.id;
       const studentNome = studentData.nome;
 
@@ -189,43 +259,45 @@ const Discipulado = () => {
       }
 
       let aluno = currentAulaForScan.alunos.find((a) => a.membroId === studentId);
-
-      if (!aluno) {
-        // Auto-adicionar aluno de repósição (semestre anterior) se tiver o QR Code
-        aluno = {
-          membroId: studentId,
-          nome: studentData.nome || "Aluno Identificado Pelo QR",
-          rede: { name: "Reposição/Visitante", _id: "" },
-          presente: true
-        };
-
-        const updated = {
-          ...currentAulaForScan,
-          alunos: [aluno, ...currentAulaForScan.alunos],
-        };
-
-        updateAula.mutate(updated);
-        setCurrentAulaForScan(updated);
-        Toast.showSuccess(`Adicionado à aula para reposição: ${capitalizeWords(aluno.nome)}`);
+      
+      // Verifica se já está na fila de sincronização para evitar duplicidade rápida
+      const isAlreadyInQueue = syncQueue.some(item => item.membroId === studentId && item.aulaId === currentAulaForScan.id);
+      
+      if (aluno?.presente || isAlreadyInQueue) {
+        Toast.showSuccess(`${capitalizeWords(studentNome)} já está presente ou sendo sincronizado`);
         return;
       }
 
-      if (aluno.presente) {
-        Toast.showSuccess(`${capitalizeWords(aluno.nome)} já estava presente`);
-        return;
-      }
-
-      const updated = {
-        ...currentAulaForScan,
-        alunos: currentAulaForScan.alunos.map((a) =>
-          a.membroId === studentId ? { ...a, presente: true } : a,
-        ),
+      // Preparar dados do aluno (especialmente se for reposição)
+      const alunoData = aluno || {
+        membroId: studentId,
+        nome: studentNome,
+        rede: studentData.rede || { name: "Reposição/Visitante", _id: "" },
+        presente: true
       };
 
-      updateAula.mutate(updated);
-      // Atualiza o estado local da aula sendo escaneada para que scans subsequentes funcionem corretamente
+      // Adicionar à fila do LocalStorage
+      setSyncQueue(prev => [
+        ...prev,
+        {
+          aulaId: currentAulaForScan.id,
+          membroId: studentId,
+          presente: true,
+          studentData: alunoData,
+          timestamp: Date.now()
+        }
+      ]);
+
+      // Atualização Otimista do estado visual da aula atual
+      const updated = {
+        ...currentAulaForScan,
+        alunos: aluno 
+          ? currentAulaForScan.alunos.map((a) => a.membroId === studentId ? { ...a, presente: true } : a)
+          : [alunoData, ...currentAulaForScan.alunos]
+      };
+
       setCurrentAulaForScan(updated);
-      Toast.showSuccess(`registrado presença ${capitalizeWords(aluno.nome)}`);
+      Toast.showSuccess(`${aluno ? "Presença registrada" : "Adicionado para reposição"}: ${capitalizeWords(studentNome)}`);
     } catch (error) {
       console.error("Erro ao processar scan:", error);
       Toast.showError("Erro na leitura");
@@ -250,6 +322,23 @@ const Discipulado = () => {
             <BookOpen className="h-5 w-5 text-primary shrink-0" />
             <h1 className="text-lg font-bold truncate">Discipulado</h1>
           </div>
+          
+          {/* Status de Sincronização */}
+          {syncQueue.length > 0 && (
+            <Badge 
+              variant="outline" 
+              className={cn(
+                "hidden sm:flex items-center gap-2 px-3 py-1 animate-in fade-in slide-in-from-top-1",
+                isSyncing ? "border-primary/50 bg-primary/5 text-primary" : "border-amber-500/50 bg-amber-500/5 text-amber-600"
+              )}
+            >
+              {isSyncing ? <Loader2 className="h-3 w-3 animate-spin" /> : <CloudOff className="h-3 w-3" />}
+              <span className="text-[10px] font-bold uppercase tracking-tight">
+                {isSyncing ? `Sincronizando ${syncQueue.length}...` : `${syncQueue.length} pendentes`}
+              </span>
+            </Badge>
+          )}
+
           <div className="flex items-center gap-3">
             <Dialog open={openNovoCiclo} onOpenChange={setOpenNovoCiclo}>
               <DialogTrigger asChild>
@@ -575,25 +664,34 @@ const Discipulado = () => {
                           <TableRow>
                             <TableHead>Aluno</TableHead>
                             <TableHead>Rede</TableHead>
-                            <TableHead className="text-center">Presença</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {[...aula.alunos]
-                            .sort((a, b) => a.nome.localeCompare(b.nome))
-                            .map((aluno) => (
-                              <TableRow key={aluno.membroId}>
+                          <TableHead className="text-center">Presença</TableHead>
+                          <TableHead className="w-[40px]"></TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {[...aula.alunos]
+                          .sort((a, b) => a.nome.localeCompare(b.nome))
+                          .map((aluno) => {
+                            const isPending = syncQueue.some(item => item.membroId === aluno.membroId && item.aulaId === aula.id);
+                            return (
+                              <TableRow key={aluno.membroId} className={cn(isPending && "opacity-60 bg-muted/30")}>
                                 <TableCell className="font-medium">{capitalizeWords(aluno.nome)}</TableCell>
                                 <TableCell className="text-muted-foreground">{aluno.rede.name}</TableCell>
                                 <TableCell className="text-center">
                                   <Checkbox
-                                    checked={aluno.presente}
+                                    checked={aluno.presente || isPending}
                                     onCheckedChange={() => handleTogglePresenca(aula, aluno.membroId)}
-                                    disabled={updateAula.isLoading}
+                                    disabled={updatePresenca.isLoading || isPending}
                                   />
                                 </TableCell>
+                                <TableCell>
+                                  {isPending && (
+                                    <RefreshCw className="h-3 w-3 animate-spin text-muted-foreground" title="Sincronizando..." />
+                                  )}
+                                </TableCell>
                               </TableRow>
-                            ))}
+                            );
+                          })}
                           {aula.alunos.length === 0 && (
                             <TableRow>
                               <TableCell colSpan={3} className="text-center text-muted-foreground py-6">

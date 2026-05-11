@@ -133,6 +133,25 @@ export function useUpdateAula(churchId?: string, onSuccess?: () => void) {
   );
 }
 
+export function useUpdatePresencaAluno(churchId?: string, onSuccess?: () => void) {
+  const { refetch } = useAulas(churchId, undefined);
+  return useMutate(
+    async ({ aulaId, membroId, presente, studentData }: { aulaId: string, membroId: string, presente: boolean, studentData?: any }) => {
+      if (!churchId) throw new Error("Church ID required");
+      const response = await axios.patch(`${API_BASE}/${churchId}/discipulado/aulas/${aulaId}/presenca`, {
+        membroId,
+        presente,
+        studentData
+      });
+      return response.data;
+    },
+    () => {
+      refetch();
+      onSuccess?.();
+    },
+  );
+}
+
 // Delete aula
 export function useDeleteAula(churchId?: string, onSuccess?: () => void) {
   const { refetch } = useAulas(churchId, undefined);
