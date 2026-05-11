@@ -2,7 +2,7 @@ import { withAudit } from '@/middlewares/withAudit';
 import { addConsagratedService, addConsagratedUsersService, getConsagracaoByIdService } from "@/services/consagracao";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const churchId = (req.query?.churchid as string) || "";
     const consagracaoId = (req.query?.id as string) || "";

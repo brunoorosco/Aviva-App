@@ -6,7 +6,7 @@ import {
 } from '@/services/eventTypes'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const eventTypeId = (req.query?.id as string) || ''
     

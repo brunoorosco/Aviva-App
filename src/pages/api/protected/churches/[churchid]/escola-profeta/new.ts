@@ -8,7 +8,7 @@ type Data = {
   name: string
 }
 
-export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   try {
     if (req.method === 'POST') {
       const sheet = await escolaProfeta()

@@ -2,7 +2,7 @@ import { withAudit } from '@/middlewares/withAudit';
 import { createUser, updatePermissionAndPasswordUser } from "@/services/users";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     if (req.method == "POST") {
       const user = await createUser(req.body);

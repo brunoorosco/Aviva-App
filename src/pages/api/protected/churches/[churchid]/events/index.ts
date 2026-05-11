@@ -3,7 +3,7 @@ import { withAudit } from '@/middlewares/withAudit';
 import { createEventsService, getEventsService } from '@/services/events'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const churchId = (req.query?.churchid as string) || ''
     if (req.method == 'POST') {
