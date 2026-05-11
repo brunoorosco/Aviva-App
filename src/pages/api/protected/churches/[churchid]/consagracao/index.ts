@@ -1,7 +1,8 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { createConsagracaoService, getConsagracaoByChurchIdService } from "@/services/consagracao";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const churchId = (req.query?.churchid as string) || "";
     if (req.method == "POST") {
@@ -19,3 +20,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export default withAudit(handler);

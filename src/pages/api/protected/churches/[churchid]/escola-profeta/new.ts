@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { escolaProfeta } from '@/infra/google/accessGoogle'
 import { NextApiRequest, NextApiResponse } from 'next'
 
@@ -7,7 +8,7 @@ type Data = {
   name: string
 }
 
-export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   try {
     if (req.method === 'POST') {
       const sheet = await escolaProfeta()
@@ -25,3 +26,5 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     throw new Error(error as string)
   }
 }
+
+export default withAudit(handler);

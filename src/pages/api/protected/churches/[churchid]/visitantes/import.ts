@@ -1,7 +1,8 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { createVisitantesImportService } from "@/services/visitantes";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const churchId = (req.query?.churchid as string) || "";
     if (req.method == "POST") {
@@ -16,3 +17,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).json({ error: "Falha na conexão com tb usuário" });
   }
 };
+
+export default withAudit(handler);

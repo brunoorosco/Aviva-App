@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import type { NextApiRequest, NextApiResponse } from "next";
 import { 
   deleteMinisterioService, 
@@ -9,7 +10,7 @@ interface Error {
   message: string;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
   const churchId = req.query.churchid as string;
   const ministerioId = req.query.ministerioid as string;
 
@@ -34,3 +35,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(500).json({ message: error.message || "Internal server error" });
   }
 }
+
+export default withAudit(handler);

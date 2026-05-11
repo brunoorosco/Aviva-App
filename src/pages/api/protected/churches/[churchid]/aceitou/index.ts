@@ -1,7 +1,8 @@
 import { createAceitouService, getAceitouService } from "@/services/aceitou";
 import { NextApiRequest, NextApiResponse } from "next";
+import { withAudit } from "@/middlewares/withAudit";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
      const { churchid, page = 1, limit = 10, name, rede, dateStart, dateEnd } = req.query
 
@@ -37,3 +38,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).json({ error: "Falha na conexão com tb usuário" });
   }
 };
+
+export default withAudit(handler);
+

@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { CellsModel } from '@/domain/models/cells'
 import { createMinisterioService, getMinisterioService } from '@/services/ministerioService'
@@ -6,7 +7,7 @@ type Error = {
   message: string
 }
 
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse<CellsModel[] | Error>
 ) {
@@ -24,3 +25,5 @@ export default async function handler(
 
   return res.status(204)
 }
+
+export default withAudit(handler);

@@ -1,7 +1,8 @@
+import { withAudit } from '@/middlewares/withAudit';
 import type { NextApiRequest, NextApiResponse } from "next";
 import { addMembroMinisterioService, removeMembroMinisterioService } from "@/services/ministerioService";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
   const churchId = req.query.churchid as string;
   const ministerioId = req.query.ministerioid as string;
 
@@ -45,3 +46,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(405).json({ message: "Method not allowed" });
   }
 }
+
+export default withAudit(handler);

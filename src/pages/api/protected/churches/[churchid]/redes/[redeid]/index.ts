@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import type { NextApiRequest, NextApiResponse } from "next";
 import { deleteCemService, getCemByIdService, updateCemService } from "@/services/redeService";
 
@@ -5,7 +6,7 @@ interface Error {
   message: string;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
+async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
   const churchId = req.query.churchid as string;
   const cemId = req.query.redeid as string;
 
@@ -25,3 +26,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   //   return res.status(400).json({ message: `CEM [${cemId}] not found.` })
   // }
 }
+
+export default withAudit(handler);

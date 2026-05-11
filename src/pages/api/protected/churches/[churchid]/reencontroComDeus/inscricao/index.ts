@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { NextApiRequest, NextApiResponse } from "next";
 import {
   upsertInscricaoRedeService,
@@ -8,7 +9,7 @@ import {
   getAllInscricoesService,
 } from "@/services/reencontroComDeus";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { churchid, reencontroId, redeId } = req.query;
 
@@ -90,3 +91,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: "Erro ao processar inscrição" });
   }
 }
+
+export default withAudit(handler);

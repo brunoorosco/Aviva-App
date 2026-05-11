@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import {
   createChurchService,
   getChurchByIdService,
@@ -5,7 +6,7 @@ import {
 } from '@/services/churchService'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -33,3 +34,5 @@ export default async function handler(
 
   return res.status(204)
 }
+
+export default withAudit(handler);

@@ -1,9 +1,10 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { getBatismoByIdService, addBatizandoService, removeBatizandoService } from '@/services/batismos'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
   if (!session) {
     return res.status(401).json({ error: 'Unauthorized' })
@@ -54,3 +55,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(500).json({ error: 'Erro interno ao processar solicitação' })
   }
 }
+
+export default withAudit(handler);

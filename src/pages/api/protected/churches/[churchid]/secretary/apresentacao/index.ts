@@ -1,9 +1,10 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { ApresentacaoMongoRepository } from "@/infra/db/repositories/mongo/apresentacao";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
         const session = await getServerSession(req, res, authOptions);
         if (!session) {
@@ -38,3 +39,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(500).json({ error: "Internal Server Error" });
     }
 }
+
+export default withAudit(handler);

@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 // pages/api/church/[id]/flow.ts
 import { FlowMongoRepository } from '@/infra/db/repositories/mongo/flow'
 import { FlowService } from '@/services/flowService'
@@ -6,7 +7,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 const repo = new FlowMongoRepository()
 const service = new FlowService(repo)
 
-export default async function handler(
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -36,3 +37,5 @@ export default async function handler(
     res.status(405).end()
   }
 }
+
+export default withAudit(handler);

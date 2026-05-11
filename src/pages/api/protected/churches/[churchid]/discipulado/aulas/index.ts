@@ -6,10 +6,13 @@ type Error = {
   message: string;
 };
 
-export default async function handler(
+import { withAudit } from "@/middlewares/withAudit";
+
+async function handler(
   req: NextApiRequest,
   res: NextApiResponse<AulaDiscipulado[] | AulaDiscipulado | Error>,
 ) {
+
   try {
     const repository = new DiscipuladoMongoRepository();
 
@@ -42,3 +45,5 @@ export default async function handler(
     return res.status(500).json({ message: error.message || "Erro ao processar aulas" });
   }
 }
+
+export default withAudit(handler);

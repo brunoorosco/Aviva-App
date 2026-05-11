@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 // pages/api/protected/churches/[churchid]/batismo/lista-pdf.ts
 
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -200,7 +201,7 @@ function buildHTML(
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────────────
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método não permitido" });
   }
@@ -284,3 +285,4 @@ export const config = {
   api: { responseLimit: false },
   maxDuration: 30, // segundos — plano Pro da Vercel suporta até 300s
 };
+export default withAudit(handler);

@@ -1,3 +1,4 @@
+import { withAudit } from '@/middlewares/withAudit';
 import {
   deleteEventTypeService,
   getEventTypeByIdService,
@@ -5,7 +6,7 @@ import {
 } from '@/services/eventTypes'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const eventTypeId = (req.query?.id as string) || ''
     
@@ -26,3 +27,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(500).json({ message: 'Internal server error', error: String(error) })
   }
 }
+
+export default withAudit(handler);

@@ -1,8 +1,9 @@
+import { withAudit } from '@/middlewares/withAudit';
 
 import { getCasasdePazByIdService, saveCasaDePazService } from '@/services/casasdepaz'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const churchId = (req.query?.churchid as string) || ''
     const casadepazId = (req.query?.id as string) || ''
@@ -24,3 +25,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).json({ error: 'Falha na conexão com tb usuário' })
   }
 }
+
+export default withAudit(handler);

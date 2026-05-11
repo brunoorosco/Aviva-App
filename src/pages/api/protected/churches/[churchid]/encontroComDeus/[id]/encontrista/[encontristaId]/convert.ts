@@ -1,7 +1,8 @@
+import { withAudit } from '@/middlewares/withAudit';
 import { convertToMemberService } from "@/services/encontroComDeus";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const churchId = (req.query?.churchid as string) || "";
     const encontroId = (req.query?.id as string) || "";
@@ -18,3 +19,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).json({ error: error.message || "Erro ao converter para membro" });
   }
 };
+
+export default withAudit(handler);
