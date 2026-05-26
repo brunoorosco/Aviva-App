@@ -15,6 +15,9 @@ import {
 import * as XLSX from 'xlsx'
 import { useSession } from 'next-auth/react'
 import Toast from '@/components/Toast'
+import { Plus } from 'lucide-react'
+import { useMembers } from '../members/useMembers'
+import axios from 'axios'
 
 export default function CreateModulePage() {
   const [moduleName, setModuleName] = useState('')
@@ -24,6 +27,13 @@ export default function CreateModulePage() {
   const [alunos, setAlunos] = useState<Aluno[]>([])
   const [isSaving, setIsSaving] = useState(false)
   const { data: session } = useSession()
+  const churchId = session?.user.churchId as string
+
+  const [newAlunoNome, setNewAlunoNome] = useState('')
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [isCreatingUser, setIsCreatingUser] = useState(false)
+
+  const { members, isLoading: isLoadingMembers } = useMembers(churchId, newAlunoNome)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -69,6 +79,53 @@ export default function CreateModulePage() {
     }
 
     reader.readAsArrayBuffer(file)
+  }
+
+  const handleAddAluno = (membroExistente?: { _id: string, name: string }) => {
+    let nomeFinal = newAlunoNome.trim()
+
+    if (membroExistente) {
+      nomeFinal = membroExistente.name
+    }
+
+    if (!nomeFinal) {
+      Toast.showError('Digite o nome do aluno')
+      return
+    }
+
+    if (alunos.some(a => a.nome.toLowerCase() === nomeFinal.toLowerCase())) {
+      Toast.showError('Este aluno já foi adicionado')
+      return
+    }
+
+    const nAulas = Number(lessonCount) || 1
+    const presencas = Array(nAulas).fill(true)
+
+    setAlunos([...alunos, {
+      nome: nomeFinal,
+      presencas,
+      status: 'Aprovado'
+    }])
+    setNewAlunoNome('')
+    setShowSuggestions(false)
+  }
+
+  const handleCreateAndAddAluno = async () => {
+    if (!newAlunoNome.trim()) return
+    setIsCreatingUser(true)
+    try {
+      const response = await axios.post(`/api/protected/churches/${churchId}/users/quick-create`, {
+        name: newAlunoNome.trim()
+      })
+      if (response.data) {
+        handleAddAluno({ _id: response.data._id, name: response.data.name })
+        Toast.showSuccess('Membro criado e adicionado com sucesso!')
+      }
+    } catch (error) {
+      Toast.showError('Erro ao criar membro')
+    } finally {
+      setIsCreatingUser(false)
+    }
   }
 
   const handleSave = async () => {
@@ -204,7 +261,67 @@ export default function CreateModulePage() {
                 </div>
               </div>
 
-              {/* Alunos Importados */}
+              {/* Adição manual de alunos */}
+              <div className='pt-8 border-t border-gray-200'>
+                <h3 className='text-xl font-semibold text-gray-900'>
+                  Adicionar Alunos Manualmente
+                </h3>
+                <div className='flex flex-col gap-2 w-full md:w-1/2 relative mt-4'>
+                  <div className='flex flex-col md:flex-row gap-2 w-full'>
+                    <Input
+                      placeholder='Buscar membro ou digitar novo nome'
+                      value={newAlunoNome}
+                      onChange={(e) => {
+                        setNewAlunoNome(e.target.value)
+                        setShowSuggestions(true)
+                      }}
+                      onFocus={() => setShowSuggestions(true)}
+                      onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddAluno()}
+                      className='w-full md:w-3/4'
+                      disabled={!lessonCount}
+                    />
+                    <Button onClick={() => handleAddAluno()} className='w-full md:w-1/4' disabled={isCreatingUser || !lessonCount}>
+                      <Plus className='h-4 w-4 mr-2' /> Adicionar
+                    </Button>
+                  </div>
+                  {!lessonCount && <p className='text-xs text-orange-500'>Preencha o Número de Aulas primeiro.</p>}
+
+                  {showSuggestions && newAlunoNome.trim().length > 1 && (
+                    <div className='absolute top-[40px] left-0 z-50 w-full md:w-3/4 mt-1 bg-popover text-popover-foreground border rounded-md shadow-lg max-h-60 overflow-auto'>
+                      {isLoadingMembers ? (
+                        <div className='p-2 text-sm text-muted-foreground'>Buscando...</div>
+                      ) : members && members.length > 0 ? (
+                        <ul>
+                          {members.map((m: any) => (
+                            <li
+                              key={m._id}
+                              className='p-2 hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm'
+                              onMouseDown={() => handleAddAluno(m)}
+                            >
+                              {m.name}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div className='p-2 text-sm flex flex-col gap-2'>
+                          <span className='text-muted-foreground'>Nenhum membro encontrado.</span>
+                          <Button 
+                            size='sm' 
+                            variant='secondary' 
+                            onClick={handleCreateAndAddAluno}
+                            disabled={isCreatingUser}
+                          >
+                            {isCreatingUser ? 'Criando...' : `Criar membro "${newAlunoNome}"`}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Alunos Importados/Adicionados */}
               {alunos.length > 0 && (
                 <div className='pt-8 border-t border-gray-200'>
                   <h3 className='text-xl font-semibold text-gray-900'>

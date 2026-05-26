@@ -64,6 +64,21 @@ export class EscolaProfetaRepository {
     }
   }
 
+  async update(id: string, data: any): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName)
+      const { _id, ...updateData } = data
+      const result = await collection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updateData }
+      )
+      return result
+    } catch (error) {
+      console.error('Error updating module:', error)
+      throw error
+    }
+  }
+
   async updatePresence(
     id: string,
     alunoId: string,

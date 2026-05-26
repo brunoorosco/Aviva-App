@@ -30,13 +30,15 @@ import Toast from '@/components/Toast'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
-import { useHttpGet, useHttpPut } from '@/hooks/api'
+import { useHttpGet, useHttpPut, useHttpPost } from '@/hooks/api'
+import { useMembers } from '../../members/useMembers'
+import axios from 'axios'
 
 // Se quiser tipar o aluno localmente:
 type TAluno = {
   _id: string
   nome: string
-  presencas: Record<string, 'P' | 'F'>
+  presencas: Record<string, boolean | 'P' | 'F'>
   status: 'Aprovado' | 'Reprovado'
 }
 
@@ -83,6 +85,10 @@ const ModuleEdit = () => {
   const [course, setCourse] = useState<TEscolaProfeta>(initialCourse)
   const [newAlunoNome, setNewAlunoNome] = useState('')
   const [newDiaAula, setNewDiaAula] = useState('')
+  const [isCreatingUser, setIsCreatingUser] = useState(false)
+  const [showSuggestions, setShowSuggestions] = useState(false)
+
+  const { members, isLoading: isLoadingMembers } = useMembers(churchId, newAlunoNome)
 
   useEffect(() => {
     if (courseEdit && isEdit) {
@@ -197,21 +203,33 @@ const ModuleEdit = () => {
     } as TEscolaProfeta)
   }
 
-  const handleAddAluno = () => {
-    if (!newAlunoNome.trim()) {
+  const handleAddAluno = (membroExistente?: { _id: string, name: string }) => {
+    let nomeFinal = newAlunoNome.trim()
+    let idFinal = `a${Date.now()}`
+
+    if (membroExistente) {
+      nomeFinal = membroExistente.name
+      idFinal = membroExistente._id
+    }
+
+    if (!nomeFinal) {
       notify({ title: 'Digite o nome do aluno', variant: 'destructive' })
       return
     }
 
-    const presencas: Record<string, 'P' | 'F'> = {}
+    if ((course.alunos || []).some(a => a._id === idFinal || (a.nome.toLowerCase() === nomeFinal.toLowerCase()))) {
+      notify({ title: 'Este aluno já foi adicionado', variant: 'destructive' })
+      return
+    }
 
-    ;(course.diasAula || []).forEach((dia: string) => {
-      presencas[dia] = 'P'
+    const presencas: Record<number, boolean> = {}
+    ;(course.diasAula || []).forEach((_, idx) => {
+      presencas[idx] = true
     })
 
     const newAluno: TAluno = {
-      _id: `a${Date.now()}`,
-      nome: newAlunoNome.trim(),
+      _id: idFinal,
+      nome: nomeFinal,
       presencas,
       status: 'Aprovado'
     }
@@ -221,6 +239,25 @@ const ModuleEdit = () => {
       alunos: [...(course.alunos || []), newAluno]
     } as TEscolaProfeta)
     setNewAlunoNome('')
+    setShowSuggestions(false)
+  }
+
+  const handleCreateAndAddAluno = async () => {
+    if (!newAlunoNome.trim()) return
+    setIsCreatingUser(true)
+    try {
+      const response = await axios.post(`/api/protected/churches/${churchId}/users/quick-create`, {
+        name: newAlunoNome.trim()
+      })
+      if (response.data) {
+        handleAddAluno({ _id: response.data._id, name: response.data.name })
+        notify({ title: 'Membro criado e adicionado com sucesso!' })
+      }
+    } catch (error) {
+      notify({ title: 'Erro ao criar membro', variant: 'destructive' })
+    } finally {
+      setIsCreatingUser(false)
+    }
   }
 
   const handleRemoveAluno = (alunoId: string) => {
@@ -235,19 +272,24 @@ const ModuleEdit = () => {
     dia: number,
     presenca: 'P' | 'F'
   ) => {
-    await useHttpPut({
-      url: `${baseUrl}/aluno/${alunoId}/presenca`,
-      data: { dia, presenca }
-    })
+    try {
+      const isPresenca = presenca === 'P'
+      await axios.put(`${baseUrl}/aluno/${alunoId}/presenca`, {
+        dia,
+        presenca
+      })
 
-    setCourse({
-      ...course,
-      alunos: (course.alunos || []).map((a) =>
-        a._id === alunoId
-          ? { ...a, presencas: { ...a.presencas, [dia]: presenca } }
-          : a
-      )
-    } as TEscolaProfeta)
+      setCourse({
+        ...course,
+        alunos: (course.alunos || []).map((a) =>
+          a._id === alunoId
+            ? { ...a, presencas: { ...a.presencas, [dia]: isPresenca } }
+            : a
+        )
+      } as TEscolaProfeta)
+    } catch (error) {
+      notify({ title: 'Erro ao atualizar presença no servidor', variant: 'destructive' })
+    }
   }
 
   const handleUpdateStatus = (
@@ -262,7 +304,7 @@ const ModuleEdit = () => {
     } as TEscolaProfeta)
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!course.tema.trim()) {
       notify({
         title: 'O tema do módulo é obrigatório',
@@ -279,10 +321,15 @@ const ModuleEdit = () => {
       return
     }
 
-    notify({ title: `Módulo ${isNew ? 'criado' : 'atualizado'} com sucesso!` })
-    setTimeout(() => {
-      router.push('/')
-    }, 800)
+    try {
+      await axios.put(baseUrl, course)
+      notify({ title: `Módulo ${isNew ? 'criado' : 'atualizado'} com sucesso!` })
+      setTimeout(() => {
+        router.push(`/app/${churchId}/secretary/escola-de-profeta`)
+      }, 800)
+    } catch (error) {
+      notify({ title: 'Erro ao salvar módulo', variant: 'destructive' })
+    }
   }
 
   return (
@@ -442,17 +489,56 @@ const ModuleEdit = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
-              <div className='flex flex-col md:flex-row gap-2 w-full md:w-1/3'>
-                <Input
-                  placeholder='Nome do aluno'
-                  value={newAlunoNome}
-                  onChange={(e) => setNewAlunoNome(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleAddAluno()}
-                  className='w-full md:w-3/4'
-                />
-                <Button onClick={handleAddAluno} className='w-full md:w-1/4'>
-                  <Plus className='h-4 w-4 mr-2' /> Adicionar
-                </Button>
+              <div className='flex flex-col gap-2 w-full md:w-1/3 relative'>
+                <div className='flex flex-col md:flex-row gap-2 w-full'>
+                  <Input
+                    placeholder='Buscar membro ou digitar novo nome'
+                    value={newAlunoNome}
+                    onChange={(e) => {
+                      setNewAlunoNome(e.target.value)
+                      setShowSuggestions(true)
+                    }}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAddAluno()}
+                    className='w-full md:w-3/4'
+                  />
+                  <Button onClick={() => handleAddAluno()} className='w-full md:w-1/4' disabled={isCreatingUser}>
+                    <Plus className='h-4 w-4 mr-2' /> Adicionar
+                  </Button>
+                </div>
+
+                {showSuggestions && newAlunoNome.trim().length > 1 && (
+                  <div className='absolute top-full left-0 z-50 w-full md:w-3/4 mt-1 bg-popover text-popover-foreground border rounded-md shadow-lg max-h-60 overflow-auto'>
+                    {isLoadingMembers ? (
+                      <div className='p-2 text-sm text-muted-foreground'>Buscando...</div>
+                    ) : members && members.length > 0 ? (
+                      <ul>
+                        {members.map((m: any) => (
+                          <li
+                            key={m._id}
+                            className='p-2 hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm'
+                            onMouseDown={() => handleAddAluno(m)}
+                          >
+                            {m.name}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className='p-2 text-sm flex flex-col gap-2'>
+                        <span className='text-muted-foreground'>Nenhum membro encontrado.</span>
+                        <Button 
+                          size='sm' 
+                          variant='secondary' 
+                          onClick={handleCreateAndAddAluno}
+                          disabled={isCreatingUser}
+                        >
+                          {isCreatingUser ? 'Criando...' : `Criar membro "${newAlunoNome}"`}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {(course.alunos || []).length > 0 &&
@@ -500,7 +586,9 @@ const ModuleEdit = () => {
                                     value={
                                       aluno.presencas?.[index] === true
                                         ? 'P'
-                                        : ''
+                                        : aluno.presencas?.[index] === false
+                                        ? 'F'
+                                        : 'P' // padrão como Presença caso não definido
                                     }
                                     onValueChange={(value: 'P' | 'F') =>
                                       handleUpdatePresenca(

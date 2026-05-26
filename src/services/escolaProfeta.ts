@@ -24,6 +24,12 @@ export const createEscolaProfetaService = async (data: any): Promise<any> => {
   return saved
 }
 
+export const updateEscolaProfetaService = async (id: string, data: any): Promise<any> => {
+  const escolaProfetaRepository = new EscolaProfetaRepository()
+  const saved = await escolaProfetaRepository.update(id, data)
+  return saved
+}
+
 export const updatePresenEscolaProfetaService = async (
   id: string,
   alunoId: string,
