@@ -35,11 +35,15 @@ export const createReencontroComDeusService = async (data: any, churchId: string
 export const updateReencontroComDeusService = async (id: string, data: any): Promise<any> => {
   const reencontroRepository = new ReencontroComDeusRepository();
 
-  const updateData = {
+  const updateData: Record<string, any> = {
     data: new Date(data.data),
     numero: data.numero,
     descricao: data.descricao,
   };
+
+  if (data.allowPastEdits !== undefined) {
+    updateData.allowPastEdits = data.allowPastEdits;
+  }
   const result = await reencontroRepository.update(id, updateData);
   return result;
 };

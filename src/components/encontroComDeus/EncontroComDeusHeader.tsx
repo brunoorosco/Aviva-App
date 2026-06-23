@@ -182,7 +182,6 @@ const Header = <T extends TEncontroComDeus,>({
           {/* Seção de Ações */}
           {canViewButtons() && (
             <div className='flex flex-col sm:flex-row gap-2 sm:gap-3 shrink-0'>
-
               {/* Botão Importar */}
               <ImportButton inputFileRef={inputFileRef} onSuccess={onImportSuccess} />
 

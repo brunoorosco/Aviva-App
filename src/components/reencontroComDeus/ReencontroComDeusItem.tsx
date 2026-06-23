@@ -1,11 +1,13 @@
-import Link from "next/link";
-import { Edit, EyeIcon, Calendar, Users, FileText, DollarSign, Download } from "lucide-react";
+import { Edit, Calendar, Users, FileText, DollarSign } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { TReencontroComDeus } from "@/domain/models/encontroComDeus";
 import { Button } from "../ui/button";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { hasPermission, ROLES } from "@/lib/permissions";
 import ExportButton from "./ExportButton";
+import { useHttpPut } from "@/hooks/api";
+import { useState } from "react";
 
 type Props = {
   reencontro: TReencontroComDeus;
@@ -16,6 +18,17 @@ type Props = {
 const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
   const router = useRouter();
   const { data: session } = useSession();
+  const [isItemAllowed, setIsItemAllowed] = useState(
+    reencontro.allowPastEdits ?? false
+  );
+
+  const handleToggleAllowPast = async (checked: boolean) => {
+    setIsItemAllowed(checked);
+    await useHttpPut({
+      url: `/api/protected/churches/${reencontro.churchId || 'default'}/reencontroComDeus/${reencontro._id}`,
+      data: { allowPastEdits: checked },
+    });
+  };
 
   const formatDate = (dateValue: any) => {
     if (!dateValue) return "Data não definida";
@@ -72,8 +85,7 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
 
   return (
     <div className="group relative">
-      <Link href={`${basePath}/${reencontro._id}`}>
-        <article
+      <article
           className="
           bg-gray-50 dark:bg-dark-secondary 
           border border-gray-200 dark:border-orange-900/30
@@ -95,30 +107,42 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
                 </span>
               )}
 
-              {/* Botão de editar ao lado da data (Somente Admin) */}
+              {/* Ações de admin: editar + toggle permitir passado */}
               {canEditReencontro() && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onEdit();
-                  }}
-                  className="
-                    w-7 h-7 
-                    bg-white dark:bg-gray-700 
-                    border border-gray-200 dark:border-gray-600
-                    rounded-full 
-                    shadow-sm hover:shadow-md
-                    flex items-center justify-center
-                    transition-all duration-200
-                    hover:bg-blue-50 dark:hover:bg-blue-900/30
-                    hover:border-blue-300 dark:hover:border-blue-600
-                    active:scale-95
-                  "
-                  aria-label="Editar Reencontro"
+                <div
+                  className="flex items-center gap-1"
+                  onClick={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
                 >
-                  <Edit className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400" />
-                </button>
+                  <Switch
+                    id={`allow-past-${reencontro._id}`}
+                    checked={isItemAllowed}
+                    onCheckedChange={handleToggleAllowPast}
+                    className="scale-75 origin-right"
+                  />
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onEdit();
+                    }}
+                    className="
+                      w-7 h-7 
+                      bg-white dark:bg-gray-700 
+                      border border-gray-200 dark:border-gray-600
+                      rounded-full 
+                      shadow-sm hover:shadow-md
+                      flex items-center justify-center
+                      transition-all duration-200
+                      hover:bg-blue-50 dark:hover:bg-blue-900/30
+                      hover:border-blue-300 dark:hover:border-blue-600
+                      active:scale-95
+                    "
+                    aria-label="Editar Reencontro"
+                  >
+                    <Edit className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400" />
+                  </button>
+                </div>
               )}
             </div>
           </header>
@@ -166,11 +190,7 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
             </div>
 
             {/* Footer com ação e botões */}
-            <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
-              <span className="text-xs text-gray-400 dark:text-gray-500">
-                Clique para visualizar detalhes
-              </span>
-
+            <div className="flex items-center justify-end pt-2 border-t border-gray-100 dark:border-gray-700">
               <div className="flex items-center gap-2">
                 {/* Botão de Exportar - sempre visível se houver dados */}
                 {reencontro.reencontristas && reencontro.reencontristas.length > 0 && (
@@ -197,8 +217,8 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
                   </button>
                 )}
 
-                {/* Botão de Ficha de Inscrição - sempre visível para reencontros futuros */}
-                {(isReencontroFuturo() || canViewFinancialReport()) && (
+                {/* Botão de Ficha de Inscrição - sempre visível para reencontros futuros ou se isItemAllowed estiver ativo */}
+                {(isReencontroFuturo() || canViewFinancialReport() || isItemAllowed) && (
                   <button
                     onClick={handleFichaInscricao}
                     className="
@@ -217,13 +237,10 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
                   </button>
                 )}
 
-                <EyeIcon className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-orange-400  transition-colors" />
               </div>
             </div>
           </div>
         </article>
-      </Link>
-
     </div>
   );
 };

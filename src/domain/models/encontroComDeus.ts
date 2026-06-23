@@ -6,7 +6,8 @@ type BaseEncontro = {
   churchId: string;
   descricao?: string;
   equipe: TEquipe[];
-  financeiro: FinanceiroRede[]; // ← Renomeado para clareza
+  financeiro: FinanceiroRede[];
+  allowPastEdits?: boolean;
 };
 
 export type TEncontroComDeus = BaseEncontro & {
