@@ -243,7 +243,7 @@ const EncontroComDeusItem = ({ encontro, onEdit, basePath, onToggleSuccess }: Pr
                 )}
 
                 {/* Botão de Ficha de Inscrição - sempre visível para encontros futuros ou se isItemAllowed estiver ativo */}
-                {(isEncontroFuturo() || canViewFinancialReport() || isItemAllowed) && (
+                {(isEncontroFuturo() || isItemAllowed) && (
                   <button
                     onClick={handleFichaInscricao}
                     className="
