@@ -1,4 +1,4 @@
-import { Edit, Calendar, Users, FileText, DollarSign } from "lucide-react";
+import { Edit, Calendar, Users, FileText, DollarSign, Eye } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { TReencontroComDeus } from "@/domain/models/encontroComDeus";
 import { Button } from "../ui/button";
@@ -7,28 +7,27 @@ import { useSession } from "next-auth/react";
 import { hasPermission, ROLES } from "@/lib/permissions";
 import ExportButton from "./ExportButton";
 import { useHttpPatch } from "@/hooks/api";
-import { useState } from "react";
 
 type Props = {
   reencontro: TReencontroComDeus;
   onEdit: () => void;
   basePath: string;
+  onToggleSuccess?: () => void;
 };
 
-const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
+const ReencontroComDeusItem = ({ reencontro, onEdit, basePath, onToggleSuccess }: Props) => {
   const router = useRouter();
   const { data: session } = useSession();
-  const [isItemAllowed, setIsItemAllowed] = useState(
-    reencontro.allowPastEdits ?? false
-  );
 
   const handleToggleAllowPast = async (checked: boolean) => {
-    setIsItemAllowed(checked);
     await useHttpPatch({
       url: `/api/protected/churches/${reencontro.churchId || 'default'}/reencontroComDeus/${reencontro._id}`,
       data: { allowPastEdits: checked },
     });
+    onToggleSuccess?.();
   };
+
+  const isItemAllowed = reencontro.allowPastEdits ?? false;
 
   const formatDate = (dateValue: any) => {
     if (!dateValue) return "Data não definida";
@@ -64,6 +63,12 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
     e.preventDefault();
     e.stopPropagation();
     router.push(`${basePath}/${reencontro._id}/resumo-financeiro`);
+  };
+
+  const handleViewParticipants = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`${basePath}/${reencontro._id}`);
   };
 
   // Verifica se o usuário tem permissão para ver relatório financeiro
@@ -194,6 +199,24 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
             {/* Footer com ação e botões */}
             <div className="flex items-center justify-end pt-2 border-t border-gray-100 dark:border-gray-700">
               <div className="flex items-center gap-2">
+                {/* Botão de Visualizar Participantes */}
+                <button
+                  onClick={handleViewParticipants}
+                  className="
+                    px-3 py-1.5
+                    bg-gray-600 hover:bg-gray-700
+                    text-white text-xs font-medium
+                    rounded-md shadow-sm hover:shadow-md
+                    flex items-center gap-1.5
+                    transition-all duration-200
+                    active:scale-95
+                  "
+                  aria-label="Visualizar Participantes"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Participantes</span>
+                </button>
+
                 {/* Botão de Exportar - sempre visível se houver dados */}
                 {reencontro.reencontristas && reencontro.reencontristas.length > 0 && (
                   <ExportButton reencontro={reencontro} />

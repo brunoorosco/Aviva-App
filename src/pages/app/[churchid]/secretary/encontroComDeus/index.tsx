@@ -63,6 +63,7 @@ const EncontroComDeusList = () => {
                 encontro={encontro}
                 onEdit={() => handleEdit(encontro)}
                 basePath={asPath}
+                onToggleSuccess={() => refreshEncontros()}
               />
             ))
           )}

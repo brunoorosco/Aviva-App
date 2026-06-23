@@ -63,6 +63,7 @@ const ReencontroComDeusList = () => {
                 reencontro={reencontro}
                 onEdit={() => handleEdit(reencontro)}
                 basePath={asPath}
+                onToggleSuccess={() => refreshReencontros()}
               />
             ))
           )}
