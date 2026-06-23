@@ -36,16 +36,18 @@ export const createEncontroComDeusService = async (data: any, churchId: string):
 export const updateEncontroComDeusService = async (id: string, data: any): Promise<any> => {
   const encontroRepository = new EncontroComDeusRepository();
 
-  const updateData: Record<string, any> = {
+  const updateData = {
     data: new Date(data.data),
     numero: data.numero,
     descricao: data.descricao,
   };
-
-  if (data.allowPastEdits !== undefined) {
-    updateData.allowPastEdits = data.allowPastEdits;
-  }
   const result = await encontroRepository.update(id, updateData);
+  return result;
+};
+
+export const updateEncontroAllowPastEditsService = async (id: string, allowPastEdits: boolean): Promise<any> => {
+  const encontroRepository = new EncontroComDeusRepository();
+  const result = await encontroRepository.update(id, { allowPastEdits });
   return result;
 };
 

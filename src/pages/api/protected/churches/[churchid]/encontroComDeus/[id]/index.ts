@@ -1,6 +1,7 @@
 import {
   getEncontroComDeusByIdService,
   updateEncontroComDeusService,
+  updateEncontroAllowPastEditsService,
 } from '@/services/encontroComDeus'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { withAudit } from '@/middlewares/withAudit'
@@ -12,6 +13,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method == 'PUT') {
       const user = await updateEncontroComDeusService(encontroId, req.body)
       res.status(200).json({ user })
+    } else if (req.method == 'PATCH') {
+      const result = await updateEncontroAllowPastEditsService(encontroId, req.body.allowPastEdits)
+      res.status(200).json({ result })
     } else if (req.method == 'GET') {
       const encontro = await getEncontroComDeusByIdService(churchId, encontroId)
       res.send(encontro)

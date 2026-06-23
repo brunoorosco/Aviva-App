@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { hasPermission, ROLES } from "@/lib/permissions";
 import ExportButton from "./ExportButton";
-import { useHttpPut } from "@/hooks/api";
+import { useHttpPatch } from "@/hooks/api";
 import { useState } from "react";
 
 type Props = {
@@ -24,7 +24,7 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
 
   const handleToggleAllowPast = async (checked: boolean) => {
     setIsItemAllowed(checked);
-    await useHttpPut({
+    await useHttpPatch({
       url: `/api/protected/churches/${reencontro.churchId || 'default'}/reencontroComDeus/${reencontro._id}`,
       data: { allowPastEdits: checked },
     });
