@@ -161,15 +161,17 @@ const ReencontroComDeusItem = ({ reencontro, onEdit, basePath }: Props) => {
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-blue-600 dark:text-orange-400 flex-shrink-0" />
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Equipe:</span>
-                    <span className="text-lg font-bold text-blue-600 dark:text-orange-400">
-                      {equipeCount}
-                    </span>
+                {equipeCount > 0 && (
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-blue-600 dark:text-orange-400 flex-shrink-0" />
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Equipe:</span>
+                      <span className="text-lg font-bold text-blue-600 dark:text-orange-400">
+                        {equipeCount}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Badge de status (opcional) */}
