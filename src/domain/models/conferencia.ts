@@ -1,3 +1,5 @@
+import type { TPeople } from "./encontroComDeus";
+
 // Reutiliza tipos do encontroComDeus
 export type { TypePagamento, StatusFinanceiro, TEquipe } from "./encontroComDeus";
 export type { PagamentoItem, Pagamento, FinanceiroRede } from "./encontroComDeus";
@@ -15,16 +17,7 @@ export type TConferencia = {
   allowPastEdits?: boolean;
 };
 
-export type TParticipante = {
-  _id?: string;
-  nome: string;
-  rede?: { _id: string; name: string } | string;
-  telefone?: string;
-  sexo?: string;
-  isento?: boolean;
-  isMembro?: boolean;
-  equipeMembroId?: string;
-};
+export type TParticipante = TPeople;
 
 export type TEquipeConferencia = {
   name: string;

@@ -345,7 +345,7 @@ export default function ConferenciaInscricaoNovo() {
                 title="Buscar membro"
                 value={selectedUser?._id ?? ""}
                 onChange={setSelectedUser}
-                excludeIds={participantes.map(p => p._id)}
+                excludeIds={participantes.map((p) => p._id).filter((id): id is string => Boolean(id))}
               />
               <Button onClick={addMembroDaRede} size="sm" className="gap-1 h-10 px-4" disabled={!selectedUser}>
                 <Plus className="h-4 w-4" /> <span className="hidden sm:block">Adicionar</span>

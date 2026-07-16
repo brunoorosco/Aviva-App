@@ -68,11 +68,11 @@ const ConferenciaList = () => {
           )}
         </ul>
 
-        {conferencias?.data?.totalPages > 1 ? (
+        {(conferencias?.data?.totalPages ?? 0) > 1 ? (
           <Pagination
             currentPage={page}
             pageSize={limit}
-            items={conferencias.data.total}
+            items={conferencias?.data?.total ?? 0}
             onPageChange={setPage}
           />
         ) : (

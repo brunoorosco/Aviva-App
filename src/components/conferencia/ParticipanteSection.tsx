@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Pencil, Users } from "lucide-react";
-import { TPeople } from "@/domain/models/encontroComDeus";
 import { ParticipanteModal } from "./ParticipanteConferenciaModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { TParticipante } from "@/domain/models/conferencia";
@@ -19,7 +18,7 @@ interface Props {
 
 export function ParticipantesSection({ title = "Participantes", emptyMessage = "Nenhum participante adicionado", participantes, onAdd, onEdit, onRemove }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<TPeople | null>(null);
+  const [editing, setEditing] = useState<TParticipante | null>(null);
 
   const [selectedToDelete, setSelectedToDelete] = useState<string | null>(null);
 
@@ -28,12 +27,12 @@ export function ParticipantesSection({ title = "Participantes", emptyMessage = "
     setModalOpen(true);
   };
 
-  const handleEdit = (e: TPeople) => {
+  const handleEdit = (e: TParticipante) => {
     setEditing(e);
     setModalOpen(true);
   };
 
-  const handleSave = (data: TPeople) => {
+  const handleSave = (data: TParticipante) => {
     if (editing) {
       onEdit(editing._id as string, data);
     } else {

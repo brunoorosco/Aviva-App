@@ -40,8 +40,9 @@ export interface RelatorioFinanceiroTotais {
 }
 
 export interface RelatorioFinanceiroData {
-  encontro: RelatorioFinanceiroEncontro;
-  reencontro: RelatorioFinanceiroEncontro;
-  grupos: RelatorioFinanceiroGrupo[];
-  totais: RelatorioFinanceiroTotais;
+  encontro?: RelatorioFinanceiroEncontro;
+  reencontro?: RelatorioFinanceiroEncontro;
+  conferencia?: RelatorioFinanceiroEncontro;
+  grupos?: RelatorioFinanceiroGrupo[];
+  totais?: RelatorioFinanceiroTotais;
 }
