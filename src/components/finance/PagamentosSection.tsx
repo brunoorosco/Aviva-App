@@ -31,6 +31,7 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprov
   const [showForm, setShowForm] = useState(false);
   const [tipo, setTipo] = useState<string>("");
   const [valor, setValor] = useState("");
+  const [observacao, setObservacao] = useState("");
   const [comprovante, setComprovante] = useState<File | null>(null);
   const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -127,10 +128,12 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprov
       comprovanteUrl,
       comprovanteName,
       comprovantePublicId,
+      observacao,
     });
 
     setTipo("");
     setValor("");
+    setObservacao("");
     setComprovante(null);
     setShowForm(false);
   };
@@ -150,7 +153,7 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprov
           </CardTitle>
           {!showForm && (
             <Button size="sm" className="gap-1" onClick={() => setShowForm(true)}>
-              <Plus className="h-4 w-4" /> Adicionar Pagamento
+              <Plus className="h-4 w-4" /> <span className="hidden sm:block">Adicionar Pagamento</span>
             </Button>
           )}
         </CardHeader>
@@ -182,6 +185,15 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprov
                     placeholder="0,00"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>Observação (Opcional)</Label>
+                <Input
+                  value={observacao}
+                  onChange={(e) => setObservacao(e.target.value)}
+                  placeholder="Ex: Pagamento referente a inscrição e transporte..."
+                />
               </div>
 
               {needsComprovante && (
@@ -242,6 +254,7 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprov
                     setShowForm(false);
                     setTipo("");
                     setValor("");
+                    setObservacao("");
                     setComprovante(null);
                   }}
                   disabled={isUploading}
@@ -272,7 +285,7 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprov
             {pagamentos.map((p) => (
               <div
                 key={p._id}
-                className="flex items-center gap-3 rounded-lg border border-border/50 bg-secondary/30 px-3 py-2"
+                className="flex flex-wrap items-center gap-3 rounded-lg border border-border/50 bg-secondary/30 px-3 py-2"
               >
                 <span className="text-xs font-medium uppercase rounded-full px-2 py-0.5 bg-primary/10 text-primary">
                   {tipoLabels[p.tipo]}
@@ -318,6 +331,11 @@ export function PagamentosSection({ pagamentos, onAdd, onRemove, onRemoveComprov
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
+                {p.observacao && (
+                  <div className="w-full mt-2 text-xs text-muted-foreground italic border-t border-border/50 pt-2 col-span-full">
+                    {p.observacao}
+                  </div>
+                )}
               </div>
             ))}
           </div>

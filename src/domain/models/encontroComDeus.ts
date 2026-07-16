@@ -42,6 +42,7 @@ export interface PagamentoItem {
   valor: number;
   comprovanteUrl?: string;
   comprovanteName?: string;
+  observacao?: string;
   createdAt: string;
 }
 
@@ -55,6 +56,7 @@ export interface Pagamento {
   comprovanteUrl?: string;
   comprovanteName?: string;
   comprovantePublicId?: string;
+  observacao?: string;
 }
 
 export type TypePagamento = "pix" | "cartao" | "dinheiro";

@@ -7,6 +7,8 @@ import { EncontristaModal } from "./EncontristaModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface Props {
+  title?: string;
+  emptyMessage?: string;
   encontristas: TPeople[];
   onAdd: (data: TPeople) => void;
   onEdit: (id: string, data: TPeople) => void;
@@ -14,7 +16,7 @@ interface Props {
   onLinkEquipe: (encontristaId: string, equipeMembroId: string | undefined) => void;
 }
 
-export function EncontristasSection({ encontristas, onAdd, onEdit, onRemove }: Props) {
+export function EncontristasSection({ title = "(Re)Encontristas", emptyMessage = "Nenhum encontrista adicionado", encontristas, onAdd, onEdit, onRemove }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<TPeople | null>(null);
 
@@ -45,17 +47,17 @@ export function EncontristasSection({ encontristas, onAdd, onEdit, onRemove }: P
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Users className="h-5 w-5 text-primary" />
-              (Re)Encontristas
+              {title}
             </CardTitle>
             <Button onClick={handleNew} size="sm" className="gap-1">
-              <Plus className="h-4 w-4" /> Adicionar
+              <Plus className="h-4 w-4" /> <span className="hidden sm:block">Adicionar</span>
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {encontristas.length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-4">
-              Nenhum encontrista adicionado
+              {emptyMessage}
             </p>
           )}
 
@@ -72,14 +74,16 @@ export function EncontristasSection({ encontristas, onAdd, onEdit, onRemove }: P
                   {e.isento && <span className="ml-2 text-xs text-muted-foreground">(Isento)</span>}
                 </span>
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => handleEdit(e)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
+                {(!e._id || e._id.includes("-")) && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => handleEdit(e)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="icon"
