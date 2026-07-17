@@ -181,7 +181,6 @@ const ConferenciaItem = ({ conferencia, onEdit, basePath, onToggleSuccess }: Pro
             "
             >
               <div className="flex gap-2">
-                <span className="text-sm">Edição:</span>
                 <time className="text-sm font-medium">{conferencia.numero}</time>
               </div>
             </div>
