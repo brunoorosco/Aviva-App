@@ -17,10 +17,12 @@ export interface RelatorioFinanceiroGrupo {
   id: string;
   nome: string;
   celula: string;
-  encontristas: number;
-  encontristasIsentos: number;
-  equipe: number;
-  equipeIsentos: number;
+  encontristas?: number;
+  encontristasIsentos?: number;
+  participantes?: number;
+  participantesIsentos?: number;
+  equipe?: number;
+  equipeIsentos?: number;
   totalPago: number;
   totalAPagar: number;
   status: "quitado" | "parcial" | "pendente" | "excedente";
@@ -29,9 +31,9 @@ export interface RelatorioFinanceiroGrupo {
 }
 
 export interface RelatorioFinanceiroTotais {
-  totalEncontristas: number;
-  totalReencontristas: number;
-  totalEquipe: number;
+  totalEncontristas?: number;
+  totalReencontristas?: number;
+  totalEquipe?: number;
   totalParticipantes: number;
   totalIsentos: number;
   totalPago: number;

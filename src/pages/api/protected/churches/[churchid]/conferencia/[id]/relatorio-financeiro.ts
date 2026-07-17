@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getConferenciaByIdService } from "@/services/conferencia";
 
-const VALOR_PARTICIPANTE = 200;
-const VALOR_EQUIPE = 100;
+const VALOR_INSCRICAO = 50;
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -20,16 +19,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const grupos = financeiroPorRede.map((fin: any) => {
         const participantes =
           conferencia.participantes?.filter((p: any) => p.rede?._id === fin.rede._id) || [];
-        const equipe = conferencia.equipe?.filter((m: any) => m.rede?._id === fin.rede._id) || [];
 
         const participantesIsentos = participantes.filter((p: any) => p.isento).length;
-        const equipeIsentos = equipe.filter((m: any) => m.isento).length;
-
         const participantesNaoIsentos = participantes.length - participantesIsentos;
-        const equipeNaoIsenta = equipe.length - equipeIsentos;
 
-        const totalAPagar =
-          participantesNaoIsentos * VALOR_PARTICIPANTE + equipeNaoIsenta * VALOR_EQUIPE;
+        const totalAPagar = participantesNaoIsentos * VALOR_INSCRICAO;
 
         const pagamentosPorTipo: Record<string, number> = {};
         (fin.pagamento || []).forEach((p: any) => {
@@ -60,10 +54,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           id: fin._id,
           nome: fin.rede.name,
           celula: fin.rede.name,
-          encontristas: participantes.length,
-          encontristasIsentos: participantesIsentos,
-          equipe: equipe.length,
-          equipeIsentos,
+          participantes: participantes.length,
+          participantesIsentos,
           totalPago,
           totalAPagar,
           status,
@@ -72,8 +64,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         };
       });
 
-      const totalEncontristas = grupos.reduce((s: number, g: any) => s + g.encontristas, 0);
-      const totalEquipe = grupos.reduce((s: number, g: any) => s + g.equipe, 0);
+      const totalParticipantes = grupos.reduce((s: number, g: any) => s + g.participantes, 0);
 
       const pagamentosPorTipoGeral: Record<string, number> = {};
       grupos.forEach((g: any) => {
@@ -83,11 +74,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       const totais = {
-        totalEncontristas,
-        totalEquipe,
-        totalParticipantes: totalEncontristas + totalEquipe,
+        totalParticipantes,
         totalIsentos: grupos.reduce(
-          (s: number, g: any) => s + g.encontristasIsentos + g.equipeIsentos,
+          (s: number, g: any) => s + g.participantesIsentos,
           0
         ),
         totalPago: grupos.reduce((s: number, g: any) => s + g.totalPago, 0),

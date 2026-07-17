@@ -129,7 +129,7 @@ export default function FinanceReport({ type }: { type: "encontro" | "reencontro
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
               <InfoCard label="Redes" value={String(grupos.length)} />
               <InfoCard label={type === "encontro" ? "Encontristas" : type === "reencontro" ? "Reencontristas" : "Participantes"} value={String(type === "conferencia" ? totalParticipantes : totalEncontristas)} />
-              <InfoCard label="Equipe" value={String(totalEquipe)} />
+              {type !== "conferencia" && <InfoCard label="Equipe" value={String(totalEquipe)} />}
               <InfoCard label="Total Participantes" value={String(totalParticipantes)} />
               <InfoCard label="Isentos" value={String(totalIsentos)} />
             </div>
@@ -223,13 +223,15 @@ export default function FinanceReport({ type }: { type: "encontro" | "reencontro
                       )}
                     </div>
 
-                    <div className="rounded-lg border border-border/50 bg-secondary/20 p-3 text-center">
-                      <p className="text-[10px] text-muted-foreground uppercase">Equipe</p>
-                      <p className="text-lg font-semibold">{g.equipe}</p>
-                      {g.equipeIsentos > 0 && (
-                        <p className="text-xs text-muted-foreground">({g.equipeIsentos} isentos)</p>
-                      )}
-                    </div>
+                    {type !== "conferencia" && (
+                      <div className="rounded-lg border border-border/50 bg-secondary/20 p-3 text-center">
+                        <p className="text-[10px] text-muted-foreground uppercase">Equipe</p>
+                        <p className="text-lg font-semibold">{g.equipe}</p>
+                        {g.equipeIsentos > 0 && (
+                          <p className="text-xs text-muted-foreground">({g.equipeIsentos} isentos)</p>
+                        )}
+                      </div>
+                    )}
 
                     <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-3 text-center">
                       <p className="text-[10px] text-muted-foreground uppercase">Pago</p>
