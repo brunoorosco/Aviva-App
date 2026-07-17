@@ -411,9 +411,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         conferencia: {
           ...conferencia,
           _id: conferencia._id?.toString() || null,
-          data: conferencia.data?.toISOString() || null,
-          updatedAt: conferencia.updatedAt?.toISOString() || null,
-          createdAt: conferencia.createdAt?.toISOString() || null,
+          data: conferencia.data instanceof Date ? conferencia.data.toISOString() : conferencia.data || null,
+          updatedAt: conferencia.updatedAt instanceof Date ? conferencia.updatedAt.toISOString() : conferencia.updatedAt || null,
+          createdAt: conferencia.createdAt instanceof Date ? conferencia.createdAt.toISOString() : conferencia.createdAt || null,
 
           participantes: (conferencia.participantes || []).map((p: any) => {
             const { _id, ...rest } = p;
