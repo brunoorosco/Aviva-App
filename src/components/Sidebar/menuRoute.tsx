@@ -20,6 +20,7 @@ import {
   Footprints,
   University,
   Settings,
+  TicketCheck,
 } from "lucide-react";
 import { Role, ROLES } from "@/lib/permissions";
 
@@ -110,7 +111,7 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
         },
         {
           label: "Conferências",
-          icon: MapPinHouse,
+          icon: TicketCheck,
           link: `${base}/secretary/conferencia`,
         },
         {
