@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { useHttpGet } from "@/hooks/api";
 import Loading from "./loading";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { capitalizeWords } from "@/utils/capitalizaFirst";
 
 type DropdownProps = {
@@ -20,6 +20,7 @@ type DropdownProps = {
   onChange?: (value: { _id: string; name: string }) => void;
   onDataLoaded?: (data: any[]) => void;
   error?: string;
+  excludeIds?: string[];
 };
 
 export function SelectMembrosRede({
@@ -30,6 +31,7 @@ export function SelectMembrosRede({
   onChange,
   onDataLoaded,
   error,
+  excludeIds,
 }: DropdownProps) {
   const { data, isLoading } = useHttpGet<any[]>(
     `/api/protected/churches/${churchId}/redes/${cemId}/equipe`,
@@ -37,9 +39,15 @@ export function SelectMembrosRede({
   const items = data?.data ?? [];
   // ↓ Ref sempre atualizado com a lista mais recente
   const itemsRef = useRef<any[]>([]);
+  
+  const filteredItems = useMemo(() => {
+    if (!excludeIds || excludeIds.length === 0) return items;
+    return items.filter((item: any) => !excludeIds.includes(item._id));
+  }, [items, excludeIds]);
+
   useEffect(() => {
-    itemsRef.current = items;
-  }, [items]);
+    itemsRef.current = filteredItems;
+  }, [filteredItems]);
 
   useEffect(() => {
     if (!isLoading && items.length > 0 && onDataLoaded) {
@@ -69,7 +77,7 @@ export function SelectMembrosRede({
         <SelectContent>
           {isLoading && <Loading />}
           {!isLoading &&
-            items.map((item: any) => (
+            filteredItems.map((item: any) => (
               <SelectItem key={item._id} value={item._id}>
                 {capitalizeWords(item.name)}
               </SelectItem>
