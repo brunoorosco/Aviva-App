@@ -5,6 +5,7 @@ import { Plus, Trash2, Pencil, Users } from "lucide-react";
 import { ParticipanteModal } from "./ParticipanteConferenciaModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { TParticipante } from "@/domain/models/conferencia";
+import { capitalizeWords } from "@/utils/capitalizaFirst";
 
 interface Props {
   title?: string;
@@ -70,7 +71,7 @@ export function ParticipantesSection({ title = "Participantes", emptyMessage = "
                 <span
                   className={`flex-1 text-sm font-medium truncate ${e.isento ? "line-through text-muted-foreground" : ""}`}
                 >
-                  {e.nome}
+                  {capitalizeWords(e.nome)}
                   {e.isento && <span className="ml-2 text-xs text-muted-foreground">(Isento)</span>}
                 </span>
 
