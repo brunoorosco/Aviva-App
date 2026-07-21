@@ -114,11 +114,11 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
           icon: TicketCheck,
           link: `${base}/secretary/conferencia`,
         },
-        {
-          label: "Treinamento de Líderes",
-          icon: University,
-          link: `${base}/secretary/treinamento-lideres`,
-        },
+        // {
+        //   label: "Treinamento de Líderes",
+        //   icon: University,
+        //   link: `${base}/secretary/treinamento-lideres`,
+        // },
         {
           label: "Relatórios",
           icon: ChartColumn,
