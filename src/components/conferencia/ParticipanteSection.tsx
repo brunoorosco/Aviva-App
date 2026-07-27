@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Pencil, Users } from "lucide-react";
 import { ParticipanteModal } from "./ParticipanteConferenciaModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -14,10 +16,11 @@ interface Props {
   onAdd: (data: TParticipante) => void;
   onEdit: (id: string, data: TParticipante) => void;
   onRemove: (id: string) => void;
+  onToggleIsento: (id: string) => void;
   onLinkEquipe: (encontristaId: string, equipeMembroId: string | undefined) => void;
 }
 
-export function ParticipantesSection({ title = "Participantes", emptyMessage = "Nenhum participante adicionado", participantes, onAdd, onEdit, onRemove }: Props) {
+export function ParticipantesSection({ title = "Participantes", emptyMessage = "Nenhum participante adicionado", participantes, onAdd, onEdit, onRemove, onToggleIsento }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<TParticipante | null>(null);
 
@@ -66,25 +69,37 @@ export function ParticipantesSection({ title = "Participantes", emptyMessage = "
             {participantes.map((e) => (
               <div
                 key={e._id}
-                className="flex items-center gap-2 rounded-lg border border-border/50 bg-secondary/30 px-3 py-2"
+                className={`flex items-center gap-2 rounded-lg border px-3 py-2 ${
+                  e.isento
+                    ? "border-green-500/30 bg-green-500/5"
+                    : "border-border/50 bg-secondary/30"
+                }`}
               >
-                <span
-                  className={`flex-1 text-sm font-medium truncate ${e.isento ? "line-through text-muted-foreground" : ""}`}
-                >
+                <Checkbox
+                  checked={e.isento}
+                  onCheckedChange={() => onToggleIsento(e._id as string)}
+                  title="Isento de pagamento"
+                />
+                <span className="flex-1 text-sm font-medium truncate">
                   {capitalizeWords(e.nome)}
-                  {e.isento && <span className="ml-2 text-xs text-muted-foreground">(Isento)</span>}
                 </span>
-
-                {(!e._id || e._id.includes("-")) && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => handleEdit(e)}
+                {e.isento && (
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] px-1.5 py-0 shrink-0 border-green-500/40 bg-green-500/10 text-green-700 dark:text-green-400"
                   >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
+                    Gratuito
+                  </Badge>
                 )}
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => handleEdit(e)}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"

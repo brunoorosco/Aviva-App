@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Tabs,
@@ -7,6 +6,7 @@ import {
   TabsContent,
 } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -19,9 +19,9 @@ import { getConferenciaByIdService } from "@/services/conferencia";
 import { capitalizeWords } from "@/utils/capitalizaFirst";
 import { getRedeName } from "@/utils/helpersNameREde";
 import { ArrowLeft, Calendar, Users, MapPin, Hash, Search, FilterX } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { GetServerSideProps } from "next/types";
 import { useMemo, useState } from "react";
+import { useRouter } from "next/router";
 
 function formatDate(dateValue: any): string {
   if (!dateValue) return "Data não informada";
@@ -42,6 +42,8 @@ type Props = {
 
 export default function ConferenciaPage({ conferencia }: Props) {
   const router = useRouter();
+
+  const participantesState = conferencia?.participantes || [];
 
   if (!conferencia) {
     return (
@@ -65,21 +67,6 @@ export default function ConferenciaPage({ conferencia }: Props) {
     );
   }
 
-  function calculateAgeFromBirthDate(dataNascimento: string): string {
-    const birth = new Date(dataNascimento);
-    if (isNaN(birth.getTime())) return "—";
-
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-
-    return age > 0 ? `${age} anos` : "—";
-  }
-
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRede, setSelectedRede] = useState("all");
 
@@ -100,7 +87,7 @@ export default function ConferenciaPage({ conferencia }: Props) {
   }, [conferencia]);
 
   const participantesFiltrados = useMemo(() => {
-    let list = [...(conferencia.participantes ?? [])];
+    let list = [...participantesState];
 
     if (selectedRede !== "all") {
       list = list.filter((p) => getRedeName(p.rede) === selectedRede);
@@ -114,25 +101,9 @@ export default function ConferenciaPage({ conferencia }: Props) {
     return list.sort((a, b) =>
       (a.nome || "").localeCompare(b.nome || "", "pt-BR", { sensitivity: "base" })
     );
-  }, [conferencia.participantes, selectedRede, searchTerm]);
+  }, [participantesState, selectedRede, searchTerm]);
 
   const defaultTab = "participantes";
-
-  const getAgeDisplay = (idade?: string, dataNascimento?: string) => {
-    if (idade) {
-      const parsed = Number(idade);
-      if (!Number.isNaN(parsed) && parsed > 0) {
-        return `${parsed} anos`;
-      }
-      return idade;
-    }
-
-    if (dataNascimento) {
-      return calculateAgeFromBirthDate(dataNascimento);
-    }
-
-    return "—";
-  };
 
   const renderEmptyState = (title: string, description: string) => (
     <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -149,34 +120,35 @@ export default function ConferenciaPage({ conferencia }: Props) {
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
         <thead className="bg-gray-100 dark:bg-gray-800/60 text-left text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
           <tr>
+            <th className="px-4 py-3">Status</th>
             <th className="px-4 py-3">Nome</th>
             <th className="px-4 py-3">Rede</th>
             <th className="px-4 py-3">Telefone</th>
-            <th className="px-4 py-3 hidden lg:table-cell">Idade</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-transparent">
           {participantesFiltrados.map((pessoa, index) => {
             const redeName = getRedeName(pessoa.rede);
-            const ageLabel = getAgeDisplay(pessoa.idade, pessoa.dataNascimento);
 
             return (
               <tr key={pessoa._id ?? `${capitalizeWords(pessoa.nome)}-${index}`}>
+                <td className="px-4 py-3">
+                  {pessoa.isento ? (
+                    <Badge
+                      variant="outline"
+                      className="text-xs border-green-500/40 bg-green-500/10 text-green-700 dark:text-green-400"
+                    >
+                      Gratuito
+                    </Badge>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
+                </td>
                 <td className="px-4 py-3">
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-900 dark:text-white">
                       {capitalizeWords(pessoa.nome) || "Nome não informado"}
                     </span>
-                    <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                      {pessoa.isento && (
-                        <Badge
-                          variant="secondary"
-                          className="border border-emerald-200 bg-emerald-100 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200"
-                        >
-                          Isento
-                        </Badge>
-                      )}
-                    </div>
                   </div>
                 </td>
                 <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
@@ -184,9 +156,6 @@ export default function ConferenciaPage({ conferencia }: Props) {
                 </td>
                 <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
                   {pessoa.telefone || "—"}
-                </td>
-                <td className="px-4 py-3 text-gray-600 dark:text-gray-300 hidden lg:table-cell">
-                  {ageLabel}
                 </td>
               </tr>
             );
@@ -264,7 +233,7 @@ export default function ConferenciaPage({ conferencia }: Props) {
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Participantes</p>
                   <p className="font-semibold text-gray-900 dark:text-white text-lg">
-                    {conferencia.participantes?.length || 0}
+                    {participantesState.length || 0}
                   </p>
                 </div>
               </div>

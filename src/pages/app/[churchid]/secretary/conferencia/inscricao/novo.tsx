@@ -70,6 +70,11 @@ export default function ConferenciaInscricaoNovo() {
   const removeParticipante = (id: string) => {
     setParticipantes((prev) => prev.filter((e) => e._id !== id));
   };
+  const toggleParticipanteIsento = (id: string) => {
+    setParticipantes((prev) =>
+      prev.map((e) => (e._id === id ? { ...e, isento: !e.isento } : e)),
+    );
+  };
   const linkEquipe = (participanteId: string, equipeMembroId: string | undefined) => {
     setParticipantes((prev) =>
       prev.map((e) => (e._id === participanteId ? { ...e, equipeMembroId } : e)),
@@ -359,6 +364,7 @@ export default function ConferenciaInscricaoNovo() {
               onAdd={addParticipante as any}
               onEdit={editParticipante as any}
               onRemove={removeParticipante}
+              onToggleIsento={toggleParticipanteIsento}
               onLinkEquipe={linkEquipe}
             />
           </div>

@@ -107,3 +107,11 @@ export const removePagamentoConferenciaService = async (
   const repo = new ConferenciaRepository();
   return repo.removePagamento(conferenciaId, redeId, pagamentoId);
 };
+
+export const toggleParticipanteIsentoConferenciaService = async (
+  conferenciaId: string,
+  participanteId: string
+) => {
+  const repo = new ConferenciaRepository();
+  return repo.toggleParticipanteIsento(conferenciaId, participanteId);
+};

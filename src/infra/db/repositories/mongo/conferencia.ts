@@ -315,6 +315,53 @@ class ConferenciaRepository {
       { $set: { allowPastEdits, updatedAt: new Date() } }
     );
   }
+
+  async toggleParticipanteIsento(
+    conferenciaId: string,
+    participanteId: string
+  ): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+      const doc = await collection.findOne({ _id: new ObjectId(conferenciaId) });
+      if (!doc) throw new Error("Conferência não encontrada");
+
+      const participante = (doc.participantes || []).find(
+        (p: any) => p._id === participanteId
+      );
+      if (!participante) throw new Error("Participante não encontrado");
+
+      const novoIsento = !participante.isento;
+
+      const result = await collection.updateOne(
+        { _id: new ObjectId(conferenciaId) },
+        [
+          {
+            $set: {
+              participantes: {
+                $map: {
+                  input: "$participantes",
+                  as: "p",
+                  in: {
+                    $cond: {
+                      if: { $eq: ["$$p._id", participanteId] },
+                      then: { $mergeObjects: ["$$p", { isento: novoIsento }] },
+                      else: "$$p",
+                    },
+                  },
+                },
+              },
+              updatedAt: new Date(),
+            },
+          },
+        ]
+      );
+
+      return { success: true, isento: novoIsento, result };
+    } catch (error) {
+      console.error("Error toggling participante isento:", error);
+      throw error;
+    }
+  }
 }
 
 export { ConferenciaRepository };
