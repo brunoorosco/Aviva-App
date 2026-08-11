@@ -567,7 +567,7 @@ const Discipulado = () => {
                     className="border rounded-xl bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
                   >
                     <AccordionTrigger className="px-4 py-4 hover:no-underline">
-                      <div className="flex items-center gap-4 text-left flex-1 min-w-0">
+                      <div className="flex items-center gap-3 sm:gap-4 text-left flex-1 min-w-0 w-full">
                         {/* Modern Date Badge */}
                         <div className="flex flex-col items-center justify-center bg-primary/10 border border-primary/20 rounded-lg w-14 h-14 shrink-0 transition-colors group-hover:bg-primary/20">
                           <span className="text-[10px] text-primary font-bold uppercase tracking-wider leading-none mb-1">
@@ -579,18 +579,18 @@ const Discipulado = () => {
                         </div>
 
                         <div className="flex-1 min-w-0 space-y-0.5">
-                          <p className="font-bold text-base text-card-foreground leading-tight truncate pr-2">
+                          <p className="font-bold text-sm sm:text-base text-card-foreground leading-tight truncate pr-2">
                             {aula.tema}
                           </p>
-                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground min-w-0">
                             <span className="shrink-0 opacity-70">ministrado por</span>
-                            <span className="font-medium text-foreground/80 truncate">
+                            <span className="font-medium text-foreground/80 truncate min-w-0">
                               {aula.ministrador?.nome}
                             </span>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-4 mr-2 shrink-0">
+                        <div className="flex items-center gap-2 sm:gap-3 sm:mr-2 shrink-0">
                           <div className="hidden sm:flex items-center gap-3">
                             <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-primary/5 border border-primary/10">
                               <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
@@ -655,15 +655,15 @@ const Discipulado = () => {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-4">
-                      <div className="flex flex-wrap items-center justify-end mb-4 gap-3">
+                      <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-end mb-4 gap-3">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleOpenScanner(aula)}
                           className="gap-2 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary h-10 px-4 flex-1 sm:flex-none shadow-sm"
                         >
-                          <QrCode className="h-4 w-4" />
-                          Presença por QR Code
+                          <QrCode className="h-4 w-4 shrink-0" />
+                          <span className="truncate">Presença por QR Code</span>
                         </Button>
                         <Button
                           variant="outline"
@@ -671,8 +671,8 @@ const Discipulado = () => {
                           onClick={() => handleEditAula(aula)}
                           className="gap-2 h-10 px-4 flex-1 sm:flex-none shadow-sm"
                         >
-                          <Edit3 className="h-4 w-4" />
-                          Editar Aula
+                          <Edit3 className="h-4 w-4 shrink-0" />
+                          <span className="truncate">Editar Aula</span>
                         </Button>
                       </div>
                       <Table>
@@ -691,8 +691,8 @@ const Discipulado = () => {
                               const isPending = syncQueue.some(item => item.membroId === aluno.membroId && item.aulaId === aula.id);
                               return (
                                 <TableRow key={aluno.membroId} className={cn(isPending && "opacity-60 bg-muted/30")}>
-                                  <TableCell className="font-medium">{capitalizeWords(aluno.nome)}</TableCell>
-                                  <TableCell className="text-muted-foreground">{aluno.rede.name}</TableCell>
+                                  <TableCell className="font-medium max-w-[160px] truncate">{capitalizeWords(aluno.nome)}</TableCell>
+                                  <TableCell className="text-muted-foreground max-w-[120px] truncate">{aluno.rede.name}</TableCell>
                                   <TableCell className="text-center">
                                     <Checkbox
                                       checked={aluno.presente || isPending}
