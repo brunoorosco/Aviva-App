@@ -46,7 +46,7 @@ const ExportButton = <T,>({
       disabled={isEmpty || isExporting}
       className="
         inline-flex items-center justify-center
-        px-3 py-2 sm:px-4
+        h-8 w-8 sm:h-auto sm:w-auto sm:px-4 sm:py-2
         text-sm font-medium text-white
         bg-blue-600 hover:bg-blue-700 
         dark:bg-blue-700 dark:hover:bg-blue-800
@@ -57,7 +57,6 @@ const ExportButton = <T,>({
         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
         dark:focus:ring-offset-gray-800
         disabled:opacity-50 disabled:cursor-not-allowed
-        w-full sm:w-auto
       "
       aria-label={`Exportar ${items?.length || 0} itens para Excel`}
       title={isEmpty ? 'Nenhum item para exportar' : 'Exportar para Excel'}
@@ -65,14 +64,10 @@ const ExportButton = <T,>({
     >
       {isExporting ? (
         <>
-          <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
-          <span className="hidden sm:inline">Exportando...</span>
+          <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
         </>
       ) : (
-        <>
-          <Download className="w-4 h-4 mr-0 sm:mr-2 flex-shrink-0" />
-          <span className="hidden sm:inline">Exportar</span>
-        </>
+        <Download className="w-4 h-4" />
       )}
     </button>
   )
