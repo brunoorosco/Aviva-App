@@ -367,7 +367,9 @@ const DiscipuladoRelatorio = () => {
                               </div>
                             </TableCell>
                             <TableCell className="text-right">
-                              <Badge variant={aluno.status === "aprovado" ? "default" : "destructive"} className="bg-green-600 hover:bg-green-600">
+                              <Badge
+                                className={aluno.status === "aprovado" ? "bg-green-600 hover:bg-green-600 border-transparent" : "bg-red-600 hover:bg-red-600 border-transparent"}
+                              >
                                 {aluno.status === "aprovado" ? "Aprovado" : "Reprovado"}
                               </Badge>
                             </TableCell>

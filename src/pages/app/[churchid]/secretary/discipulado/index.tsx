@@ -520,7 +520,7 @@ const Discipulado = () => {
                         <TableBody>
                           {(pendencias || []).map((p) => (
                             <TableRow key={p.membroId} className="hover:bg-destructive/5 transition-colors">
-                              <TableCell className="font-medium">{p.nome}</TableCell>
+                              <TableCell className="font-medium">{capitalizeWords(p.nome)}</TableCell>
                               <TableCell className="text-muted-foreground">{p.rede.name}</TableCell>
                               <TableCell>
                                 <div className="flex flex-wrap gap-1">
