@@ -37,3 +37,51 @@ export type CicloDiscipulado = {
   ativo: boolean;
   inscritos?: Membro[];
 };
+
+export type StatusAluno = "aprovado" | "reprovado";
+
+export type AlunoRelatorio = {
+  membroId: string;
+  nome: string;
+  rede: { name: string; _id: string };
+  totalAulas: number;
+  presencas: number;
+  faltas: number;
+  frequencia: number; // 0-100
+  status: StatusAluno;
+};
+
+export type AulaRelatorio = {
+  id: string;
+  data: string;
+  tema: string;
+  ministrador: MinistroDaAula;
+  presentes: number;
+  ausentes: number;
+};
+
+export type RedeRelatorio = {
+  rede: string;
+  total: number;
+  aprovados: number;
+  reprovados: number;
+};
+
+export type RelatorioCiclo = {
+  ciclo: {
+    id: string;
+    nome: string;
+    dataInicio: string;
+    dataFim: string;
+    ativo: boolean;
+  };
+  totalAulas: number;
+  totalMatriculados: number;
+  aprovados: number;
+  reprovados: number;
+  percentualAprovacao: number; // 0-100
+  presencaMedia: number; // 0-100
+  aulas: AulaRelatorio[];
+  alunos: AlunoRelatorio[];
+  porRede: RedeRelatorio[];
+};

@@ -1,6 +1,16 @@
 import { ObjectId } from "mongodb";
 import { MongoHelper } from "../../mongoHelper";
-import { AulaDiscipulado, CicloDiscipulado, Membro } from "@/domain/models/discupulado";
+import {
+  AulaDiscipulado,
+  AulaRelatorio,
+  AlunoRelatorio,
+  CicloDiscipulado,
+  Membro,
+  RedeRelatorio,
+  RelatorioCiclo,
+} from "@/domain/models/discupulado";
+
+const FALTAS_LIMITE = 3;
 
 export class DiscipuladoMongoRepository {
   private ciclosCollection: string;
@@ -50,6 +60,27 @@ export class DiscipuladoMongoRepository {
       };
     } catch (error) {
       console.error("Error getting active ciclo:", error);
+      throw error;
+    }
+  }
+
+  async getCicloById(cicloId: string): Promise<CicloDiscipulado | null> {
+    try {
+      const collection = await MongoHelper.getCollection(this.ciclosCollection);
+      const ciclo = await collection.findOne({ _id: new ObjectId(cicloId) });
+
+      if (!ciclo) return null;
+
+      return {
+        id: ciclo._id.toHexString(),
+        nome: ciclo.nome,
+        dataInicio: ciclo.dataInicio,
+        dataFim: ciclo.dataFim,
+        ativo: ciclo.ativo || false,
+        inscritos: ciclo.inscritos || [],
+      };
+    } catch (error) {
+      console.error("Error getting ciclo by id:", error);
       throw error;
     }
   }
@@ -356,6 +387,120 @@ export class DiscipuladoMongoRepository {
       return pendencias;
     } catch (error) {
       console.error("Error getting pendencias:", error);
+      throw error;
+    }
+  }
+
+  // ==================== RELATÓRIO POR CICLO ====================
+  async getRelatorioCiclo(cicloId: string): Promise<RelatorioCiclo | null> {
+    try {
+      const ciclo = await this.getCicloById(cicloId);
+      if (!ciclo) return null;
+
+      const aulasCollection = await MongoHelper.getCollection(this.aulasCollection);
+      const aulas = await aulasCollection.find({ cicloId }).toArray();
+      const inscritos = ciclo.inscritos || [];
+
+      const totalAulas = aulas.length;
+      const totalMatriculados = inscritos.length;
+
+      // Relatório por aluno
+      const alunos: AlunoRelatorio[] = inscritos.map((inscrito) => {
+        let faltas = 0;
+
+        for (const aula of aulas) {
+          const alunoPresente = aula.alunos?.find(
+            (a: any) => a.membroId === inscrito.id,
+          );
+          if (!alunoPresente || !alunoPresente.presente) {
+            faltas += 1;
+          }
+        }
+
+        const presencas = Math.max(totalAulas - faltas, 0);
+        const frequencia = totalAulas > 0 ? Math.round((presencas / totalAulas) * 100) : 0;
+        const status = faltas <= FALTAS_LIMITE ? "aprovado" : "reprovado";
+
+        return {
+          membroId: inscrito.id,
+          nome: inscrito.nome,
+          rede: inscrito.rede,
+          totalAulas,
+          presencas,
+          faltas,
+          frequencia,
+          status,
+        };
+      });
+
+      const aprovados = alunos.filter((a) => a.status === "aprovado").length;
+      const reprovados = alunos.filter((a) => a.status === "reprovado").length;
+      const percentualAprovacao =
+        totalMatriculados > 0 ? Math.round((aprovados / totalMatriculados) * 100) : 0;
+      const presencaMedia =
+        totalMatriculados > 0
+          ? Math.round(
+              alunos.reduce((acc, aluno) => acc + aluno.frequencia, 0) /
+                totalMatriculados,
+            )
+          : 0;
+
+      // Relatório por aula
+      const aulasRelatorio: AulaRelatorio[] = aulas.map((aula) => {
+        const presentes = (aula.alunos || []).filter((a: any) => a.presente).length;
+        const ausentes = Math.max(totalMatriculados - presentes, 0);
+
+        return {
+          id: aula._id.toHexString(),
+          data: aula.data,
+          tema: aula.tema,
+          ministrador: aula.ministrador,
+          presentes,
+          ausentes,
+        };
+      });
+
+      // Breakdown por rede
+      const porRede: RedeRelatorio[] = [];
+      const redeMap = new Map<string, RedeRelatorio>();
+      for (const aluno of alunos) {
+        const nomeRede = aluno.rede?.name || "Sem Rede";
+        const atual = redeMap.get(nomeRede) || {
+          rede: nomeRede,
+          total: 0,
+          aprovados: 0,
+          reprovados: 0,
+        };
+        atual.total += 1;
+        if (aluno.status === "aprovado") atual.aprovados += 1;
+        else atual.reprovados += 1;
+        redeMap.set(nomeRede, atual);
+      }
+      for (const rede of redeMap.values()) {
+        porRede.push(rede);
+      }
+      porRede.sort((a, b) => b.total - a.total);
+
+      return {
+        ciclo: {
+          id: ciclo.id,
+          nome: ciclo.nome,
+          dataInicio: ciclo.dataInicio,
+          dataFim: ciclo.dataFim,
+          ativo: ciclo.ativo,
+        },
+        totalAulas,
+        totalMatriculados,
+        aprovados,
+        reprovados,
+        percentualAprovacao,
+        presencaMedia,
+        aulas: aulasRelatorio,
+        alunos,
+        porRede,
+      };
+    } catch (error) {
+      console.error("Error getting relatorio by ciclo:", error);
       throw error;
     }
   }

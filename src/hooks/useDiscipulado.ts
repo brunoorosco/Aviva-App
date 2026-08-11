@@ -1,4 +1,4 @@
-import { AulaDiscipulado, CicloDiscipulado, Membro } from "@/domain/models/discupulado";
+import { AulaDiscipulado, CicloDiscipulado, Membro, RelatorioCiclo } from "@/domain/models/discupulado";
 import { useHttpDelete, useHttpGet, useHttpPost, useHttpPut } from "./api";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
@@ -174,6 +174,14 @@ export function usePendencias(churchId?: string, cicloId?: string) {
     ? `${API_BASE}/${churchId}/discipulado/pendencias?cicloId=${cicloId}`
     : null;
   return useFetch<{ membroId: string; nome: string; rede: { name: string; _id: string }; aulasPendentes: string[] }[]>(url, !!url);
+}
+
+// Relatório do ciclo
+export function useRelatorioCiclo(churchId?: string, cicloId?: string) {
+  const url = churchId && cicloId
+    ? `${API_BASE}/${churchId}/discipulado/relatorio?cicloId=${cicloId}`
+    : null;
+  return useFetch<RelatorioCiclo>(url, !!url);
 }
 
 // Inscrições

@@ -17,6 +17,7 @@ import {
   Loader2,
   CloudOff,
   RefreshCw,
+  BarChart3,
 } from "lucide-react";
 import { useEffect, useCallback, useRef } from "react";
 import QRCodeScanner from "@/components/Discipulado/QRCodeScanner";
@@ -396,6 +397,20 @@ const Discipulado = () => {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() =>
+                router.push(`/app/${churchId}/secretary/discipulado/relatorio${selectedCiclo ? `?cicloId=${selectedCiclo}` : ""}`)
+              }
+              className="gap-2 sm:px-4"
+              disabled={!cicloAtivo}
+              title={!cicloAtivo ? "Crie um semestre primeiro" : ""}
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline">Relatório</span>
+            </Button>
 
             <Button
               size="sm"
