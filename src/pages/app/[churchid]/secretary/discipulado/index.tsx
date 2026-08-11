@@ -17,6 +17,7 @@ import {
   Loader2,
   CloudOff,
   RefreshCw,
+  BarChart3,
 } from "lucide-react";
 import { useEffect, useCallback, useRef } from "react";
 import QRCodeScanner from "@/components/Discipulado/QRCodeScanner";
@@ -399,6 +400,20 @@ const Discipulado = () => {
 
             <Button
               size="sm"
+              variant="outline"
+              onClick={() =>
+                router.push(`/app/${churchId}/secretary/discipulado/relatorio${selectedCiclo ? `?cicloId=${selectedCiclo}` : ""}`)
+              }
+              className="gap-2 sm:px-4"
+              disabled={!cicloAtivo}
+              title={!cicloAtivo ? "Crie um semestre primeiro" : ""}
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline">Relatório</span>
+            </Button>
+
+            <Button
+              size="sm"
               onClick={() => router.push(`/app/${churchId}/secretary/discipulado/novaAula`)}
               className="gap-2 sm:px-4"
               disabled={!cicloAtivo}
@@ -505,7 +520,7 @@ const Discipulado = () => {
                         <TableBody>
                           {(pendencias || []).map((p) => (
                             <TableRow key={p.membroId} className="hover:bg-destructive/5 transition-colors">
-                              <TableCell className="font-medium">{p.nome}</TableCell>
+                              <TableCell className="font-medium">{capitalizeWords(p.nome)}</TableCell>
                               <TableCell className="text-muted-foreground">{p.rede.name}</TableCell>
                               <TableCell>
                                 <div className="flex flex-wrap gap-1">
