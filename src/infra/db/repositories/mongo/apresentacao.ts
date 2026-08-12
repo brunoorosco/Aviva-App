@@ -58,4 +58,13 @@ export class ApresentacaoMongoRepository {
         )
         return result
     }
+
+    async deleteApresentacao(churchId: string, apresentacaoId: string): Promise<any> {
+        const collection = await MongoHelper.getCollection(this.collectionName)
+        const result = await collection.deleteOne({
+            _id: new ObjectId(apresentacaoId),
+            ...this.churchIdFilter(churchId)
+        })
+        return result
+    }
 }

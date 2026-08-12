@@ -1,27 +1,33 @@
 'use client';
 
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useHttpGet } from '@/hooks/api';
+import { useHttpGet, useHttpDelete } from '@/hooks/api';
 import { Button } from '@/components/ui/button';
-import { Plus, Edit, Loader2, ArrowLeft, Calendar, User, Printer } from 'lucide-react';
+import { Plus, Edit, Trash2, Loader2, ArrowLeft, Calendar, User, Printer } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { getRedeName } from '@/utils/helpersNameREde';
 import { TApresentacao } from '@/domain/models/apresentacao';
 import { Badge } from '@/components/ui/badge';
+import Toast from '@/components/Toast';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useReactToPrint } from 'react-to-print';
 
 export default function DetalhesApresentacao() {
     const { data: session } = useSession();
     const router = useRouter();
     const churchId = session?.user?.churchId;
+    const userRole = session?.user?.role;
+    const userCemName = session?.user?.cem?.name;
     const printRef = useRef<HTMLDivElement>(null);
+    const [selectedToDelete, setSelectedToDelete] = useState<TApresentacao | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const { date } = router.query;
 
-    const { data: apresentacoesResponse, isLoading } = useHttpGet<TApresentacao[]>(
+    const { data: apresentacoesResponse, isLoading, mutate } = useHttpGet<TApresentacao[]>(
         churchId ? `/api/protected/churches/${churchId}/secretary/apresentacao` : null
     );
 
@@ -54,6 +60,42 @@ export default function DetalhesApresentacao() {
     // Helper to extract clean network name
     const getCleanRedeName = (rede?: string | { _id: string; name: string }) => {
         return getRedeName(rede) || '';
+    };
+
+    // Admin pode remover qualquer uma; supervisor/pastor só da própria rede
+    const canDeleteItem = (item: TApresentacao) => {
+        if (userRole === 'admin') return true;
+        if (userRole === 'supervisor' || userRole === 'pastor') {
+            return !!userCemName &&
+                getCleanRedeName(item.rede).toUpperCase() === userCemName.toUpperCase();
+        }
+        return false;
+    };
+
+    const getItemLabel = (item: TApresentacao) => {
+        if (item.tipo === 'novoMembro') return item.nome || '';
+        if (item.tipo === 'alianca') return `${item.nomeHomem || ''} & ${item.nomeMulher || ''}`;
+        return item.nomeCrianca || '';
+    };
+
+    const handleDelete = async () => {
+        if (!selectedToDelete) return;
+        setIsDeleting(true);
+
+        try {
+            const res = await useHttpDelete({
+                url: `/api/protected/churches/${churchId}/secretary/apresentacao/${selectedToDelete._id}`
+            });
+            if (res?.error) throw new Error(res.error);
+            Toast.showSuccess('Pessoa removida da apresentação!');
+            setSelectedToDelete(null);
+            mutate();
+        } catch (error) {
+            console.error(error);
+            Toast.showError('Erro ao remover. Você só pode remover pessoas da sua própria rede.');
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     const handlePrint = useReactToPrint({
@@ -277,18 +319,44 @@ export default function DetalhesApresentacao() {
                                         )}
                                     </div>
 
-                                    <Link href={`/app/${churchId}/secretary/apresentacao/${item._id}`}>
-                                        <Button variant="ghost" size="sm" className="text-slate-500 hover:text-blue-600 dark:text-gray-100">
-                                            <Edit className="w-4 h-4 mr-2" />
-                                            Editar
-                                        </Button>
-                                    </Link>
+                                    <div className="flex items-center gap-2">
+                                        <Link href={`/app/${churchId}/secretary/apresentacao/${item._id}`}>
+                                            <Button variant="ghost" size="sm" className="text-slate-500 hover:text-blue-600 dark:text-gray-100">
+                                                <Edit className="w-4 h-4 mr-2" />
+                                                Editar
+                                            </Button>
+                                        </Link>
+                                        {canDeleteItem(item) && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => setSelectedToDelete(item)}
+                                                className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+                                            >
+                                                <Trash2 className="w-4 h-4 mr-2" />
+                                                Remover
+                                            </Button>
+                                        )}
+                                    </div>
                                 </CardContent>
                             </Card>
                         ))
                     )}
                 </div>
             </div >
+
+            <ConfirmDialog
+                open={!!selectedToDelete}
+                onClose={() => setSelectedToDelete(null)}
+                onConfirm={handleDelete}
+                title="Remover da Apresentação"
+                description={selectedToDelete
+                    ? `Tem certeza que deseja remover "${getItemLabel(selectedToDelete)}" desta apresentação? Esta ação não pode ser desfeita.`
+                    : 'Esta ação não pode ser desfeita.'}
+                confirmLabel="Sim, remover"
+                cancelLabel="Cancelar"
+                isLoading={isDeleting}
+            />
         </>
     );
 }
