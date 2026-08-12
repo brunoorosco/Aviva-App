@@ -1,5 +1,40 @@
 import { CellsMongoRepository } from "../infra/db/repositories/mongo/cells";
 import { UsersMongoRepository } from "../infra/db/repositories/mongo/users";
+import CryptAdapter from "../infra/cryptography/bcrypt";
+
+export const addNewMemberFromApresentacao = async (
+  churchId: string,
+  data: any
+) => {
+  const userRepository = new UsersMongoRepository();
+
+  const cem =
+    data.rede && typeof data.rede === "object" && data.rede._id
+      ? { _id: data.rede._id, name: data.rede.name }
+      : { _id: "sem-rede", name: "CEM Padrão (Sem Rede)" };
+
+  const cripto = new CryptAdapter();
+  const randomPass = await cripto.randonPassword();
+  const setPassword = cripto.hashPassword(randomPass);
+
+  const userData: any = {
+    churchId,
+    name: data.nome,
+    email: "",
+    phone: "",
+    active: true,
+    cem,
+    role: "membro",
+    permission: ["user"],
+    password: setPassword,
+    igreja_anterior: data.igreja_anterior || "",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const user = await userRepository.create(userData);
+  return user;
+};
 
 export const getMembersByCellId = async (
   cemId: string,

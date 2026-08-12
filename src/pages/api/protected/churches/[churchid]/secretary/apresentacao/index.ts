@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { ApresentacaoMongoRepository } from "@/infra/db/repositories/mongo/apresentacao";
+import { addNewMemberFromApresentacao } from "@/services/members";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
@@ -28,6 +29,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             }
 
             const result = await apresentacaoRepo.addApresentacao(churchId, data);
+
+            // Novo membro apresentado vira usuário na collection de users,
+            // vinculado à rede em que está sendo apresentado
+            if (data.tipo === 'novoMembro' && data.nome) {
+                try {
+                    await addNewMemberFromApresentacao(churchId, data);
+                } catch (error) {
+                    console.error("Error creating member from apresentacao:", error);
+                }
+            }
+
             console.log('RESULT:', result);
             return res.status(201).json(result);
         } else {
