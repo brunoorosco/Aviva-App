@@ -15,6 +15,12 @@ import Toast from '@/components/Toast';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useReactToPrint } from 'react-to-print';
 
+const typeOrder: Record<TApresentacao['tipo'], number> = {
+    alianca: 1,
+    novoMembro: 2,
+    crianca: 3
+};
+
 export default function DetalhesApresentacao() {
     const { data: session } = useSession();
     const router = useRouter();
@@ -36,14 +42,12 @@ export default function DetalhesApresentacao() {
         const itemDate = item.dataApresentacao.split('T')[0];
         return itemDate === date;
     }).sort((a, b) => {
-        if (a.horario === b.horario) return 0;
-        return a.horario === 'manha' ? -1 : 1;
+        if (a.horario !== b.horario) return a.horario === 'manha' ? -1 : 1;
+        return typeOrder[a.tipo] - typeOrder[b.tipo];
     });
 
     // Organize data for print: group by time block and sort by type
     const printData = useMemo(() => {
-        const typeOrder = { novoMembro: 1, crianca: 2, alianca: 3 };
-
         const sortByType = (items: TApresentacao[]) => {
             return [...items].sort((a, b) => typeOrder[a.tipo] - typeOrder[b.tipo]);
         };
@@ -146,6 +150,18 @@ export default function DetalhesApresentacao() {
                         <div style={{ marginBottom: '1.5rem' }}>
                             <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', borderBottom: '1px solid #666', paddingBottom: '0.5rem' }}>MANHÃ</h3>
 
+                            {/* Covenants */}
+                            {printData.manha.filter(i => i.tipo === 'alianca').length > 0 && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Alianças</h4>
+                                    {printData.manha.filter(i => i.tipo === 'alianca').map((item, idx) => (
+                                        <div key={idx} style={{ padding: '0.3rem 0', borderBottom: '1px dashed #ccc' }}>
+                                            • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
                             {/* New Members */}
                             {printData.manha.filter(i => i.tipo === 'novoMembro').length > 0 && (
                                 <div style={{ marginBottom: '1.5rem' }}>
@@ -169,18 +185,6 @@ export default function DetalhesApresentacao() {
                                     ))}
                                 </div>
                             )}
-
-                            {/* Covenants */}
-                            {printData.manha.filter(i => i.tipo === 'alianca').length > 0 && (
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Alianças</h4>
-                                    {printData.manha.filter(i => i.tipo === 'alianca').map((item, idx) => (
-                                        <div key={idx} style={{ padding: '0.3rem 0', borderBottom: '1px dashed #ccc' }}>
-                                            • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
                         </div>
                     )}
 
@@ -188,6 +192,18 @@ export default function DetalhesApresentacao() {
                     {printData.noite.length > 0 && (
                         <div style={{ marginBottom: '1.5rem' }}>
                             <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', borderBottom: '1px solid #666', paddingBottom: '0.5rem' }}>NOITE</h3>
+
+                            {/* Covenants */}
+                            {printData.noite.filter(i => i.tipo === 'alianca').length > 0 && (
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Alianças</h4>
+                                    {printData.noite.filter(i => i.tipo === 'alianca').map((item, idx) => (
+                                        <div key={idx} style={{ padding: '0.3rem 0', borderBottom: '1px dashed #ccc' }}>
+                                            • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
 
                             {/* New Members */}
                             {printData.noite.filter(i => i.tipo === 'novoMembro').length > 0 && (
@@ -217,18 +233,6 @@ export default function DetalhesApresentacao() {
                                                     • {item.nomeCrianca} (Mãe: {item.nomeMae}) - {getCleanRedeName(item.rede)}
                                                 </span>
                                             )}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-
-                            {/* Covenants */}
-                            {printData.noite.filter(i => i.tipo === 'alianca').length > 0 && (
-                                <div style={{ marginBottom: '1.5rem' }}>
-                                    <h4 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Alianças</h4>
-                                    {printData.noite.filter(i => i.tipo === 'alianca').map((item, idx) => (
-                                        <div key={idx} style={{ padding: '0.3rem 0', borderBottom: '1px dashed #ccc' }}>
-                                            • {item.nomeHomem} & {item.nomeMulher} - {getCleanRedeName(item.rede)}
                                         </div>
                                     ))}
                                 </div>
