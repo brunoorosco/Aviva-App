@@ -13,13 +13,13 @@ import { useHttpGet, useHttpPut } from '@/hooks/api';
 import Toast from '@/components/Toast';
 import { CellsModel } from '@/domain/models/cells';
 import { TApresentacao } from '@/domain/models/apresentacao';
-import { getRedeName } from '@/utils/helpersNameREde';
+import { SelectCem } from '@/components/Select/SelectCem';
 
 type FormValues = {
     tipo: 'alianca' | 'novoMembro' | 'crianca';
     dataApresentacao: string;
     horario: 'manha' | 'noite';
-    rede: string;
+    rede: { _id: string; name: string } | string;
     nomeHomem?: string;
     nomeMulher?: string;
     nome?: string;
@@ -36,7 +36,7 @@ export default function EditarApresentacao() {
     // @ts-ignore
     const userRole = session?.user?.role;
     // @ts-ignore
-    const userRede = session?.user?.cem?.name
+    const userCem = session?.user?.cem
 
     const { id } = router.query;
     const [isSaving, setIsSaving] = useState(false);
@@ -60,14 +60,32 @@ export default function EditarApresentacao() {
     useEffect(() => {
         if (initialData?.data) {
             const data = initialData.data;
+            const storedRede = data.rede as FormValues['rede'] | undefined;
+            let rede: FormValues['rede'] = storedRede || '';
+
+            // Não-admin: a rede é sempre a do usuário logado
+            if (!isAdmin) {
+                rede = (userCem as FormValues['rede']) || storedRede || '';
+            }
+
             reset({
                 ...data,
-                rede: getRedeName(data.rede) || '',
+                rede,
                 // Ensure date is YYYY-MM-DD for input type="date"
                 dataApresentacao: data.dataApresentacao ? data.dataApresentacao.split('T')[0] : ''
             });
         }
-    }, [initialData, reset]);
+    }, [initialData, reset, isAdmin, userCem]);
+
+    // Resolve rede legada (string sem _id) para objeto assim que as CEMs carregarem
+    useEffect(() => {
+        const data = initialData?.data;
+        if (!data || !isAdmin) return;
+        if (typeof data.rede === 'string' && data.rede) {
+            const match = (cemsData?.data || []).find((cem: any) => cem.name === data.rede);
+            if (match) setValue('rede', { _id: match._id, name: match.name });
+        }
+    }, [cemsData, initialData, isAdmin, setValue]);
 
 
     const onSubmit = async (data: FormValues) => {
@@ -127,24 +145,24 @@ export default function EditarApresentacao() {
                     <div className="space-y-2">
                         <Label>Rede / CEM</Label>
                         {isAdmin ? (
+                            <SelectCem
+                                control={control}
+                                name="rede"
+                                title="Selecione a Rede"
+                                churchId={churchId as string}
+                            />
+                        ) : (
                             <Controller
                                 control={control}
                                 name="rede"
                                 render={({ field }) => (
-                                    <Select onValueChange={field.onChange} value={field.value}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Selecione a Rede" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {(cemsData?.data || []).map((cem: any) => (
-                                                <SelectItem key={cem._id} value={cem.name}>{cem.name}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                                    <Input
+                                        value={typeof field.value === 'object' ? field.value?.name || '' : field.value || ''}
+                                        disabled
+                                        className="bg-slate-100"
+                                    />
                                 )}
                             />
-                        ) : (
-                            <Input {...register('rede')} disabled className="bg-slate-100" />
                         )}
                     </div>
 
