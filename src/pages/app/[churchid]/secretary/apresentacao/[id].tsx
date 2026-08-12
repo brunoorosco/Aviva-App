@@ -23,6 +23,7 @@ type FormValues = {
     nomeHomem?: string;
     nomeMulher?: string;
     nome?: string;
+    igreja_anterior?: string;
     nomeCrianca?: string;
     nomePai?: string;
     nomeMae?: string;
@@ -46,9 +47,9 @@ export default function EditarApresentacao() {
         (churchId && id) ? `/api/protected/churches/${churchId}/secretary/apresentacao/${id}` : null
     );
 
-    // Fetch CEMs/Redes if admin
-    const { data: cemsData } = useHttpGet<CellsModel[]>(
-        (userRole === 'admin' && churchId) ? `/api/protected/churches/${churchId}/cems` : null
+    // Fetch redes if admin
+    const { data: redesData } = useHttpGet<CellsModel[]>(
+        (userRole === 'admin' && churchId) ? `/api/protected/churches/${churchId}/redes` : null
     );
 
     const { control, handleSubmit, watch, register, reset, setValue } = useForm<FormValues>();
@@ -59,33 +60,44 @@ export default function EditarApresentacao() {
     // Populate form when data loads
     useEffect(() => {
         if (initialData?.data) {
-            const data = initialData.data;
+            const data: any = initialData.data;
             const storedRede = data.rede as FormValues['rede'] | undefined;
             let rede: FormValues['rede'] = storedRede || '';
 
-            // Não-admin: a rede é sempre a do usuário logado
+            // Não-admin: preserva a rede do registro (só usa a do usuário para
+            // corrigir rede legada string que pertence à própria rede dele)
             if (!isAdmin) {
-                rede = (userCem as FormValues['rede']) || storedRede || '';
+                if (typeof rede === 'string' && rede && userCem?.name && rede === userCem.name) {
+                    rede = userCem as FormValues['rede'];
+                }
             }
 
             reset({
-                ...data,
+                tipo: data.tipo,
                 rede,
+                horario: data.horario,
                 // Ensure date is YYYY-MM-DD for input type="date"
-                dataApresentacao: data.dataApresentacao ? data.dataApresentacao.split('T')[0] : ''
+                dataApresentacao: data.dataApresentacao ? data.dataApresentacao.split('T')[0] : '',
+                nomeHomem: data.nomeHomem,
+                nomeMulher: data.nomeMulher,
+                nome: data.nome,
+                igreja_anterior: data.igreja_anterior,
+                nomeCrianca: data.nomeCrianca,
+                nomePai: data.nomePai,
+                nomeMae: data.nomeMae
             });
         }
     }, [initialData, reset, isAdmin, userCem]);
 
-    // Resolve rede legada (string sem _id) para objeto assim que as CEMs carregarem
+    // Resolve rede legada (string sem _id) para objeto assim que as redes carregarem
     useEffect(() => {
         const data = initialData?.data;
         if (!data || !isAdmin) return;
         if (typeof data.rede === 'string' && data.rede) {
-            const match = (cemsData?.data || []).find((cem: any) => cem.name === data.rede);
+            const match = (redesData?.data || []).find((rede: any) => rede.name === data.rede);
             if (match) setValue('rede', { _id: match._id, name: match.name });
         }
-    }, [cemsData, initialData, isAdmin, setValue]);
+    }, [redesData, initialData, isAdmin, setValue]);
 
 
     const onSubmit = async (data: FormValues) => {
@@ -116,8 +128,8 @@ export default function EditarApresentacao() {
     }
 
     return (
-        <div className="p-6 max-w-2xl mx-auto bg-white rounded-lg shadow-sm border mt-8">
-            <h1 className="text-2xl font-bold mb-6 text-slate-800">Editar Apresentação</h1>
+        <div className="p-6 max-w-2xl mx-auto bg-white dark:bg-black/50 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mt-8">
+            <h1 className="text-2xl font-bold mb-6 text-slate-800 dark:text-gray-100">Editar Apresentação</h1>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
@@ -159,7 +171,7 @@ export default function EditarApresentacao() {
                                     <Input
                                         value={typeof field.value === 'object' ? field.value?.name || '' : field.value || ''}
                                         disabled
-                                        className="bg-slate-100"
+                                        className="bg-gray-200 dark:bg-zinc-700 dark:text-gray-100"
                                     />
                                 )}
                             />
@@ -192,7 +204,7 @@ export default function EditarApresentacao() {
                 </div>
 
                 <div className="pt-4 border-t">
-                    <h2 className="text-lg font-semibold mb-4 text-slate-700">Dados Específicos</h2>
+                    <h2 className="text-lg font-semibold mb-4 text-slate-700 dark:text-gray-300">Dados Específicos</h2>
 
                     {tipo === 'alianca' && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2">
