@@ -29,6 +29,8 @@ type FormValues = {
   reencontroComDeus?: boolean;
   sejaLivre?: boolean;
   batizado?: boolean;
+  dataBatismo: string;
+  data_batismo?: string | null;
   discipulado?: boolean;
   cae?: boolean;
   escolaProfeta?: boolean;
@@ -55,10 +57,33 @@ const extractCem = (cemId: CemOption | string | undefined) => {
   return { _id, name: rest.join("-") };
 };
 
+// Converte data_batismo (Date/ISO) para o valor yyyy-MM-dd do input.
+const toDateInput = (value: any) => {
+  if (!value) return "";
+  const date = value instanceof Date ? value : new Date(value);
+  if (isNaN(date.getTime())) return "";
+  return date.toISOString().slice(0, 10);
+};
+
+// Converte yyyy-MM-dd para dd/mm/yyyy.
+const formatInputDate = (v: string) => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  const [y, m, d] = v.split("-");
+  return `${d}/${m}/${y}`;
+};
+
+// Converte yyyy-MM-dd para 00:00 no fuso UTC-3 (America/Sao_Paulo),
+// garantindo que a exibição dd/mm/yyyy não desloque o dia.
+const buildBatismoISO = (yyyyMMdd: string) => {
+  const [y, m, d] = yyyyMMdd.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d, 3)).toISOString();
+};
+
   const {
     control,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
@@ -73,11 +98,15 @@ const extractCem = (cemId: CemOption | string | undefined) => {
       reencontroComDeus: false,
       sejaLivre: false,
       batizado: false,
+      dataBatismo: "",
       discipulado: false,
       cae: false,
       escolaProfeta: false,
     },
   });
+
+  const isBatizado = watch("batizado");
+  const dataBatismoValue = watch("dataBatismo");
 
   // 🔹 Preenche dados se for edição
   useEffect(() => {
@@ -101,6 +130,7 @@ const extractCem = (cemId: CemOption | string | undefined) => {
       reencontroComDeus: member.reencontroComDeus ?? false,
       sejaLivre: member.sejaLivre ?? false,
       batizado: member.batizado ?? false,
+      dataBatismo: toDateInput(member.data_batismo),
       discipulado: member.discipulado ?? false,
       cae: member.cae ?? false,
       escolaProfeta: member.escolaProfeta ?? false,
@@ -132,6 +162,13 @@ const extractCem = (cemId: CemOption | string | undefined) => {
   delete changes.cemId;
 }
 
+        if ("dataBatismo" in changes || "batizado" in changes) {
+          const finalBatizado = (changes.batizado ?? initialData?.batizado) === true;
+          const raw = (changes.dataBatismo ?? initialData?.dataBatismo) as string;
+          changes.data_batismo = finalBatizado && raw ? buildBatismoISO(raw) : null;
+          delete changes.dataBatismo;
+        }
+
         response = await useHttpPatch({
           url: `/api/protected/churches/${member.churchId}/users/${member._id}`,
           data: changes,
@@ -144,6 +181,14 @@ const extractCem = (cemId: CemOption | string | undefined) => {
   payload.cem = extractCem(payload.cemId); // ✅ sem erro de tipo
   delete payload.cemId;
 }
+
+        if ("dataBatismo" in payload) {
+          payload.data_batismo =
+            payload.batizado && payload.dataBatismo
+              ? buildBatismoISO(payload.dataBatismo)
+              : null;
+          delete payload.dataBatismo;
+        }
 
         response = await useHttpPost({
           url: `/api/protected/churches/${session?.user.churchId}/redes/${session?.user.cem._id}/members`,
@@ -279,20 +324,41 @@ const extractCem = (cemId: CemOption | string | undefined) => {
               { name: "batizado", label: "Batizado" },
               { name: "discipulado", label: "Discipulado" },
               { name: "escolaProfeta", label: "Escola de Profetas" },
-            ].map(({ name, label }) => (
-              <Controller
-                key={name}
-                name={name as keyof FormValues}
-                control={control}
-                render={({ field }) => (
-                  <label className="flex items-center gap-2">
-                    <Checkbox checked={field.value as boolean} onCheckedChange={field.onChange} />
-                    <span>{label}</span>
-                  </label>
-                )}
-              />
-            ))}
+            ].map(({ name, label }) => {
+              const labelText =
+                name === "batizado" && isBatizado && dataBatismoValue
+                  ? `${label} (${formatInputDate(dataBatismoValue)})`
+                  : label;
+
+              return (
+                <Controller
+                  key={name}
+                  name={name as keyof FormValues}
+                  control={control}
+                  render={({ field }) => (
+                    <label className="flex items-center gap-2">
+                      <Checkbox checked={field.value as boolean} onCheckedChange={field.onChange} />
+                      <span>{labelText}</span>
+                    </label>
+                  )}
+                />
+              );
+            })}
           </div>
+
+          {/* Data do Batismo */}
+          {isBatizado && (
+            <Controller
+              name="dataBatismo"
+              control={control}
+              render={({ field }) => (
+                <div className="flex flex-col w-full md:w-1/2">
+                  <Label>Data do Batismo</Label>
+                  <Input {...field} type="date" />
+                </div>
+              )}
+            />
+          )}
 
           {/* Botões */}
           <div className="flex flex-row justify-end gap-2 mt-4">

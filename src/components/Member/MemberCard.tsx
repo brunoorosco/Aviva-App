@@ -48,6 +48,12 @@ const getInitials = (name: string) =>
     .map((n) => n[0].toUpperCase())
     .join("");
 
+const formatDataBatismo = (value: string | Date) => {
+  const date = value instanceof Date ? value : new Date(value);
+  if (isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
+};
+
 type Props = {
   member: UserModel;
 };
@@ -197,15 +203,27 @@ export const MemberCard = ({ member }: Props) => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {programs.map(({ key, label, icon: Icon }) => (
-                  <div
-                    key={key}
-                    className="flex items-center gap-3 p-2 py-4 rounded-lg bg-secondary/50"
-                  >
-                    <Icon className="w-5 h-5 text-blue-600" />
-                    <StatusBadge status={member[key as keyof UserModel] as boolean} label={label} />
-                  </div>
-                ))}
+                {programs.map(({ key, label, icon: Icon }) => {
+                  const badgeLabel =
+                    key === "batizado" &&
+                    member.batizado &&
+                    member.data_batismo
+                      ? `${label} (${formatDataBatismo(member.data_batismo)})`
+                      : label;
+
+                  return (
+                    <div
+                      key={key}
+                      className="flex items-center gap-3 p-2 py-4 rounded-lg bg-secondary/50"
+                    >
+                      <Icon className="w-5 h-5 text-blue-600" />
+                      <StatusBadge
+                        status={member[key as keyof UserModel] as boolean}
+                        label={badgeLabel}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
