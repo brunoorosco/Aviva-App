@@ -73,10 +73,18 @@ export const updateMember = async (userId: string, data: any) => {
 
 export const updateMemberBaptismStatus = async (
   userId: string,
-  { batizado, dataBatismo }: { batizado: boolean; dataBatismo?: Date | null }
+  {
+    batizado,
+    dataBatismo,
+    sexo,
+  }: { batizado: boolean; dataBatismo?: Date | null; sexo?: string }
 ) => {
   const userRepository = new UsersMongoRepository();
-  const user = await userRepository.setBaptismStatus(userId, { batizado, dataBatismo });
+  const user = await userRepository.setBaptismStatus(userId, {
+    batizado,
+    dataBatismo,
+    sexo,
+  });
   return user;
 };
 

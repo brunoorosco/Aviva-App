@@ -159,7 +159,11 @@ export class UsersMongoRepository {
 
   async setBaptismStatus(
     userId: string,
-    { batizado, dataBatismo }: { batizado: boolean; dataBatismo?: Date | null },
+    {
+      batizado,
+      dataBatismo,
+      sexo,
+    }: { batizado: boolean; dataBatismo?: Date | null; sexo?: string },
   ): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
@@ -176,6 +180,18 @@ export class UsersMongoRepository {
         { _id: new ObjectId(userId) },
         Object.keys(unset).length > 0 ? { $set: set, $unset: unset } : { $set: set },
       );
+
+      // Sexo entra apenas quando o membro ainda não possui (preserva o já existente).
+      if (sexo) {
+        await collection.updateOne(
+          {
+            _id: new ObjectId(userId),
+            $or: [{ sexo: { $exists: false } }, { sexo: null }, { sexo: "" }],
+          },
+          { $set: { sexo, updatedAt: new Date() } },
+        );
+      }
+
       return result;
     } catch (error) {
       console.error("Error updating baptism status:", error);

@@ -49,7 +49,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         const batismo = await getBatismoByIdService(churchid, id)
         await updateMemberBaptismStatus(userId, {
           batizado: true,
-          dataBatismo: batismo?.data ? buildDataBatismo(batismo.data) : null
+          dataBatismo: batismo?.data ? buildDataBatismo(batismo.data) : null,
+          sexo
         })
       }
 

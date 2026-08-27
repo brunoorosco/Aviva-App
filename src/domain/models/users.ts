@@ -22,6 +22,7 @@ export type User = {
   sejaLivre?: boolean;
   batizado?: boolean;
   data_batismo?: string;
+  sexo?: string;
   discipulado?: boolean;
   cae?: boolean;
   escolaProfeta?: boolean;
