@@ -93,15 +93,18 @@ export class BatismoMongoRepository {
   async removeBatizando(
     batismoId: string,
     nome: string,
-    rede: string
+    rede: string,
+    userId?: string
   ): Promise<any> {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName)
+      const match: any = { nome, rede }
+      if (userId) match.userId = userId
       const result = await collection.updateOne(
         { _id: new ObjectId(batismoId) },
         {
           $pull: {
-            batizandos: { nome, rede }
+            batizandos: match
           } as any
         }
       )

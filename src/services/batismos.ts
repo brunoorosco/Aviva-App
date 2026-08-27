@@ -26,9 +26,13 @@ export const createBatismoService = async (
 ): Promise<any> => {
   const batismoRepository = new BatismoMongoRepository()
 
-  const batizandos = data.people.map((p: Person) => ({
+  const people = (data.people || []).filter(
+    (p: Person) => p.name && p.name.trim()
+  )
+
+  const batizandos = people.map((p: Person) => ({
     nome: p.name,
-    rede: p.supervisorId.split('|')[1],
+    rede: p.supervisorId?.split('|')[1],
     churchId: churchId,
     sexo: p.sexo
   }))
@@ -66,7 +70,7 @@ export const createBatismoImportedService = async (
 
 export const addBatizandoService = async (
   batismoId: string,
-  batizando: { nome: string; rede: string; sexo: string }
+  batizando: { nome: string; rede: string; sexo: string; userId?: string }
 ): Promise<any> => {
   const batismoRepository = new BatismoMongoRepository()
   return batismoRepository.addBatizando(batismoId, batizando)
@@ -75,8 +79,9 @@ export const addBatizandoService = async (
 export const removeBatizandoService = async (
   batismoId: string,
   nome: string,
-  rede: string
+  rede: string,
+  userId?: string
 ): Promise<any> => {
   const batismoRepository = new BatismoMongoRepository()
-  return batismoRepository.removeBatizando(batismoId, nome, rede)
+  return batismoRepository.removeBatizando(batismoId, nome, rede, userId)
 }

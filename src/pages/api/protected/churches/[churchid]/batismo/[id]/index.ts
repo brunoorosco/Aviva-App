@@ -1,8 +1,31 @@
 import { withAudit } from '@/middlewares/withAudit';
 import { getBatismoByIdService, addBatizandoService, removeBatizandoService } from '@/services/batismos'
+import { updateMemberBaptismStatus } from '@/services/members'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
+
+// data_batismo fica às 00:00 no fuso UTC-3 (America/Sao_Paulo),
+// para que a exibição dd/mm/yyyy não desloque o dia.
+function buildDataBatismo(data: any): Date {
+  const date = data instanceof Date ? data : new Date(data)
+  if (!(date instanceof Date) || isNaN(date.getTime())) return new Date()
+  const y = date.getUTCFullYear() || 1970
+  const m = date.getUTCMonth() || 0
+  const d = date.getUTCDate() || 1
+  return new Date(Date.UTC(y, m, d, 3))
+}
+
+// Segue a convenção do app (lib/permissions): admin por papel (bispo/admin)
+// ou por permissão ("admin").
+function isAdminSession(session: any): boolean {
+  const roleAdmin = ['bispo', 'admin'].includes(
+    session?.user?.role?.toLowerCase?.() || ''
+  )
+  const permAdmin = Array.isArray(session?.user?.permission) &&
+    session.user.permission.some((p: any) => String(p).toLowerCase() === 'admin')
+  return roleAdmin || permAdmin
+}
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
@@ -21,9 +44,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     if (req.method === 'POST') {
       // Adicionar batizando
-      const { nome, rede, sexo } = req.body
+      const { nome, rede, sexo, userId } = req.body
       const userRede = session.user.cem?.name || ''
-      const isAdmin = session.user.role?.toLowerCase() === 'bispo' || session.user.role?.toLowerCase() === 'admin'
+      const isAdmin = isAdminSession(session)
 
       const finalRede = isAdmin ? rede : userRede
 
@@ -31,21 +54,58 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(400).json({ error: 'Rede é obrigatória' })
       }
 
-      await addBatizandoService(id, { nome, rede: finalRede, sexo })
+      await addBatizandoService(id, { nome, rede: finalRede, sexo, userId })
+
+      if (userId) {
+        const batismo = await getBatismoByIdService(churchid, id)
+        await updateMemberBaptismStatus(userId, {
+          batizado: true,
+          dataBatismo: batismo?.data ? buildDataBatismo(batismo.data) : null,
+          sexo
+        })
+      }
+
       return res.status(201).json({ message: 'Batizando adicionado com sucesso' })
     }
 
     if (req.method === 'DELETE') {
       // Remover batizando
-      const { nome, rede } = req.body || req.query
+      const { nome: reqNome, userId: reqUserId } = req.body || req.query
       const userRede = session.user.cem?.name || ''
-      const isAdmin = session.user.role?.toLowerCase() === 'bispo' || session.user.role?.toLowerCase() === 'admin'
+      const isAdmin = isAdminSession(session)
 
-      if (!isAdmin && rede !== userRede) {
+      // Resolve o batizando a partir do que está gravado no banco (não do que foi
+      // enviado pelo cliente), garantindo que uma rede/envio desatualizado não
+      // quebre a exclusão logo após uma adição otimista.
+      const batismo = await getBatismoByIdService(churchid, id)
+      const normalizedNome = String(reqNome || '').trim().toUpperCase()
+      const matches = (batismo?.batizandos || []).filter(
+        (p: any) => p.nome?.trim().toUpperCase() === normalizedNome
+      )
+      const target = reqUserId
+        ? matches.find((p: any) => p.userId === reqUserId) || matches[0]
+        : matches.find((p: any) => !p.userId) || matches[0]
+
+      // Exclusão idempotente: se o batizando não existe mais, responde sucesso.
+      if (!target) {
+        return res.status(200).json({ message: 'Batizando removido com sucesso' })
+      }
+
+      const storedUserId: string | null = target.userId || reqUserId || null
+
+      if (!isAdmin && target.rede !== userRede) {
         return res.status(403).json({ error: 'Você só pode excluir batizandos da sua própria rede' })
       }
 
-      await removeBatizandoService(id, nome as string, rede as string)
+      await removeBatizandoService(id, target.nome as string, target.rede as string, storedUserId || undefined)
+
+      if (storedUserId) {
+        await updateMemberBaptismStatus(storedUserId, {
+          batizado: false,
+          dataBatismo: null
+        })
+      }
+
       return res.status(200).json({ message: 'Batizando removido com sucesso' })
     }
 

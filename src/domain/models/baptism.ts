@@ -11,4 +11,5 @@ type People = {
   rede?: string;
   isCourse: boolean;
   sexo?: string;
+  userId?: string;
 };
