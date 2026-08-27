@@ -16,6 +16,17 @@ function buildDataBatismo(data: any): Date {
   return new Date(Date.UTC(y, m, d, 3))
 }
 
+// Segue a convenção do app (lib/permissions): admin por papel (bispo/admin)
+// ou por permissão ("admin").
+function isAdminSession(session: any): boolean {
+  const roleAdmin = ['bispo', 'admin'].includes(
+    session?.user?.role?.toLowerCase?.() || ''
+  )
+  const permAdmin = Array.isArray(session?.user?.permission) &&
+    session.user.permission.some((p: any) => String(p).toLowerCase() === 'admin')
+  return roleAdmin || permAdmin
+}
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
   if (!session) {
@@ -35,7 +46,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       // Adicionar batizando
       const { nome, rede, sexo, userId } = req.body
       const userRede = session.user.cem?.name || ''
-      const isAdmin = session.user.role?.toLowerCase() === 'bispo' || session.user.role?.toLowerCase() === 'admin'
+      const isAdmin = isAdminSession(session)
 
       const finalRede = isAdmin ? rede : userRede
 
@@ -61,7 +72,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       // Remover batizando
       const { nome: reqNome, userId: reqUserId } = req.body || req.query
       const userRede = session.user.cem?.name || ''
-      const isAdmin = session.user.role?.toLowerCase() === 'bispo' || session.user.role?.toLowerCase() === 'admin'
+      const isAdmin = isAdminSession(session)
 
       // Resolve o batizando a partir do que está gravado no banco (não do que foi
       // enviado pelo cliente), garantindo que uma rede/envio desatualizado não

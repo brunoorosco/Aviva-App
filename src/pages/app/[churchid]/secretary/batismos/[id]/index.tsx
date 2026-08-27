@@ -115,9 +115,10 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
 
   if (!batismo) return <p className="p-10 text-center">Batismo não encontrado.</p>;
 
-  const isAdmin = ["bispo", "admin"].includes(
-    session?.user?.role?.toLowerCase() || ""
-  );
+  const isAdmin =
+    ["bispo", "admin"].includes(session?.user?.role?.toLowerCase() || "") ||
+    session?.user?.permission?.some((p) => p.toLowerCase() === "admin") ||
+    false;
   const userRede = session?.user?.cem?.name;
 
   const getDateOnly = (date: Date) => {
