@@ -41,7 +41,7 @@ const NovoBatismo = () => {
     watch,
     formState: { errors }
   } = useForm<FormValues>({
-    defaultValues: { people: [{ name: '', supervisorId: '', sexo: '' }] }
+    defaultValues: { people: [] }
   })
   const inputFileRef = useRef<HTMLInputElement>(null)
 
@@ -53,9 +53,12 @@ const NovoBatismo = () => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setIsLoading(true)
+      const people = (data.people || []).filter(
+        (p) => p.name && p.name.trim() && p.supervisorId
+      )
       const response = await useHttpPost({
         url: `/api/protected/churches/${session?.user.churchId}/batismo`,
-        data
+        data: { ...data, people }
       })
       setIsLoading(false)
       if (response?.error) Toast.showError('Erro ao salvar batismo!')

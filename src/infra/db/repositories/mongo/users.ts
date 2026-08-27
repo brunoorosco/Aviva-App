@@ -102,7 +102,9 @@ export class UsersMongoRepository {
     }
   }
 
-  async getUsersByCellIdEquipe(cemId: string): Promise<{ _id: string; name: string }[]> {
+  async getUsersByCellIdEquipe(cemId: string): Promise<
+    { _id: string; name: string; batizado?: boolean; sexo?: string }[]
+  > {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
 
@@ -113,8 +115,8 @@ export class UsersMongoRepository {
       };
 
       const users = await collection
-        .find<{ _id: any; name: string }>(filter)
-        .project({ _id: 1, name: 1 })
+        .find<{ _id: any; name: string; batizado?: boolean; sexo?: string }>(filter)
+        .project({ _id: 1, name: 1, batizado: 1, sexo: 1 })
         .collation({ locale: "pt", strength: 1 })
         .sort({ active: -1, name: 1 })
         .toArray();
@@ -122,6 +124,8 @@ export class UsersMongoRepository {
       return users.map((user) => ({
         _id: user._id.toString(),
         name: user.name,
+        batizado: user.batizado,
+        sexo: user.sexo,
       }));
     } catch (error) {
       console.error("Error get users by cell:", error);
@@ -149,6 +153,32 @@ export class UsersMongoRepository {
       return result;
     } catch (error) {
       console.error("Error get users:", error);
+      throw error;
+    }
+  }
+
+  async setBaptismStatus(
+    userId: string,
+    { batizado, dataBatismo }: { batizado: boolean; dataBatismo?: Date | null },
+  ): Promise<any> {
+    try {
+      const collection = await MongoHelper.getCollection(this.collectionName);
+      const set: any = { batizado, updatedAt: new Date() };
+      const unset: any = {};
+
+      if (dataBatismo) {
+        set.data_batismo = dataBatismo;
+      } else {
+        unset.data_batismo = "";
+      }
+
+      const result = await collection.updateOne(
+        { _id: new ObjectId(userId) },
+        Object.keys(unset).length > 0 ? { $set: set, $unset: unset } : { $set: set },
+      );
+      return result;
+    } catch (error) {
+      console.error("Error updating baptism status:", error);
       throw error;
     }
   }
