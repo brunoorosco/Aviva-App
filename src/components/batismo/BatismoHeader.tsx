@@ -35,11 +35,22 @@ const BatismoHeader = ({ pathname, inputFileRef, batismo }: Props) => {
     .slice()
     .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())[0];
 
-  const dataUltimo = ultimoBatismo?.data
-    ? !isMobile
-      ? format(new Date(ultimoBatismo.data), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
-      : format(new Date(ultimoBatismo.data), "dd/MM/yy", { locale: ptBR })
-    : "-";
+  const formatUltimo = (data: string | Date) => {
+    const d = new Date(data);
+    const utcDate = new Date(
+      d.getUTCFullYear(),
+      d.getUTCMonth(),
+      d.getUTCDate(),
+      12,
+      0,
+      0
+    );
+    return !isMobile
+      ? format(utcDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+      : format(utcDate, "dd/MM/yy", { locale: ptBR });
+  };
+
+  const dataUltimo = ultimoBatismo?.data ? formatUltimo(ultimoBatismo.data) : "-";
 
   return (
     <Header
@@ -65,10 +76,15 @@ const Header = ({
 }: HeaderProps) => {
 
   const { data: session } = useSession();
-  if (!session?.user?.permission) return null;
-  const permission = session?.user?.permission as string[];
-  const isAdmin = permission.some((p) => p === "admin" || p === "secretaria");
 
+  const permission = Array.isArray(session?.user?.permission)
+    ? session.user.permission
+    : [];
+  const isAdmin = permission.some(
+    (p) => p === "admin" || p === "secretaria"
+  );
+
+  if (!session?.user || !isAdmin) return null;
 
   return (
     <div className="bg-card rounded-xl border shadow-sm overflow-hidden">

@@ -121,22 +121,10 @@ export default function BatismoPage({ batismo: initialBatismo }: Props) {
     false;
   const userRede = session?.user?.cem?.name;
 
-  const getDateOnly = (date: Date) => {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    return d.getTime();
-  };
+  const baptismDateISO = new Date(batismo.data).toISOString().slice(0, 10);
+  const todayISO = new Date().toISOString().slice(0, 10);
 
-  const baptismDate = new Date(batismo.data);
-  const dataString = batismo.data as unknown as string;
-  if (typeof dataString === "string" && dataString.length <= 10) {
-    baptismDate.setHours(12, 0, 0, 0);
-  }
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const isFutureOrAdmin = getDateOnly(baptismDate) >= today.getTime() || isAdmin;
+  const isFutureOrAdmin = baptismDateISO >= todayISO || isAdmin;
   const canAdd = isFutureOrAdmin;
 
   const dataFormatada = formatDate(batismo.data);
