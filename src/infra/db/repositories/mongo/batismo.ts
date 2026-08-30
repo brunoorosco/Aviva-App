@@ -18,13 +18,17 @@ export class BatismoMongoRepository {
           {
             $project: {
               data: 1,
-              batizandos: {
-                $sortArray: { input: '$batizandos', sortBy: { nome: 1 } }
-              }
+              batizandos: 1
             }
           }
         ])
         .toArray()
+
+      if (batismo?.batizandos) {
+        batismo.batizandos.sort((a: any, b: any) =>
+          a.nome.localeCompare(b.nome, "pt-BR")
+        )
+      }
 
       return batismo
     } catch (error) {

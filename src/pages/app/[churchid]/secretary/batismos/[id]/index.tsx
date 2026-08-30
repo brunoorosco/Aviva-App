@@ -60,21 +60,23 @@ function exportarListaExcel(batismo: baptism, dataFormatada: string) {
     Sexo: p.sexo === "M" ? "Masculino" : p.sexo === "F" ? "Feminino" : "-",
   });
 
+  const sortByName = (a: any, b: any) => a.nome.localeCompare(b.nome, "pt-BR");
+
   // Sheet 1 — Todos (ordem alfabética)
   const todos = [...batismo.batizandos]
-    .sort((a, b) => a.nome.localeCompare(b.nome))
+    .sort(sortByName)
     .map(toRow);
 
   // Sheet 2 — Somente homens
   const homens = [...batismo.batizandos]
     .filter((p) => p.sexo === "M")
-    .sort((a, b) => a.nome.localeCompare(b.nome))
+    .sort(sortByName)
     .map(toRow);
 
   // Sheet 3 — Somente mulheres
   const mulheres = [...batismo.batizandos]
     .filter((p) => p.sexo === "F")
-    .sort((a, b) => a.nome.localeCompare(b.nome))
+    .sort(sortByName)
     .map(toRow);
 
   const addSheet = (data: any[], sheetName: string) => {
