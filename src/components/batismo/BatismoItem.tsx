@@ -24,17 +24,10 @@ const BatismoItem = ({ batismos, onEdit, basePath }: Props) => {
 
   const isAdmin = session?.user?.permission?.includes("admin");
 
-  const endOfToday = new Date();
-  endOfToday.setHours(23, 59, 59, 999);
+  const baptismDateISO = new Date(batismos.data).toISOString().slice(0, 10);
+  const todayISO = new Date().toISOString().slice(0, 10);
 
-  const baptismEndOfDay = new Date(batismos.data);
-  const dataString = batismos.data as unknown as string;
-  if (typeof dataString === "string" && dataString.length <= 10) {
-    baptismEndOfDay.setHours(12, 0, 0, 0);
-  }
-  baptismEndOfDay.setHours(23, 59, 59, 999);
-
-  const isFuture = baptismEndOfDay.getTime() >= endOfToday.getTime() || isAdmin;
+  const isFuture = baptismDateISO >= todayISO || isAdmin;
 
   const total = batismos.batizandos?.length || 0;
   const redes = [...new Set(batismos.batizandos?.map((b: any) => b.rede).filter(Boolean))];
