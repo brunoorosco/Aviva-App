@@ -38,7 +38,14 @@ export default function SelectMembersMultiple({
     const isNotSelected = !selectedPeople.find((p) => p._id === member._id)
     const matchesSearch = member.name
       .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .includes(
+        searchTerm
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+      )
     return isNotSelected && matchesSearch
   })
 

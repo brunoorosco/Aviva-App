@@ -2,6 +2,11 @@ import { TMinisterialLevel } from "@/domain/models/ministerial";
 import { ObjectId } from "mongodb";
 import { MongoHelper } from "../../mongoHelper";
 import { User } from "@/domain/models/users";
+
+function foldAccents(text: string): string {
+  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 export class UsersMongoRepository {
   private collectionName: string;
   constructor() {
@@ -111,7 +116,6 @@ export class UsersMongoRepository {
       const filter = {
         "cem._id": cemId,
         active: true,
-        role: { $ne: "bispo" },
       };
 
       const users = await collection
@@ -222,9 +226,8 @@ export class UsersMongoRepository {
     try {
       const collection = await MongoHelper.getCollection(this.collectionName);
       const result = await collection
-
         .find(
-          { name: new RegExp(name, "i"), churchId: churchId, active: true },
+          { churchId: churchId, active: true },
           {
             projection: {
               name: 1,
@@ -234,6 +237,19 @@ export class UsersMongoRepository {
         )
         .collation({ locale: "pt", strength: 1 })
         .toArray();
+
+      const normalizedName = name?.trim()?.toLocaleLowerCase("pt-BR") ?? "";
+
+      if (normalizedName) {
+        const foldedName = foldAccents(normalizedName);
+        return result.filter(
+          (u: any) =>
+            foldAccents((u.name || "").toLocaleLowerCase("pt-BR")).includes(
+              foldedName
+            )
+        );
+      }
+
       return result;
     } catch (error) {
       console.error("Error get user:", error);
@@ -256,22 +272,30 @@ export class UsersMongoRepository {
       const collection = await MongoHelper.getCollection(this.collectionName);
       const skip = (page - 1) * limit;
 
-      // 🔹 filtro dinâmico
-      const filter: any = { churchId };
-      if (name && name.trim().length > 0) {
-        filter.name = { $regex: name, $options: "i" }; // case-insensitive
+      let all = await collection
+        .find({ churchId })
+        .collation({ locale: "pt", strength: 1 })
+        .toArray();
+
+      const normalizedName = name?.trim()?.toLocaleLowerCase("pt-BR") ?? "";
+
+      if (normalizedName) {
+        const foldedName = foldAccents(normalizedName);
+        all = all.filter(
+          (u: any) =>
+            foldAccents((u.name || "").toLocaleLowerCase("pt-BR")).includes(
+              foldedName
+            )
+        );
       }
 
-      const [data, total] = await Promise.all([
-        collection
-          .find(filter)
-          .collation({ locale: "pt", strength: 1 })
-          .sort({ active: -1, name: 1 })
-          .skip(skip)
-          .limit(limit)
-          .toArray(),
-        collection.countDocuments(filter),
-      ]);
+      all.sort((a: any, b: any) => {
+        if (a.active !== b.active) return a.active ? -1 : 1;
+        return (a.name || "").localeCompare(b.name || "", "pt-BR");
+      });
+
+      const data = all.slice(skip, skip + limit);
+      const total = all.length;
 
       return {
         data,
