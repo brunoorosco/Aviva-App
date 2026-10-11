@@ -156,12 +156,13 @@ export default function EditarApresentacao() {
 
                     <div className="space-y-2">
                         <Label>Rede / CEM</Label>
-                        {isAdmin ? (
+{isAdmin ? (
                             <SelectCem
                                 control={control}
                                 name="rede"
                                 title="Selecione a Rede"
                                 churchId={churchId as string}
+                                fallbackRede={userCem ?? null}
                             />
                         ) : (
                             <Controller

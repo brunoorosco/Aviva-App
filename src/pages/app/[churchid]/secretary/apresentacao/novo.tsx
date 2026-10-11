@@ -188,7 +188,7 @@ export default function NovaApresentacao() {
 
                     <div className="space-y-2">
                         <Label>Rede / CEM</Label>
-                        {isAdmin ? (
+{isAdmin ? (
                             <SelectCem
                                 control={control}
                                 name="rede"
@@ -196,19 +196,19 @@ export default function NovaApresentacao() {
                                 churchId={churchId}
                                 errors={errors}
                                 isRequired
+                                fallbackRede={userCem ?? null}
                             />
                         ) : (
-                            <Controller
-                                control={control}
-                                name="rede"
-                                render={({ field }) => (
-                                    <Input
-                                        value={field.value?.name || ''} // ← extrai o name
-                                        disabled
-                                        className="bg-slate-100"
-                                    />
-                                )}
-                            />
+<Controller
+    control={control}
+    name="rede"
+    render={({ field }) => (
+        <Input
+            value={field.value?.name || ''}
+            disabled
+        />
+    )}
+/>
                         )}
                     </div>
 
