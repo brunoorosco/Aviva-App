@@ -14,6 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import Toast from '@/components/Toast';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useReactToPrint } from 'react-to-print';
+import { useCultoSettings } from '@/hooks/useCultoSettings';
+import { isSunday } from '@/utils/date';
 
 const typeOrder: Record<TApresentacao['tipo'], number> = {
     alianca: 1,
@@ -32,6 +34,10 @@ export default function DetalhesApresentacao() {
     const [isDeleting, setIsDeleting] = useState(false);
 
     const { date } = router.query;
+
+    const { cultoDomingo } = useCultoSettings(churchId);
+    const isDomingo = isSunday(date as string | undefined);
+    const hideHorario = isDomingo && cultoDomingo !== 'manha_e_noite';
 
     const { data: apresentacoesResponse, isLoading, mutate } = useHttpGet<TApresentacao[]>(
         churchId ? `/api/protected/churches/${churchId}/secretary/apresentacao` : null
@@ -266,7 +272,7 @@ export default function DetalhesApresentacao() {
                             <Printer className="w-4 h-4 mr-2 " />
                             Imprimir
                         </Button>
-                        <Link href={`/app/${churchId}/secretary/apresentacao/novo?date=${date}`}>
+                        <Link href={hideHorario ? `/app/${churchId}/secretary/apresentacao/novo?date=${date}&horario=${cultoDomingo}` : `/app/${churchId}/secretary/apresentacao/novo?date=${date}`}>
                             <Button className='bg-blue-500 dark:bg-orange-500'>
                                 <Plus className="w-4 h-4 mr-2" />
                                 Adicionar Pessoa
@@ -291,8 +297,12 @@ export default function DetalhesApresentacao() {
                                             </Badge>
                                             <span className="text-sm text-slate-400 dark:text-gray-100">|</span>
                                             <span className="text-sm text-slate-500 font-medium dark:text-gray-200">{getCleanRedeName(item.rede) || 'nome da rede'}</span>
-                                            <span className="text-sm text-slate-400 dark:text-gray-100">|</span>
-                                            <span className="text-sm text-slate-500 font-medium dark:text-gray-200">{item.horario}</span>
+                                            {!hideHorario && (
+                                                <>
+                                                    <span className="text-sm text-slate-400 dark:text-gray-100">|</span>
+                                                    <span className="text-sm text-slate-500 font-medium dark:text-gray-200">{item.horario}</span>
+                                                </>
+                                            )}
                                         </div>
 
                                         <div className="font-semibold text-lg text-slate-800 flex items-center gap-2 dark:text-gray-100">

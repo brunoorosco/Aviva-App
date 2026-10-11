@@ -230,6 +230,11 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
           link: `${base}/admin/eventos`,
           icon: Calendar1Icon,
         },
+        {
+          label: "Configurações",
+          link: `${base}/admin/configuracoes`,
+          icon: Settings,
+        },
       ],
     },
   ];

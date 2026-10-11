@@ -3,6 +3,7 @@ import { AddressModel } from "./address";
 import { CellsModel } from "./cells";
 import { TMinisterialLevel } from "./ministerial";
 import { TApresentacao } from "./apresentacao";
+import { CultoDomingo } from "./cultoSettings";
 
 export type ChurchModel = {
   _id: ObjectId;
@@ -11,6 +12,7 @@ export type ChurchModel = {
   apresentacao: TApresentacao[];
   cells: CellsModel[];
   ministerios: TMinisterios[]
+  cultoDomingo?: CultoDomingo;
 } & AddressModel;
 
 export type ConsagracaoHistory = {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -18,6 +18,8 @@ import { Loader2 } from 'lucide-react';
 import { usePermissions } from '@/hooks/usePermissions';
 import { SelectCem } from '@/components/Select/SelectCem';
 import { useHttpPost } from '@/hooks/api';
+import { useCultoSettings } from '@/hooks/useCultoSettings';
+import { isSunday } from '@/utils/date';
 import Toast from '@/components/Toast';
 
 /* =======================
@@ -88,6 +90,21 @@ export default function NovaApresentacao() {
     });
 
     const tipo = watch('tipo');
+    const dataApresentacao = watch('dataApresentacao');
+    const horario = watch('horario');
+
+    const { cultoDomingo } = useCultoSettings(churchId);
+
+    const isDomingo = useMemo(() => isSunday(dataApresentacao), [dataApresentacao]);
+    const fixedHorario = isDomingo && cultoDomingo !== 'manha_e_noite' ? cultoDomingo : null;
+
+    // Quando o config fixa o horário para domingo e o valor atual está errado,
+    // sincroniza o form (sem sobrepor o valor do usuário quando não é domingo).
+    useEffect(() => {
+        if (fixedHorario) {
+            setValue('horario', fixedHorario as 'manha' | 'noite');
+        }
+    }, [fixedHorario, setValue]);
 
     /* =======================
        EFFECTS
@@ -222,24 +239,39 @@ export default function NovaApresentacao() {
 
                     <div className="space-y-2">
                         <Label>Horário do Culto</Label>
-                        <Controller
-                            control={control}
-                            name="horario"
-                            render={({ field }) => (
-                                <Select
-                                    onValueChange={field.onChange}
-                                    value={field.value}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Selecione o horário" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="manha">Manhã</SelectItem>
-                                        <SelectItem value="noite">Noite</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            )}
-                        />
+                        {fixedHorario ? (
+                            <Controller
+                                control={control}
+                                name="horario"
+                                render={({ field }) => (
+                                    <Input
+                                        value={
+                                            field.value === 'manha' ? 'Manhã' : field.value === 'noite' ? 'Noite' : ''
+                                        }
+                                        disabled
+                                    />
+                                )}
+                            />
+                        ) : (
+                            <Controller
+                                control={control}
+                                name="horario"
+                                render={({ field }) => (
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Selecione o horário" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="manha">Manhã</SelectItem>
+                                            <SelectItem value="noite">Noite</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
+                        )}
                     </div>
                 </div>
 
