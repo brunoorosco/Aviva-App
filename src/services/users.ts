@@ -174,6 +174,84 @@ export const getUsersByStatus = async (churchId: string, cargo: TMinisterialLeve
   return resp;
 };
 
+/**
+ * Concede ou revoga uma permissão específica para uma lista de usuários,
+ * sem mexer em outras permissões e sem alterar senha.
+ * Usado para:
+ *  - `apresentacao_crianca` (página de Apresentação de Crianças)
+ */
+export const changeUserPermissionByEmail = async (data: {
+  emails: string;
+  permission: string;
+  action: "grant" | "revoke";
+}) => {
+  const { emails, permission, action } = data;
+  const userRepository = new UsersMongoRepository();
+
+  if (!emails || !permission) {
+    return { status: 400, message: "Emails e permissão são obrigatórios." };
+  }
+  if (action !== "grant" && action !== "revoke") {
+    return { status: 400, message: "Ação inválida." };
+  }
+
+  const emailList = emails
+    .split(",")
+    .map((e: string) => e.trim().toLowerCase())
+    .filter((e: string) => e.length > 0);
+
+  if (emailList.length === 0) {
+    return { status: 400, message: "Nenhum email válido informado." };
+  }
+
+  const results: { email: string; found: boolean; applied: boolean }[] = [];
+
+  for (const email of emailList) {
+    const user = await userRepository.getByEmail(email);
+    if (!user) {
+      results.push({ email, found: false, applied: false });
+      continue;
+    }
+
+    let perms: string[] = [];
+    if (Array.isArray(user.permission)) {
+      perms = [...user.permission];
+    } else if (typeof user.permission === "string" && user.permission) {
+      perms = [user.permission];
+    }
+
+    if (action === "grant") {
+      if (!perms.includes(permission)) perms.push(permission);
+    } else {
+      perms = perms.filter((p: string) => p !== permission);
+    }
+
+    const resp = await userRepository.updatePermissionOnly(email, perms);
+    results.push({
+      email,
+      found: true,
+      applied: (resp?.modifiedCount ?? 0) > 0,
+    });
+  }
+
+  const notFound = results.filter((r) => !r.found).map((r) => r.email);
+  if (notFound.length === emailList.length) {
+    return {
+      status: 404,
+      message: `Nenhum usuário encontrado para os emails: ${notFound.join(", ")}`,
+    };
+  }
+
+  return {
+    status: 200,
+    message:
+      action === "grant"
+        ? `Permissão "${permission}" concedida para ${results.filter((r) => r.applied).length} usuário(s).`
+        : `Permissão "${permission}" revogada para ${results.filter((r) => r.applied).length} usuário(s).`,
+    results,
+  };
+};
+
 export const getUserSettings = async (userId: string): Promise<Partial<User>> => {
   const userRepository = new UsersMongoRepository();
   const user = await userRepository.geUserById(userId);

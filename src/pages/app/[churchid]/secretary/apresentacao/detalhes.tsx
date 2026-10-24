@@ -16,11 +16,13 @@ import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useReactToPrint } from 'react-to-print';
 import { useCultoSettings } from '@/hooks/useCultoSettings';
 import { isSunday } from '@/utils/date';
+import { isAdminUser } from '@/lib/isAdminUser';
 
 const typeOrder: Record<TApresentacao['tipo'], number> = {
     alianca: 1,
     novoMembro: 2,
-    crianca: 3
+    crianca: 3,
+    cursoCrianca: 4,
 };
 
 export default function DetalhesApresentacao() {
@@ -46,7 +48,10 @@ export default function DetalhesApresentacao() {
     const filteredList = (apresentacoesResponse?.data || []).filter(item => {
         if (!date) return false;
         const itemDate = item.dataApresentacao.split('T')[0];
-        return itemDate === date;
+        if (itemDate !== date) return false;
+        // O doc 'cursoCrianca' de wrapper não entra na lista de pessoas.
+        if (item.tipo === 'cursoCrianca') return false;
+        return true;
     }).sort((a, b) => {
         if (a.horario !== b.horario) return a.horario === 'manha' ? -1 : 1;
         return typeOrder[a.tipo] - typeOrder[b.tipo];
@@ -72,9 +77,9 @@ export default function DetalhesApresentacao() {
         return getRedeName(rede) || '';
     };
 
-    // Admin pode remover qualquer uma; supervisor/pastor só da própria rede
+    // Admin pode remover qualquer uma (qualquer rede); supervisor/pastor só da própria rede
     const canDeleteItem = (item: TApresentacao) => {
-        if (userRole === 'admin') return true;
+        if (isAdminUser(session)) return true;
         if (userRole === 'supervisor' || userRole === 'pastor') {
             return !!userCemName &&
                 getCleanRedeName(item.rede).toUpperCase() === userCemName.toUpperCase();
@@ -85,7 +90,8 @@ export default function DetalhesApresentacao() {
     const getItemLabel = (item: TApresentacao) => {
         if (item.tipo === 'novoMembro') return item.nome || '';
         if (item.tipo === 'alianca') return `${item.nomeHomem || ''} & ${item.nomeMulher || ''}`;
-        return item.nomeCrianca || '';
+        if (item.tipo === 'crianca') return item.nomeCrianca || '';
+        return '';
     };
 
     const handleDelete = async () => {

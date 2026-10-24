@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { ApresentacaoMongoRepository } from "@/infra/db/repositories/mongo/apresentacao";
 import { getRedeName } from "@/utils/helpersNameREde";
+import { isAdminUser } from "@/lib/isAdminUser";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
@@ -37,11 +38,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 return res.status(404).json({ error: "Not found" });
             }
 
-            // @ts-ignore
-            const role = (session.user.role || '').toLowerCase();
-            const isAdmin = role === 'admin';
+            const isAdmin = isAdminUser(session);
 
-            if (!isAdmin && role !== 'supervisor' && role !== 'pastor') {
+            const userRole = (session.user.role || '').toString().toLowerCase().trim();
+
+            if (!isAdmin && userRole !== 'supervisor' && userRole !== 'pastor') {
                 return res.status(403).json({ error: "Você não tem permissão para remover apresentações." });
             }
 

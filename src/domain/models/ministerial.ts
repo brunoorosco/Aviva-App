@@ -16,7 +16,8 @@ export type Permission =
   | "SUPERADMIN"
   | "boas-vindas"
   | "secretaria"
-  | "ADMIN_CELL";
+  | "ADMIN_CELL"
+  | "apresentacao_crianca";
 
 export type Cargo =
   | "Membro"

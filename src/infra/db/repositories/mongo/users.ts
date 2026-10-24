@@ -315,22 +315,41 @@ export class UsersMongoRepository {
     permission,
   }: {
     email: string;
-    password: string;
+    password?: string;
     permission: string[];
   }) {
     const emailLower = email.toLowerCase();
     const collection = await MongoHelper.getCollection(this.collectionName);
+    const set: Record<string, any> = {
+      permission,
+      updatedAt: new Date(),
+    };
+    if (password) set.password = password;
     const resp = await collection.updateOne(
       { email: { $regex: emailLower, $options: "i" } },
       {
-        $set: {
-          password,
-          permission: permission,
-          updatedAt: new Date(),
-        },
+        $set: set,
       },
     )
     return resp;
+  }
+
+  /**
+   * Atualiza APENAS o campo `permission` (sem senha).
+   * Para o fluxo de grant/revoke de `apresentacao_crianca`.
+   */
+  async updatePermissionOnly(email: string, permission: string[]) {
+    const emailLower = email.toLowerCase();
+    const collection = await MongoHelper.getCollection(this.collectionName);
+    return await collection.updateOne(
+      { email: { $regex: emailLower, $options: "i" } },
+      {
+        $set: {
+          permission,
+          updatedAt: new Date(),
+        },
+      },
+    );
   }
 
   async getUsersByStatus(churchId: string, cargo: TMinisterialLevel) {

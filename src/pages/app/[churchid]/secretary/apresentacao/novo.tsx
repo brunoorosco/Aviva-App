@@ -24,10 +24,11 @@ import Toast from '@/components/Toast';
 
 /* =======================
    TIPOS DO FORMULÁRIO
+   (crianca removida: agora criada via "Apresentação de Crianças")
 ======================= */
 
 type BaseForm = {
-    tipo: 'alianca' | 'novoMembro' | 'crianca';
+    tipo: 'alianca' | 'novoMembro';
     rede: { _id: string; name: string }; // ← sempre objeto agora
     dataApresentacao: string;
     horario: 'manha' | 'noite';
@@ -45,14 +46,7 @@ type FormNovoMembro = BaseForm & {
     igreja_anterior: string;
 };
 
-type FormCrianca = BaseForm & {
-    tipo: 'crianca';
-    nomeCrianca: string;
-    nomePai: string;
-    nomeMae: string;
-};
-
-type FormValues = FormAlianca | FormNovoMembro | FormCrianca;
+type FormValues = FormAlianca | FormNovoMembro;
 
 /* =======================
    COMPONENTE
@@ -119,25 +113,12 @@ export default function NovaApresentacao() {
     useEffect(() => {
         if (tipo === 'alianca') {
             setValue('nome', undefined as never);
-            setValue('nomeCrianca', undefined as never);
-            setValue('nomePai', undefined as never);
-            setValue('nomeMae', undefined as never);
             setValue('igreja_anterior', undefined as never);
         }
 
         if (tipo === 'novoMembro') {
             setValue('nomeHomem', undefined as never);
             setValue('nomeMulher', undefined as never);
-            setValue('nomeCrianca', undefined as never);
-            setValue('nomePai', undefined as never);
-            setValue('nomeMae', undefined as never);
-        }
-
-        if (tipo === 'crianca') {
-            setValue('nomeHomem', undefined as never);
-            setValue('nomeMulher', undefined as never);
-            setValue('nome', undefined as never);
-            setValue('igreja_anterior', undefined as never);
         }
     }, [tipo, setValue]);
 
@@ -196,7 +177,6 @@ export default function NovaApresentacao() {
                                     <SelectContent>
                                         <SelectItem value="alianca">Aliança</SelectItem>
                                         <SelectItem value="novoMembro">Novo Membro</SelectItem>
-                                        <SelectItem value="crianca">Criança</SelectItem>
                                     </SelectContent>
                                 </Select>
                             )}
@@ -264,7 +244,7 @@ export default function NovaApresentacao() {
                                         <SelectTrigger>
                                             <SelectValue placeholder="Selecione o horário" />
                                         </SelectTrigger>
-                                        <SelectContent>
+<SelectContent>
                                             <SelectItem value="manha">Manhã</SelectItem>
                                             <SelectItem value="noite">Noite</SelectItem>
                                         </SelectContent>
@@ -318,36 +298,6 @@ export default function NovaApresentacao() {
                                 />
                             </div>
                         </>
-                    )}
-
-                    {tipo === 'crianca' && (
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <Label>Nome da Criança</Label>
-                                <Input
-                                    {...register('nomeCrianca', { required: true })}
-                                    placeholder="Nome completo da criança"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label>Nome do Pai</Label>
-                                    <Input
-                                        {...register('nomePai' )}
-                                        placeholder="Nome do pai"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label>Nome da Mãe</Label>
-                                    <Input
-                                        {...register('nomeMae', { required: true })}
-                                        placeholder="Nome da mãe"
-                                    />
-                                </div>
-                            </div>
-                        </div>
                     )}
                 </div>
 

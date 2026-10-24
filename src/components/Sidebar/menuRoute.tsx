@@ -21,8 +21,10 @@ import {
   University,
   Settings,
   TicketCheck,
+  Baby,
 } from "lucide-react";
 import { Role, ROLES } from "@/lib/permissions";
+import { hasCriancaAccess } from "@/lib/hasCriancaAccess";
 
 type TMenu = {
   churchId: string;
@@ -34,6 +36,13 @@ export type MenuItem = {
   icon: any;
   link?: string;
   roles?: Role[];
+  /**
+   * Gate adicional opcional (ex.: 'role ∈ {admin,bispo} OU permission ∋ X').
+   * Quando presente, o item só aparece se `requires(session)` voltar true.
+   * Itens com `requires` e sem `roles` contam como "público" na checagem
+   * padrão da sidebar (o filter só inspeciona `roles`).
+   */
+  requires?: (session: any) => boolean;
   children?: Omit<MenuItem, "children">[];
 };
 
@@ -157,6 +166,12 @@ export const menuItems = ({ churchId, cemId }: TMenu): MenuItem[] => {
           label: "Apresentações",
           icon: Users,
           link: `${base}/secretary/apresentacao`,
+        },
+        {
+          label: "Apresentação de Crianças",
+          icon: Baby,
+          link: `${base}/secretary/apresentacao-crianca`,
+          requires: hasCriancaAccess,
         },
         {
           label: "Membros",
