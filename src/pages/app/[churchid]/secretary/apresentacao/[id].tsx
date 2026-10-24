@@ -162,7 +162,6 @@ export default function EditarApresentacao() {
                                     <SelectContent>
                                         <SelectItem value="alianca">Aliança</SelectItem>
                                         <SelectItem value="novoMembro">Novo Membro</SelectItem>
-                                        <SelectItem value="crianca">Criança</SelectItem>
                                     </SelectContent>
                                 </Select>
                             )}

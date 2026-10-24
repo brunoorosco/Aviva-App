@@ -19,7 +19,9 @@ export default function ListaApresentacao() {
 
   // Group by Date + Horario
   const groupedEvents = React.useMemo(() => {
-    const list = apresentacoesResponse?.data || [];
+    const list = (apresentacoesResponse?.data || []).filter(
+      (i) => i.tipo !== 'cursoCrianca'
+    );
     const groups: Record<string, { date: string, items: TApresentacao[] }> = {};
 
     list.forEach(item => {

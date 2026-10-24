@@ -42,6 +42,9 @@ export function AppSidebar() {
   const filterMenuItems = (items: MenuItem[]): MenuItem[] => {
     return items
       .filter((item) => {
+        // 1) Gate de permission explícito (ex.: 'apresentacao_crianca')
+        if (item.requires && !item.requires(session)) return false;
+        // 2) Gate de roles
         if (!item.roles) return true; // público
         if (isAdmin) return true;
         return hasPermission(item.roles);
@@ -49,7 +52,8 @@ export function AppSidebar() {
       .map((item) => ({
         ...item,
         children: item.children ? filterMenuItems(item.children) : undefined,
-      }));
+      }))
+      .filter((item) => !item.children || item.children.length > 0); // remove grupos sem filhos visíveis
   };
 
   const filteredItems = filterMenuItems(items);
