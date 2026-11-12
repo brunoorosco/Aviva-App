@@ -36,7 +36,10 @@ export const addConsagratedService = async (
   }
 
   const nextRole = users[0].nextRole;
-  return consagracaoRepository.addCargo(churchId, consagracaoId, nextRole, users);
+  await consagracaoRepository.addCargo(churchId, consagracaoId, nextRole, users);
+
+  // Retorna os dados atualizados para o cliente não depender de refetch
+  return await consagracaoRepository.getConsagracaoById(churchId, consagracaoId);
 };
 
 export const addConsagratedUsersService = async (

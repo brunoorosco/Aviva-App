@@ -1,93 +1,39 @@
 // components/consagracoes/ConsagracaoAuxiliarTab.tsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useCallback } from "react";
 import { UserSelectForm } from "./UserSelectForm";
-import Toast from "../Toast";
-import { TempUserToAdd, TMinisterialLevel } from "@/domain/models/ministerial";
-import { useHttpPut } from "@/hooks/api";
+import { TempUserToAdd } from "@/domain/models/ministerial";
 
 export function ConsagracaoAuxiliarTab({
   churchId,
   consagracaoId,
   initialUsers,
+  onListChange,
 }: {
   churchId: string;
   consagracaoId: string;
   initialUsers: any;
+  onListChange?: (list: TempUserToAdd[]) => void;
 }) {
-  const [auxiliaresTempList, setAuxiliaresTempList] = useState<TempUserToAdd[]>(initialUsers ?? []);
-
-  useEffect(() => {
-    if (initialUsers) {
-      setAuxiliaresTempList(initialUsers);
-    }
-  }, [initialUsers]);
-  const handleAddUser = (user: TempUserToAdd) => {
-    setAuxiliaresTempList((prev) => {
-      const exists = prev.some((u) => u.id === user.id);
-      if (exists) return prev;
-      return [...prev, user];
-    });
-  };
-
-  const handleRemoveUser = (userId: string) => {
-    setAuxiliaresTempList((prev) => prev.filter((user) => user.id !== userId));
-  };
-
-  const handleConsagrarAuxiliares = async () => {
-    if (auxiliaresTempList.length === 0) {
-      Toast.showError("Nenhum auxiliar selecionado para consagrar.");
-      return;
-    }
-
-    const payload = auxiliaresTempList.map((user) => ({
-      name: user.name,
-      rede: user.rede,
-      id: user.id,
-      role: user.role,
-      nextRole: "Auxiliar" as TMinisterialLevel,
-    }));
-
-    try {
-      const resp = useHttpPut({
-        url: `/api/protected/churches/${churchId}/consagracao/${consagracaoId}`,
-        data: payload,
-      });
-
-      if (!resp) {
-        throw new Error("Falha ao consagrar auxiliares.");
-      }
-
-      Toast.showSuccess("Auxiliares consagrados com sucesso!");
-    } catch (error: any) {
-      Toast.showError(`Erro ao consagrar auxiliares: ${error.message}`);
-      console.error("Erro ao consagrar auxiliares:", error);
-    }
-  };
+  const handleListChange = useCallback(
+    (list: TempUserToAdd[]) => {
+      onListChange?.(list);
+    },
+    [onListChange],
+  );
 
   return (
-    <div className="space-y-6">
-      <UserSelectForm
-        initialUsers={initialUsers}
-        currentMinisterialLevel="Membro"
-        targetMinisterialLevel="Auxiliar"
-        onAddUser={handleAddUser}
-        onRemoveUser={handleRemoveUser}
-        tempList={auxiliaresTempList}
-        churchId={churchId}
-      />
-      <Button
-        onClick={handleConsagrarAuxiliares}
-        className="w-full mt-6 md:w-auto"
-        disabled={auxiliaresTempList.length === 0}
-      >
-        Consagrar Auxiliares
-      </Button>
-      <p className="mt-2 text-sm text-gray-500">
-        Ao clicar, os usuários selecionados serão promovidos a Auxiliar.
-      </p>
-    </div>
+    <UserSelectForm
+      key="auxiliar"
+      churchId={churchId}
+      consagracaoId={consagracaoId}
+      initialUsers={initialUsers}
+      currentMinisterialLevel="Membro"
+      targetMinisterialLevel="Auxiliar"
+      onListChange={handleListChange}
+      onSaveLabel="Consagrar Auxiliares"
+      onSaveHint="Ao clicar, os usuários selecionados serão promovidos a Auxiliar."
+    />
   );
 }

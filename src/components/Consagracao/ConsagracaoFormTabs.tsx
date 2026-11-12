@@ -1,9 +1,9 @@
+import { useCallback, useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ministerialLevels } from "@/domain/models/ministerial";
+import { ministerialLevels, TempUserToAdd } from "@/domain/models/ministerial";
 import { useHttpGet } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
 
 import { ConsagracaoAuxiliarTab } from "./ConsagracaoAuxiliarTab";
 import { ConsagracaoLiderTab } from "./ConsagracaoLiderTab";
@@ -12,114 +12,129 @@ import { ConsagracaoSeparadoPastoradoTab } from "./ConsagracaoSeparadoPastoradoT
 import { ConsagracaoSeparadoSupervisorTab } from "./ConsagracaoSeparadoSupervidorTab";
 import { ConsagracaoSupervisorTab } from "./ConsagracaoSupervisorTab";
 
+type ConsagracaoLists = Record<string, TempUserToAdd[]>;
+
+const normalize = (text: string) =>
+  text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
 export function ConsagracaoFormTabs({ onDataChange }: any) {
   const { data: session } = useSession();
   const route = useRouter();
   const { id } = route.query;
-  const consagrationId = id as string;
+  const consagracaoId = id as string;
+
+  // État global: guarda a lista por cargo (o estado "fonte da verdade")
+  const [localLists, setLocalLists] = useState<ConsagracaoLists>({});
+  const [listsInited, setListsInited] = useState(false);
 
   const { data } = useHttpGet(
-    session?.user.churchId && consagrationId
-      ? `/api/protected/churches/${session.user.churchId}/consagracao/${consagrationId}`
+    session?.user.churchId && consagracaoId
+      ? `/api/protected/churches/${session.user.churchId}/consagracao/${consagracaoId}`
       : null,
   );
 
   //@ts-ignore
   const consagracao = data?.data?.consagracao?.[0];
-  const users = consagracao?.users ?? [];
-  const date = consagracao?.date; // Data da consagração
-  const concluedAt = consagracao?.concluedAt; // Data de conclusão
+  const users = consagracao?.users ?? {};
+  const date = consagracao?.date;
+  const concluedAt = consagracao?.concluedAt;
 
+  // Inicializa as listas APENAS quando o fetch pela primeira vez chega
   useEffect(() => {
-    if (onDataChange && users) {
-      // ✅ Passa users, date e concluedAt para o parent
+    if (listsInited || !data) return;
+    const initial: ConsagracaoLists = {};
+    for (const [key, value] of Object.entries(users)) {
+      if (Array.isArray(value)) initial[normalize(key)] = value as TempUserToAdd[];
+    }
+    setLocalLists(initial);
+    setListsInited(true);
+  }, [users, data, listsInited]);
+
+  // ✅ Passa para o parent os dados (desta vez, os LOCAIS — não o array novo do fetch)
+  useEffect(() => {
+    if (onDataChange && listsInited) {
       onDataChange({
-        users,
+        users: localLists,
         date,
         concluedAt,
       });
     }
-  }, [users, date, concluedAt, onDataChange]);
+  }, [localLists, date, concluedAt, onDataChange, listsInited]);
 
-  const normalize = (text: string) =>
-    text
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
+  const getRoleList = useCallback(
+    (role: string): TempUserToAdd[] => localLists[normalize(role)] ?? [],
+    [localLists],
+  );
 
-  const getUsersByRole = (role: string) => {
-    const normalizedRole = normalize(role);
-
-    // encontra a chave correta no objeto musers
-    const key = Object.keys(users).find((k) => normalize(k) === normalizedRole);
-
-    if (!key) return [];
-
-    return users[key];
-  };
+  const setRoleList = useCallback((role: string, list: TempUserToAdd[]) => {
+    setLocalLists((prev) => ({ ...prev, [normalize(role)]: list }));
+  }, []);
 
   return (
-    <div className="p-4 bg-card text-card-foreground rounded-lg shadow-sm">
+    <div className="p-3 sm:p-4 bg-card text-card-foreground rounded-lg shadow-sm">
       <Tabs defaultValue={ministerialLevels[0]} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-4 md:grid-cols-3 lg:grid-cols-6">
+        <TabsList className="grid w-full grid-cols-3 gap-1 mb-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6">
           {ministerialLevels.map((level) => (
-            <TabsTrigger key={level} value={level}>
-              {level.replace(/_/g, " ")}
+            <TabsTrigger key={level} value={level} className="h-auto min-h-9 text-xs px-2 sm:text-sm">
+              {level.replace(/_/g, " ").split(" ").pop()}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        {/* Auxiliar */}
         <TabsContent value="Auxiliar">
           <ConsagracaoAuxiliarTab
             churchId={session?.user.churchId!}
-            consagracaoId={consagrationId}
-            initialUsers={getUsersByRole("Auxiliar")}
+            consagracaoId={consagracaoId}
+            initialUsers={getRoleList("Auxiliar")}
+            onListChange={(list) => setRoleList("Auxiliar", list)}
           />
         </TabsContent>
 
-        {/* Líder */}
         <TabsContent value="Lider">
           <ConsagracaoLiderTab
             churchId={session?.user.churchId!}
-            consagracaoId={consagrationId}
-            initialUsers={getUsersByRole("Lider")}
+            consagracaoId={consagracaoId}
+            initialUsers={getRoleList("Lider")}
+            onListChange={(list) => setRoleList("Lider", list)}
           />
         </TabsContent>
 
-        {/* Separado a Supervisão */}
         <TabsContent value="Separado a Supervisão">
           <ConsagracaoSeparadoSupervisorTab
             churchId={session?.user.churchId!}
-            consagracaoId={consagrationId}
-            initialUsers={getUsersByRole("Separado a Supervisao")}
+            consagracaoId={consagracaoId}
+            initialUsers={getRoleList("Separado a Supervisao")}
+            onListChange={(list: TempUserToAdd[]) => setRoleList("Separado a Supervisao", list)}
           />
         </TabsContent>
 
-        {/* Supervisor */}
         <TabsContent value="Supervisor">
           <ConsagracaoSupervisorTab
             churchId={session?.user.churchId!}
-            consagracaoId={consagrationId}
-            initialUsers={getUsersByRole("Supervisor")}
+            consagracaoId={consagracaoId}
+            initialUsers={getRoleList("Supervisor")}
+            onListChange={(list) => setRoleList("Supervisor", list)}
           />
         </TabsContent>
 
-        {/* Separado a Pastorado */}
         <TabsContent value="Separado a Pastorado">
           <ConsagracaoSeparadoPastoradoTab
             churchId={session?.user.churchId!}
-            consagracaoId={consagrationId}
-            initialUsers={getUsersByRole("Separado a Pastorado")}
+            consagracaoId={consagracaoId}
+            initialUsers={getRoleList("Separado a Pastorado")}
+            onListChange={(list) => setRoleList("Separado a Pastorado", list)}
           />
         </TabsContent>
 
-        {/* Pastor */}
         <TabsContent value="Pastor">
           <ConsagracaoPastorTab
             churchId={session?.user.churchId!}
-            consagracaoId={consagrationId}
-            initialUsers={getUsersByRole("Pastor")}
+            consagracaoId={consagracaoId}
+            initialUsers={getRoleList("Pastor")}
+            onListChange={(list) => setRoleList("Pastor", list)}
           />
         </TabsContent>
       </Tabs>

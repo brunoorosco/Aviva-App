@@ -1,5 +1,5 @@
 // components/consagracoes/UserSelectForm.tsx
-import { useState, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,18 +20,20 @@ import {
 } from "@/components/ui/table";
 import { TempUserToAdd, TMinisterialLevel } from "@/domain/models/ministerial";
 import { PlusIcon, TrashIcon, ChevronDown, ChevronRight } from "lucide-react";
-import { useHttpGet } from "@/hooks/api";
+import { useHttpGet, useHttpPut } from "@/hooks/api";
 import { getNextMinisterialLevel } from "@/utils/getNextMinisterialLevel";
 import { getRedeName } from "@/utils/helpersNameREde";
+import Toast from "../Toast";
 
 interface UserSelectFormProps {
+  churchId: string;
+  consagracaoId: string;
   currentMinisterialLevel: TMinisterialLevel;
   targetMinisterialLevel: TMinisterialLevel;
-  onAddUser: (user: TempUserToAdd) => void;
-  onRemoveUser: (userId: string) => void;
-  tempList: TempUserToAdd[];
-  churchId: string;
-  initialUsers: TempUserToAdd[];
+  initialUsers: TempUserToAdd[] | undefined;
+  onListChange?: (list: TempUserToAdd[]) => void;
+  onSaveLabel?: string;
+  onSaveHint?: string;
 }
 
 type TInputConsagracao = {
@@ -50,17 +52,66 @@ type GroupedByRede = {
 };
 
 export function UserSelectForm({
+  churchId,
+  consagracaoId,
   currentMinisterialLevel,
   targetMinisterialLevel,
-  onAddUser,
-  onRemoveUser,
-  tempList,
-  churchId,
   initialUsers,
+  onListChange,
+  onSaveLabel,
+  onSaveHint,
 }: UserSelectFormProps) {
+  const [tempList, setTempList] = useState<TempUserToAdd[]>(initialUsers ?? []);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [expandedRedes, setExpandedRedes] = useState<Set<string>>(new Set());
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Sincroniza quando o parent trocar de array (nova ref).
+  // O parent só troca a ref quando o fetch chega com dados novos do banco,
+  // ou quando o usuário fez uma mudança aqui (via onListChange -> setRoleList).
+  // Quando o usuário muda aqui, o parent faz re-render com a MESMA ref (o novo
+  // array vem de localLists que é o mesmo objeto mutado), então o efeito não dispara.
+  const lastInitialRef = useRef<TempUserToAdd[] | undefined>(initialUsers);
+  useEffect(() => {
+    if (lastInitialRef.current !== initialUsers) {
+      lastInitialRef.current = initialUsers;
+      setTempList(initialUsers ?? []);
+    }
+  }, [initialUsers]);
+
+  // ✅ Reporta mudanças para o parent (FormTabs) de forma estável
+  const handleListChange = useCallback(
+    (list: TempUserToAdd[]) => {
+      setTempList(list);
+      onListChange?.(list);
+    },
+    [onListChange],
+  );
+
+  const handleAddUserToTemp = useCallback(
+    (user: TempUserToAdd) => {
+      setTempList((prev) => {
+        const exists = prev.some((u) => u.id === user.id);
+        if (exists) return prev;
+        const next = [...prev, user];
+        onListChange?.(next);
+        return next;
+      });
+    },
+    [onListChange],
+  );
+
+  const handleRemoveUser = useCallback(
+    (userId: string) => {
+      setTempList((prev) => {
+        const next = prev.filter((user) => user.id !== userId);
+        onListChange?.(next);
+        return next;
+      });
+    },
+    [onListChange],
+  );
 
   function isRoleValid(userRole: string, level: string) {
     const r = userRole.toLowerCase();
@@ -74,17 +125,29 @@ export function UserSelectForm({
   }
 
   const { data, isLoading } = useHttpGet(
-    `/api/protected/churches/${churchId}/users/cargo/${currentMinisterialLevel}`
+    `/api/protected/churches/${churchId}/users/cargo/${currentMinisterialLevel}`,
   );
 
   const ALL_CHURCH_MEMBERS = (data?.data ?? []) as TInputConsagracao[];
 
-  const availableUsers = ALL_CHURCH_MEMBERS.filter(
-    (user) =>
-      isRoleValid(user.role, currentMinisterialLevel) &&
-      !tempList.some((temp) => temp.id === user._id) &&
-      !initialUsers.some((init) => init.id === user._id) &&
-      user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const availableUsers = useMemo(
+    () =>
+      ALL_CHURCH_MEMBERS.filter(
+        (user) =>
+          isRoleValid(user.role, currentMinisterialLevel) &&
+          !tempList.some((temp) => temp.id === user._id),
+        // ✅ NÃO filtra por initialUsers aqui: quem já foi consagrado
+        // NESTE cargo não pode aparecer de novo, mas quem está em OUTROS
+        // cargos pode (porque o fluxo é por baixo para cima).
+        // initialUsers já veio de um cargo anterior e será tratado no backend.
+      ),
+    [ALL_CHURCH_MEMBERS, tempList, currentMinisterialLevel],
+  );
+
+  // Filtro por busca separado para o selector
+  const searchFiltered = useMemo(
+    () => availableUsers.filter((user) => user.name.toLowerCase().includes(searchTerm.toLowerCase())),
+    [availableUsers, searchTerm],
   );
 
   // Agrupa usuários por rede
@@ -102,7 +165,7 @@ export function UserSelectForm({
     return Object.entries(groups)
       .map(([rede, users]) => ({
         rede,
-        users: users.sort((a, b) => a.name.localeCompare(b.name)),
+        users: [...users].sort((a, b) => a.name.localeCompare(b.name)),
         count: users.length,
       }))
       .sort((a, b) => a.rede.localeCompare(b.rede));
@@ -130,25 +193,59 @@ export function UserSelectForm({
 
   const handleAddUser = () => {
     const userToAdd = availableUsers.find((u) => u._id === selectedUserId);
-    if (userToAdd) {
-      onAddUser({
-        id: userToAdd._id,
-        name: userToAdd.name,
-        rede: userToAdd.cem.name,
-        role: userToAdd.role,
-        nextRole: getNextMinisterialLevel(userToAdd.role),
+    if (!userToAdd) return;
+
+    handleAddUserToTemp({
+      id: userToAdd._id,
+      name: userToAdd.name,
+      rede: userToAdd.cem?.name || "Sem Rede",
+      role: userToAdd.role,
+      nextRole: getNextMinisterialLevel(userToAdd.role),
+    });
+
+    setSelectedUserId("");
+    setSearchTerm("");
+
+    const redeName = getRedeName(userToAdd.cem?.name) || "Sem Rede";
+    setExpandedRedes((prev) => new Set([...prev, redeName]));
+  };
+
+  const handleSave = async () => {
+    if (tempList.length === 0) {
+      Toast.showError(
+        `Nenhum membro na lista de ${targetMinisterialLevel.replace(/_/g, " ")}.`,
+      );
+      return;
+    }
+
+    const payload = tempList.map((user) => ({
+      name: user.name,
+      rede: user.rede,
+      id: user.id,
+      role: user.role,
+      nextRole: targetMinisterialLevel,
+    }));
+
+    setIsSaving(true);
+    try {
+      await useHttpPut({
+        url: `/api/protected/churches/${churchId}/consagracao/${consagracaoId}`,
+        data: payload,
       });
-      setSelectedUserId("");
-      setSearchTerm("");
-      // Expande automaticamente a rede do usuário adicionado
-      setExpandedRedes((prev) => new Set([...prev, userToAdd.cem.name]));
+
+      Toast.showSuccess(`${onSaveLabel ?? `Consagrados`}: sucesso!`);
+    } catch (error: any) {
+      Toast.showError(`Erro: ${error?.message ?? "falha ao salvar"}`);
+      console.error("Erro ao consagrar:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
     <div className="space-y-4">
       {/* Formulário de seleção */}
-      <div className="flex flex-col items-end gap-4 md:flex-row">
+      <div className="flex flex-col gap-3 md:flex-row md:items-end">
         <div className="flex-1 w-full">
           <Label htmlFor={`search-user-${currentMinisterialLevel}`}>Buscar Membro</Label>
           <Input
@@ -159,51 +256,63 @@ export function UserSelectForm({
           />
         </div>
         <div className="flex-1 w-full">
-          <Label htmlFor={`select-user-${currentMinisterialLevel}`}>Selecionar Membro</Label>
-          <Select value={selectedUserId} onValueChange={setSelectedUserId}>
-            <SelectTrigger id={`select-user-${currentMinisterialLevel}`} className="capitalize">
+          <Label htmlFor={`select-user-${currentMinisterialLevel}`}>
+            Selecionar {currentMinisterialLevel.replace(/_/g, " ")}
+          </Label>
+          <Select
+            value={selectedUserId || undefined}
+            onValueChange={(v) => setSelectedUserId(v ?? "")}
+          >
+            <SelectTrigger
+              id={`select-user-${currentMinisterialLevel}`}
+              className="h-9 w-full bg-background"
+            >
               <SelectValue
                 placeholder={`Selecionar ${currentMinisterialLevel.replace(/_/g, " ")}`}
               />
             </SelectTrigger>
             <SelectContent>
-              {availableUsers.length === 0 ? (
-                <SelectItem value="no-users" disabled>
+              {searchFiltered.length === 0 ? (
+                <div className="px-2 py-1.5 text-sm text-muted-foreground">
                   Nenhum usuário disponível
-                </SelectItem>
+                </div>
               ) : (
-                availableUsers.map((user) => (
-                  <SelectItem key={user._id} value={user._id} className="capitalize">
-                    {user.name.toLowerCase()} - {user.cem.name.toLowerCase()}
+                searchFiltered.map((user) => (
+                  <SelectItem key={user._id} value={user._id}>
+                    {user.name} - {user.cem?.name ?? "Sem rede"}
                   </SelectItem>
                 ))
               )}
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={handleAddUser} disabled={!selectedUserId} className="w-full md:w-auto">
+        <Button
+          onClick={handleAddUser}
+          disabled={!selectedUserId || isLoading}
+          className="w-full md:w-auto"
+        >
           <PlusIcon className="w-4 h-4 mr-2" /> Adicionar à Lista
         </Button>
       </div>
 
       {/* Header da lista com totais */}
-      <div className="flex items-center justify-between mt-6">
-        <div className="flex items-center gap-4">
-          <h4 className="text-lg font-semibold">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-2">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <h4 className="text-base sm:text-lg font-semibold">
             Lista de {targetMinisterialLevel.replace(/_/g, " ")}
           </h4>
           {tempList.length > 0 && (
-            <span className="px-3 py-1 text-sm font-medium text-white bg-primary rounded-full">
+            <span className="px-2.5 py-0.5 text-xs sm:text-sm font-medium text-white bg-primary rounded-full">
               Total: {tempList.length}
             </span>
           )}
         </div>
         {groupedByRede.length > 1 && (
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={expandAll}>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" className="text-xs sm:text-sm" onClick={expandAll}>
               Expandir Todos
             </Button>
-            <Button variant="outline" size="sm" onClick={collapseAll}>
+            <Button variant="outline" size="sm" className="text-xs sm:text-sm" onClick={collapseAll}>
               Recolher Todos
             </Button>
           </div>
@@ -212,7 +321,7 @@ export function UserSelectForm({
 
       {/* Resumo por rede */}
       {tempList.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-3 bg-muted/50 rounded-lg">
+        <div className="flex flex-wrap gap-2 p-2 sm:p-3 bg-muted/50 rounded-lg">
           {groupedByRede.map((group) => (
             <span
               key={group.rede}
@@ -225,41 +334,39 @@ export function UserSelectForm({
         </div>
       )}
 
-      {/* Tabela com scroll */}
+      {/* Tabela / lista */}
       {tempList.length === 0 ? (
-        <p className="text-gray-600">
+        <p className="text-sm text-muted-foreground">
           Nenhum membro adicionado para consagração como {targetMinisterialLevel.replace(/_/g, " ")}.
         </p>
       ) : (
-        <div className="border rounded-lg max-h-[400px] overflow-y-auto">
-          <Table>
+        <div className="border rounded-lg max-h-[60vh] overflow-y-auto overflow-x-auto">
+          <Table className="min-w-full">
             <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow>
                 <TableHead className="w-8"></TableHead>
                 <TableHead>Nome</TableHead>
-                <TableHead className="text-center">Cargo Atual</TableHead>
-                <TableHead className="text-center">Próximo Cargo</TableHead>
-                <TableHead className="text-right w-20">Ações</TableHead>
+                <TableHead className="hidden md:table-cell text-center">Cargo Atual</TableHead>
+                <TableHead className="hidden md:table-cell text-center">Próximo Cargo</TableHead>
+                <TableHead className="text-right w-14">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {groupedByRede.map((group) => (
-                <>
-                  {/* Header da Rede (clicável) */}
+                <React.Fragment key={group.rede}>
                   <TableRow
-                    key={`rede-${group.rede}`}
                     className="bg-muted/30 hover:bg-muted/50 cursor-pointer"
                     onClick={() => toggleRede(group.rede)}
                   >
-                    <TableCell className="w-8">
+                    <TableCell className="w-8 p-2">
                       {expandedRedes.has(group.rede) ? (
                         <ChevronDown className="w-4 h-4" />
                       ) : (
                         <ChevronRight className="w-4 h-4" />
                       )}
                     </TableCell>
-                    <TableCell colSpan={3} className="font-semibold capitalize">
-                      {group.rede.toLowerCase()}
+                    <TableCell colSpan={3} className="font-semibold text-sm sm:text-base p-2">
+                      {group.rede}
                       <span className="ml-2 px-2 py-0.5 text-xs bg-primary/10 text-primary rounded-full">
                         {group.count} {group.count === 1 ? "membro" : "membros"}
                       </span>
@@ -267,25 +374,26 @@ export function UserSelectForm({
                     <TableCell></TableCell>
                   </TableRow>
 
-                  {/* Usuários da Rede (expandível) */}
                   {expandedRedes.has(group.rede) &&
                     group.users.map((user) => (
                       <TableRow key={user.id} className="bg-background">
-                        <TableCell></TableCell>
-                        <TableCell className="font-medium capitalize pl-6">
-                          {user.name.toLowerCase()}
+                        <TableCell className="w-8 p-2"></TableCell>
+                        <TableCell className="font-medium pl-4 sm:pl-6 text-sm sm:text-base p-2">
+                          {user.name}
                         </TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="hidden md:table-cell text-center p-2">
                           {user.role.replace(/_/g, " ")}
                         </TableCell>
-                        <TableCell className="text-center">{user.nextRole}</TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="hidden md:table-cell text-center p-2">
+                          {user.nextRole.replace(/_/g, " ")}
+                        </TableCell>
+                        <TableCell className="text-right p-2">
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={(e) => {
                               e.stopPropagation();
-                              onRemoveUser(user.id);
+                              handleRemoveUser(user.id);
                             }}
                             title="Remover da lista"
                           >
@@ -294,12 +402,26 @@ export function UserSelectForm({
                         </TableCell>
                       </TableRow>
                     ))}
-                </>
+                </React.Fragment>
               ))}
             </TableBody>
           </Table>
         </div>
       )}
+
+      {/* Botão salvar */}
+      <div className="flex flex-col gap-2 pt-2">
+        <Button
+          onClick={handleSave}
+          disabled={tempList.length === 0 || isSaving}
+          className="w-full"
+        >
+          {onSaveLabel ?? "Salvar"}
+        </Button>
+        <p className="text-xs sm:text-sm text-muted-foreground">
+          {onSaveHint ?? "Ao clicar, os usuários selecionados serão salvos no banco."}
+        </p>
+      </div>
     </div>
   );
 }

@@ -148,7 +148,7 @@ export class ConsagracaoRepository {
     const normalizedRole = nextRole;
     const updatePath = `consagracao.$.users.${normalizedRole}`;
 
-    return collection.updateOne(
+    await collection.updateOne(
       {
         _id: new ObjectId(churchId),
         "consagracao._id": new ObjectId(consagracaoId),
@@ -156,6 +156,53 @@ export class ConsagracaoRepository {
       {
         $set: {
           [updatePath]: users, // sobrescreve completamente a lista desse cargo
+        },
+      },
+    );
+
+    // Recalcula os totais após a atualização
+    await this.recalculateTotals(churchId, consagracaoId);
+
+    return { updated: true };
+  }
+
+  private async recalculateTotals(churchId: string, consagracaoId: string) {
+    const collection = await MongoHelper.getCollection(this.collectionName);
+
+    const church = await collection.findOne(
+      {
+        _id: new ObjectId(churchId),
+        "consagracao._id": new ObjectId(consagracaoId),
+      },
+      { projection: { "consagracao.$": 1 } },
+    );
+
+    const consagracaoList = church?.consagracao;
+    if (!consagracaoList || consagracaoList.length === 0) return;
+
+    const consagracao = consagracaoList[0];
+
+    const users: Record<string, unknown[]> = consagracao.users || {};
+    const totalConsagrated = Object.values(users).reduce(
+      (acc, list) => acc + (Array.isArray(list) ? list.length : 0),
+      0,
+    );
+    const rolesConsagrated = Object.fromEntries(
+      Object.entries(users).map(([role, list]) => [
+        role,
+        { count: Array.isArray(list) ? list.length : 0 },
+      ]),
+    );
+
+    await collection.updateOne(
+      {
+        _id: new ObjectId(churchId),
+        "consagracao._id": new ObjectId(consagracaoId),
+      },
+      {
+        $set: {
+          "consagracao.$.totalConsagrated": totalConsagrated,
+          "consagracao.$.rolesConsagrated": rolesConsagrated,
         },
       },
     );

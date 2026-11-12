@@ -6,7 +6,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const churchId = (req.query?.churchid as string) || "";
     if (req.method == "POST") {
-      const user = await createConsagracaoService(churchId, req.body);
+      const date = (req.body as { date?: Date | string })?.date;
+      if (!date) {
+        res.status(400).json({ error: "Data da consagração é obrigatória." });
+        return;
+      }
+      const user = await createConsagracaoService(churchId, new Date(date));
       res.status(201).json(user);
     } else if (req.method == "GET") {
       const casas = await getConsagracaoByChurchIdService(churchId);

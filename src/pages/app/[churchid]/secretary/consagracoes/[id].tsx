@@ -78,36 +78,38 @@ const MinisterialHistory = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+          <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => navigate.back()}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h1 className="text-3xl font-bold">Consagração Ministerial</h1>
-              <p className="text-muted-foreground">Gerencie a evolução ministerial dos membros</p>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Consagração Ministerial</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Gerencie a evolução ministerial dos membros
+              </p>
               {/* ✅ Mostra status de conclusão */}
               {isConsagracaoConcluida && (
-                <p className="text-sm text-green-600 font-semibold mt-1">
+                <p className="text-xs sm:text-sm text-green-600 font-semibold mt-1">
                   ✅ Consagração concluída em {format(new Date(concluedAt), "dd/MM/yyyy")}
                 </p>
               )}
             </div>
           </div>
           <Dialog open={isPdfDialogOpen} onOpenChange={setIsPdfDialogOpen}>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-2">
               <DialogTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" className="text-sm">
                   <FileText className="h-4 w-4 mr-2" />
                   Gerar PDF
                 </Button>
               </DialogTrigger>
 
               {/* ✅ Botão bloqueado se já foi concluída */}
-              <Button 
+              <Button
                 onClick={handleSubmit}
                 disabled={isConsagracaoConcluida || isLoading}
-                className={isConsagracaoConcluida ? "opacity-50 cursor-not-allowed" : ""}
+                className={`text-sm ${isConsagracaoConcluida ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 <SaveAllIcon className="h-4 w-4 mr-2" />
                 {isConsagracaoConcluida ? "Já Finalizada" : "Finalizar Consagrações"}

@@ -1,89 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useCallback } from "react";
 import { UserSelectForm } from "./UserSelectForm";
-import Toast from "../Toast";
-import { TempUserToAdd, TMinisterialLevel } from "@/domain/models/ministerial";
-import { useHttpPut } from "@/hooks/api";
+import { TempUserToAdd } from "@/domain/models/ministerial";
 
 export function ConsagracaoSeparadoSupervisorTab({
   churchId,
   consagracaoId,
   initialUsers,
+  onListChange,
 }: {
   churchId: string;
   consagracaoId: string;
   initialUsers: any;
+  onListChange?: (list: TempUserToAdd[]) => void;
 }) {
-  const [auxiliaresTempList, setAuxiliaresTempList] = useState<TempUserToAdd[]>(initialUsers ?? []);
-
-  useEffect(() => {
-    if (initialUsers) {
-      setAuxiliaresTempList(initialUsers);
-    }
-  }, [initialUsers]);
-
-  const handleAddUser = (user: TempUserToAdd) => {
-    setAuxiliaresTempList((prev) => [...prev, user]);
-  };
-
-  const handleRemoveUser = (userId: string) => {
-    setAuxiliaresTempList((prev) => prev.filter((user) => user.id !== userId));
-  };
-
-  const handleConsagrarAuxiliares = async () => {
-    if (auxiliaresTempList.length === 0) {
-      Toast.showError("Nenhum lider separado a supervisão.");
-      return;
-    }
-
-    const payload = auxiliaresTempList.map((user) => ({
-      name: user.name,
-      rede: user.rede,
-      id: user.id,
-      nextRole: "Separado a Supervisão" as TMinisterialLevel,
-      role: "Lider",
-    }));
-
-    try {
-      const resp = useHttpPut({
-        url: `/api/protected/churches/${churchId}/consagracao/${consagracaoId}`,
-        data: payload,
-      });
-
-      if (!resp) {
-        throw new Error("Falha ao consagrar auxiliares.");
-      }
-
-      Toast.showSuccess("Auxiliares consagrados com sucesso!");
-    } catch (error: any) {
-      Toast.showError(`Erro ao registrar: ${error.message}`);
-      console.error("Erro ao registrar separação supervisores:", error);
-    }
-  };
+  const handleListChange = useCallback(
+    (list: TempUserToAdd[]) => {
+      onListChange?.(list);
+    },
+    [onListChange],
+  );
 
   return (
-    <div className="space-y-6">
-      <UserSelectForm
-        initialUsers={initialUsers}
-        currentMinisterialLevel="Lider"
-        targetMinisterialLevel="Separado a Supervisão"
-        onAddUser={handleAddUser}
-        onRemoveUser={handleRemoveUser}
-        tempList={auxiliaresTempList}
-        churchId={churchId}
-      />
-      <Button
-        onClick={handleConsagrarAuxiliares}
-        className="w-full mt-6 md:w-auto"
-        disabled={auxiliaresTempList.length === 0}
-      >
-        Separar para Supervisão
-      </Button>
-      <p className="mt-2 text-sm text-gray-500">
-        Ao clicar, os usuários selecionados serão promovidos a Auxiliar.
-      </p>
-    </div>
+    <UserSelectForm
+      key="separado-supervisor"
+      churchId={churchId}
+      consagracaoId={consagracaoId}
+      initialUsers={initialUsers}
+      currentMinisterialLevel="Lider"
+      targetMinisterialLevel="Separado a Supervisão"
+      onListChange={handleListChange}
+      onSaveLabel="Separar para Supervisão"
+      onSaveHint="Ao clicar, os usuários selecionados serão separados para Supervisão."
+    />
   );
 }

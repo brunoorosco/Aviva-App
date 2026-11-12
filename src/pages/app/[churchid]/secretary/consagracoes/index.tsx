@@ -43,7 +43,7 @@ function ConsagracoesHistoryPage() {
     try {
       const res = await useHttpPost({
         url: `/api/protected/churches/${churchId}/consagracao`,
-        data: date,
+        data: { date },
       });
 
       if (res.error) {

@@ -42,7 +42,7 @@ export function ConsagracaoCard({ consagracao }: ConsagracaoCardProps) {
               .sort(([, a], [, b]) => (b?.count ?? 0) - (a?.count ?? 0))
               .map(([role, data]) => (
                 <li key={role} className="text-gray-600">
-                  {data.role.replace(/_/g, " ")}: {data.count}
+                  {role.replace(/_/g, " ")}: {data.count}
                 </li>
               ))}
           </ul>
