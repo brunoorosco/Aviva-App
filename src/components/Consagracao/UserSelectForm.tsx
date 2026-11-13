@@ -23,6 +23,8 @@ import { PlusIcon, TrashIcon, ChevronDown, ChevronRight } from "lucide-react";
 import { useHttpGet, useHttpPut } from "@/hooks/api";
 import { getNextMinisterialLevel } from "@/utils/getNextMinisterialLevel";
 import { getRedeName } from "@/utils/helpersNameREde";
+import { isAdminUser } from "@/lib/isAdminUser";
+import { useSession } from "next-auth/react";
 import Toast from "../Toast";
 
 interface UserSelectFormProps {
@@ -71,6 +73,10 @@ export function UserSelectForm({
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [expandedRedes, setExpandedRedes] = useState<Set<string>>(new Set());
   const [isSaving, setIsSaving] = useState(false);
+
+  const { data: session } = useSession();
+  const isAdmin = isAdminUser(session);
+  const userRede = session?.user?.cem?.name;
 
   useEffect(() => {
     if (readOnly && initialUsers && initialUsers.length > 0) {
@@ -142,17 +148,22 @@ export function UserSelectForm({
   const ALL_CHURCH_MEMBERS = (data?.data ?? []) as TInputConsagracao[];
 
   const availableUsers = useMemo(
-    () =>
-      ALL_CHURCH_MEMBERS.filter(
+    () => {
+      let filtered = ALL_CHURCH_MEMBERS.filter(
         (user) =>
           isRoleValid(user.role, currentMinisterialLevel) &&
           !tempList.some((temp) => temp.id === user._id),
-        // ✅ NÃO filtra por initialUsers aqui: quem já foi consagrado
-        // NESTE cargo não pode aparecer de novo, mas quem está em OUTROS
-        // cargos pode (porque o fluxo é por baixo para cima).
-        // initialUsers já veio de um cargo anterior e será tratado no backend.
-      ),
-    [ALL_CHURCH_MEMBERS, tempList, currentMinisterialLevel],
+      );
+
+      if (!isAdmin && userRede) {
+        filtered = filtered.filter(
+          (user) => getRedeName(user.cem?.name) === userRede,
+        );
+      }
+
+      return filtered;
+    },
+    [ALL_CHURCH_MEMBERS, tempList, currentMinisterialLevel, isAdmin, userRede],
   );
 
   // Filtro por busca separado para o selector

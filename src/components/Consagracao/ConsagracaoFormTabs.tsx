@@ -79,7 +79,9 @@ export function ConsagracaoFormTabs({ onDataChange, readOnly = false }: any) {
         <TabsList className="grid w-full grid-cols-3 gap-1 mb-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6">
           {ministerialLevels.map((level) => (
             <TabsTrigger key={level} value={level} className="h-auto min-h-9 text-xs px-2 sm:text-sm">
-              {level.replace(/_/g, " ").split(" ").pop()}
+              {level.startsWith("Separado a")
+      ? `Sep ${level.replace("Separado a ", "").replace(/_/g, " ")}`
+      : level.replace(/_/g, " ").split(" ").pop()}
             </TabsTrigger>
           ))}
         </TabsList>
