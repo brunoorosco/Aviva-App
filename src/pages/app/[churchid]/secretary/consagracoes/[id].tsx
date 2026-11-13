@@ -14,8 +14,6 @@ import { jsPDF } from "jspdf";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useRouter } from "next/router";
 import { ConsagracaoFormTabs } from "@/components/Consagracao/ConsagracaoFormTabs";
-import { capitalizeWords } from "@/utils/capitalizaFirst";
-import { loadImageAsDataURL } from "@/utils/loadImageasDataUrl";
 import { useHttpPost } from "@/hooks/api";
 import { useSession } from "next-auth/react";
 import Toast from "@/components/Toast";

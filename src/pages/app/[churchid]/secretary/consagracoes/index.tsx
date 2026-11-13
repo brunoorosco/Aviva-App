@@ -66,8 +66,8 @@ function ConsagracoesHistoryPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800">
+      <div className="flex justify-between items-center mb-8 sm:mb-12">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800 dark:text-gray-100">
           Histórico de Consagrações
         </h1>
 

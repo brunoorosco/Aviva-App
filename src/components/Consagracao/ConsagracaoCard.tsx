@@ -20,13 +20,11 @@ export function ConsagracaoCard({ consagracao }: ConsagracaoCardProps) {
   const router = useRouter();
   return (
     <Card className="w-full max-w-sm sm:max-w-md mx-auto shadow-md hover:shadow-lg transition-shadow duration-200">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-lg font-bold">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 pb-2">
+        <CardTitle className="text-lg font-bold w-full sm:w-auto">
           {new Date(consagracao.date).toLocaleDateString("pt-BR", { timeZone: "UTC" })}
         </CardTitle>
-        <div className="text-sm font-medium px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-          {/* {consagracao.mainRoleConsagrated.replace(/_/g, " ")} */}
-        </div>
+        {/* Removed main role - not available in ConsagracaoHistory type */}
       </CardHeader>
       <CardContent>
         <div className="mb-2">
