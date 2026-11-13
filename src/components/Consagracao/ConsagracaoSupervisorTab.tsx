@@ -9,17 +9,20 @@ export function ConsagracaoSupervisorTab({
   consagracaoId,
   initialUsers,
   onListChange,
+  readOnly = false,
 }: {
   churchId: string;
   consagracaoId: string;
   initialUsers: any;
   onListChange?: (list: TempUserToAdd[]) => void;
+  readOnly?: boolean;
 }) {
   const handleListChange = useCallback(
     (list: TempUserToAdd[]) => {
+      if (readOnly) return;
       onListChange?.(list);
     },
-    [onListChange],
+    [onListChange, readOnly],
   );
 
   return (
@@ -33,6 +36,7 @@ export function ConsagracaoSupervisorTab({
       onListChange={handleListChange}
       onSaveLabel="Consagrar para Supervisor(a)"
       onSaveHint="Ao clicar, os usuários selecionados serão promovidos a Supervisor."
+      readOnly={readOnly}
     />
   );
 }

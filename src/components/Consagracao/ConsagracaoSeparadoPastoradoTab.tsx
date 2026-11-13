@@ -9,17 +9,20 @@ export function ConsagracaoSeparadoPastoradoTab({
   consagracaoId,
   initialUsers,
   onListChange,
+  readOnly = false,
 }: {
   churchId: string;
   consagracaoId: string;
   initialUsers: any;
   onListChange?: (list: TempUserToAdd[]) => void;
+  readOnly?: boolean;
 }) {
   const handleListChange = useCallback(
     (list: TempUserToAdd[]) => {
+      if (readOnly) return;
       onListChange?.(list);
     },
-    [onListChange],
+    [onListChange, readOnly],
   );
 
   return (
@@ -33,6 +36,7 @@ export function ConsagracaoSeparadoPastoradoTab({
       onListChange={handleListChange}
       onSaveLabel="Separar para Pastorado"
       onSaveHint="Ao clicar, os usuários selecionados serão separados para Pastorado."
+      readOnly={readOnly}
     />
   );
 }

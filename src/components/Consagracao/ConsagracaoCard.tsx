@@ -38,7 +38,7 @@ export function ConsagracaoCard({ consagracao }: ConsagracaoCardProps) {
         <div className="text-sm">
           <p className="font-semibold mb-1">Quantidade por Cargo:</p>
           <ul className="list-disc list-inside pl-2">
-            {Object.entries(consagracao.rolesConsagrated)
+            {Object.entries(consagracao.rolesConsagrated || {})
               .sort(([, a], [, b]) => (b?.count ?? 0) - (a?.count ?? 0))
               .map(([role, data]) => (
                 <li key={role} className="text-gray-600">
@@ -48,9 +48,25 @@ export function ConsagracaoCard({ consagracao }: ConsagracaoCardProps) {
           </ul>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end pt-0">
+      <CardFooter className="flex justify-between pt-0 gap-2">
+        <div className="text-xs text-gray-500">
+          {consagracao.concluedAt ? (
+            <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded-full font-semibold">
+              <span className="mr-1">✓</span> Finalizada em{" "}
+              {new Date(consagracao.concluedAt).toLocaleDateString("pt-BR", {
+                timeZone: "UTC",
+              })}
+            </span>
+          ) : (
+            <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
+              Pendente
+            </span>
+          )}
+        </div>
         <Link href={`${router.asPath}/${consagracao._id}`} passHref>
-          <Button>Editar</Button>
+          <Button variant={consagracao.concluedAt ? "outline" : "default"}>
+            {consagracao.concluedAt ? "Visualizar" : "Editar"}
+          </Button>
         </Link>
       </CardFooter>
     </Card>

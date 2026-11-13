@@ -10,17 +10,20 @@ export function ConsagracaoAuxiliarTab({
   consagracaoId,
   initialUsers,
   onListChange,
+  readOnly = false,
 }: {
   churchId: string;
   consagracaoId: string;
   initialUsers: any;
   onListChange?: (list: TempUserToAdd[]) => void;
+  readOnly?: boolean;
 }) {
   const handleListChange = useCallback(
     (list: TempUserToAdd[]) => {
+      if (readOnly) return;
       onListChange?.(list);
     },
-    [onListChange],
+    [onListChange, readOnly],
   );
 
   return (
@@ -34,6 +37,7 @@ export function ConsagracaoAuxiliarTab({
       onListChange={handleListChange}
       onSaveLabel="Consagrar Auxiliares"
       onSaveHint="Ao clicar, os usuários selecionados serão promovidos a Auxiliar."
+      readOnly={readOnly}
     />
   );
 }

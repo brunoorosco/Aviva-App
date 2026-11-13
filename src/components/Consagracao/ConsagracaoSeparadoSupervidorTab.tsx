@@ -9,17 +9,20 @@ export function ConsagracaoSeparadoSupervisorTab({
   consagracaoId,
   initialUsers,
   onListChange,
+  readOnly = false,
 }: {
   churchId: string;
   consagracaoId: string;
   initialUsers: any;
   onListChange?: (list: TempUserToAdd[]) => void;
+  readOnly?: boolean;
 }) {
   const handleListChange = useCallback(
     (list: TempUserToAdd[]) => {
+      if (readOnly) return;
       onListChange?.(list);
     },
-    [onListChange],
+    [onListChange, readOnly],
   );
 
   return (
@@ -33,6 +36,7 @@ export function ConsagracaoSeparadoSupervisorTab({
       onListChange={handleListChange}
       onSaveLabel="Separar para Supervisão"
       onSaveHint="Ao clicar, os usuários selecionados serão separados para Supervisão."
+      readOnly={readOnly}
     />
   );
 }

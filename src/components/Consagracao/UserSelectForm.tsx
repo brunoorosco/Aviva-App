@@ -34,7 +34,11 @@ interface UserSelectFormProps {
   onListChange?: (list: TempUserToAdd[]) => void;
   onSaveLabel?: string;
   onSaveHint?: string;
+  readOnly?: boolean;
 }
+
+const groupedRedesAll = (users: TempUserToAdd[]): string[] =>
+  Array.from(new Set(users.map((u) => getRedeName(u.rede) || "Sem Rede")));
 
 type TInputConsagracao = {
   _id: string;
@@ -60,12 +64,19 @@ export function UserSelectForm({
   onListChange,
   onSaveLabel,
   onSaveHint,
+  readOnly = false,
 }: UserSelectFormProps) {
   const [tempList, setTempList] = useState<TempUserToAdd[]>(initialUsers ?? []);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [expandedRedes, setExpandedRedes] = useState<Set<string>>(new Set());
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (readOnly && initialUsers && initialUsers.length > 0) {
+      setExpandedRedes(new Set(groupedRedesAll(initialUsers)));
+    }
+  }, [readOnly, initialUsers]);
 
   // Sincroniza quando o parent trocar de array (nova ref).
   // O parent só troca a ref quando o fetch chega com dados novos do banco,
@@ -125,7 +136,7 @@ export function UserSelectForm({
   }
 
   const { data, isLoading } = useHttpGet(
-    `/api/protected/churches/${churchId}/users/cargo/${currentMinisterialLevel}`,
+    readOnly ? null : `/api/protected/churches/${churchId}/users/cargo/${currentMinisterialLevel}`,
   );
 
   const ALL_CHURCH_MEMBERS = (data?.data ?? []) as TInputConsagracao[];
@@ -211,6 +222,7 @@ export function UserSelectForm({
   };
 
   const handleSave = async () => {
+    if (readOnly) return;
     if (tempList.length === 0) {
       Toast.showError(
         `Nenhum membro na lista de ${targetMinisterialLevel.replace(/_/g, " ")}.`,
@@ -245,7 +257,8 @@ export function UserSelectForm({
   return (
     <div className="space-y-4">
       {/* Formulário de seleção */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-end">
+      {!readOnly && (
+        <div className="flex flex-col gap-3 md:flex-row md:items-end">
         <div className="flex-1 w-full">
           <Label htmlFor={`search-user-${currentMinisterialLevel}`}>Buscar Membro</Label>
           <Input
@@ -293,7 +306,8 @@ export function UserSelectForm({
         >
           <PlusIcon className="w-4 h-4 mr-2" /> Adicionar à Lista
         </Button>
-      </div>
+        </div>
+      )}
 
       {/* Header da lista com totais */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-2">
@@ -307,7 +321,7 @@ export function UserSelectForm({
             </span>
           )}
         </div>
-        {groupedByRede.length > 1 && (
+        {!readOnly && groupedByRede.length > 1 && (
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" className="text-xs sm:text-sm" onClick={expandAll}>
               Expandir Todos
@@ -348,7 +362,7 @@ export function UserSelectForm({
                 <TableHead>Nome</TableHead>
                 <TableHead className="hidden md:table-cell text-center">Cargo Atual</TableHead>
                 <TableHead className="hidden md:table-cell text-center">Próximo Cargo</TableHead>
-                <TableHead className="text-right w-14">Ações</TableHead>
+                {!readOnly && <TableHead className="text-right w-14">Ações</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -371,7 +385,7 @@ export function UserSelectForm({
                         {group.count} {group.count === 1 ? "membro" : "membros"}
                       </span>
                     </TableCell>
-                    <TableCell></TableCell>
+                    {!readOnly && <TableCell></TableCell>}
                   </TableRow>
 
                   {expandedRedes.has(group.rede) &&
@@ -387,19 +401,21 @@ export function UserSelectForm({
                         <TableCell className="hidden md:table-cell text-center p-2">
                           {user.nextRole.replace(/_/g, " ")}
                         </TableCell>
-                        <TableCell className="text-right p-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemoveUser(user.id);
-                            }}
-                            title="Remover da lista"
-                          >
-                            <TrashIcon className="w-4 h-4 text-red-500" />
-                          </Button>
-                        </TableCell>
+                        {!readOnly && (
+                          <TableCell className="text-right p-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRemoveUser(user.id);
+                              }}
+                              title="Remover da lista"
+                            >
+                              <TrashIcon className="w-4 h-4 text-red-500" />
+                            </Button>
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))}
                 </React.Fragment>
@@ -410,7 +426,8 @@ export function UserSelectForm({
       )}
 
       {/* Botão salvar */}
-      <div className="flex flex-col gap-2 pt-2">
+      {!readOnly && (
+        <div className="flex flex-col gap-2 pt-2">
         <Button
           onClick={handleSave}
           disabled={tempList.length === 0 || isSaving}
@@ -421,7 +438,8 @@ export function UserSelectForm({
         <p className="text-xs sm:text-sm text-muted-foreground">
           {onSaveHint ?? "Ao clicar, os usuários selecionados serão salvos no banco."}
         </p>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

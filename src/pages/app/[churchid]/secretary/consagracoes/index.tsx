@@ -31,7 +31,9 @@ function ConsagracoesHistoryPage() {
     churchId ? `/api/protected/churches/${churchId}/consagracao` : null
   );
 
-  const historicConsagracoes = Array.isArray(data?.data) ? data?.data : [];
+  const historicConsagracoes = (
+    Array.isArray(data?.data) ? data?.data : []
+  ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   async function handleCreateConsagracao() {
     if (!date) {

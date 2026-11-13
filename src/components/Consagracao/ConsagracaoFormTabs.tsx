@@ -20,7 +20,7 @@ const normalize = (text: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-export function ConsagracaoFormTabs({ onDataChange }: any) {
+export function ConsagracaoFormTabs({ onDataChange, readOnly = false }: any) {
   const { data: session } = useSession();
   const route = useRouter();
   const { id } = route.query;
@@ -90,6 +90,7 @@ export function ConsagracaoFormTabs({ onDataChange }: any) {
             consagracaoId={consagracaoId}
             initialUsers={getRoleList("Auxiliar")}
             onListChange={(list) => setRoleList("Auxiliar", list)}
+            readOnly={readOnly}
           />
         </TabsContent>
 
@@ -99,6 +100,7 @@ export function ConsagracaoFormTabs({ onDataChange }: any) {
             consagracaoId={consagracaoId}
             initialUsers={getRoleList("Lider")}
             onListChange={(list) => setRoleList("Lider", list)}
+            readOnly={readOnly}
           />
         </TabsContent>
 
@@ -108,6 +110,7 @@ export function ConsagracaoFormTabs({ onDataChange }: any) {
             consagracaoId={consagracaoId}
             initialUsers={getRoleList("Separado a Supervisao")}
             onListChange={(list: TempUserToAdd[]) => setRoleList("Separado a Supervisao", list)}
+            readOnly={readOnly}
           />
         </TabsContent>
 
@@ -117,6 +120,7 @@ export function ConsagracaoFormTabs({ onDataChange }: any) {
             consagracaoId={consagracaoId}
             initialUsers={getRoleList("Supervisor")}
             onListChange={(list) => setRoleList("Supervisor", list)}
+            readOnly={readOnly}
           />
         </TabsContent>
 
@@ -126,6 +130,7 @@ export function ConsagracaoFormTabs({ onDataChange }: any) {
             consagracaoId={consagracaoId}
             initialUsers={getRoleList("Separado a Pastorado")}
             onListChange={(list) => setRoleList("Separado a Pastorado", list)}
+            readOnly={readOnly}
           />
         </TabsContent>
 
@@ -135,6 +140,7 @@ export function ConsagracaoFormTabs({ onDataChange }: any) {
             consagracaoId={consagracaoId}
             initialUsers={getRoleList("Pastor")}
             onListChange={(list) => setRoleList("Pastor", list)}
+            readOnly={readOnly}
           />
         </TabsContent>
       </Tabs>

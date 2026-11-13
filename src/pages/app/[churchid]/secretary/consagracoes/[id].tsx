@@ -162,7 +162,7 @@ const MinisterialHistory = () => {
         </div>
 
         <div className="container mx-auto">
-          <ConsagracaoFormTabs onDataChange={handleDataChange} />
+          <ConsagracaoFormTabs onDataChange={handleDataChange} readOnly={isConsagracaoConcluida} />
         </div>
       </div>
     </div>
