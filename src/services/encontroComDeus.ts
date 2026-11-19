@@ -179,7 +179,12 @@ export const upsertInscricaoRedeService = async (data: {
   let totalPago = 0;
   let status = "pendente";
 
-  const totalAPagar = qtdEncontristas * VALOR_ENCONTRISTA + qtdEquipe * VALOR_EQUIPE;
+  const encontristasIsentos = data.encontristas?.filter((e) => e.isento).length || 0;
+  const equipeIsentos = data.equipeMembers?.filter((m) => m.isento).length || 0;
+  const encontristasNaoIsentos = qtdEncontristas - encontristasIsentos;
+  const equipeNaoIsenta = qtdEquipe - equipeIsentos;
+
+  const totalAPagar = encontristasNaoIsentos * VALOR_ENCONTRISTA + equipeNaoIsenta * VALOR_EQUIPE;
 
   if (data.pagamento.length > 0) {
     totalPago = (data?.pagamento || []).reduce((sum: number, p: any) => sum + (p.valor || 0), 0);
