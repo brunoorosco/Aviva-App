@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { ConsagracaoFormTabs } from "@/components/Consagracao/ConsagracaoFormTabs";
 import { useHttpPost } from "@/hooks/api";
 import { useSession } from "next-auth/react";
+import { isAdminUser } from "@/lib/isAdminUser";
 import Toast from "@/components/Toast";
 
 const MinisterialHistory = () => {
@@ -29,6 +30,7 @@ const MinisterialHistory = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const consagracaoId = router.query.id;
+  const isAdmin = isAdminUser(session);
 
   // Callback para receber dados do ConsagracaoFormTabs
   const handleDataChange = useCallback((data: any) => {
@@ -103,15 +105,17 @@ const MinisterialHistory = () => {
                 </Button>
               </DialogTrigger>
 
-              {/* ✅ Botão bloqueado se já foi concluída */}
-              <Button
-                onClick={handleSubmit}
-                disabled={isConsagracaoConcluida || isLoading}
-                className={`text-sm ${isConsagracaoConcluida ? "opacity-50 cursor-not-allowed" : ""}`}
-              >
-                <SaveAllIcon className="h-4 w-4 mr-2" />
-                {isConsagracaoConcluida ? "Já Finalizada" : "Finalizar Consagrações"}
-              </Button>
+              {/* ✅ Botão apenas para admin/bispo */}
+              {isAdmin ? (
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isConsagracaoConcluida || isLoading}
+                  className={`text-sm ${isConsagracaoConcluida ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  <SaveAllIcon className="h-4 w-4 mr-2" />
+                  {isConsagracaoConcluida ? "Já Finalizada" : "Finalizar Consagrações"}
+                </Button>
+              ) : null}
             </div>
             <DialogContent>
               <DialogHeader>
